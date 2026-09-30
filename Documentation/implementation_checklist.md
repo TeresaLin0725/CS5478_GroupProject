@@ -65,6 +65,11 @@ dependency wiring, termination enum, and fixture JSONL output.
 - Freeze evidence and score once; false claims end the episode. Never allow
   evaluator feedback to resume search.
 - Add provider transport cancellation and usage/cost capture to the LLM adapter.
+  Gemini-compatible transport cancellation and usage capture are now available in
+  `policies/provider.py`; cost is still unknown. A separate contract-based
+  three-room synthetic loop and live/replay cases are in `runner/synthetic.py`.
+  These do not complete the production lifecycle/recovery items above. See
+  [integration review](chinese/c_integration_review.md).
 - Load/freeze paired manifests with separate RNG streams; log revisions, actual
   executed distance, collisions, replans, barriers, attempts, and terminal outcomes.
 - Report all episode outcomes, paired uncertainty, and explicitly labeled

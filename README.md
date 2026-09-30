@@ -5,9 +5,11 @@ frontier selection. The [English plan](Documentation/english/robotics_project_de
 defines the project; [Interface Freeze 1.0](Documentation/english/interface_freeze.md)
 is authoritative for behavior and ownership.
 
-The scaffold runs synthetic **selection decisions**, with no simulator, detector,
-network access, or third-party runtime dependencies. It does not run robot search
-episodes yet. The skeleton supports Python 3.8 or newer. Use Python 3.8 for the
+The default scaffold runs synthetic **selection decisions**, with no simulator,
+detector, network access, or third-party runtime dependencies. The C integration
+adds a separate three-room synthetic loop and an opt-in live Gemini client (see
+below); it does not implement real simulator episodes. The skeleton supports
+Python 3.8 or newer. Use Python 3.8 for the
 iGibson environment, matching its
 [documented installation setup](https://stanfordvl.github.io/iGibson/installation.html).
 
@@ -85,5 +87,44 @@ or lineage invariant in the design. Real integration must complete these checks.
 The LLM seam accepts an injected client and records exact symbolic input, response,
 model settings, latency, and fallback. Its client must enforce transport deadlines;
 independent process-level supervision of stalled modules belongs in the full
-runner. No live-provider credentials or calls are included. Usage/cost are unknown
-until the provider adapter supplies them.
+runner. The opt-in provider adapter enforces HTTP deadlines using a killable
+subprocess and records raw responses and provider usage. Pricing/cost remains
+unknown. Credentials are loaded locally and are not committed or logged.
+
+## C integration: nearest and Gemini on one synthetic map
+
+The review and detailed limitations are in
+[C integration notes](Documentation/chinese/c_integration_review.md).
+
+```powershell
+$env:PYTHONPATH = "$PWD/src"
+python -m frontier_search.runner.synthetic --log runs/three-rooms-replay.jsonl
+```
+
+This runs Nearest (F1 → F2 → F3) and an explicitly authored LLM replay (F3).
+Both execute 9 m in the synthetic point-robot fixture. Nearest uses **B-assessed
+path length**, not Euclidean distance. The immutable state, eligibility checks,
+and policy interface are shared with the original scaffold. A terminal claim is
+scored by a separate fixture evaluator before reporting synthetic success.
+
+For a live call, copy `.env.example` to `.env` and fill `LLM_API_KEY`, or pass
+`--env-file` to an existing local file. Process environment variables take
+precedence. In the original workspace, `--env-file ../.env` reuses the existing
+key without copying it into this checkout.
+
+```powershell
+python -m frontier_search.runner.synthetic --backend live --env-file ../.env --log runs/three-rooms-live.jsonl
+python -m unittest discover -s tests -v
+```
+
+Use a new log filename for each run. The live smoke command exits nonzero if
+fallback was needed, even when the Nearest fallback completed the search. Default
+LLM deadline is 10 s and call cap is 10; hosted-model selection is not deterministic.
+JSONL records use `fixture_*` event names and `source=synthetic` to separate them
+from real experiments. The default `python -m frontier_search` selection demo is
+unchanged and does not make network calls.
+
+Verified locally with Python 3.10: original and integration tests; replay and live
+Gemini cases. Source is written for Python 3.8, but a Python 3.8 runtime was not
+available for execution. The production `EpisodeRunner.run()` and recovery
+manager still require the lifecycle implementation described in the freeze.

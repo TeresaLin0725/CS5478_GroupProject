@@ -54,6 +54,7 @@ class LLMGuidedPolicy(BaselinePolicy):
         started = monotonic()
         response = None
         fallback = None
+        provider_record = None
         if self.client is None or not self.config.llm_model:
             fallback = 'unconfigured_client'
         elif self.calls >= self.config.llm_call_cap:
@@ -73,12 +74,16 @@ class LLMGuidedPolicy(BaselinePolicy):
                 fallback = 'timeout'
             except Exception as error:
                 fallback = f'client_error:{type(error).__name__}'
+            provider_record = getattr(self.client, 'last_record', None)
         record = {'episode_id': state.episode_id, 'state_revision': state.revision,
                   'model': self.config.llm_model, 'reasoning': self.config.llm_reasoning,
                   'input': payload, 'response': response, 'latency_s': monotonic() - started,
                   'fallback_reason': fallback, 'fallback_selected_action': fallback is not None,
-                  'usage': None, 'cost': None}
+                  'usage': provider_record.get('usage') if provider_record else None,
+                  'cost': provider_record.get('cost') if provider_record else None,
+                  'provider': provider_record}
         self.call_records.append(record)
         if self.log:
             self.log(record)
-        return (nearest_id(context), f'nearest fallback: {fallback}') if fallback else (response, 'LLM selection')
+        rationale = provider_record.get('reason', 'LLM selection') if provider_record else 'LLM selection'
+        return (nearest_id(context), f'nearest fallback: {fallback}') if fallback else (response, rationale)
