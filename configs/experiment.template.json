@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+  "status": "draft_not_for_experiments",
+  "code_revision_or_snapshot_hash": null,
+  "policies": ["random", "nearest", "information_gain", "llm_guided"],
+  "paired_episodes": [],
+  "episode_fields_required": ["episode_id", "scene_id", "target_class", "start_pose_including_yaw", "environment_seed", "policy_seed", "perception_seed"],
+  "evaluator_only_pairing_manifest": null,
+  "priors": {
+    "known_room_layout": true,
+    "known_robot_pose": true,
+    "verified_spawn_footprint_clearance": true,
+    "oracle_room_labels": false
+  },
+  "pause_simulation_during_decisions": true,
+  "simulator": {"name": "igibson", "version": null, "scene_asset_versions": null},
+  "sensor": {
+    "rgb_encoding": null, "depth_units": null, "invalid_depth_values": null,
+    "image_size": null, "intrinsics": null, "distortion": null,
+    "transform_convention": "camera-to-world, row-major 4x4, column vectors, metres",
+    "range_m": null, "fov_rad": null, "capture_hz": null, "processing_hz": null
+  },
+  "robot": {
+    "footprint_base": null, "base_frame": null, "camera_frame": null,
+    "collision_z_min_m": null, "collision_z_max_m": null,
+    "clearance_margin_m": null, "motion_model": null, "motion_model_constraints": null,
+    "can_turn_in_place": null, "max_linear_speed_mps": null,
+    "max_angular_speed_radps": null, "position_tolerance_m": null, "yaw_tolerance_rad": null
+  },
+  "mapping": {
+    "fixed_grid_geometry": null, "depth_floor_height_evidence_model": null,
+    "coverage_rasterization": null, "frontier_adjacency_clustering": null,
+    "identity_overlap_tolerance_history": null, "approach_heading_rule": null,
+    "gain_ray_model": null, "detector_weights_hash": null, "label_mapping": null,
+    "confidence_threshold": null, "confirmation_frames": 2,
+    "confirmation_window_s": null, "localization_association_tolerances_m": null,
+    "evidence_retention_s": null
+  },
+  "observation": {
+    "initial_headings_rad": null, "arrival_headings_rad": null, "recovery_headings_rad": null,
+    "heading_tolerance_rad": null, "dwell_s": null, "processed_samples_per_heading": null,
+    "allow_full_rotation": null, "operation_deadline_s": null, "drain_deadline_s": null
+  },
+  "recovery": {
+    "relevant_change_tolerance": null, "cooldown_s": null, "evaluation_retry_cap": null,
+    "navigation_retry_cap": null, "progress_radius_m": null, "minimum_progress_m2": null,
+    "no_progress_cap": null, "opportunity_attempt_cap": null, "max_cycles_without_navigation": null
+  },
+  "policy": {
+    "epsilon_m": null, "tie_rule": "frontier_id",
+    "llm_model": null, "llm_reasoning": null, "llm_prompt": null,
+    "llm_call_cap": null, "llm_deadline_s": null, "fallback": "nearest"
+  },
+  "navigation": {
+    "batch_deadline_s": null, "navigation_deadline_s": null, "max_replans": null,
+    "pose_freshness_m": null, "map_freshness_s": null
+  },
+  "limits": {
+    "max_attempts": null, "max_steps": null, "max_simulated_time_s": null,
+    "max_wall_time_s": null, "max_decisions": null
+  },
+  "evaluation": {
+    "visible_class_matching_rule": null, "minimum_visibility": null,
+    "minimum_bbox_iou": null, "localization_tolerance_m": null,
+    "required_evidence_frames": null, "deadline_s": null,
+    "success_definition": "verified visible requested-class evidence",
+    "reporting_uncertainty_procedure": null
+  }
+}
