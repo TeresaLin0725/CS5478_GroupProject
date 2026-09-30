@@ -1,0 +1,467 @@
+{
+  "run_directory": "runs/igibson-20260930-155929",
+  "episodes": {
+    "nearest": {
+      "decisions": [
+        {
+          "state_revision": 12,
+          "candidates": [
+            {
+              "frontier_id": "F1",
+              "region_id": "R1",
+              "path_cost_m": null,
+              "eligible": false
+            },
+            {
+              "frontier_id": "F2",
+              "region_id": "R1",
+              "path_cost_m": 3.58,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F3",
+              "region_id": "R1",
+              "path_cost_m": 3.931,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F4",
+              "region_id": "R4",
+              "path_cost_m": 4.107,
+              "eligible": true
+            }
+          ],
+          "observed_classes": [
+            "coffee_table",
+            "desk",
+            "dining_table",
+            "sofa",
+            "television"
+          ],
+          "selected": "F2",
+          "stop_reason": null,
+          "rationale": "minimum assessed path length"
+        },
+        {
+          "state_revision": 46,
+          "candidates": [
+            {
+              "frontier_id": "F1",
+              "region_id": "R1",
+              "path_cost_m": null,
+              "eligible": false
+            },
+            {
+              "frontier_id": "F5",
+              "region_id": "R2",
+              "path_cost_m": 2.449,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F6",
+              "region_id": "R2",
+              "path_cost_m": 2.514,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F7",
+              "region_id": "R2",
+              "path_cost_m": 2.231,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F8",
+              "region_id": "R3",
+              "path_cost_m": 2.514,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F9",
+              "region_id": "R4",
+              "path_cost_m": 3.038,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F10",
+              "region_id": "R3",
+              "path_cost_m": 2.514,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F11",
+              "region_id": "R4",
+              "path_cost_m": 3.68,
+              "eligible": true
+            }
+          ],
+          "observed_classes": [
+            "coffee_table",
+            "desk",
+            "dining_table",
+            "refrigerator",
+            "sofa",
+            "television"
+          ],
+          "selected": "F7",
+          "stop_reason": null,
+          "rationale": "minimum assessed path length"
+        },
+        {
+          "state_revision": 70,
+          "candidates": [
+            {
+              "frontier_id": "F1",
+              "region_id": "R1",
+              "path_cost_m": null,
+              "eligible": false
+            },
+            {
+              "frontier_id": "F6",
+              "region_id": "R2",
+              "path_cost_m": 0.5,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F9",
+              "region_id": "R4",
+              "path_cost_m": 4.756,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F10",
+              "region_id": "R3",
+              "path_cost_m": 1.083,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F11",
+              "region_id": "R4",
+              "path_cost_m": 5.397,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F12",
+              "region_id": "R3",
+              "path_cost_m": 1.724,
+              "eligible": true
+            }
+          ],
+          "observed_classes": [
+            "bed",
+            "coffee_table",
+            "desk",
+            "dining_table",
+            "refrigerator",
+            "sofa",
+            "television",
+            "toilet"
+          ],
+          "selected": "F6",
+          "stop_reason": null,
+          "rationale": "minimum assessed path length"
+        },
+        {
+          "state_revision": 89,
+          "candidates": [
+            {
+              "frontier_id": "F1",
+              "region_id": "R1",
+              "path_cost_m": null,
+              "eligible": false
+            },
+            {
+              "frontier_id": "F6",
+              "region_id": "R2",
+              "path_cost_m": null,
+              "eligible": false
+            },
+            {
+              "frontier_id": "F9",
+              "region_id": "R4",
+              "path_cost_m": 5.038,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F10",
+              "region_id": "R3",
+              "path_cost_m": 1.141,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F11",
+              "region_id": "R4",
+              "path_cost_m": 5.68,
+              "eligible": true
+            }
+          ],
+          "observed_classes": [
+            "bed",
+            "coffee_table",
+            "desk",
+            "dining_table",
+            "refrigerator",
+            "sofa",
+            "television",
+            "toilet"
+          ],
+          "selected": "F10",
+          "stop_reason": null,
+          "rationale": "minimum assessed path length"
+        },
+        {
+          "state_revision": 107,
+          "candidates": [
+            {
+              "frontier_id": "F1",
+              "region_id": "R1",
+              "path_cost_m": null,
+              "eligible": false
+            },
+            {
+              "frontier_id": "F6",
+              "region_id": "R2",
+              "path_cost_m": 1.141,
+              "eligible": false
+            },
+            {
+              "frontier_id": "F9",
+              "region_id": "R4",
+              "path_cost_m": 5.738,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F10",
+              "region_id": "R3",
+              "path_cost_m": null,
+              "eligible": false
+            },
+            {
+              "frontier_id": "F11",
+              "region_id": "R4",
+              "path_cost_m": 6.38,
+              "eligible": true
+            }
+          ],
+          "observed_classes": [
+            "bed",
+            "coffee_table",
+            "desk",
+            "dining_table",
+            "refrigerator",
+            "sofa",
+            "television",
+            "toilet"
+          ],
+          "selected": "F9",
+          "stop_reason": null,
+          "rationale": "minimum assessed path length"
+        }
+      ],
+      "navigation": [
+        {
+          "frontier_id": "F2",
+          "execution": "reached",
+          "failure": null,
+          "executed_distance_m": 3.408,
+          "replans": 1
+        },
+        {
+          "frontier_id": "F7",
+          "execution": "reached",
+          "failure": null,
+          "executed_distance_m": 1.929,
+          "replans": 0
+        },
+        {
+          "frontier_id": "F6",
+          "execution": "reached",
+          "failure": null,
+          "executed_distance_m": 0.454,
+          "replans": 0
+        },
+        {
+          "frontier_id": "F10",
+          "execution": "reached",
+          "failure": null,
+          "executed_distance_m": 0.965,
+          "replans": 0
+        },
+        {
+          "frontier_id": "F9",
+          "execution": "cancelled",
+          "failure": null,
+          "executed_distance_m": 5.13,
+          "replans": 0
+        }
+      ],
+      "evaluation": {
+        "valid_target": true,
+        "position_error_m": 0.03,
+        "evidence": [
+          "capture-144-cracker_box",
+          "capture-145-cracker_box"
+        ]
+      },
+      "summary": {
+        "collision_steps": 0,
+        "decisions": 5,
+        "executed_distance_m": 12.131,
+        "fallbacks": 0,
+        "known_fraction": 0.5928,
+        "llm_calls": 0,
+        "model": null,
+        "observed_classes": [
+          "bed",
+          "coffee_table",
+          "cracker_box",
+          "desk",
+          "dining_table",
+          "refrigerator",
+          "sofa",
+          "television",
+          "toilet"
+        ],
+        "policy": "nearest",
+        "robot": "Locobot",
+        "scene": "Rs",
+        "sim_time_s": 87.567,
+        "source": "igibson_static_scan",
+        "target_detections": 2,
+        "termination": "success",
+        "wall_time_s": 9.375
+      }
+    },
+    "llm_guided": {
+      "decisions": [
+        {
+          "state_revision": 12,
+          "candidates": [
+            {
+              "frontier_id": "F1",
+              "region_id": "R1",
+              "path_cost_m": null,
+              "eligible": false
+            },
+            {
+              "frontier_id": "F2",
+              "region_id": "R1",
+              "path_cost_m": 3.58,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F3",
+              "region_id": "R1",
+              "path_cost_m": 3.931,
+              "eligible": true
+            },
+            {
+              "frontier_id": "F4",
+              "region_id": "R4",
+              "path_cost_m": 4.107,
+              "eligible": true
+            }
+          ],
+          "observed_classes": [
+            "coffee_table",
+            "desk",
+            "dining_table",
+            "sofa",
+            "television"
+          ],
+          "selected": "F4",
+          "stop_reason": null,
+          "rationale": "A cracker box is typically found in a kitchen or pantry. Region R1 is already over 82% explored and contains living room and dining furniture, whereas frontier F4 leads into unexplored region R4, which may contain a kitchen.",
+          "llm": {
+            "latency_s": 5.438,
+            "fallback_reason": null,
+            "usage": {
+              "completion_tokens": 67,
+              "prompt_tokens": 1135,
+              "total_tokens": 1895
+            }
+          }
+        }
+      ],
+      "navigation": [
+        {
+          "frontier_id": "F4",
+          "execution": "reached",
+          "failure": null,
+          "executed_distance_m": 3.941,
+          "replans": 0
+        }
+      ],
+      "evaluation": {
+        "valid_target": true,
+        "position_error_m": 0.032,
+        "evidence": [
+          "capture-41-cracker_box",
+          "capture-42-cracker_box"
+        ]
+      },
+      "summary": {
+        "collision_steps": 0,
+        "decisions": 1,
+        "executed_distance_m": 4.041,
+        "fallbacks": 0,
+        "known_fraction": 0.4061,
+        "llm_calls": 1,
+        "model": "gemini-3.8-flash",
+        "observed_classes": [
+          "coffee_table",
+          "cracker_box",
+          "desk",
+          "dining_table",
+          "sink",
+          "sofa",
+          "television"
+        ],
+        "policy": "llm_guided",
+        "robot": "Locobot",
+        "scene": "Rs",
+        "sim_time_s": 30.2,
+        "source": "igibson_static_scan",
+        "target_detections": 2,
+        "termination": "success",
+        "wall_time_s": 8.531
+      }
+    }
+  },
+  "config": {
+    "grid_resolution_m": 0.1,
+    "initial_clearance_m": 0.6,
+    "landmarks": [
+      "sofa",
+      "coffee_table",
+      "dining_table",
+      "desk",
+      "television",
+      "bed",
+      "stove",
+      "sink",
+      "refrigerator",
+      "toilet",
+      "shower"
+    ],
+    "limits": {
+      "decisions": 25,
+      "sim_s": 600.0,
+      "wall_s": 1200.0
+    },
+    "perception": "RGB-D depth fusion (eyes camera, head tilt -25/0 deg); annotated-landmark oracle gated by rendered depth visibility; target from rendered instance segmentation",
+    "region_prior": [
+      "R1",
+      "R2",
+      "R3",
+      "R4"
+    ],
+    "robot": "Locobot (DifferentialDriveController, wheel velocity commands)",
+    "robot_height_m": 0.907,
+    "robot_radius_m": 0.182,
+    "scene": "Rs",
+    "simulator": "iGibson 2.2.2 Simulator (headless) + PyBullet physics",
+    "source": "igibson_static_scan",
+    "target": "cracker_box",
+    "target_asset": "YCB 003_cracker_box"
+  }
+}

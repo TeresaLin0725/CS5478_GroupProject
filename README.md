@@ -125,8 +125,8 @@ from real experiments. The default `python -m frontier_search` selection demo is
 unchanged and does not make network calls.
 
 Verified locally with Python 3.10: original and integration tests; replay and live
-Gemini cases. Source is written for Python 3.8, but a Python 3.8 runtime was not
-available for execution. The production `EpisodeRunner.run()` and recovery
+Gemini cases. The full test suite also passes under the Python 3.8 iGibson runtime
+(see below). The production `EpisodeRunner.run()` and recovery
 manager still require the lifecycle implementation described in the freeze.
 
 ## PyBullet 3D map demo
@@ -158,3 +158,29 @@ an animated GIF, initial/final PNGs, detailed JSONL and a summary under a new
 `runs/pybullet-*` directory. DIRECT mode renders without opening a desktop window.
 Add `-Blocked` to close the target room door; failure to find the target is then
 the expected negative-test outcome. See [3D demo notes](Documentation/chinese/pybullet_demo.md).
+
+## iGibson Rs demo
+
+The same Nearest / live Gemini loop now also runs in **iGibson 2.2.2**, using the
+public Gibson `Rs` apartment scan and iGibson's differential-drive Locobot. The
+robot moves only through wheel velocity commands. The occupancy map is fused from
+rendered depth, and the YCB target is detected through rendered instance
+segmentation. Furniture classes are hand-annotated scan landmarks, reported only
+when rendered depth confirms they are visible (a landmark oracle, not YOLO).
+
+```powershell
+python scripts/setup_igibson.py          # once: source build + Python 3.8 env + assets
+.\scripts\run_igibson_demo.ps1 -Policy both
+```
+
+Measured on 2026-09-30, from the same start state:
+
+| Policy | Result | Decisions | Distance | Collisions |
+| --- | --- | ---: | ---: | ---: |
+| Nearest | success | 5 | 12.1 m | 0 |
+| Gemini | success | 1 | 4.0 m | 0 |
+
+This is one scene and one start pose, so it is not a statistical comparison.
+Details, two Windows build fixes for upstream iGibson, and limitations are in
+[iGibson demo notes](Documentation/chinese/igibson_demo.md). Animations and
+per-decision records are in `Documentation/igibson_demo/`.

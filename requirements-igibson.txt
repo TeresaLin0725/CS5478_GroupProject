@@ -1,0 +1,32 @@
+# Python 3.8 runtime for iGibson 2.2.2 (source build; see scripts/setup_igibson.py).
+# Pinned to the versions verified on Windows 11 + RTX 4060 on 2026-09-30.
+aenum==3.1.17
+bddl==1.0.1
+cloudpickle==3.1.2
+cmake==4.4.3
+freetype-py==2.5.1
+future==1.0.0
+gitpython==3.1.62
+gputil==1.4.0
+gym==0.23.1
+h5py==3.11.0
+ipython==8.12.3
+matplotlib==3.7.5
+networkx==2.8.8
+numpy==1.24.4
+opencv-python==4.8.1.78
+packaging==26.2
+pandas==2.0.3
+pillow==10.4.0
+progressbar==2.5
+py360convert==0.1.0
+pybullet-svl==3.1.6.4
+pyyaml==6.0.3
+scipy==1.10.1
+setuptools==75.3.4
+six==1.17.0
+tqdm==4.70.1
+transforms3d==0.4.2
+trimesh==4.12.2
+urllib3==2.2.3
+wheel==0.45.1
