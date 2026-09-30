@@ -128,3 +128,33 @@ Verified locally with Python 3.10: original and integration tests; replay and li
 Gemini cases. Source is written for Python 3.8, but a Python 3.8 runtime was not
 available for execution. The production `EpisodeRunner.run()` and recovery
 manager still require the lifecycle implementation described in the freeze.
+
+## PyBullet 3D map demo
+
+A separate optional demo now builds a procedural 12 m × 8 m scene with three
+rooms, doorways, furniture and a mug. The robot physically moves in PyBullet;
+partial occupancy comes from ray intersections, candidates from observed/unknown
+boundaries, and paths from the current footprint-inflated known-free map.
+Movement feedback records actual poses, travelled distance and obstacle contacts.
+
+This is an explicitly named **range-sensor / oracle-visible-class ablation**:
+semantic labels and positions are obtained only for objects visible in rendered
+camera segmentation. It is not the planned RGB-D/YOLO pipeline, not an iGibson
+asset, and not a physical robot trial. Full scene geometry is not passed to C.
+The robot is a velocity-actuated holonomic cylinder; scans use a virtual panoramic
+camera. Production recovery and wheel dynamics remain out of scope.
+
+```powershell
+py -3.10 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-pybullet.txt
+.\scripts\run_pybullet_demo.ps1 -Policy nearest
+.\scripts\run_pybullet_demo.ps1 -Policy llm_guided
+# Visible interactive scene, with movement paced in real time:
+.\scripts\run_pybullet_demo.ps1 -Policy nearest -Gui
+```
+
+On this workspace the virtual environment is already installed. Each run writes
+an animated GIF, initial/final PNGs, detailed JSONL and a summary under a new
+`runs/pybullet-*` directory. DIRECT mode renders without opening a desktop window.
+Add `-Blocked` to close the target room door; failure to find the target is then
+the expected negative-test outcome. See [3D demo notes](Documentation/chinese/pybullet_demo.md).
