@@ -9,14 +9,21 @@ Implemented: all frozen contract records/enums from Interface Freeze 1.0, tuple
 collections, immutable-value checks, core snapshot/assessment/selection validation,
 owner interfaces, synthetic fixture loader, policy demo, and JSONL event sink.
 
-Pending: full manifest loader/validation; fixed sensor encodings and calibration;
+Pending: full manifest loader/validation; integrated adapter agreement on sensor conventions;
 robot- and motion-specific settings; episode-wide sequence, ID, lineage, and fixed
 grid validation; complete claim/evidence validation; planner/feedback lifecycle
 validation. Reject boundary violations explicitly rather than returning empty data.
 
 ## A — Perception and evaluation
 
-- Implement `PerceptionMapper` with reset, RGB-D update, and evidence retrieval.
+Completed W1: mapper reset, JSON room-prior loading, RGB-D validation and replay,
+and detector feasibility. See the [handoff](english/w1_perception_handoff.md) for
+ownership and setup, and [detector results](english/detector_feasibility.md) for the comparison.
+
+Depth projection and uninflated obstacle-endpoint helpers are available as W2
+groundwork. `RGBDMapper.update()`, detector integration and evidence retrieval
+remain pending.
+
 - Derive physical occupancy from robot-height clearance evidence. Unknown remains
   non-traversable; spawn clearance seeds free space without observation coverage.
 - Rasterize room coverage and associate localized objects without leaking room
