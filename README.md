@@ -5,12 +5,12 @@ frontier selection. The [English plan](Documentation/english/robotics_project_de
 defines the project; [Interface Freeze 1.0](Documentation/english/interface_freeze.md)
 is authoritative for behavior and ownership.
 
-The default scaffold runs synthetic **selection decisions**, with no simulator,
-detector, network access, or third-party runtime dependencies. The C integration
-adds a separate three-room synthetic loop and an opt-in live Gemini client (see
-below); it does not implement real simulator episodes. The skeleton supports
-Python 3.8 or newer. Use Python 3.8 for the
-iGibson environment, matching its
+The default scaffold runs synthetic **selection decisions**, without simulator or
+network dependencies. The integration branch also contains A's W1 perception
+tools, B's navigation implementation, and C's optional synthetic/PyBullet/iGibson
+demos. The shared A/B/C RGB-D episode loop is still a W2 deliverable; the existing
+C demos use their own mapper/navigation implementations. Use Python 3.8 for the
+shared iGibson environment, matching its
 [documented installation setup](https://stanfordvl.github.io/iGibson/installation.html).
 
 ## Run the development demo
@@ -42,8 +42,9 @@ not a success result. Add `--log runs/demo.jsonl` to create a new JSONL log; use
 new filename on subsequent runs.
 
 Optionally install in a virtual environment with `python -m pip install -e .` to
-use `frontier-search` without setting `PYTHONPATH`. iGibson and detector packages
-are deliberately unpinned until robot, scene, and detector choices are made.
+use `frontier-search` without setting `PYTHONPATH`. The tested simulator and detector versions are recorded in
+[screening metadata](configs/detector_screening.json); detector installation is in the
+[W1 handoff](Documentation/english/w1_perception_handoff.md#usage-and-checks).
 Creating this environment does not install iGibson or its assets.
 
 Keep new code compatible with Python 3.8: use `typing.Tuple`, `typing.List`,
@@ -56,16 +57,18 @@ collection generics or `X | Y` unions.
 | --- | --- |
 | `src/frontier_search/contracts.py` | Shared immutable records and enums matching contract 1.0 |
 | `src/frontier_search/config.py`, `sensors.py`, `validation.py` | Development configuration, sensor types, boundary checks |
-| `src/frontier_search/perception/api.py` | A: mapper, tracks, frontiers, target evidence interface |
+| `src/frontier_search/perception/` | A: mapper interface, reset, priors, RGB-D validation, projection and occupancy helpers |
 | `src/frontier_search/evaluation/api.py` | A: isolated terminal verifier interface |
 | `src/frontier_search/navigation/api.py` | B: assessment, navigation, observation, cancellation interface |
-| `src/frontier_search/simulation/api.py` | B: proposed simulator adapter interface |
+| `src/frontier_search/simulation/` | Simulator adapter interface, iGibson capture and RGB-D conversion |
 | `src/frontier_search/policies/` | C: three working baselines and provider-neutral LLM seam |
 | `src/frontier_search/runner/` | C: validated decision boundary, runner wiring, recovery interface |
-| `src/frontier_search/fixtures/` | Synthetic navigation grids and policy-state loader |
+| `src/frontier_search/fixtures/` | Authored state fixtures and RGB-D recording/replay |
 | `src/frontier_search/experiments/` | JSONL serialization and logging |
 | `configs/experiment.template.json` | Draft freeze checklist; nulls require team decisions |
-| `tests/` | Focused synthetic contract and selection checks |
+| `configs/detector_screening.json` | Detector versions, model sources and screening settings |
+| `scripts/perception/` | Development capture, rendering, detector screening and scoring tools |
+| `tests/` | Contract, perception, replay, scoring and selection checks |
 
 Contract collections are tuples. Nested mutable values are rejected rather than
 being treated as immutable just because a dataclass is frozen. Occupancy uses

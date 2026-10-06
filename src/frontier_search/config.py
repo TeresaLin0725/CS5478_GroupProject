@@ -20,6 +20,10 @@ class MappingConfig:
     confirmation_frames: int = 2
     confirmation_window_s: float = 2.0
     confidence_threshold: float = 0.8
+    floor_height_m: float = 0.0       # world z; explicit flat-floor assumption
+    floor_tolerance_m: float = 0.03
+    depth_min_m: float = 0.1         # axial camera depth
+    depth_max_m: float = 5.0
 
     def __post_init__(self) -> None:
         if not isfinite(self.resolution_m) or self.resolution_m <= 0:
@@ -32,6 +36,13 @@ class MappingConfig:
             raise ValueError("confidence_threshold must lie in [0, 1]")
         if not isfinite(self.confirmation_window_s) or self.confirmation_window_s <= 0:
             raise ValueError("confirmation window must be finite and positive")
+        if not isfinite(self.floor_height_m):
+            raise ValueError("floor height must be finite")
+        if not isfinite(self.floor_tolerance_m) or self.floor_tolerance_m < 0:
+            raise ValueError("floor tolerance must be finite and nonnegative")
+        if not (isfinite(self.depth_min_m) and isfinite(self.depth_max_m)
+                and 0 < self.depth_min_m < self.depth_max_m):
+            raise ValueError("depth limits must be finite and satisfy 0 < min < max")
 
 
 @dataclass(frozen=True)

@@ -1,5 +1,6 @@
 """Boundary checks for scaffold data. Temporal/lineage checks belong to owners."""
 from typing import Set, Tuple
+from math import isfinite
 
 
 from .contracts import (
@@ -15,6 +16,14 @@ class ContractError(ValueError):
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise ContractError(message)
+
+
+def is_finite_number(value: object) -> bool:
+    """Accept finite built-in numbers, excluding booleans and oversized integers."""
+    try:
+        return type(value) in (int, float) and isfinite(value)
+    except OverflowError:
+        return False
 
 
 def _unique(values: Tuple[str, ...], label: str) -> Set[str]:
