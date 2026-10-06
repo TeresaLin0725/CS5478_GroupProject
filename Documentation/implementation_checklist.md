@@ -3,6 +3,14 @@
 The English design documents remain authoritative. This file records scaffolding
 status and intended extension points, without changing the contract.
 
+W2 integration update (2026-10-07): A/B/C branches are merged. B's costmap,
+planner, candidate evaluation, navigation and observation control now have a
+tested implementation using MockSimulator; the B items below are requirements
+to verify against the real adapter, not all unimplemented features. A's update,
+the real B adapter and C's production episode/recovery loop remain pending.
+See [current integration status](chinese/w2_integration_status.md) and
+`tests/test_w2_integration.py` for the cross-owner checks and remaining gates.
+
 ## Shared foundation
 
 Implemented: all frozen contract records/enums from Interface Freeze 1.0, tuple

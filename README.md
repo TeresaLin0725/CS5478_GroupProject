@@ -5,6 +5,16 @@ frontier selection. The [English plan](Documentation/english/robotics_project_de
 defines the project; [Interface Freeze 1.0](Documentation/english/interface_freeze.md)
 is authoritative for behavior and ownership.
 
+## W2 integration status (2026-10-07)
+
+`integration/w2` merges A `ab52cf4`, B `224bfcf`, and C `8f817f8` with their
+history preserved. See the [integration report and W2 plan](Documentation/chinese/w2_integration_status.md)
+for ownership, configuration differences, test results and acceptance gates.
+The existing 119 tests and three new cross-module checks pass on Python 3.8.
+A's `RGBDMapper.update()`, B's real `IGibsonAdapter`, and C's production
+`EpisodeRunner.run()` remain pending. Existing simulator demos do not constitute
+the shared A/B/C RGB-D loop.
+
 The default scaffold runs synthetic **selection decisions**, without simulator or
 network dependencies. The integration branch also contains A's W1 perception
 tools, B's navigation implementation, and C's optional synthetic/PyBullet/iGibson
