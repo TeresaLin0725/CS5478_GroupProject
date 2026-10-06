@@ -1,0 +1,101 @@
+"""Recovery must preserve hard caps through relabeling, splitting and merging."""
+from dataclasses import replace
+import unittest
+
+from frontier_search.config import RecoveryConfig
+from frontier_search.contracts import (CandidateEvaluation, FailureReason, Frontier, GridCell,
+    PlannerAttempt, PlannerResult, PolicyName, Pose, Subgoal)
+from frontier_search.fixtures.loader import load_policy_fixture
+from frontier_search.runner.recovery import SpatialRecovery
+
+
+class RecoveryTests(unittest.TestCase):
+    def setUp(self):
+        self.state = load_policy_fixture().state
+        self.recovery = SpatialRecovery(RecoveryConfig(cooldown_s=2., opportunity_attempt_cap=2))
+        self.recovery.reset(self.state.episode_id)
+
+    def failed(self, state, frontier, reason=FailureReason.NO_PATH):
+        self.recovery.record_dispatch(state, frontier.frontier_id)
+        self.recovery.record_attempt(state, PlannerAttempt(
+            Subgoal(frontier.frontier_id, frontier.approach_pose, state.revision, PolicyName.NEAREST),
+            PlannerResult(False, None, None, reason), 'failed', reason))
+
+    def excluded(self, state):
+        return {e.frontier_id: e for e in self.recovery.exclusions(state, CandidateEvaluation(
+            state.episode_id, state.revision, state.robot_pose, ()))}
+
+    def test_revision_and_semantic_changes_do_not_unlock_geometry_failure(self):
+        f = self.state.frontiers[0]
+        self.failed(self.state, f)
+        changed = replace(self.state, revision=9, timestamp_s=99., semantic_objects=())
+        self.assertEqual(self.excluded(changed)[f.frontier_id].retry_condition, 'evidence_change')
+
+    def test_relevant_map_change_unlocks_but_hard_cap_remains(self):
+        f = self.state.frontiers[0]
+        self.failed(self.state, f)
+        cells = [list(row) for row in self.state.occupancy_map.data]
+        cells[7][6] = 100
+        changed = replace(self.state, occupancy_map=replace(self.state.occupancy_map,
+                            data=tuple(tuple(row) for row in cells)))
+        self.assertNotIn(f.frontier_id, self.excluded(changed))
+        self.failed(changed, f)
+        self.assertEqual(self.excluded(self.state)[f.frontier_id].retry_condition, 'exhausted')
+
+    def test_unrelated_unknown_to_occupied_change_does_not_unlock(self):
+        f = self.state.frontiers[0]
+        self.failed(self.state, f)
+        cells = [list(row) for row in self.state.occupancy_map.data]
+        cells[39][39] = 100
+        changed = replace(self.state, occupancy_map=replace(self.state.occupancy_map,
+                            data=tuple(tuple(row) for row in cells)))
+        self.assertIn(f.frontier_id, self.excluded(changed))
+
+    def test_cooldown_uses_simulation_time(self):
+        f = self.state.frontiers[0]
+        self.failed(self.state, f, FailureReason.BLOCKED)
+        self.assertIn(f.frontier_id, self.excluded(replace(self.state, timestamp_s=2.)))
+        self.assertNotIn(f.frontier_id, self.excluded(replace(self.state, timestamp_s=3.)))
+
+    def test_split_disappearance_relabel_preserve_shared_cap(self):
+        f = self.state.frontiers[0]
+        self.failed(self.state, f)
+        self.failed(self.state, f)
+        self.excluded(replace(self.state, frontiers=()))
+        children = (replace(f, frontier_id='child-a', parent_frontier_ids=(f.frontier_id,)),
+                    replace(f, frontier_id='child-b', parent_frontier_ids=(f.frontier_id,)))
+        excluded = self.excluded(replace(self.state, frontiers=children))
+        self.assertEqual(set(excluded), {'child-a', 'child-b'})
+        self.assertTrue(all(e.attempt_count == 2 and e.retry_condition == 'exhausted' for e in excluded.values()))
+        # Even missing lineage cannot erase spatial history.
+        relabeled = replace(f, frontier_id='new-label')
+        self.assertEqual(self.excluded(replace(self.state, frontiers=(relabeled,)))['new-label'].retry_condition,
+                         'exhausted')
+
+    def test_merge_accumulates_attempts_from_both_parents(self):
+        a, b = self.state.frontiers[:2]
+        self.failed(self.state, a)
+        self.failed(self.state, b)
+        merged = replace(a, frontier_id='merged', parent_frontier_ids=(a.frontier_id, b.frontier_id))
+        result = self.excluded(replace(self.state, frontiers=(merged,)))['merged']
+        self.assertEqual((result.attempt_count, result.retry_condition), (2, 'exhausted'))
+
+    def test_cancelled_attempt_is_not_a_failure(self):
+        f = self.state.frontiers[0]
+        self.recovery.record_attempt(self.state, PlannerAttempt(
+            Subgoal(f.frontier_id, f.approach_pose, 1, PolicyName.NEAREST), None, 'cancelled', None))
+        self.assertEqual(self.excluded(self.state), {})
+
+    def test_progress_counts_only_dispatch_neighborhood_unknown_cells(self):
+        f = self.state.frontiers[0]
+        cells = [list(row) for row in self.state.occupancy_map.data]
+        cells[7][4] = 0
+        cells[39][39] = 0  # unrelated distant observation
+        after = replace(self.state, occupancy_map=replace(self.state.occupancy_map,
+                        data=tuple(tuple(row) for row in cells)))
+        area = self.recovery.record_progress(self.state, after, f.frontier_id)
+        self.assertAlmostEqual(area, .01)
+
+
+if __name__ == '__main__':
+    unittest.main()

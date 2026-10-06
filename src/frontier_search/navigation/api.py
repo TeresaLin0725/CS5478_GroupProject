@@ -1,5 +1,5 @@
 """Owner B: feasibility and execution; never rank by search value."""
-from typing import Protocol
+from typing import Protocol, Tuple
 
 
 from ..contracts import (
@@ -16,3 +16,9 @@ class Navigator(Protocol):
     def update_map(self, episode_id: str, goal_id: str, occupancy_map: OccupancyGrid) -> None: ...
     def poll(self, episode_id: str, goal_id: str) -> NavigationFeedback: ...
     def cancel(self, episode_id: str, goal_id: str, reason: str) -> NavigationFeedback: ...
+
+
+class SteppedNavigator(Navigator, Protocol):
+    """W2 runner hooks already implemented by TeamNavigator; no simulator stepping in poll."""
+    def on_step(self) -> None: ...
+    def capture_marks(self, goal_id: str) -> Tuple[float, ...]: ...

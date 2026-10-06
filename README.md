@@ -10,10 +10,24 @@ is authoritative for behavior and ownership.
 `integration/w2` merges A `ab52cf4`, B `224bfcf`, and C `8f817f8` with their
 history preserved. See the [integration report and W2 plan](Documentation/chinese/w2_integration_status.md)
 for ownership, configuration differences, test results and acceptance gates.
-The existing 119 tests and three new cross-module checks pass on Python 3.8.
-A's `RGBDMapper.update()`, B's real `IGibsonAdapter`, and C's production
-`EpisodeRunner.run()` remain pending. Existing simulator demos do not constitute
-the shared A/B/C RGB-D loop.
+C's `EpisodeRunner.run()` now implements the shared lifecycle, scan barriers,
+spatial recovery, budgets and logs, with a process supervisor for hard deadlines.
+The runnable fixture connects B's actual TeamNavigator to an explicitly scripted
+A test double. A's real `RGBDMapper.update()` and B's real `IGibsonAdapter` remain
+pending; this is not yet the shared real RGB-D loop.
+See [C runner usage](Documentation/chinese/w2_runner.md) and the
+[A/B delivery checklist and acceptance criteria](Documentation/chinese/w2_ab_handoff.md).
+
+```powershell
+$env:PYTHONPATH = "$PWD/src"
+python -m frontier_search.runner.w2 --manifest configs/w2.mock.json --log runs/w2-progress-001.jsonl
+```
+
+Use a new log filename each time. This runs offline with the standard library.
+The progress fixture dispatches two goals, travels about 1.80 m without collision,
+and terminates as `no_frontiers`; it never claims object-search success.
+All 153 tests pass on Python 3.8.20 with no skips. Measured supervised scenarios
+are recorded in [verification.json](Documentation/w2_runner/verification.json).
 
 The default scaffold runs synthetic **selection decisions**, without simulator or
 network dependencies. The integration branch also contains A's W1 perception
@@ -91,11 +105,11 @@ See [the implementation checklist](Documentation/implementation_checklist.md) fo
 the work still needed by A, B, and C. Protocols define the replacement boundaries;
 synthetic fixture metadata is not an extra policy feature.
 
-`EpisodeRunner.run()` explicitly raises `NotImplementedError`. Configuration
-defaults are development examples; the JSON template is a checklist, not a
-validated or executable experiment manifest. Boundary validation currently checks
-snapshot/assessment/selection coherence, not every temporal, geometry, sensor,
-or lineage invariant in the design. Real integration must complete these checks.
+`EpisodeRunner.run()` accepts the validated `EpisodeManifest` in `runner/manifest.py`.
+`configs/w2.mock.json` is executable development configuration; the older
+`experiment.template.json` remains an experiment checklist. The runner checks
+sensor/frame/geometry/version coherence and scan barriers. Real robot, sensor and
+mapper acceptance still requires the A/B checks linked above.
 
 The LLM seam accepts an injected client and records exact symbolic input, response,
 model settings, latency, and fallback. Its client must enforce transport deadlines;
@@ -139,8 +153,8 @@ unchanged and does not make network calls.
 
 Verified locally with Python 3.10: original and integration tests; replay and live
 Gemini cases. The full test suite also passes under the Python 3.8 iGibson runtime
-(see below). The production `EpisodeRunner.run()` and recovery
-manager still require the lifecycle implementation described in the freeze.
+(see below). This older synthetic loop remains separate from the new W2 runner;
+use the W2 entry point above to exercise the shared B navigator and lifecycle.
 
 ## PyBullet 3D map demo
 

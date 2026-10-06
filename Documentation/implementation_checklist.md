@@ -7,7 +7,8 @@ W2 integration update (2026-10-07): A/B/C branches are merged. B's costmap,
 planner, candidate evaluation, navigation and observation control now have a
 tested implementation using MockSimulator; the B items below are requirements
 to verify against the real adapter, not all unimplemented features. A's update,
-the real B adapter and C's production episode/recovery loop remain pending.
+and the real B adapter remain pending. C's episode/recovery implementation now
+runs against an authored mapper and B's mock adapter, with process supervision.
 See [current integration status](chinese/w2_integration_status.md) and
 `tests/test_w2_integration.py` for the cross-owner checks and remaining gates.
 
@@ -64,14 +65,21 @@ planner or robot can execute a path.
 
 ## C — Runner, recovery and experiments
 
+W2 update: `EpisodeRunner`, `SpatialRecovery`, `EpisodeManifest` and the process
+supervisor implement the lifecycle/recovery/budget items below for synchronous
+module calls. Tests cover normal/blocked/no-progress episodes, stale inputs,
+scan barriers, cancellation, lineage caps and hung modules. These remain
+acceptance requirements when replacing mocks with real A/B components.
+See [runner usage](chinese/w2_runner.md) and [A/B acceptance](chinese/w2_ab_handoff.md).
+
 Implemented: Random, Nearest, Information Gain, LLM response validation/Nearest
 fallback, shared eligible-context construction, validated selection, runner
 dependency wiring, termination enum, and fixture JSONL output.
 
-- Complete `EpisodeRunner.run()` in the exact lifecycle order from section 5.
+- Validate the implemented `EpisodeRunner.run()` on real A/B inputs against section 5.
   Capture before initial motion, enforce scan-frame barriers, pause all decisions,
   and reassess stale dispatches. Continue perception during motion.
-- Implement `RecoveryManager` using spatial overlap and lineage; retain caps
+- Validate `SpatialRecovery` using spatial overlap and lineage; retain caps
   through relabeling/disappearance and unlock only on relevant evidence/cooldown.
 - Freeze local progress neighborhoods at dispatch; count unknown-to-known area
   after arrival observations. Bound retries and recovery-only loops.
@@ -83,7 +91,7 @@ dependency wiring, termination enum, and fixture JSONL output.
   Gemini-compatible transport cancellation and usage capture are now available in
   `policies/provider.py`; cost is still unknown. A separate contract-based
   three-room synthetic loop and live/replay cases are in `runner/synthetic.py`.
-  These do not complete the production lifecycle/recovery items above. See
+  These older demos are separate from the W2 lifecycle implementation. See
   [integration review](chinese/c_integration_review.md).
 - Load/freeze paired manifests with separate RNG streams; log revisions, actual
   executed distance, collisions, replans, barriers, attempts, and terminal outcomes.

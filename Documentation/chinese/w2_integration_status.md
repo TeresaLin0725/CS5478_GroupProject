@@ -18,7 +18,10 @@
 其中是较早的总体分工与接口草案；当前代码已有更细的候选评估、执行反馈和版本校验，
 集成不退回草案中的简化字段。
 
-**本次完成代码合并与跨模块契约验证；完整 A/B/C 实时 RGB-D 闭环尚未完成。**
+**已完成代码合并、C 的统一基本流程及 mock 闭环；完整 A/B/C 实时 RGB-D 闭环仍待 A/B 交付。**
+
+新增：[C runner 使用说明](w2_runner.md)、[给 A/B 的任务清单与逐项验收标准](w2_ab_handoff.md)。
+你现在可以运行统一 runner，并以这份清单协调共同配置和交付时间；不用等 A/B 才开发 C 的执行流程。
 
 ## 当前可用与缺口
 
@@ -26,7 +29,7 @@
 | --- | --- | --- |
 | A | 原子 reset、出生净空种子、区域先验、RGB-D 校验/录制/回放/投影、障碍端点标记、检测器可行性工具 | `perception.mapper.RGBDMapper.update()` 仍抛 `NotImplementedError`；空闲空间融合、覆盖率、前沿/接近位姿、ID/谱系、信息增益、不可变状态发布 |
 | B | 足迹代价地图、A* 与距离场、候选评估、差速控制、观察转动、同目标重规划、取消与超时、MockSimulator | `simulation.igibson_adapter.IGibsonAdapter` 仍是占位；真实速度控制/时钟/捕获、出生净空和机器人参数校验 |
-| C | 四种策略、共享选择校验、LLM 接口与回退、日志、synthetic/PyBullet/iGibson 演示 | `EpisodeRunner.run()` 仍抛 `NotImplementedError`；RecoveryManager 仅协议；生产时序、帧屏障、版本刷新、恢复与预算管理 |
+| C | 四种策略、统一 EpisodeRunner、同步扫描帧屏障、版本/位姿校验、SpatialRecovery、可执行 manifest、预算/进程监督、JSONL 日志和 mock 回归 | A/B 真模块工厂接入、真实配置冻结、录制数据与实时闭环验收；真实场景的恢复规则调优 |
 
 C 的 `simulation/igibson_rs.py` 内也有名为 RGBDMapper 的演示实现，不能与 A 的
 `perception/mapper.py` 混淆。演示成功不代表统一 runner 已接上 A/B。
@@ -38,8 +41,12 @@ C 的 `simulation/igibson_rs.py` 内也有名为 RGBDMapper 的演示实现，�
 
 - 合并后的原有 **119 项测试全部通过，无跳过**，包含 iGibson、PyBullet、A 的 RGB-D 工具、B 的导航以及 C 的策略测试。
 - 新增 `tests/test_w2_integration.py` 的 **3 项跨模块测试通过**：B 真实评估 → C Nearest → B mock 执行；A 障碍更新 → B 可达性变化 → C 改选并拒绝旧评估；B 拒绝缺少完整足迹净空的旧 C 人工候选。
-- 合计 122 项通过。跨模块测试使用人工地图/候选与 B 的占位机器人，不是录制 RGB-D 的完整 ABC 验收。
+- 首次合并为 122 项测试；本次 C 增加 31 项运行/恢复回归，**全套 153 项通过、无跳过**。人工地图/占位机器人不代替录制 RGB-D 的完整 ABC 验收。
 - 测试环境出现上游 iGibson/Gym 的弃用与资源提示，但测试无失败。没有重新调用付费 LLM，也没有重新验证 A 的 YOLO 权重推理。
+
+C 的 progress mock 已连续完成 2 次导航、约 1.80 m 实际距离、零碰撞，终态为 `no_frontiers`；
+blocked/no_progress 负例在有限次数后以 `no_feasible_frontiers` 停止。此处地图由测试替身脚本化生成，不是 A 的真实建图。
+四个监督运行场景的实测结果见 [verification.json](../w2_runner/verification.json)。
 
 运行全套（仓库根目录）：
 
@@ -82,7 +89,7 @@ python -m unittest discover -s tests -p test_w2_integration.py -v
 | --- | --- | --- |
 | P0 | B 牵头，A/C 接入 | 同一机器人/场景/地图与传感器配置；可校验的捕获和出生净空 |
 | P0 | A | 多帧 RGB-D 经 `update()` 产生递增版本、不可变地图/覆盖/前沿；旧快照不变 |
-| P0 | C | 统一 runner 接 A mapper、B TeamNavigator；正确处理 on_step、帧屏障、评估/派发版本 |
+| P0 | C | 基本 runner/on_step/帧屏障/版本校验已完成；待 A/B 交付后替换构造工厂并进行真实验收 |
 | P1 | A/B/C | 固定录制序列的 ABC 回归；可达和不可达候选均有断言 |
-| P1 | C 牵头，B 配合 | Nearest 实时闭环、有限恢复、实际距离和完整失败日志 |
+| P1 | C 牵头，B 配合 | mock 已有 Nearest 闭环、有限恢复、实际距离和失败日志；接真实 adapter 后验证同一流程 |
 | W3 | A 牵头，C 接入 | 对象跟踪、证据/声明、隔离验证，随后开展语义策略比较 |
