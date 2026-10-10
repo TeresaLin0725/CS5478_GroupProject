@@ -63,6 +63,10 @@ Projection transforms `((u-cx)*d/fx, (v-cy)*d/fy, d)` into world coordinates usi
 
 These are simulated captures, not search episodes. Hidden traversability is used only for spawn setup; observations exclude floor maps, room labels and object ground truth. Spawn clearance and room polygons still need adapter integration. Captures stay in ignored `runs/`; `tests/rgbd_support.py` supplies a small wall fixture for exact geometry checks.
 
+For multiframe packaging, repeat-verified mapping and offline A/B/C selection,
+use the [W2 RGB-D replay commands](w2_rgbd_replay.md). They preserve this per-frame
+format and add a shared manifest, spawn-clearance provenance and checksums.
+
 ### W2 groundwork: obstacle endpoints
 
 `perception.occupancy.world_to_grid()` maps world y to rows and x to columns, with inclusive lower and exclusive upper bounds. `mark_obstacles()` returns an immutable grid with its revision incremented once:
@@ -71,7 +75,7 @@ These are simulated captures, not search episodes. Hidden traversability is used
 - Floor-band and out-of-bounds points are ignored; existing obstacles persist.
 - Free space and coverage are not inferred. B handles navigation inflation.
 
-Defaults are floor z=0, tolerance=0.03 m and axial depth=0.1-5 m. Calibrate these and the robot envelope during integration. Publishing `WorldState` still requires `RGBDMapper.update()`.
+Defaults are floor z=0, tolerance=0.03 m and axial depth=0.1-5 m. Calibrate these and the robot envelope during integration. `RGBDMapper.update()` now publishes occupancy/coverage and tracked frontiers with approach poses and gain using the [W2 evidence model](w2_mapping.md).
 
 ## B: synthetic grids and navigation requests
 

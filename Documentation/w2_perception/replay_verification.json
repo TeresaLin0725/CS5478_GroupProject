@@ -1,0 +1,27 @@
+{
+  "configuration": "configs/w2.rgbd-synthetic.json",
+  "episode_id": "w2-analytic-rgbd",
+  "final_explored_cells": 334,
+  "final_known_cells": 322,
+  "first_explored_cells": 246,
+  "first_known_cells": 186,
+  "frames": 7,
+  "inconclusive_assessments": 0,
+  "input_sha256": "8000e3e1718cbb2803c8e380e7635afe4c401107ade0861002a74017bc731c35",
+  "mode": "offline_rgbd_replay",
+  "policies": [
+    "nearest",
+    "information_gain",
+    "random"
+  ],
+  "python_version": "3.11.9",
+  "reachable_assessments": 69,
+  "recorded_translation_m": 0.40000000000000013,
+  "rejected_assessments": 11,
+  "repeat_verified": true,
+  "result_sha256": "23d10d29e73b280bc3fb14fcb8d9e4346f85305135d68e8b44d138d403785f69",
+  "scope": "Analytic RGB-D recording replay; no real simulator, policy execution, or target scoring.",
+  "source": "synthetic",
+  "status": "complete",
+  "verification_date": "2026-10-10"
+}

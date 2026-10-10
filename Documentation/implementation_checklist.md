@@ -6,8 +6,8 @@ status and intended extension points, without changing the contract.
 W2 integration update (2026-10-07): A/B/C branches are merged. B's costmap,
 planner, candidate evaluation, navigation and observation control now have a
 tested implementation using MockSimulator; the B items below are requirements
-to verify against the real adapter, not all unimplemented features. A's update,
-and the real B adapter remain pending. C's episode/recovery implementation now
+to verify against the real adapter, not all unimplemented features. A's real-data
+acceptance and the real B adapter remain pending. C's episode/recovery implementation now
 runs against an authored mapper and B's mock adapter, with process supervision.
 See [current integration status](chinese/w2_integration_status.md) and
 `tests/test_w2_integration.py` for the cross-owner checks and remaining gates.
@@ -29,9 +29,18 @@ Completed W1: mapper reset, JSON room-prior loading, RGB-D validation and replay
 and detector feasibility. See the [handoff](english/w1_perception_handoff.md) for
 ownership and setup, and [detector results](english/detector_feasibility.md) for the comparison.
 
-Depth projection and uninflated obstacle-endpoint helpers are available as W2
-groundwork. `RGBDMapper.update()`, detector integration and evidence retrieval
-remain pending.
+W2 perception implementation (2026-10-10): `RGBDMapper.update()` fuses observed obstacle endpoints and
+height-binned free-ray evidence, publishes separate geometric/room coverage,
+and returns immutable states atomically. Frontier extraction, interior approach
+poses, stable identity/lineage and arrival-sweep gain are implemented, with a
+synthetic RGB-D → A → B assessment → C selection regression. See
+[mapping details](english/w2_mapping.md). Real recording/adapter acceptance,
+detector integration and evidence retrieval remain pending.
+
+The [portable RGB-D replay](english/w2_rgbd_replay.md) implements sequence
+packaging/checksums, a synthetic moving/scanning dataset, repeat verification,
+offline A/B/C decisions and map/HTML reports. A7's real recording acceptance
+still requires the agreed robot/configuration and B's capture/clearance checks.
 
 - Derive physical occupancy from robot-height clearance evidence. Unknown remains
   non-traversable; spawn clearance seeds free space without observation coverage.

@@ -13,8 +13,15 @@ for ownership, configuration differences, test results and acceptance gates.
 C's `EpisodeRunner.run()` now implements the shared lifecycle, scan barriers,
 spatial recovery, budgets and logs, with a process supervisor for hard deadlines.
 The runnable fixture connects B's actual TeamNavigator to an explicitly scripted
-A test double. A's real `RGBDMapper.update()` and B's real `IGibsonAdapter` remain
-pending; this is not yet the shared real RGB-D loop.
+A test double. A's `RGBDMapper.update()` now publishes occupancy, geometric
+coverage and frontiers with approach poses, stable identity/lineage and predicted
+gain. B's real `IGibsonAdapter`, real recordings/configuration and factory wiring
+remain pending. See [A's W2 mapping implementation](Documentation/english/w2_mapping.md)
+for the evidence model, synthetic A → B → C checks and remaining integration work.
+The [RGB-D sequence replay](Documentation/english/w2_rgbd_replay.md) now provides
+a portable synthetic moving/scanning dataset, checksum-validated packaging for
+existing captures, and repeat-verified A → B assessment → C decisions with HTML
+and map reports. It does not execute the selected goals.
 See [C runner usage](Documentation/chinese/w2_runner.md) and the
 [A/B delivery checklist and acceptance criteria](Documentation/chinese/w2_ab_handoff.md).
 
@@ -81,7 +88,7 @@ collection generics or `X | Y` unions.
 | --- | --- |
 | `src/frontier_search/contracts.py` | Shared immutable records and enums matching contract 1.0 |
 | `src/frontier_search/config.py`, `sensors.py`, `validation.py` | Development configuration, sensor types, boundary checks |
-| `src/frontier_search/perception/` | A: mapper interface, reset, priors, RGB-D validation, projection and occupancy helpers |
+| `src/frontier_search/perception/` | A: RGB-D occupancy/coverage, frontier geometry/identity/gain, priors and validation |
 | `src/frontier_search/evaluation/api.py` | A: isolated terminal verifier interface |
 | `src/frontier_search/navigation/api.py` | B: assessment, navigation, observation, cancellation interface |
 | `src/frontier_search/simulation/` | Simulator adapter interface, iGibson capture and RGB-D conversion |
