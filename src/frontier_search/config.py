@@ -26,6 +26,14 @@ class MappingConfig:
     depth_max_m: float = 5.0
     clearance_bin_height_m: float = 0.05  # vertical free-space evidence resolution
     depth_surface_margin_m: float = 0.02  # stop carving before measured surfaces
+    frontier_min_cells: int = 2
+    frontier_connectivity: int = 4
+    frontier_approach_search_m: float = 1.0
+    frontier_match_tolerance_cells: int = 1
+    frontier_match_fraction: float = 0.25
+    frontier_history_s: float = 30.0
+    gain_range_m: float = 3.0
+    gain_ray_step_rad: float = 0.05
 
     def __post_init__(self) -> None:
         if not isfinite(self.resolution_m) or self.resolution_m <= 0:
@@ -52,7 +60,25 @@ class MappingConfig:
                 or not isfinite(self.depth_surface_margin_m)
                 or not 0 <= self.depth_surface_margin_m < self.depth_min_m):
             raise ValueError("surface margin must be nonnegative and smaller than minimum depth")
-
+        if type(self.frontier_min_cells) is not int or self.frontier_min_cells < 1:
+            raise ValueError("frontier minimum must be a positive integer")
+        if type(self.frontier_connectivity) is not int or self.frontier_connectivity not in (4, 8):
+            raise ValueError("frontier connectivity must be 4 or 8")
+        if (type(self.frontier_match_tolerance_cells) is not int
+                or not 0 <= self.frontier_match_tolerance_cells <= 8):
+            raise ValueError("frontier matching tolerance must be an integer from 0 to 8 cells")
+        for value in (self.frontier_approach_search_m, self.gain_range_m):
+            if type(value) not in (int, float) or not isfinite(value) or value <= 0:
+                raise ValueError("frontier search and gain ranges must be finite and positive")
+        if (type(self.frontier_match_fraction) not in (int, float)
+                or not isfinite(self.frontier_match_fraction) or not 0 < self.frontier_match_fraction <= 1):
+            raise ValueError("frontier matching fraction must be in (0, 1]")
+        if (type(self.frontier_history_s) not in (int, float)
+                or not isfinite(self.frontier_history_s) or self.frontier_history_s < 0):
+            raise ValueError("frontier history window must be finite and nonnegative")
+        if (type(self.gain_ray_step_rad) not in (int, float)
+                or not isfinite(self.gain_ray_step_rad) or not 0.001 <= self.gain_ray_step_rad <= 1.0):
+            raise ValueError("gain ray step must be in [0.001, 1] radians")
 
 
 @dataclass(frozen=True)

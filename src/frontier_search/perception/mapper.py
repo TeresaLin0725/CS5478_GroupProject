@@ -18,6 +18,7 @@ from ..immutable import require_immutable
 from ..sensors import CameraIntrinsics
 from ..validation import ContractError, is_finite_number, require, validate_state
 from .fusion import fuse_observation
+from .frontiers import FrontierMemory, assign_identities, build_candidates
 from .observations import validate_rgbd_observation
 from .priors import rasterize_region, validate_region_priors
 
@@ -41,6 +42,7 @@ class _EpisodeState:
     region_cells: Optional[Tuple[Tuple[GridCell, ...], ...]] = None
     tracks: Dict[str, ObjectTrack] = field(default_factory=dict)
     frontiers: Dict[str, Frontier] = field(default_factory=dict)
+    frontier_memory: Dict[str, FrontierMemory] = field(default_factory=dict)
     frontier_history: Dict[str, Tuple[str, ...]] = field(default_factory=dict)
     evidence: Dict[str, DetectionEvidence] = field(default_factory=dict)
     target_claim: Optional[TargetClaim] = None
@@ -138,7 +140,7 @@ class RGBDMapper:
     def update(self, observation: RGBDObservation) -> WorldState:
         """Atomically process one fresh frame and publish an owned snapshot.
 
-        W2 publishes occupancy and coverage; frontiers, objects and claims remain absent.
+        W2 publishes maps and tracked frontiers; objects and claims remain absent.
         The flat-floor model requires constant robot base elevation;
         camera pose may translate and rotate freely with each observation.
         """
@@ -189,9 +191,14 @@ class RGBDMapper:
             sum(working.coverage[c.row][c.column] for c in cells) / len(cells) if cells else None,
             (), region.room_type, "simulator_annotation" if region.room_type is not None else None)
             for region, cells in zip(request.region_priors, region_cells))
+        candidates = build_candidates(occupancy, observation, robot, cfg, request.observation_config,
+            {region.region_id: cells for region, cells in zip(request.region_priors, region_cells)})
+        frontiers, memory, history, counter = assign_identities(
+            candidates, previous.frontier_memory, previous.frontier_history,
+            previous.entity_counters['frontier'], observation.timestamp_s, cfg)
         state = WorldState("1.0", request.episode_id, revision, observation.timestamp_s,
                            observation.sequence, request.target_class, observation.robot_pose,
-                           occupancy, explored, (), regions, (), None)
+                           occupancy, explored, (), regions, frontiers, None)
         validate_state(state, oracle_room_labels=request.oracle_room_labels)
         working.revision = revision
         working.last_processed_sequence = observation.sequence
@@ -201,6 +208,10 @@ class RGBDMapper:
         working.base_z_m = previous.base_z_m if previous.base_z_m is not None else observation.robot_pose.z_m
         working.collision_z = collision_z
         working.region_cells = region_cells
+        working.frontiers = {f.frontier_id: f for f in frontiers}
+        working.frontier_memory = memory
+        working.frontier_history = history
+        working.entity_counters = dict(previous.entity_counters, frontier=counter)
         self._state = working
         return state
 

@@ -119,7 +119,7 @@ class MapperUpdateTests(unittest.TestCase):
         self.assertEqual(second.robot_pose, scene_frame(sequence=2).robot_pose)
         self.assertEqual(second.target_class, self.request.target_class)
         self.assertEqual((second.semantic_objects, second.target_claim), ((), None))
-        self.assertEqual(second.frontiers, ())
+        self.assertTrue(second.frontiers)
         self.assertEqual(first.frontiers, second.frontiers)
         require_immutable(second)
         with self.assertRaises(FrozenInstanceError):
