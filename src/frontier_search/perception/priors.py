@@ -4,8 +4,41 @@ import json
 from pathlib import Path
 from typing import Tuple
 
-from ..contracts import Point2, RegionPrior
+from ..config import MappingConfig
+from ..contracts import GridCell, Point2, RegionPrior
 from ..validation import ContractError, is_finite_number, require
+
+
+def rasterize_region(region: RegionPrior, cfg: MappingConfig) -> Tuple[GridCell, ...]:
+    """Cell-centre even/odd polygon fill, including centres on the boundary.
+
+    Refuse clipped polygons so coverage never silently uses a smaller room as
+    its denominator. A valid small polygon may contain no cell centres.
+    """
+    vertices = region.boundary_world
+    xmax = cfg.origin_x_m + cfg.width_cells * cfg.resolution_m
+    ymax = cfg.origin_y_m + cfg.height_cells * cfg.resolution_m
+    require(all(cfg.origin_x_m <= p.x_m <= xmax and cfg.origin_y_m <= p.y_m <= ymax
+                for p in vertices), "room polygon extends outside configured map")
+    edges = tuple(zip(vertices, vertices[1:] + vertices[:1]))
+    cells = []
+    for row in range(cfg.height_cells):
+        y = cfg.origin_y_m + (row + 0.5) * cfg.resolution_m
+        for column in range(cfg.width_cells):
+            x = cfg.origin_x_m + (column + 0.5) * cfg.resolution_m
+            inside = False
+            for a, b in edges:
+                cross = (x - a.x_m) * (b.y_m - a.y_m) - (y - a.y_m) * (b.x_m - a.x_m)
+                if (abs(cross) <= 1e-12 and min(a.x_m, b.x_m) - 1e-12 <= x <= max(a.x_m, b.x_m) + 1e-12
+                        and min(a.y_m, b.y_m) - 1e-12 <= y <= max(a.y_m, b.y_m) + 1e-12):
+                    inside = True
+                    break
+                if ((a.y_m > y) != (b.y_m > y)
+                        and x < a.x_m + (y - a.y_m) * (b.x_m - a.x_m) / (b.y_m - a.y_m)):
+                    inside = not inside
+            if inside:
+                cells.append(GridCell(row, column))
+    return tuple(cells)
 
 
 

@@ -171,11 +171,11 @@ class MapperResetTests(unittest.TestCase):
             self.mapper.reset(request)
             self.assertEqual(self.mapper._state.request.region_priors[0].room_type, "kitchen")
 
-    def test_unimplemented_operations_fail_explicitly(self):
+    def test_invalid_updates_and_unimplemented_evidence_fail_explicitly(self):
         for initialized in (False, True):
             if initialized:
                 self.mapper.reset(self.request)
-            with self.assertRaises(NotImplementedError):
+            with self.assertRaises(ContractError):
                 self.mapper.update(None)
             with self.assertRaises(NotImplementedError):
                 self.mapper.get_claim_evidence("episode-1", "claim-1")

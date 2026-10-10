@@ -24,6 +24,8 @@ class MappingConfig:
     floor_tolerance_m: float = 0.03
     depth_min_m: float = 0.1         # axial camera depth
     depth_max_m: float = 5.0
+    clearance_bin_height_m: float = 0.05  # vertical free-space evidence resolution
+    depth_surface_margin_m: float = 0.02  # stop carving before measured surfaces
 
     def __post_init__(self) -> None:
         if not isfinite(self.resolution_m) or self.resolution_m <= 0:
@@ -43,6 +45,14 @@ class MappingConfig:
         if not (isfinite(self.depth_min_m) and isfinite(self.depth_max_m)
                 and 0 < self.depth_min_m < self.depth_max_m):
             raise ValueError("depth limits must be finite and satisfy 0 < min < max")
+        if (type(self.clearance_bin_height_m) not in (int, float)
+                or not isfinite(self.clearance_bin_height_m) or self.clearance_bin_height_m <= 0):
+            raise ValueError("clearance bin height must be finite and positive")
+        if (type(self.depth_surface_margin_m) not in (int, float)
+                or not isfinite(self.depth_surface_margin_m)
+                or not 0 <= self.depth_surface_margin_m < self.depth_min_m):
+            raise ValueError("surface margin must be nonnegative and smaller than minimum depth")
+
 
 
 @dataclass(frozen=True)

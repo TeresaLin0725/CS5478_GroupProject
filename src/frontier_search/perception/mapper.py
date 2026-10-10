@@ -1,21 +1,25 @@
-"""Owner A: episode initialization for the RGB-D mapper.
+"""Owner A: synchronous RGB-D occupancy and geometric coverage mapping.
 
 Private mutable buffers hold working data; published WorldState snapshots must
 be independently owned and immutable.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from random import Random
 from typing import Dict, List, Optional, Tuple
 
 from ..config import MappingConfig, ObservationConfig
 from ..contracts import (
     DetectionEvidence, EvidenceBundle, Frontier, GridCell, MapperInit, ObjectTrack,
-    RGBDObservation, RobotConfig, TargetClaim, WorldState,
+    RGBDObservation, RobotConfig, TargetClaim, WorldState, OccupancyGrid,
+    ExploredGrid, RegionSummary,
 )
 from ..immutable import require_immutable
-from ..validation import ContractError, is_finite_number, require
-from .priors import validate_region_priors
+from ..sensors import CameraIntrinsics
+from ..validation import ContractError, is_finite_number, require, validate_state
+from .fusion import fuse_observation
+from .observations import validate_rgbd_observation
+from .priors import rasterize_region, validate_region_priors
 
 
 @dataclass
@@ -29,6 +33,12 @@ class _EpisodeState:
     occupancy: List[List[int]]
     coverage: List[List[bool]]
     rng: Random
+    free_masks: List[List[int]] = field(default_factory=list)
+    floor_seen: List[List[bool]] = field(default_factory=list)
+    collision_z: Optional[Tuple[float, float]] = None
+    base_z_m: Optional[float] = None
+    intrinsics: Optional[CameraIntrinsics] = None
+    region_cells: Optional[Tuple[Tuple[GridCell, ...], ...]] = None
     tracks: Dict[str, ObjectTrack] = field(default_factory=dict)
     frontiers: Dict[str, Frontier] = field(default_factory=dict)
     frontier_history: Dict[str, Tuple[str, ...]] = field(default_factory=dict)
@@ -72,6 +82,22 @@ def _validate_init(request: MapperInit) -> None:
             "grid resolution must be finite and positive")
     require(is_finite_number(cfg.origin_x_m) and is_finite_number(cfg.origin_y_m),
             "grid origin must be finite")
+    try:
+        cfg.__post_init__()
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ContractError("invalid mapping configuration: %s" % exc) from exc
+    robot = request.robot_config
+    require(is_finite_number(robot.collision_z_min_m)
+            and is_finite_number(robot.collision_z_max_m)
+            and robot.collision_z_min_m < robot.collision_z_max_m,
+            "invalid robot collision height interval")
+    require(len(robot.footprint_base) >= 3
+            and all(is_finite_number(p.x_m) and is_finite_number(p.y_m) for p in robot.footprint_base)
+            and is_finite_number(robot.clearance_margin_m) and robot.clearance_margin_m >= 0,
+            "invalid footprint or margin for frontier approach placement")
+    require(bool(request.observation_config.arrival_headings_rad)
+            and all(is_finite_number(h) for h in request.observation_config.arrival_headings_rad),
+            "arrival sweep must contain finite headings")
 
     require(isinstance(request.initial_clearance_cells, tuple), "clearance cells must be a tuple")
     for cell in request.initial_clearance_cells:
@@ -105,11 +131,78 @@ class RGBDMapper:
         for cell in request.initial_clearance_cells:
             occupancy[cell.row][cell.column] = 0
         new_state = _EpisodeState(request, occupancy, coverage, Random(request.seed))
+        new_state.free_masks = [[0] * cfg.width_cells for _ in range(cfg.height_cells)]
+        new_state.floor_seen = [[False] * cfg.width_cells for _ in range(cfg.height_cells)]
         self._state = new_state
 
     def update(self, observation: RGBDObservation) -> WorldState:
-        # TODO: Process RGB-D into maps, tracks and frontiers; publish an immutable WorldState.
-        raise NotImplementedError("RGB-D processing is not implemented yet")
+        """Atomically process one fresh frame and publish an owned snapshot.
+
+        W2 publishes occupancy and coverage; frontiers, objects and claims remain absent.
+        The flat-floor model requires constant robot base elevation;
+        camera pose may translate and rotate freely with each observation.
+        """
+        previous = self._state
+        require(previous is not None, "mapper must be reset before update")
+        validate_rgbd_observation(observation)
+        request = previous.request
+        cfg, robot = request.mapping_config, request.robot_config
+        require(observation.episode_id == request.episode_id, "observation episode mismatch")
+        require(previous.last_processed_sequence is None
+                or observation.sequence > previous.last_processed_sequence,
+                "processed sequence must strictly increase")
+        require(previous.last_timestamp_s is None or observation.timestamp_s >= previous.last_timestamp_s,
+                "observation timestamp moved backwards")
+        require(previous.intrinsics is None or previous.intrinsics == observation.camera_intrinsics,
+                "camera calibration changed within episode")
+        require(previous.base_z_m is None or abs(previous.base_z_m - observation.robot_pose.z_m) <= 1e-6,
+                "flat-floor mapper requires constant base elevation; reset for another floor")
+        collision_z = previous.collision_z or (
+            max(observation.robot_pose.z_m + robot.collision_z_min_m,
+                cfg.floor_height_m + cfg.floor_tolerance_m),
+            observation.robot_pose.z_m + robot.collision_z_max_m)
+        require(all(is_finite_number(z) for z in collision_z) and collision_z[0] < collision_z[1],
+                "collision envelope must extend above the configured floor band")
+        bin_count = (collision_z[1] - collision_z[0]) / cfg.clearance_bin_height_m
+        require(is_finite_number(bin_count) and 0 < bin_count <= 4096,
+                "collision envelope requires between 1 and 4096 vertical bins")
+        region_cells = previous.region_cells
+        if region_cells is None:
+            region_cells = tuple(rasterize_region(region, cfg) for region in request.region_priors)
+        # All computation uses private copies. Rejected frames cannot consume a
+        # sequence number or partially modify maps/evidence for the next update.
+        working = replace(previous,
+            occupancy=[row[:] for row in previous.occupancy],
+            coverage=[row[:] for row in previous.coverage],
+            free_masks=[row[:] for row in previous.free_masks],
+            floor_seen=[row[:] for row in previous.floor_seen])
+        fuse_observation(observation, cfg, collision_z, working.occupancy,
+                         working.coverage, working.free_masks, working.floor_seen)
+        revision = previous.revision + 1
+        geometry = dict(frame_id="world", revision=revision, resolution_m=cfg.resolution_m,
+                        origin_x_m=cfg.origin_x_m, origin_y_m=cfg.origin_y_m,
+                        width_cells=cfg.width_cells, height_cells=cfg.height_cells)
+        occupancy = OccupancyGrid(data=tuple(tuple(row) for row in working.occupancy), **geometry)
+        explored = ExploredGrid(data=tuple(tuple(row) for row in working.coverage), **geometry)
+        regions = tuple(RegionSummary(
+            region.region_id, region.boundary_world, "igibson_room_prior",
+            sum(working.coverage[c.row][c.column] for c in cells) / len(cells) if cells else None,
+            (), region.room_type, "simulator_annotation" if region.room_type is not None else None)
+            for region, cells in zip(request.region_priors, region_cells))
+        state = WorldState("1.0", request.episode_id, revision, observation.timestamp_s,
+                           observation.sequence, request.target_class, observation.robot_pose,
+                           occupancy, explored, (), regions, (), None)
+        validate_state(state, oracle_room_labels=request.oracle_room_labels)
+        working.revision = revision
+        working.last_processed_sequence = observation.sequence
+        working.last_timestamp_s = observation.timestamp_s
+        working.latest_state = state
+        working.intrinsics = observation.camera_intrinsics
+        working.base_z_m = previous.base_z_m if previous.base_z_m is not None else observation.robot_pose.z_m
+        working.collision_z = collision_z
+        working.region_cells = region_cells
+        self._state = working
+        return state
 
     def get_claim_evidence(self, episode_id: str, claim_id: str) -> EvidenceBundle:
         # TODO: Validate episode/claim IDs and return retained evidence for scoring.
