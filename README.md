@@ -29,6 +29,8 @@ Perception capture uses **Locobot's native fixed camera**, configured by
 [`configs/perception.locobot.json`](configs/perception.locobot.json).
 See the [capture instructions](Documentation/english/development_fixtures.md#real-igibson-capture-and-replay)
 and [native-camera visibility check](Documentation/english/locobot_camera_check.md).
+For B/C Codex sessions, start with the [Locobot A/B/C handoff](Documentation/english/locobot_abc_handoff.md),
+which records the selected settings, owner tasks, reproduction commands and remaining gates.
 
 ```powershell
 $env:PYTHONPATH = "$PWD/src"
