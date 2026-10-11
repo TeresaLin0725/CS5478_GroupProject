@@ -27,6 +27,7 @@ C owns integration; A and B supply module fixtures/checks. The evaluator is a se
 - **Values:** Unknown uses None, not zero. Numbers are finite; confidence/fractions lie in [0,1]. Empty candidates are valid observations, not API errors.
 - **Allowed priors:** Complete room polygons, simulator robot pose, calibrated capture-time camera transforms, and verified initial footprint clearance. Room geometry reveals unseen layout, though not obstacle occupancy. This is a known-room-layout/known-pose experiment.
 - **Spawn clearance:** The adapter verifies a collision-free spawn and supplies only the initial footprint-clearance mask. A may seed these cells as free. No additional ground-truth free space is exposed. Reject initialization if clearance cannot be verified.
+- **Optional experimental extension:** `verified_start_area` permits a bounded, connected initial mask only with B's scene-bound clearance and floor-support attestation. Footprint-only remains the default; see [schema, validation and ownership](verified_start_area.md). All later occupancy still comes from observations.
 - **Hidden data:** Full occupancy, object locations/instance IDs, and semantic room labels are excluded from robot modules. Labels may be enabled only in a named oracle-label condition shared across policies. Use opaque room IDs, not semantic simulator names. The evaluator alone receives hidden matching data.
 
 ## 3. Core Data Contracts

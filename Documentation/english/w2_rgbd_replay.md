@@ -83,10 +83,14 @@ python -m frontier_search.runner.replay run --dataset runs/w2-real-recording-001
 Pass frame directories in capture order. `pack` preserves each capture's source
 metadata. The first pose must equal the manifest start pose, all episode IDs
 must match, sequences strictly increase, timestamps never decrease, and
-intrinsics stay constant. The current mapper also requires fixed base elevation
-to 1e-6 m. Do not rewrite physical captures to hide vertical motion; validate or
-extend the floor-relative evidence model before using captures that violate
-this assumption. Set the manifest source to the actual capture source.
+intrinsics stay constant. By default the mapper requires fixed base elevation
+to 1e-6 m. `mapping.base_elevation_margin_m` can explicitly allow bounded
+floor-relative base drift: the fixed world collision interval is padded by this
+margin in both directions, and actual per-frame poses/transforms are preserved.
+The recorder's local development manifest uses 0.005 m for observed millimetre
+drift. Frames beyond that initial-base-relative bound still fail. This is not
+support for changing floors or stairs. Set the manifest source to the actual
+capture source; never rewrite physical captures to hide vertical motion.
 
 The package contains a complete `manifest.json`, frame directories and
 `sequence.json`. The index records the ordered frame paths, configuration/frame
@@ -109,3 +113,11 @@ The next team gate is real recordings with the agreed configuration, followed
 by B's real adapter and C's runner factory. The existing W2 mock command still
 uses its explicitly scripted mapper. Tracking, target claims and independent
 target verification remain W3 work.
+
+## Optional verified starting-area experiment
+
+The exact footprint-mask rules above describe the default format-version-1
+baseline. Explicit `verified_start_area` manifests use format version 2 and
+require B's bounded connected mask and verification record. See
+[the A implementation and B handoff](verified_start_area.md) for the schema,
+physical checks and acceptance commands. Do not enlarge a default clearance file.

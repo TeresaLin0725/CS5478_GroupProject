@@ -31,6 +31,8 @@ See the [capture instructions](Documentation/english/development_fixtures.md#rea
 and [native-camera visibility check](Documentation/english/locobot_camera_check.md).
 For B/C Codex sessions, start with the [Locobot A/B/C handoff](Documentation/english/locobot_abc_handoff.md),
 which records the selected settings, owner tasks, reproduction commands and remaining gates.
+The [continuous Locobot recording guide](Documentation/english/locobot_multiframe.md)
+documents real multiframe replay results and the remaining clearance/goal acceptance gap.
 
 ```powershell
 $env:PYTHONPATH = "$PWD/src"
@@ -225,3 +227,7 @@ This is one scene and one start pose, so it is not a statistical comparison.
 Details, two Windows build fixes for upstream iGibson, and limitations are in
 [iGibson demo notes](Documentation/chinese/igibson_demo.md). Animations and
 per-decision records are in `Documentation/igibson_demo/`.
+
+The optional [verified starting-area handoff](Documentation/english/verified_start_area.md)
+describes A's validated initialization/replay support and B's remaining physical
+clearance and floor-support checks. Footprint-only initialization stays the default.

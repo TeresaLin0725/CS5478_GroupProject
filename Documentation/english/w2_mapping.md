@@ -13,10 +13,13 @@ and live exploration acceptance remain pending the shared robot/adapter.
 ## Evidence model and assumptions
 
 - The scene is static on one configured flat floor. Grid geometry is fixed for
-  the episode. Robot base elevation must stay constant to 1e-6 m; a change is
-  rejected atomically. This explicit restriction keeps accumulated vertical
-  evidence in one collision envelope. Real simulator base motion may require
-  a validated floor-relative envelope model before integration.
+  the episode. By default robot base elevation must stay constant to 1e-6 m.
+  An explicit `base_elevation_margin_m` permits bounded drift relative to the
+  first capture and pads the fixed world collision interval both below and above
+  its initial bounds. Free evidence must cover the padded interval; obstacle
+  endpoints within it remain blocking. Actual poses/transforms are unchanged.
+  Excess drift is rejected atomically. Floor height stays fixed; this model
+  does not support stairs or changing floors.
 - RGB-D uses aligned `rgb8` and axial metre `depth32f_le` buffers, integer pixel
   centres and capture-time camera-to-world transforms. Intrinsics stay fixed;
   camera transforms and horizontal robot pose can change between captures.

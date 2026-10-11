@@ -42,9 +42,10 @@ dimensions must not be reused as measured Locobot geometry.
 - Portable multiframe packaging and replay: integrity/order/calibration checks,
   repeat verification, B assessments, C baseline decisions and map/HTML reports.
 - `simulation.capture_igibson`: now constructs Locobot and uses the native camera.
-  It saves **one frame per invocation**, with robot/camera/config metadata,
+  By default it saves one frame; `--sequence` records continuous base motion and
+  scans in one session. Frames include robot/camera/config metadata,
   camera pose and URDF checksum. Repeated invocations are separate captures with
-  sequence 1, not a continuous movement recording.
+  sequence 1, not a continuous movement recording. Use `--sequence` instead.
 - `scripts/check_locobot_camera.py`: reproducible controlled furniture visibility
   test with the installed model, using PyBullet TinyRenderer.
 - One real iGibson `Rs_int`, seed 0 stationary capture: 76,800 valid depth pixels,
@@ -81,10 +82,13 @@ Continue in your B branch after incorporating `integration/w2`.
    stop/pause/resume/close. Base rotations perform scans; no independent camera
    pan/tilt commands or camera pose overrides.
 
-Important acceptance issue: A currently rejects base-z changes greater than
-1e-6 m within an episode. Preserve measured poses and report any simulator
-vertical drift to A; do not round z to zero to make validation pass. A must
-validate or extend its flat-floor evidence model if the physical captures vary.
+Important acceptance issue: A defaults to a 1e-6 m base-z limit. An explicit
+`mapping.base_elevation_margin_m` now conservatively pads the fixed world
+collision envelope and permits bounded initial-base-relative drift without
+rewriting poses. The continuous recorder's development manifest uses 0.005 m
+after observing about 0.003 m drift. Preserve measured poses and report excessive
+drift to A; do not round z to zero to make validation pass. This remains a
+single-flat-floor model, not support for stairs or floor transitions.
 The reference spawn helper is a development utility, not the completed B
 clearance contract. Its use in the smoke capture does not certify an export mask.
 
@@ -122,6 +126,7 @@ conda activate igibson
 $env:PYTHONPATH = "$PWD/src"
 python scripts/check_locobot_camera.py --output runs/locobot-native-camera-new
 python -m frontier_search.simulation.capture_igibson --config configs/perception.locobot.json --scene Rs_int --seed 0 --output runs/locobot-native-capture-new
+python -m frontier_search.simulation.capture_igibson --sequence --config configs/perception.locobot.json --scene Rs_int --seed 1 --output runs/locobot-native-sequence-new
 ```
 
 The capture defaults to the scene/spawn helper in
@@ -140,9 +145,26 @@ python -m frontier_search.runner.replay pack --manifest configs/w2.real.json --f
 python -m frontier_search.runner.replay run --dataset runs/locobot-sequence-new --output runs/locobot-replay-new
 ```
 
+The recorder now also writes a `development-manifest.json`, measured base-aligned
+collision AABB rectangle, and a full grid-cell collision-column spawn check.
+`development-clearance.json` exists only if that check passes; raw recordings
+are retained when clearance fails. These are local development artifacts to
+review with B/C, not an agreed live-adapter configuration. See
+[continuous recording instructions](locobot_multiframe.md) for packaging them.
+
+The full-scan follow-up there now confirms a near-floor blind area: about 0.72 m
+from camera XY to the nearest ideal floor view. Nine real frames yield 11 valid
+final goals, but the current footprint overlaps five unknown cells, leaving
+zero reachable assessments. B should review the measured footprint and its
+larger planning-disc check; A/B must address missing near-floor evidence before
+live acceptance. The diagnostic CLI identifies blocked cells and missing bins.
+
 A will inspect occupancy/coverage, frontier identity and B assessments, and
 measure processing cadence. The first frame's pose must equal the manifest
-start pose; the spawn mask must exactly match the footprint plus margin. Keep
+start pose; the default spawn mask must exactly match the footprint plus margin.
+The opt-in [verified starting-area experiment](verified_start_area.md) now has
+A-side validation and replay support; B must supply actual full-cell clearance
+and supporting-floor verification before a larger prior can be tested. Keep
 failure reports, especially base-z/calibration violations. The fixed-camera
 views must provide enough floor/clearance evidence for mapping as well as object
 visibility. The previous synthetic 640x480 timing was about 3.48 s/frame and is
@@ -156,7 +178,9 @@ For B:
 > Perception selected unmodified Locobot with its native fixed eyes camera; use
 > configs/perception.locobot.json. Implement/validate the real adapter and measured
 > robot geometry, then export a continuous short base-movement/scan RGB-D sequence
-> with verified footprint clearance for A's existing replay. Coordinate the real
+> with verified clearance for A's replay. Read verified_start_area.md in the same
+> documentation folder and implement its bounded full-cell collision and floor-support
+> verifier; export the scene-bound record, never an assumed free circle. Coordinate the real
 > manifest with A/C and report base-z drift without rewriting measured poses.
 
 For C:

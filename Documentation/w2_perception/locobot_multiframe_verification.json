@@ -1,0 +1,26 @@
+{
+  "episode_id": "locobot-Rs_int-seed-1-sequence",
+  "final_explored_cells": 394,
+  "final_known_cells": 352,
+  "first_explored_cells": 216,
+  "first_known_cells": 184,
+  "frames": 7,
+  "inconclusive_assessments": 0,
+  "input_sha256": "92b556eb4e69cbc3dcea7073ca30ad044be7d1b43dedb9a82a293c44105cb5f6",
+  "mode": "offline_rgbd_replay",
+  "policies": [
+    "nearest",
+    "information_gain",
+    "random"
+  ],
+  "reachable_assessments": 0,
+  "recorded_translation_m": 0.1140457447769373,
+  "rejected_assessments": 33,
+  "repeat_verified": true,
+  "result_sha256": "d9672d3b9f12f4333f9216b8bbdf758b0e76bcd3bdfaa33cc487f1d816f7247f",
+  "source": "igibson",
+  "status": "complete",
+  "verification_date": "2026-10-11",
+  "scope": "Real native-camera continuous Locobot recording; development manifest and spawn collision check; offline assessment/selection only; zero reachable candidates, live acceptance pending.",
+  "raw_capture_report": "runs/locobot-native-sequence-004/capture-report.json"
+}
