@@ -1,0 +1,9 @@
+{
+  "robot": "Locobot",
+  "camera_link": "eyes",
+  "camera_pose": "native_link",
+  "image_width": 320,
+  "image_height": 240,
+  "vertical_fov_deg": 60.0,
+  "hide_robot": false
+}

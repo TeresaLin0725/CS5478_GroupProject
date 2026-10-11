@@ -25,6 +25,11 @@ and map reports. It does not execute the selected goals.
 See [C runner usage](Documentation/chinese/w2_runner.md) and the
 [A/B delivery checklist and acceptance criteria](Documentation/chinese/w2_ab_handoff.md).
 
+Perception capture uses **Locobot's native fixed camera**, configured by
+[`configs/perception.locobot.json`](configs/perception.locobot.json).
+See the [capture instructions](Documentation/english/development_fixtures.md#real-igibson-capture-and-replay)
+and [native-camera visibility check](Documentation/english/locobot_camera_check.md).
+
 ```powershell
 $env:PYTHONPATH = "$PWD/src"
 python -m frontier_search.runner.w2 --manifest configs/w2.mock.json --log runs/w2-progress-001.jsonl

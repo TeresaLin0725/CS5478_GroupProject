@@ -46,7 +46,18 @@ $env:PYTHONPATH = "$PWD/src"
 python -m frontier_search.simulation.capture_igibson --output runs/capture-new
 ```
 
-The utility reuses `src/simulator_test.py` from `D:/Projects/CS5478_RoboticProject`. Override with `--reference-project PATH`, `--scene SCENE_ID` or `--seed N`. Use a new output directory; iGibson also writes temporary files beside its dataset.
+Perception uses **Locobot with its native fixed `eyes` camera**, configured by
+[`configs/perception.locobot.json`](../../configs/perception.locobot.json).
+The renderer takes both position and orientation from the link; scans turn the
+base rather than overriding camera pitch. Images are 320x240 with 60 degree
+vertical FOV and robot visibility retained. See the
+[native-camera check](locobot_camera_check.md) for measured visibility limits.
+
+The utility reuses the scene/spawn helper in `src/simulator_test.py` from `D:/Projects/CS5478_RoboticProject`, constructing Locobot itself. Override with `--reference-project PATH`, `--scene SCENE_ID`, `--seed N` or `--config PATH`. Use a new output directory; iGibson also writes temporary files beside its dataset.
+
+The scene, navigation geometry, mapping bounds and capture cadence still need
+the shared A/B/C experiment configuration. C's historical Rs demo uses rendered
+pitch overrides and is not the native-camera perception capture entry point.
 
 Each capture saves raw RGB/depth, pose, calibration, source metadata and PNG previews; only the depth preview clips at 5 m. Conversion aligns camera axes and pixel centres and checks projection against renderer XYZ. Replay validates the recording and needs neither iGibson nor NumPy:
 

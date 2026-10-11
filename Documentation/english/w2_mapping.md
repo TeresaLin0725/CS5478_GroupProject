@@ -1,6 +1,9 @@
 # A: W2 — RGB-D mapping, frontiers and information gain
 
-Implemented on `a-perception`, 10 October 2026. The real robot is still undecided.
+Implemented on `a-perception`, 10 October 2026. On 11 October, perception selected
+Locobot with its native fixed `eyes` camera; capture settings are in
+[`configs/perception.locobot.json`](../../configs/perception.locobot.json).
+The shared navigation geometry, scene and full episode configuration remain pending.
 `RGBDMapper()` consumes the existing `MapperInit` and `RGBDObservation` records
 and synchronously returns a complete immutable `WorldState` for each accepted
 frame, including frontiers, approach poses, identity/lineage and predicted gain.
