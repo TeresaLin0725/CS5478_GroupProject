@@ -44,8 +44,14 @@ def main() -> None:
     parser.add_argument("--scene", default="Rs_int")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument("--sequence", action="store_true",
+                        help="Record a continuous short base-turn/move sequence instead of one frame")
+    parser.add_argument("--full-scan", action="store_true",
+                        help="With --sequence, record a full base revolution with eight scan stops")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    if args.full_scan and not args.sequence:
+        parser.error('--full-scan requires --sequence')
     if args.output.exists():
         parser.error("output directory already exists; choose a new recording directory")
     try:
@@ -87,6 +93,11 @@ def main() -> None:
         demo.spawn_robot(simulator, scene, robot)
         robot.apply_action(np.zeros(2))
         simulator.step()
+
+        if args.sequence:
+            from .record_sequence import record_sequence
+            record_sequence(simulator, robot, scene, demo, config, args)
+            return
 
         # Capture all modalities and calibration at one stationary simulation state.
         renderer = simulator.renderer

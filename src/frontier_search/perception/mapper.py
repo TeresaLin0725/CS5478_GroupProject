@@ -141,7 +141,7 @@ class RGBDMapper:
         """Atomically process one fresh frame and publish an owned snapshot.
 
         W2 publishes maps and tracked frontiers; objects and claims remain absent.
-        The flat-floor model requires constant robot base elevation;
+        The flat-floor model bounds base elevation drift by the configured margin;
         camera pose may translate and rotate freely with each observation.
         """
         previous = self._state
@@ -157,12 +157,13 @@ class RGBDMapper:
                 "observation timestamp moved backwards")
         require(previous.intrinsics is None or previous.intrinsics == observation.camera_intrinsics,
                 "camera calibration changed within episode")
-        require(previous.base_z_m is None or abs(previous.base_z_m - observation.robot_pose.z_m) <= 1e-6,
-                "flat-floor mapper requires constant base elevation; reset for another floor")
+        require(previous.base_z_m is None or abs(previous.base_z_m - observation.robot_pose.z_m)
+                <= cfg.base_elevation_margin_m + 1e-6,
+                "flat-floor mapper base elevation exceeds margin; reset for another floor")
         collision_z = previous.collision_z or (
-            max(observation.robot_pose.z_m + robot.collision_z_min_m,
+            max(observation.robot_pose.z_m + robot.collision_z_min_m - cfg.base_elevation_margin_m,
                 cfg.floor_height_m + cfg.floor_tolerance_m),
-            observation.robot_pose.z_m + robot.collision_z_max_m)
+            observation.robot_pose.z_m + robot.collision_z_max_m + cfg.base_elevation_margin_m)
         require(all(is_finite_number(z) for z in collision_z) and collision_z[0] < collision_z[1],
                 "collision envelope must extend above the configured floor band")
         bin_count = (collision_z[1] - collision_z[0]) / cfg.clearance_bin_height_m

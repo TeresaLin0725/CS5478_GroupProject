@@ -26,6 +26,7 @@ class MappingConfig:
     depth_max_m: float = 5.0
     clearance_bin_height_m: float = 0.05  # vertical free-space evidence resolution
     depth_surface_margin_m: float = 0.02  # stop carving before measured surfaces
+    base_elevation_margin_m: float = 0.0  # expand fixed world collision envelope for bounded base drift
     frontier_min_cells: int = 2
     frontier_connectivity: int = 4
     frontier_approach_search_m: float = 1.0
@@ -60,6 +61,9 @@ class MappingConfig:
                 or not isfinite(self.depth_surface_margin_m)
                 or not 0 <= self.depth_surface_margin_m < self.depth_min_m):
             raise ValueError("surface margin must be nonnegative and smaller than minimum depth")
+        if (type(self.base_elevation_margin_m) not in (int, float)
+                or not isfinite(self.base_elevation_margin_m) or self.base_elevation_margin_m < 0):
+            raise ValueError("base elevation margin must be finite and nonnegative")
         if type(self.frontier_min_cells) is not int or self.frontier_min_cells < 1:
             raise ValueError("frontier minimum must be a positive integer")
         if type(self.frontier_connectivity) is not int or self.frontier_connectivity not in (4, 8):

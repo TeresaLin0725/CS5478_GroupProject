@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 
 from frontier_search.contracts import GridCell
 from frontier_search.experiments.logging import dumps
-from frontier_search.fixtures.sequence import load_sequence, write_sequence
+from frontier_search.fixtures.sequence import load_sequence, write_sequence, validate_sequence
 from frontier_search.runner.replay import AssessmentControl, generate_synthetic, pack_recordings, replay
 from frontier_search.validation import ContractError
 
@@ -21,6 +21,19 @@ CONFIG = Path(__file__).resolve().parents[1] / 'configs' / 'w2.rgbd-synthetic.js
 
 
 class RGBDSequenceTests(unittest.TestCase):
+    def test_configured_base_margin_preserves_real_pose_and_rejects_excess(self):
+        data = load_sequence(self.dataset)
+        frames = list(data.observations)
+        frames[1] = replace(frames[1], robot_pose=replace(frames[1].robot_pose, z_m=0.003))
+        with self.assertRaisesRegex(ContractError, 'base elevation'):
+            validate_sequence(data.manifest, frames, data.initial_clearance_cells, data.clearance_provenance)
+        manifest = replace(data.manifest, mapping=replace(data.manifest.mapping, base_elevation_margin_m=0.005))
+        validate_sequence(manifest, frames, data.initial_clearance_cells, data.clearance_provenance)
+        self.assertEqual(frames[1].robot_pose.z_m, 0.003)
+        frames[1] = replace(frames[1], robot_pose=replace(frames[1].robot_pose, z_m=0.006))
+        with self.assertRaisesRegex(ContractError, 'base elevation'):
+            validate_sequence(manifest, frames, data.initial_clearance_cells, data.clearance_provenance)
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)

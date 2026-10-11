@@ -59,8 +59,9 @@ def validate_sequence(manifest, observations, clearance, provenance):
         require(frame.sequence > last_sequence and frame.timestamp_s >= last_time,
                 'recording frames must have increasing sequence and nondecreasing time')
         require(frame.camera_intrinsics == first.camera_intrinsics, 'recording camera intrinsics changed')
-        require(abs(frame.robot_pose.z_m - first.robot_pose.z_m) <= 1e-6,
-                'current flat-floor mapper requires constant recording base elevation')
+        require(abs(frame.robot_pose.z_m - first.robot_pose.z_m)
+                <= manifest.mapping.base_elevation_margin_m + 1e-6,
+                'flat-floor recording base elevation exceeds configured margin')
         last_sequence, last_time = frame.sequence, frame.timestamp_s
     require(first.robot_pose == manifest.start_pose, 'first capture pose differs from manifest start pose')
 

@@ -31,6 +31,37 @@ def request(**mapping):
 
 
 class MapperUpdateTests(unittest.TestCase):
+    def test_bounded_base_drift_expands_fixed_envelope_without_rewriting_pose(self):
+        mapper = RGBDMapper()
+        mapper.reset(request(base_elevation_margin_m=0.005))
+        first = scene_frame()
+        mapper.update(first)
+        self.assertAlmostEqual(mapper._state.collision_z[1], 0.405)
+        envelope = mapper._state.collision_z
+        frame = scene_frame(sequence=2)
+        frame = replace(frame, robot_pose=replace(frame.robot_pose, z_m=0.003))
+        state = mapper.update(frame)
+        self.assertEqual(state.robot_pose.z_m, 0.003)
+        self.assertEqual(mapper._state.collision_z, envelope)
+        bad = replace(scene_frame(sequence=3), robot_pose=replace(frame.robot_pose, z_m=0.006))
+        with self.assertRaisesRegex(ContractError, 'base elevation'):
+            mapper.update(bad)
+        self.assertIs(mapper._state.latest_state, state)
+
+    def test_base_elevation_margin_validation(self):
+        for value in (-0.01, float('nan'), float('inf'), True):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                request(base_elevation_margin_m=value)
+
+    def test_margin_retains_obstacles_in_expanded_vertical_band(self):
+        frame = scene_frame(boxes=(((0.9, -0.2, 0.401), (1.1, 0.2, 0.414)),))
+        strict, padded = RGBDMapper(), RGBDMapper()
+        strict.reset(request())
+        padded.reset(request(base_elevation_margin_m=0.015))
+        a, b = strict.update(frame), padded.update(frame)
+        self.assertFalse(any(a.occupancy_map.data[r][c] == 100 for r in range(9, 11) for c in range(4, 6)))
+        self.assertTrue(any(b.occupancy_map.data[r][c] == 100 for r in range(9, 11) for c in range(4, 6)))
+
     def setUp(self):
         self.mapper = RGBDMapper()
         self.request = request()
