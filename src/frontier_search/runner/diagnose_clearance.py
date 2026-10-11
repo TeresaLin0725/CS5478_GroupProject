@@ -40,7 +40,7 @@ def diagnose(dataset, output):
     sequence = load_sequence(dataset)
     manifest = sequence.manifest
     mapper = RGBDMapper()
-    mapper.reset(mapper_init(manifest, sequence.initial_clearance_cells))
+    mapper.reset(mapper_init(manifest, sequence.initial_clearance_cells, sequence.clearance_verification))
     records = []
     for frame in sequence.observations:
         state = mapper.update(frame)

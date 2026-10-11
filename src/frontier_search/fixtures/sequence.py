@@ -6,9 +6,9 @@ import json
 from pathlib import Path
 from typing import Mapping, Optional, Tuple
 
-from ..contracts import GridCell, MapperInit, OccupancyGrid, RGBDObservation
+from ..contracts import GridCell, MapperInit, RGBDObservation
 from ..experiments.logging import dumps
-from ..navigation.geometry import cells_overlapping_footprint
+from .clearance import footprint_cells, validate_clearance
 from ..perception.mapper import RGBDMapper
 from ..perception.observations import validate_rgbd_observation
 from ..runner.manifest import EpisodeManifest, load_manifest
@@ -26,31 +26,22 @@ class RecordingSequence:
     initial_clearance_cells: Tuple[GridCell, ...]
     clearance_provenance: str
     digest: str
+    clearance_verification: Optional[Mapping[str, object]] = None
 
 
-def mapper_init(manifest: EpisodeManifest, clearance: Tuple[GridCell, ...]) -> MapperInit:
+def mapper_init(manifest: EpisodeManifest, clearance: Tuple[GridCell, ...], verification=None) -> MapperInit:
+    validate_clearance(manifest, clearance, verification)
     return MapperInit(manifest.episode_id, manifest.target_class, manifest.perception_seed,
                       manifest.mapping, manifest.observation, manifest.robot,
                       manifest.region_priors, clearance, manifest.oracle_room_labels)
 
 
-def footprint_cells(manifest: EpisodeManifest) -> Tuple[GridCell, ...]:
-    """Compute only the initial footprint-plus-margin mask, without claiming it is free."""
-    c = manifest.mapping
-    geometry = OccupancyGrid('world', 0, c.resolution_m, c.origin_x_m, c.origin_y_m,
-                             c.width_cells, c.height_cells, ())
-    return tuple(GridCell(r, col) for r, col in cells_overlapping_footprint(
-        geometry, manifest.robot.footprint_base, manifest.start_pose, manifest.robot.clearance_margin_m))
-
-
-def validate_sequence(manifest, observations, clearance, provenance):
+def validate_sequence(manifest, observations, clearance, provenance, verification=None):
     manifest.validate()
     require(not manifest.enable_target_evaluation, 'W2 replay requires target evaluation disabled')
     require(isinstance(provenance, str) and bool(provenance.strip()), 'missing spawn-clearance provenance')
     require(bool(observations), 'recording sequence must contain at least one frame')
-    require(len(set(clearance)) == len(clearance) and set(clearance) == set(footprint_cells(manifest)),
-            'spawn-clearance mask must equal the initial footprint plus margin')
-    RGBDMapper().reset(mapper_init(manifest, clearance))
+    RGBDMapper().reset(mapper_init(manifest, clearance, verification))
     first = observations[0]
     last_sequence, last_time = -1, -1.0
     for frame in observations:
@@ -84,9 +75,10 @@ def _child(root: Path, name: str) -> Path:
 def write_sequence(directory: Path, manifest: EpisodeManifest,
                    observations: Tuple[RGBDObservation, ...], clearance: Tuple[GridCell, ...],
                    clearance_provenance: str,
-                   sources: Optional[Tuple[Mapping[str, object], ...]] = None) -> None:
+                   sources: Optional[Tuple[Mapping[str, object], ...]] = None,
+                   verification=None) -> None:
     """Create a new self-contained package; write its index last, never overwrite."""
-    validate_sequence(manifest, observations, clearance, clearance_provenance)
+    validate_sequence(manifest, observations, clearance, clearance_provenance, verification)
     require(sources is None or len(sources) == len(observations), 'source metadata count differs from frames')
     if sources is not None:
         require(all(isinstance(source, dict) for source in sources), 'frame sources must be JSON objects')
@@ -103,8 +95,10 @@ def write_sequence(directory: Path, manifest: EpisodeManifest,
             'kind': manifest.source, 'scene_id': manifest.scene_id, 'trajectory': 'recorded_not_policy_executed'}
         save_rgbd_recording(destination, frame, source)
         records.append({'path': relative, 'sha256': {name: _digest(destination / name) for name in FRAME_FILES}})
-    index = dict(format_version=1, manifest='manifest.json', manifest_sha256=_digest(manifest_path),
+    index = dict(format_version=2 if verification is not None else 1, manifest='manifest.json', manifest_sha256=_digest(manifest_path),
                  initial_clearance_cells=clearance, clearance_provenance=clearance_provenance, frames=records)
+    if verification is not None:
+        index['clearance_verification'] = verification
     (directory / 'sequence.json').write_text(dumps(index) + '\n', encoding='utf-8')
 
 
@@ -114,14 +108,19 @@ def load_sequence(directory: Path) -> RecordingSequence:
     try:
         index_path = directory / 'sequence.json'
         index = json.loads(index_path.read_text(encoding='utf-8'))
-        require(isinstance(index, dict) and set(index) == {
+        require(isinstance(index, dict), 'invalid sequence index')
+        version = index.get('format_version')
+        require(type(version) is int and version in (1, 2), 'unsupported recording sequence version')
+        require(set(index) == {
             'format_version', 'manifest', 'manifest_sha256', 'initial_clearance_cells',
-            'clearance_provenance', 'frames'}, 'invalid sequence index fields')
-        require(type(index['format_version']) is int and index['format_version'] == 1,
-                'unsupported recording sequence version')
+            'clearance_provenance', 'frames'} | ({'clearance_verification'} if version == 2 else set()),
+                'invalid sequence index fields')
         manifest_path = _child(directory, index['manifest'])
         require(_digest(manifest_path) == index['manifest_sha256'], 'manifest checksum mismatch')
         manifest = load_manifest(manifest_path)
+        require((version == 2) == (manifest.initial_clearance_mode == 'verified_start_area'),
+                'sequence version differs from initial clearance mode')
+        verification = index.get('clearance_verification')
         require(isinstance(index['frames'], list), 'sequence frames must be a list')
         frames, seen = [], set()
         for entry in index['frames']:
@@ -138,8 +137,8 @@ def load_sequence(directory: Path) -> RecordingSequence:
             frames.append(load_rgbd_recording(folder))
         clearance = tuple(GridCell(**cell) for cell in index['initial_clearance_cells'])
         observations = tuple(frames)
-        validate_sequence(manifest, observations, clearance, index['clearance_provenance'])
-        return RecordingSequence(manifest, observations, clearance, index['clearance_provenance'], _digest(index_path))
+        validate_sequence(manifest, observations, clearance, index['clearance_provenance'], verification)
+        return RecordingSequence(manifest, observations, clearance, index['clearance_provenance'], _digest(index_path), verification)
     except ContractError:
         raise
     except (OSError, UnicodeError, KeyError, TypeError, ValueError, OverflowError) as exc:

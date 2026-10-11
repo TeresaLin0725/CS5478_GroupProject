@@ -71,19 +71,22 @@ def pack_recordings(directory: Path, manifest_path: Path, frame_paths: Tuple[Pat
     """Bundle existing per-frame recordings, preserving their original source metadata."""
     manifest = load_manifest(manifest_path)
     clearance = json.loads(Path(clearance_path).read_text(encoding='utf-8'))
-    require(isinstance(clearance, dict) and set(clearance) == {'cells', 'provenance'},
+    expected = {'cells', 'provenance'}
+    if manifest.initial_clearance_mode == 'verified_start_area':
+        expected.add('verification')
+    require(isinstance(clearance, dict) and set(clearance) == expected,
             'clearance file requires cells and provenance')
     cells = tuple(GridCell(**cell) for cell in clearance['cells'])
     observations = tuple(load_rgbd_recording(path) for path in frame_paths)
     sources = tuple(json.loads((Path(path) / 'observation.json').read_text(encoding='utf-8'))['source']
                     for path in frame_paths)
-    write_sequence(directory, manifest, observations, cells, clearance['provenance'], sources)
+    write_sequence(directory, manifest, observations, cells, clearance['provenance'], sources, clearance.get('verification'))
 
 
 def _assess(sequence, policy_names):
     m = sequence.manifest
     mapper = RGBDMapper()
-    mapper.reset(mapper_init(m, sequence.initial_clearance_cells))
+    mapper.reset(mapper_init(m, sequence.initial_clearance_cells, sequence.clearance_verification))
     control = AssessmentControl(sequence.observations[0])
     navigator = TeamNavigator(control)
     navigator.reset(NavigatorInit(m.episode_id, m.robot, m.observation, m.navigation))
@@ -103,6 +106,9 @@ def _assess(sequence, policy_names):
         known = sum(v != -1 for row in state.occupancy_map.data for v in row)
         record = dict(event='rgbd_replay_frame', mode='offline_selection_only', source=m.source,
                       episode_id=m.episode_id, sequence=frame.sequence, state=state,
+                      initial_clearance_mode=m.initial_clearance_mode,
+                      initial_clearance_radius_m=m.initial_clearance_radius_m,
+                      initial_clearance_cells=len(sequence.initial_clearance_cells),
                       state_sha256=_hash(state), assessment=assessment,
                       eligible_frontier_ids=context.eligible_frontier_ids, decisions=decisions,
                       known_cells=known, explored_cells=sum(sum(row) for row in state.explored_map.data))
@@ -157,13 +163,16 @@ def _html(report, records):
             'table{border-collapse:collapse;width:100%%}td,th{padding:9px;text-align:left;border-bottom:1px solid #cbd5e1}'
             'svg{max-width:100%%;border:1px solid #cbd5e1}a{color:#1d4ed8}</style>'
             '<h1>RGB-D replay</h1><p>Source: <strong>%s</strong>. Fixed recorded trajectory; decisions are not executed.</p>'
+            '<p>Initial prior: %s; radius limit: %s m; seed cells: %s.</p>'
             '<p>Repeat verified: %s. <a href="report.json">Report</a> · <a href="events.jsonl">Full states and decisions</a></p>'
             '<table><thead><tr><th>Frame/map</th><th>Known cells</th><th>Observed cells</th><th>Frontiers</th>'
             '<th>Reachable</th><th>Selections</th></tr></thead><tbody>%s</tbody></table>'
             '<h2>Final observed map</h2>%s<p>White: free; dark: occupied; grey: unknown; blue-grey: observed but unknown clearance. '
             'Orange outlines: frontier support. Approach dots: green reachable, red rejected, orange inconclusive. '
             'Blue: recorded robot pose. World +y points up.</p></html>') %
-            (escape(report['source']), str(report['repeat_verified']).lower(), ''.join(rows), _map_svg(records[-1])))
+            (escape(report['source']), escape(report['initial_clearance_mode']),
+             report['initial_clearance_radius_m'], report['initial_clearance_cells'],
+             str(report['repeat_verified']).lower(), ''.join(rows), _map_svg(records[-1])))
 
 
 def replay(directory: Path, output: Path, policy_names: Tuple[str, ...] = BASELINES,
@@ -175,7 +184,11 @@ def replay(directory: Path, output: Path, policy_names: Tuple[str, ...] = BASELI
     output.mkdir(parents=True, exist_ok=False)
     report = dict(mode='offline_rgbd_replay', source=sequence.manifest.source,
                   episode_id=sequence.manifest.episode_id, input_sha256=sequence.digest,
-                  policies=policy_names, repeat_verified=False, status='running')
+                  policies=policy_names, repeat_verified=False, status='running',
+                  initial_clearance_mode=sequence.manifest.initial_clearance_mode,
+                  initial_clearance_radius_m=sequence.manifest.initial_clearance_radius_m,
+                  initial_clearance_cells=len(sequence.initial_clearance_cells),
+                  clearance_verification=sequence.clearance_verification)
     try:
         records = _assess(sequence, policy_names)
         result_digest = _hash(records)

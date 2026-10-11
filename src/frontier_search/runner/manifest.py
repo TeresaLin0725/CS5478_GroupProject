@@ -37,6 +37,8 @@ class EpisodeManifest:
     module_deadline_s: float = 10.0
     # W2 is geometry-only. Claims are rejected unless scoring is explicitly enabled.
     enable_target_evaluation: bool = False
+    initial_clearance_mode: str = 'footprint'
+    initial_clearance_radius_m: float = 0.0
 
     def validate(self) -> None:
         require_immutable(self)
@@ -44,6 +46,13 @@ class EpisodeManifest:
                 'episode, scene and target must be nonempty')
         require(self.source in ('synthetic', 'rgbd_replay', 'igibson'), 'invalid source')
         require(self.policy_name in ('nearest', 'random', 'information_gain', 'llm_guided'), 'invalid policy')
+        require(self.initial_clearance_mode in ('footprint', 'verified_start_area'), 'invalid initial clearance mode')
+        radius = self.initial_clearance_radius_m
+        require(type(radius) in (int, float) and isfinite(radius) and radius >= 0,
+                'initial clearance radius must be finite and nonnegative')
+        require((self.initial_clearance_mode == 'footprint' and radius == 0)
+                or (self.initial_clearance_mode == 'verified_start_area' and radius > 0),
+                'footprint mode requires zero radius; verified start area requires a positive radius')
         for seed in (self.environment_seed, self.perception_seed, self.policy_seed):
             require(type(seed) is int, 'seeds must be integers')
         for flag in (self.oracle_room_labels, self.enable_target_evaluation):
