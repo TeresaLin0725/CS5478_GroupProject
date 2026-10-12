@@ -44,6 +44,7 @@ LOCOBOT_DEV_ROBOT = RobotConfig(
 # OPTIONAL planning radius for ``TeamNavigator(planning_radius_m=...)``; NOT applied by default.
 # Between the inscribed (0.181 m) and circumscribed (0.256 m) radius. On the ideal mock simulator,
 # 0.20-0.22 m planned and drove through 0.5 m and 0.6 m gaps with no contact (random starts, goals and
-# yaws; see B_REPORT_NOTES.md section 9). Wheel slip, latency and the real controller are not modelled:
-# verify on iGibson before using it (B_IGIBSON_TEST_PLAN.md section 10).
+# yaws; see tests/test_planning_radius.py, which also pins the known limit: a bend inside a narrow
+# corridor is stopped by the turn guard). Wheel slip, latency and the real controller are not modelled:
+# verify on iGibson (zero contact on 0.5 m and 0.6 m gaps) before using it.
 LOCOBOT_PLANNING_RADIUS_M = 0.22
