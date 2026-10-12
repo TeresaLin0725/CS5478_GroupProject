@@ -31,9 +31,10 @@ Robotics background
 
 Open points for the team (not decided here)
 -------------------------------------------
-1. ``SimulatorAdapter`` (simulation/api.py) has no velocity command or
-   simulation clock. B defines ``ControlInterface`` locally; the adapter must
-   provide these before real integration.
+1. ``ControlledSimulatorAdapter`` (simulation/api.py) adds the velocity command and
+   simulation clock. ``ControlInterface`` below is B's minimal local view of
+   exactly those plus ``current_pose``, so this module does not import the
+   simulation package; ``IGibsonAdapter`` and ``MockSimulator`` both provide them.
 2. The runner must call ``on_step()`` after each simulation step ("B's
    controller executes at the configured cadence on those steps"); ``poll`` is
    read-only and never advances simulation.
@@ -79,7 +80,7 @@ class NavigatorBoundaryError(ContractError):
 
 
 class ControlInterface(Protocol):
-    """What B needs from the simulator/control adapter (see open point 1)."""
+    """What B needs from the simulator/control adapter (a subset of ControlledSimulatorAdapter)."""
 
     def current_pose(self) -> Pose: ...
     def sim_time_s(self) -> float: ...

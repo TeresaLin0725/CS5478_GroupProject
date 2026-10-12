@@ -18,8 +18,9 @@ Robotics background
 The verifier is simulator-agnostic: it only needs a ``SceneProbe``. Scene truth is used for
 this setup check only and is never handed to A or C; only the verified cells and the
 attestation record leave this module. ``MockSceneProbe`` implements the probe over
-the mock simulator's ground-truth grid; the real iGibson adapter will supply its
-own probe (physics-engine volume queries and floor ray casts).
+the mock simulator's ground-truth grid; ``IGibsonBackend.scene_probe`` supplies the real
+one as a ``CallbackSceneProbe`` (PyBullet volume queries and floor ray casts; not yet run
+on real iGibson).
 
 Only the standard library is used, and annotations stay Python 3.8 compatible.
 """
