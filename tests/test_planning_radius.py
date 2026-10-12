@@ -37,6 +37,23 @@ def world(gap_cells, blocked_wall=True):
     return OccupancyGrid('w', 1, .1, 0, 0, 60, 40, tuple(map(tuple, cells))), (low + gap_cells / 2) * 0.1
 
 
+def bent_corridor(width_cells):
+    """Free L-shaped corridor: a horizontal arm, then a vertical arm going up (a 90 degree bend)."""
+    cells = [[-1] * 50 for _ in range(50)]
+    for r in range(5, 5 + width_cells):
+        for c in range(5, 40):
+            cells[r][c] = 0
+    for r in range(5, 45):
+        for c in range(40 - width_cells, 40):
+            cells[r][c] = 0
+    return OccupancyGrid('w', 1, .1, 0, 0, 50, 50, tuple(map(tuple, cells)))
+
+
+def corridor_trip(width_cells):
+    grid = bent_corridor(width_cells)
+    return grid, Pose(0.9, (5 + width_cells / 2) * 0.1, 0, 0), Pose((40 - width_cells / 2) * 0.1, 4.0, 0, 0)
+
+
 def drive(test, grid, start, goal, planning_radius_m):
     sim = MockSimulator(grid, ROBOT)
     test.addCleanup(sim.close)
@@ -114,6 +131,38 @@ class PlanningRadiusTests(unittest.TestCase):
         first, last, sim = drive(self, grid, start, goal, 0.2)
         self.assertEqual((first.status, first.failure_reason), (NavigationStatus.FAILED, FailureReason.NO_PATH))
         self.assertEqual(sim.collisions, 0)
+
+    def test_known_limit_a_bend_inside_a_narrow_corridor_is_blocked_not_collided(self):
+        # KNOWN LIMITATION of the small planning radius, recorded on purpose. Going straight through a
+        # 0.5 m corridor is fine, but the 45 degree turn at its bend needs the full rotation clearance
+        # (0.256 m + 0.02 m margin each side) that a 0.5 m corridor does not have. The planner does not
+        # know that, so it accepts the trip; the runtime turn guard then stops the robot at the bend,
+        # BEFORE it turns. The guard is deliberately conservative: it checks with the 0.02 m margin, and
+        # without it this particular turn would just fit physically (it would then be stopped later by the
+        # final-yaw guard in the narrow arm). If planning becomes rotation-aware this test must change to
+        # "refused up front".
+        grid, start, goal = corridor_trip(5)
+        costmap = Costmap.from_robot(grid, ROBOT, RADIUS)
+        self.assertTrue(plan(costmap, start, goal).success)             # evaluation/planning say reachable
+        first, last, sim = drive(self, grid, start, goal, RADIUS)
+        self.assertEqual(first.status, NavigationStatus.ACCEPTED)
+        self.assertEqual((last.status, last.failure_reason), (NavigationStatus.FAILED, FailureReason.BLOCKED))
+        self.assertEqual(sim.collisions, 0)                              # stopped safely, never touched a wall
+        self.assertLess(sim.current_pose().y_m, 1.0)                     # stopped at the bend, never entered the vertical arm
+        # A 0.6 m corridor has room to turn at the bend: it completes. The default circumscribed disc
+        # refuses both narrow corridors at the start and accepts the 0.7 m one.
+        grid, start, goal = corridor_trip(6)
+        first, last, sim = drive(self, grid, start, goal, RADIUS)
+        self.assertEqual((last.status, sim.collisions), (NavigationStatus.REACHED, 0))
+        for width, expect_reached in ((5, False), (6, False), (7, True)):
+            grid, start, goal = corridor_trip(width)
+            first, last, sim = drive(self, grid, start, goal, None)
+            with self.subTest(default_radius_corridor_cells=width):
+                if expect_reached:
+                    self.assertEqual((last.status, sim.collisions), (NavigationStatus.REACHED, 0))
+                else:
+                    self.assertEqual(first.status, NavigationStatus.FAILED)
+                    self.assertEqual(sim.executed_distance_m, 0.0)
 
     def test_radius_must_lie_between_inscribed_and_circumscribed(self):
         inscribed, circum = Costmap.planning_radius_bounds(ROBOT.footprint_base)
