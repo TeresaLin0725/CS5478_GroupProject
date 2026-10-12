@@ -190,3 +190,44 @@ class MockSceneProbe(SceneProbe):
             if height is None or abs(height - self._nominal) > self._step + _EPS:
                 return False
         return True
+
+
+class CallbackSceneProbe(SceneProbe):
+    """Simulator-agnostic probe: the physics queries are two injected callables.
+
+    ``column_blocked(x_min, y_min, x_max, y_max, z_min, z_max)`` -> True if non-robot geometry
+    intersects the box. ``floor_heights(points)`` -> for each (x, y) the world z of the supporting
+    floor found by a downward ray, or None if there is nothing (a hole). The real iGibson backend
+    implements both with PyBullet; this class holds the verification logic so it is testable
+    without a simulator.
+
+    Floor support samples a ``samples`` x ``samples`` lattice across the WHOLE cell square (inset by
+    a hair so edge points stay inside), not only its centre: a hole under a cell corner makes the
+    cell unusable, and a step is any sampled height differing from ``nominal_floor_z`` by more than
+    ``max_step_m``.
+    """
+
+    def __init__(self, column_blocked, floor_heights, nominal_floor_z: float = 0.0,
+                 max_step_m: float = 0.02, samples: int = 3, snapshot_id: str = "",
+                 description: str = "") -> None:
+        if samples < 2:
+            raise ValueError("floor support needs at least a 2x2 sample lattice per cell")
+        self._blocked, self._heights = column_blocked, floor_heights
+        self._nominal, self._step, self._samples = nominal_floor_z, max_step_m, samples
+        self.snapshot_id = snapshot_id
+        self.description = description or ("callback probe, %dx%d floor samples per cell, max step %.3f m"
+                                           % (samples, samples, max_step_m))
+
+    def column_clear(self, x_min, y_min, x_max, y_max, z_min, z_max):
+        return not self._blocked(x_min, y_min, x_max, y_max, z_min, z_max)
+
+    def floor_supported(self, x_min, y_min, x_max, y_max):
+        inset = 1e-3 * min(x_max - x_min, y_max - y_min)
+        n = self._samples
+        points = [(x_min + inset + (x_max - x_min - 2 * inset) * i / (n - 1),
+                   y_min + inset + (y_max - y_min - 2 * inset) * j / (n - 1))
+                  for j in range(n) for i in range(n)]
+        heights = list(self._heights(points))
+        if len(heights) != len(points):
+            raise ValueError("floor_heights must return one value per sample point")
+        return all(h is not None and abs(h - self._nominal) <= self._step + _EPS for h in heights)
