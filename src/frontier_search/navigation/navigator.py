@@ -309,9 +309,6 @@ class TeamNavigator:
         now = self._control.sim_time_s()
         limit = self._nav_cfg.navigation_deadline_s if op.kind == "navigate" \
             else self._obs_cfg.operation_deadline_s
-        if now - op.started_s > limit:
-            self._finish(op, NavigationStatus.FAILED, FailureReason.TIMEOUT)
-            return
         op.status = NavigationStatus.EXECUTING
         if self._stalled(op, now):
             self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
@@ -320,6 +317,12 @@ class TeamNavigator:
             self._tick_navigation(op)
         else:
             self._tick_observation(op, now)
+        # Deadline last and inclusive. The runner enforces the SAME limit as a backstop with ``>=`` and
+        # ends the whole episode (search_limit) when it fires, whereas B's TIMEOUT feeds C's cooldown
+        # retry. So B must time out on the step that reaches the limit (``>=``), but only after this
+        # step's control, so a goal reached exactly on that step still counts as REACHED.
+        if op.terminal is None and now - op.started_s >= limit:
+            self._finish(op, NavigationStatus.FAILED, FailureReason.TIMEOUT)
 
     # --- internals: stall detection ----------------------------------------
 
