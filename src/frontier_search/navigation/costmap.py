@@ -44,6 +44,23 @@ def circumradius(footprint_base: Tuple[Point2, ...]) -> float:
     return max(hypot(p.x_m, p.y_m) for p in footprint_base)
 
 
+def inscribed_radius(footprint_base: Tuple[Point2, ...]) -> float:
+    """Radius of the largest origin-centred disc that fits inside the polygon.
+
+    The smallest distance from the base origin to any edge. A robot whose centre is closer than
+    this to an obstacle certainly collides, whatever its heading.
+    """
+    best = float("inf")
+    n = len(footprint_base)
+    for i in range(n):
+        a, b = footprint_base[i], footprint_base[(i + 1) % n]
+        ex, ey = b.x_m - a.x_m, b.y_m - a.y_m
+        length2 = ex * ex + ey * ey
+        t = 0.0 if length2 == 0 else max(0.0, min(1.0, -(a.x_m * ex + a.y_m * ey) / length2))
+        best = min(best, hypot(a.x_m + t * ex, a.y_m + t * ey))
+    return best
+
+
 class Costmap:
     """Immutable-by-convention costmap for one occupancy-grid revision.
 
@@ -51,7 +68,8 @@ class Costmap:
     """
 
     def __init__(self, grid: OccupancyGrid, footprint_base: Tuple[Point2, ...],
-                 clearance_margin_m: float, sample_step_m: Optional[float] = None) -> None:
+                 clearance_margin_m: float, sample_step_m: Optional[float] = None,
+                 planning_radius_m: Optional[float] = None) -> None:
         if not footprint_base or len(footprint_base) < 3:
             raise ValueError("footprint needs at least three vertices")
         if clearance_margin_m < 0:
@@ -60,7 +78,19 @@ class Costmap:
         self.footprint_base = tuple(footprint_base)
         self.margin_m = clearance_margin_m
         self.radius_m = circumradius(self.footprint_base)
-        self._disc = circle_footprint(self.radius_m)
+        # Planning disc. Default: the circumscribed disc, safe at every heading (conservative for a
+        # long or non-square robot). An explicit smaller radius, never below the inscribed radius,
+        # lets the robot use gaps it physically fits through; the exact-footprint checks on the first
+        # move, in-place turns and sweeps (see first_move_valid / the navigator guards) then matter.
+        if planning_radius_m is None:
+            planning_radius_m = self.radius_m
+        else:
+            low, high = self.planning_radius_bounds(self.footprint_base)
+            if not (low - 1e-9 <= planning_radius_m <= high + 1e-9):
+                raise ValueError("planning radius %.4f m must lie between the inscribed radius %.4f m and "
+                                 "the circumscribed radius %.4f m" % (planning_radius_m, low, high))
+        self.planning_radius_m = planning_radius_m
+        self._disc = circle_footprint(planning_radius_m)
         # Sample at no more than half a cell so a thin obstacle cannot be skipped.
         self.sample_step_m = sample_step_m or grid.resolution_m / 2.0
         self._cell_cache = {}  # type: Dict[Tuple[int, int], bool]
@@ -111,8 +141,14 @@ class Costmap:
         return dist
 
     @classmethod
-    def from_robot(cls, grid: OccupancyGrid, robot: RobotConfig) -> "Costmap":
-        return cls(grid, robot.footprint_base, robot.clearance_margin_m)
+    def from_robot(cls, grid: OccupancyGrid, robot: RobotConfig,
+                   planning_radius_m: Optional[float] = None) -> "Costmap":
+        return cls(grid, robot.footprint_base, robot.clearance_margin_m, planning_radius_m=planning_radius_m)
+
+    @staticmethod
+    def planning_radius_bounds(footprint_base: Tuple[Point2, ...]) -> Tuple[float, float]:
+        """(inscribed, circumscribed) radius: the allowed range for an explicit planning radius."""
+        return inscribed_radius(tuple(footprint_base)), circumradius(tuple(footprint_base))
 
     # --- per-cell (planning lattice) ---------------------------------------
 

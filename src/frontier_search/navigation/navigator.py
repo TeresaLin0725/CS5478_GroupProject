@@ -128,7 +128,10 @@ class TeamNavigator:
     """B's Navigator. Construct with a control interface, then ``reset``."""
 
     def __init__(self, control: ControlInterface, wall_clock: Callable[[], float] = monotonic,
-                 smooth_paths: bool = False) -> None:
+                 smooth_paths: bool = False, planning_radius_m: Optional[float] = None) -> None:
+        # ``planning_radius_m``: None = circumscribed disc (conservative, default). A smaller value in
+        # [inscribed, circumscribed] plans through narrower gaps; see Costmap and the P6 notes.
+        self._planning_radius_m = planning_radius_m
         self._control = control
         self._wall_clock = wall_clock
         self._smooth = smooth_paths
@@ -152,6 +155,12 @@ class TeamNavigator:
             # turn in place. Refuse loudly rather than plan paths it cannot drive
             # (use Hybrid A* or a lattice planner for car-like robots).
             raise NavigatorBoundaryError("planner supports only robots that can turn in place")
+        if self._planning_radius_m is not None:
+            low, high = Costmap.planning_radius_bounds(request.robot_config.footprint_base)
+            if not (low - 1e-9 <= self._planning_radius_m <= high + 1e-9):
+                raise NavigatorBoundaryError("planning radius %.4f m must lie between the inscribed radius "
+                                             "%.4f m and the circumscribed radius %.4f m of this robot"
+                                             % (self._planning_radius_m, low, high))
         self._episode_id = request.episode_id
         self._robot = request.robot_config
         self._obs_cfg = request.observation_config
@@ -474,7 +483,7 @@ class TeamNavigator:
         cached = self._costmap_cache
         if cached is not None and cached[0] == grid.revision and cached[1].grid is grid:
             return cached[1]
-        costmap = Costmap.from_robot(grid, self._robot)
+        costmap = Costmap.from_robot(grid, self._robot, self._planning_radius_m)
         costmap.prepare()  # pay the one-off clearance precompute here, not inside a deadline
         self._costmap_cache = (grid.revision, costmap)
         self._latest_revision = max(self._latest_revision, grid.revision)
