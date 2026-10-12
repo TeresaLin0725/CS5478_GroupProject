@@ -165,10 +165,20 @@ class TeamNavigator:
 
         One Dijkstra distance field answers all candidates (amortised). A
         timeout leaves unreached cells *inconclusive* (None/TIMEOUT), never
-        "unreachable". Does not move the robot or touch the active operation.
+        "unreachable".
+
+        "Read-only" here means: it never moves the robot and never touches the
+        active operation. Like every entry point that receives a map, it does
+        record the newest map revision offered to B, and ``start`` rejects a map
+        older than that (stale-map check). The request's episode must match the
+        state's, otherwise the answer would be silently labelled with another
+        episode's ID.
         """
         self._require_ready(request.episode_id)
         state = request.state
+        if state.episode_id != request.episode_id:
+            raise NavigatorBoundaryError("request episode %r does not match state episode %r"
+                                         % (request.episode_id, state.episode_id))
         costmap = self._costmap_for(state.occupancy_map)
         start = state.robot_pose
         result = planner.distance_field(costmap, start, self._nav_cfg.batch_deadline_s,
@@ -256,11 +266,14 @@ class TeamNavigator:
         op = self._ops.get(goal_id)
         if op is not None and op.terminal is not None:
             return op.terminal
+        # Cancelling an id that is not the running operation must not stop the running one: latch
+        # the record (the id is consumed) but leave motion and the active operation alone.
+        other_running = self._active is not None and self._active.terminal is None and self._active is not op
         if op is None:
             op = _Operation(goal_id, "navigate", self._control.sim_time_s())
             self._ops[goal_id] = op
         self._log("cancel", "%s %s" % (goal_id, reason))
-        return self._finish(op, NavigationStatus.CANCELLED, None)
+        return self._finish(op, NavigationStatus.CANCELLED, None, stop=not other_running)
 
     # --- observation -------------------------------------------------------
 
@@ -490,9 +503,14 @@ class TeamNavigator:
         return feedback
 
     def _finish(self, op: _Operation, status: NavigationStatus,
-                reason: Optional[FailureReason]) -> NavigationFeedback:
-        """Stop, latch exactly one terminal outcome, and free the single slot."""
-        self._control.set_velocity(0.0, 0.0)
+                reason: Optional[FailureReason], stop: bool = True) -> NavigationFeedback:
+        """Stop, latch exactly one terminal outcome, and free the single slot.
+
+        ``stop=False`` is only for latching a record for an operation that is not the one driving
+        the robot (cancelling an unknown goal id while another operation is running).
+        """
+        if stop:
+            self._control.set_velocity(0.0, 0.0)
         op.status, op.failure_reason = status, reason
         op.terminal = self._feedback(op, status, reason)
         self._log("terminal", "%s %s %s" % (op.goal_id, status.value, reason.value if reason else ""))
