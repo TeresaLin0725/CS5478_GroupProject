@@ -110,6 +110,7 @@ class _Operation:
         self.goal_pose = None                 # type: Optional[Pose]
         self.path = ()                        # type: Tuple[Pose, ...]
         self.index = 1                        # next waypoint (0 is the start pose)
+        self.turn_ok = None                   # type: Optional[object]  # turn already checked safe (waypoint index / "goal")
         self.replans = 0
         # observation
         self.targets = []                     # type: List[float]
@@ -356,9 +357,23 @@ class TeamNavigator:
             if abs(yaw_err) <= robot.yaw_tolerance_rad:
                 self._finish(op, NavigationStatus.REACHED, None)
                 return
+            if op.turn_ok != "goal":  # never rotate blindly into a known obstacle
+                if not op.costmap.rotation_valid(pose, op.goal_pose.yaw_rad):
+                    self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
+                    return
+                op.turn_ok = "goal"
             self._control.set_velocity(0.0, _clip(K_ANGULAR * yaw_err, robot.max_angular_speed_radps))
             return
-        heading_err = _wrap(atan2(target.y_m - pose.y_m, target.x_m - pose.x_m) - pose.yaw_rad)
+        target_heading = atan2(target.y_m - pose.y_m, target.x_m - pose.x_m)
+        heading_err = _wrap(target_heading - pose.yaw_rad)
+        if abs(heading_err) > TURN_IN_PLACE_RAD and op.turn_ok != op.index:
+            # An in-place turn is about to be commanded. Planning checked the first move toward the
+            # nearest waypoint, but the controller may aim at a later one (lookahead) or the map
+            # may have changed, so check the turn it will actually perform, once per waypoint.
+            if not op.costmap.rotation_valid(pose, target_heading):
+                self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
+                return
+            op.turn_ok = op.index
         w = _clip(K_ANGULAR * heading_err, robot.max_angular_speed_radps)
         v = 0.0 if abs(heading_err) > TURN_IN_PLACE_RAD else \
             min(robot.max_linear_speed_mps, K_LINEAR * dist) * max(0.0, cos(heading_err))
@@ -398,6 +413,7 @@ class TeamNavigator:
         result = planner.plan(op.costmap, live, op.goal_pose, self._nav_cfg.batch_deadline_s,
                               clock=self._wall_clock, smooth=self._smooth)
         op.planner_result = result  # newest result is carried in feedback
+        op.turn_ok = None
         self._log("replan", "%s #%d success=%s reason=%s"
                   % (op.goal_id, op.replans, result.success, result.failure_reason))
         if not result.success:

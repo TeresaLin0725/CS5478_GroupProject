@@ -183,6 +183,22 @@ class Costmap:
                 return False
         return True
 
+    def first_move_valid(self, start: Pose, target_x_m: float, target_y_m: float) -> bool:
+        """The robot can leave its REAL pose toward a waypoint: turn in place, then drive there.
+
+        Planning uses the circumscribed disc, which is safe at cell centres, but the start pose is
+        generally off-centre and its cell may be inflation-blocked, so the turn must be checked
+        with the exact footprint. The controller is rotate-then-translate, so the turn is the
+        shortest arc from the current yaw to the heading of the move, followed by the straight
+        segment. Only the turn that is actually needed is checked (a move straight ahead needs none).
+        """
+        dx, dy = target_x_m - start.x_m, target_y_m - start.y_m
+        heading = atan2(dy, dx) if hypot(dx, dy) > 1e-9 else start.yaw_rad
+        if not self.rotation_valid(start, heading):
+            return False
+        turned = Pose(start.x_m, start.y_m, start.z_m, heading)
+        return self.segment_valid(turned, Pose(target_x_m, target_y_m, start.z_m, heading))
+
     def rotation_valid(self, pose: Pose, target_yaw_rad: float, step_rad: float = 0.1) -> bool:
         """Turning in place from ``pose.yaw_rad`` to ``target_yaw_rad`` along the
         shortest arc is collision-free (checked at ``step_rad`` increments)."""

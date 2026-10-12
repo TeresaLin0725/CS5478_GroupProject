@@ -53,6 +53,12 @@ def _offset_m(costmap: Costmap, pose: Pose, cell: GridCell) -> float:
     return hypot(pose.x_m - centre.x_m, pose.y_m - centre.y_m)
 
 
+def _first_move_ok(costmap: Costmap, start: Pose, cell: GridCell) -> bool:
+    """Leaving the real start pose toward this neighbour is turn-safe with the exact footprint."""
+    centre = cell_center(costmap.grid, cell.row, cell.column)
+    return costmap.first_move_valid(start, centre.x_m, centre.y_m)
+
+
 def start_is_usable(costmap: Costmap, start: Pose) -> bool:
     """The robot's exact footprint at the start pose must be collision-free.
 
@@ -109,6 +115,8 @@ def plan(costmap: Costmap, start: Pose, goal: Pose, deadline_s: Optional[float] 
         if deadline is not None and expanded % 64 == 0 and clock() > deadline:
             return _fail(FailureReason.TIMEOUT)
         for neighbour, step_m in costmap.neighbours(GridCell(node[0], node[1])):
+            if node == s and not _first_move_ok(costmap, start, neighbour):
+                continue  # the first turn/drive from the real pose would sweep into an obstacle
             n = (neighbour.row, neighbour.column)
             cost = best[node] + step_m
             if n not in closed and cost < best.get(n, float("inf")):
@@ -147,6 +155,8 @@ def distance_field(costmap: Costmap, start: Pose, deadline_s: Optional[float] = 
         if deadline is not None and expanded % 64 == 0 and clock() > deadline:
             return {c: v for c, v in best.items() if c in done}, False
         for neighbour, step_m in costmap.neighbours(GridCell(node[0], node[1])):
+            if node == s and not _first_move_ok(costmap, start, neighbour):
+                continue  # same rule as plan(), so evaluation and execution agree
             n = (neighbour.row, neighbour.column)
             new_cost = cost + step_m
             if n not in done and new_cost < best.get(n, float("inf")):
