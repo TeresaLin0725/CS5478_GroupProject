@@ -15,6 +15,7 @@ from ..fixtures.recording import load_rgbd_recording
 from ..fixtures.sequence import footprint_cells, load_sequence, mapper_init, write_sequence
 from ..navigation.navigator import TeamNavigator
 from ..perception.mapper import RGBDMapper
+from ..perception.detection import YOLODetector
 from ..policies.baselines import BaselinePolicy
 from ..runner.episode import build_context, decide
 from ..runner.manifest import load_manifest
@@ -83,9 +84,9 @@ def pack_recordings(directory: Path, manifest_path: Path, frame_paths: Tuple[Pat
     write_sequence(directory, manifest, observations, cells, clearance['provenance'], sources, clearance.get('verification'))
 
 
-def _assess(sequence, policy_names):
+def _assess(sequence, policy_names, detector=None):
     m = sequence.manifest
-    mapper = RGBDMapper()
+    mapper = RGBDMapper(detector)
     mapper.reset(mapper_init(m, sequence.initial_clearance_cells, sequence.clearance_verification))
     control = AssessmentControl(sequence.observations[0])
     navigator = TeamNavigator(control)
@@ -176,24 +177,29 @@ def _html(report, records):
 
 
 def replay(directory: Path, output: Path, policy_names: Tuple[str, ...] = BASELINES,
-           verify_repeat: bool = True):
+           verify_repeat: bool = True, detector_weights: Path = None):
     require(bool(policy_names) and len(set(policy_names)) == len(policy_names)
             and all(name in BASELINES for name in policy_names), 'replay requires unique offline baseline names')
     sequence = load_sequence(directory)
+    detector = YOLODetector(str(detector_weights)) if detector_weights is not None else None
+    detector_metadata = (dict(weights=str(detector_weights),
+        weights_sha256=sha256(Path(detector_weights).read_bytes()).hexdigest())
+        if detector_weights is not None else None)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     report = dict(mode='offline_rgbd_replay', source=sequence.manifest.source,
                   episode_id=sequence.manifest.episode_id, input_sha256=sequence.digest,
                   policies=policy_names, repeat_verified=False, status='running',
+                  detector=detector_metadata,
                   initial_clearance_mode=sequence.manifest.initial_clearance_mode,
                   initial_clearance_radius_m=sequence.manifest.initial_clearance_radius_m,
                   initial_clearance_cells=len(sequence.initial_clearance_cells),
                   clearance_verification=sequence.clearance_verification)
     try:
-        records = _assess(sequence, policy_names)
+        records = _assess(sequence, policy_names, detector)
         result_digest = _hash(records)
         if verify_repeat:
-            repeated = _assess(sequence, policy_names)
+            repeated = _assess(sequence, policy_names, detector)
             require(_hash(repeated) == result_digest,
                     'repeat replay differs: inspect geometry, policy seeds and assessment timeouts')
             report['repeat_verified'] = True
@@ -235,6 +241,8 @@ def main():
     run.add_argument('--output', type=Path, required=True)
     run.add_argument('--policies', choices=BASELINES, nargs='+', default=BASELINES)
     run.add_argument('--no-verify-repeat', action='store_true')
+    run.add_argument('--detector-weights', type=Path,
+                     help='enable RGB object detection with existing local YOLO weights')
     args = parser.parse_args()
     try:
         if args.action == 'generate-synthetic':
@@ -244,7 +252,8 @@ def main():
             pack_recordings(args.output, args.manifest, tuple(args.frames), args.clearance)
             print(dumps({'dataset': str(args.output), 'status': 'written'}))
         else:
-            print(dumps(replay(args.dataset, args.output, tuple(args.policies), not args.no_verify_repeat)))
+            print(dumps(replay(args.dataset, args.output, tuple(args.policies),
+                              not args.no_verify_repeat, args.detector_weights)))
     except (OSError, ValueError, TypeError, KeyError) as exc:
         parser.exit(2, 'replay error: %s\n' % exc)
     return 0

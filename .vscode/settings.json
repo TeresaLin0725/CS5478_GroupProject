@@ -1,0 +1,8 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv-detector/Scripts/python.exe",
+  "python.terminal.activateEnvironment": false,
+  "terminal.integrated.env.windows": {
+    "YOLO_CONFIG_DIR": "${workspaceFolder}/runs/yolo-config",
+    "PYTHONPATH": "${workspaceFolder}/src"
+  }
+}
