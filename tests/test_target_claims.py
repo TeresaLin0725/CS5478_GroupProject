@@ -210,7 +210,7 @@ class ClaimManifestTests(unittest.TestCase):
     def test_evaluator_count_requires_integer_at_least_two(self):
         base = mock_manifest()
         for value in (True, 1, 2.5, '3'):
-            with self.subTest(value=value), self.assertRaisesRegex(ContractError, 'required evidence frames'):
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, 'required evidence frames'):
                 replace(base, evaluation=replace(base.evaluation, required_evidence_frames=value)).validate()
-        with self.assertRaisesRegex(ValueError, 'finite'):
+        with self.assertRaisesRegex(ValueError, 'required evidence frames'):
             replace(base, evaluation=replace(base.evaluation, required_evidence_frames=float('nan'))).validate()

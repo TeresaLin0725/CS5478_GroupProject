@@ -151,6 +151,18 @@ class EvaluationConfig:
     required_evidence_frames: int = 2
     deadline_s: float = 5.0
 
+    def __post_init__(self) -> None:
+        for name in ('minimum_visibility', 'minimum_bbox_iou'):
+            value = getattr(self, name)
+            if type(value) not in (int, float) or not isfinite(value) or not 0 < value <= 1:
+                raise ValueError('%s must be finite and in (0, 1]' % name)
+        if type(self.required_evidence_frames) is not int or self.required_evidence_frames < 2:
+            raise ValueError('required evidence frames must be an integer of at least two')
+        for name in ('localization_tolerance_m', 'deadline_s'):
+            value = getattr(self, name)
+            if type(value) not in (int, float) or not isfinite(value) or value <= 0:
+                raise ValueError('%s must be finite and positive' % name)
+
 
 @dataclass(frozen=True)
 class EpisodeLimits:

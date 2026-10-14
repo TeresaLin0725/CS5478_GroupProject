@@ -90,6 +90,7 @@ class EpisodeManifest:
                 (r.max_linear_speed_mps, r.max_angular_speed_radps,
                  r.position_tolerance_m, r.yaw_tolerance_rad)), 'invalid robot geometry/limits')
         self.mapping.__post_init__()
+        self.evaluation.__post_init__()
         required_frames = self.evaluation.required_evidence_frames
         require(type(required_frames) is int and required_frames >= 2,
                 'required evidence frames must be an integer of at least two')

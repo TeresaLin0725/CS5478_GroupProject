@@ -83,7 +83,8 @@ absent in standard runs. All track state and evidence reset with the episode.
 The distance threshold is a development default requiring scene validation.
 Greedy spatial matching may confuse nearby same-class objects, and the static
 map retains false detections until reset. Appearance matching, moving-object
-tracking and independent target verification remain future work.
+tracking remain future work. Independent terminal scoring is implemented in the
+[W3 verifier](w3_verifier.md); live ground-truth capture integration remains pending.
 
 ## Target confirmation
 
@@ -116,7 +117,8 @@ for the runner. Uninitialized access, missing claims and mismatched IDs raise
 Update failures cannot partially publish a claim or consume its ID.
 
 A claim requests immediate stopping by the episode runner; it does not prove
-success. The independent verifier is still the next W3 step. The existing runner
+success. The [independent verifier](w3_verifier.md) implements terminal scoring
+against separately retained capture records. The existing runner
 handles stop/cancel and evidence retrieval when evaluation is enabled. Geometry-only
 runner mode explicitly rejects claims, so real object-search integration requires
 an evaluator rather than disabling that guard.
