@@ -35,8 +35,12 @@ class MappingConfig:
     frontier_history_s: float = 30.0
     gain_range_m: float = 3.0
     gain_ray_step_rad: float = 0.05
+    object_match_distance_m: float = 0.35
 
     def __post_init__(self) -> None:
+        if (type(self.object_match_distance_m) not in (int, float)
+                or not isfinite(self.object_match_distance_m) or self.object_match_distance_m <= 0):
+            raise ValueError("object match distance must be finite and positive")
         if not isfinite(self.resolution_m) or self.resolution_m <= 0:
             raise ValueError("resolution_m must be finite and positive")
         if min(self.width_cells, self.height_cells) <= 0:

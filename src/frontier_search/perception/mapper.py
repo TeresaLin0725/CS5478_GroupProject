@@ -18,7 +18,8 @@ from ..immutable import require_immutable
 from ..sensors import CameraIntrinsics
 from ..validation import ContractError, is_finite_number, require, validate_state
 from .fusion import fuse_observation
-from .detection import RGBDetector, localize_detection, validate_detection
+from .detection import RGBDetector
+from .tracking import associate_rooms, update_tracks
 from .frontiers import FrontierMemory, assign_identities, build_candidates
 from .observations import validate_rgbd_observation
 from .priors import rasterize_region, validate_region_priors
@@ -42,6 +43,7 @@ class _EpisodeState:
     intrinsics: Optional[CameraIntrinsics] = None
     region_cells: Optional[Tuple[Tuple[GridCell, ...], ...]] = None
     tracks: Dict[str, ObjectTrack] = field(default_factory=dict)
+    track_regions: Dict[str, Optional[str]] = field(default_factory=dict)
     frontiers: Dict[str, Frontier] = field(default_factory=dict)
     frontier_memory: Dict[str, FrontierMemory] = field(default_factory=dict)
     frontier_history: Dict[str, Tuple[str, ...]] = field(default_factory=dict)
@@ -142,8 +144,8 @@ class RGBDMapper:
     def update(self, observation: RGBDObservation) -> WorldState:
         """Atomically process one fresh frame and publish an owned snapshot.
 
-        An optional RGB detector publishes provisional single-frame objects.
-        Cross-frame association, room association and claims are separate work.
+        An optional RGB detector publishes spatially associated object tracks
+        and observed room classes. Target claims remain separate work.
         The flat-floor model bounds base elevation drift by the configured margin;
         camera pose may translate and rotate freely with each observation.
         """
@@ -182,25 +184,11 @@ class RGBDMapper:
             coverage=[row[:] for row in previous.coverage],
             free_masks=[row[:] for row in previous.free_masks],
             floor_seen=[row[:] for row in previous.floor_seen])
-        tracks, evidence = {}, {}
-        track_counter = previous.entity_counters['track']
-        observation_counter = previous.entity_counters['observation']
         detections = () if self._detector is None else tuple(self._detector.detect(observation.color_image))
-        for detection in detections:
-            validate_detection(detection, observation.color_image)
-        for detection in sorted(detections, key=lambda d: (d.class_name, d.bbox_xyxy_px, -d.confidence)):
-            if detection.confidence < cfg.confidence_threshold:
-                continue
-            position = localize_detection(detection, observation, cfg)
-            track_counter += 1
-            observation_counter += 1
-            track_id = 'track-%06d' % track_counter
-            observation_id = 'detection-%06d' % observation_counter
-            tracks[track_id] = ObjectTrack(track_id, detection.class_name, detection.confidence,
-                position, observation.timestamp_s, observation.timestamp_s, (observation_id,), 1)
-            evidence[observation_id] = DetectionEvidence(observation_id, observation.sequence,
-                observation.timestamp_s, track_id, detection.class_name, detection.confidence,
-                detection.bbox_xyxy_px, position)
+        tracks, evidence, track_counter, observation_counter = update_tracks(
+            previous.tracks, previous.evidence, detections, observation, cfg,
+            previous.entity_counters['track'], previous.entity_counters['observation'])
+        track_regions, room_classes = associate_rooms(tracks, request.region_priors)
         fuse_observation(observation, cfg, collision_z, working.occupancy,
                          working.coverage, working.free_masks, working.floor_seen)
         revision = previous.revision + 1
@@ -212,7 +200,8 @@ class RGBDMapper:
         regions = tuple(RegionSummary(
             region.region_id, region.boundary_world, "igibson_room_prior",
             sum(working.coverage[c.row][c.column] for c in cells) / len(cells) if cells else None,
-            (), region.room_type, "simulator_annotation" if region.room_type is not None else None)
+            room_classes[region.region_id], region.room_type,
+            "simulator_annotation" if region.room_type is not None else None)
             for region, cells in zip(request.region_priors, region_cells))
         candidates = build_candidates(occupancy, observation, robot, cfg, request.observation_config,
             {region.region_id: cells for region, cells in zip(request.region_priors, region_cells)})
@@ -235,6 +224,7 @@ class RGBDMapper:
         working.frontier_memory = memory
         working.frontier_history = history
         working.tracks = tracks
+        working.track_regions = track_regions
         working.evidence = evidence
         working.entity_counters = dict(previous.entity_counters, frontier=counter,
                                       track=track_counter, observation=observation_counter)

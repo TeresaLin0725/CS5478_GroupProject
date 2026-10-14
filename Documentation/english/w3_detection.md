@@ -1,5 +1,4 @@
-# W3 step 1: RGB detection in the mapper
-
+# W3 steps 1–2: RGB detection, tracking and room association
 
 The workspace selects `.venv-detector` as the default VS Code Python interpreter
 and sets project-local YOLO settings and `PYTHONPATH` for new terminals.
@@ -53,17 +52,49 @@ mapping configuration. With no valid depth, `position_world` is `None`.
 This estimates an observed surface position; box background and occlusion can
 bias it. It does not establish the true object centre.
 
-Each accepted detection produces an immutable provisional `ObjectTrack` with
-one observation ID and confirmation count 1, plus private `DetectionEvidence`
-carrying the capture sequence and box. IDs increase within an episode and reset
-with the episode. Only the current frame's provisional objects/evidence are
-retained at this stage; they are replaced on the next successful update.
-Cross-frame identity, retained track history, room association, target claims,
-and claim evidence retrieval remain subsequent W3 steps. No claim is emitted.
+Each accepted detection contributes private `DetectionEvidence` carrying its
+capture sequence, timestamp, box and measured position. Localized objects are
+associated with existing same-class tracks using a configurable 3D distance
+gate (`MappingConfig.object_match_distance_m`, default 0.35 m). The measurement
+must be close to both the track estimate and its first measurement, preventing
+gradual drift. Candidate matches are processed by shortest distance, then track
+ID and canonical detection order, with one detection per track per frame.
+Exact duplicate class/box proposals collapse to the strongest confidence.
+
+Track positions use coordinate-wise medians of accepted measurements; confidence
+is the maximum observed confidence. IDs, first/last timestamps and evidence are
+retained across missed frames and revisits until episode reset, consistent with
+the static-scene assumption. `confirmation_count` counts distinct accepted
+capture sequences over the track's lifetime. It is not yet a target-confirmation
+decision: temporal-window confirmation and claims remain step 3. No claim is
+emitted. Unknown-depth detections have a single-frame identity and expire on the
+next accepted update; they cannot be associated by image overlap alone.
+
+Localized tracks are associated with continuous room polygons using world x/y.
+Exactly one containing polygon is required; positions outside all rooms, on
+shared boundaries, or in overlapping rooms remain unassigned. The mapper keeps
+track-to-room assignments privately and publishes sorted, deduplicated
+`RegionSummary.observed_object_classes` through the frozen public contract.
+Classes persist with localized tracks, but hidden semantic room labels remain
+absent in standard runs. All track state and evidence reset with the episode.
+
+The distance threshold is a development default requiring scene validation.
+Greedy spatial matching may confuse nearby same-class objects, and the static
+map retains false detections until reset. Appearance matching, moving-object
+tracking, target claims and claim evidence retrieval remain future work.
 
 Malformed detector output or inference exceptions reject the whole update
 without changing maps, counters, evidence or processed sequence. Already
 processed frames are rejected before inference. Tests in
 `tests/test_mapper_detection.py` exercise localization, confidence filtering,
 invalid depth, evidence, rollback, reset, duplicate frames and the YOLO adapter
-with a stub model. They do not establish real model accuracy.
+with a stub model. `tests/test_object_tracking.py` covers stable identities,
+one-to-one matching, missed frames, spatial/class gates, drift, room ambiguity,
+concave polygons and transactional rollback. These do not establish model accuracy.
+
+Local validation on `runs/locobot-full-scan-package-001` produced two chair
+tracks, each supported by two distinct frames, over the nine-frame recording.
+Two full replays matched exactly (`runs/w3-tracking-001/report.json`). This
+recording contains no room priors, so room association is covered by synthetic
+polygon tests rather than this real-data replay. The recording still has zero
+reachable navigation candidates; tracking does not close that separate W2 gate.
