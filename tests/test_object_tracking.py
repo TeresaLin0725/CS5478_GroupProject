@@ -133,7 +133,7 @@ class ObjectTrackingTests(unittest.TestCase):
         self.assertIsNone(second.regions[0].room_type)
         self.assertEqual(second.semantic_objects[0].confirmation_count, 2)
         self.assertEqual(first.semantic_objects[0].confirmation_count, 1)
-        self.assertIsNone(second.target_claim)
+        self.assertIsNotNone(second.target_claim)
         mapper.reset(request())
         self.assertEqual(mapper._state.track_regions, {})
         self.assertEqual(mapper._state.evidence, {})

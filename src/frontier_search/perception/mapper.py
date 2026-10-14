@@ -19,6 +19,7 @@ from ..sensors import CameraIntrinsics
 from ..validation import ContractError, is_finite_number, require, validate_state
 from .fusion import fuse_observation
 from .detection import RGBDetector
+from .claims import confirm_target
 from .tracking import associate_rooms, update_tracks
 from .frontiers import FrontierMemory, assign_identities, build_candidates
 from .observations import validate_rgbd_observation
@@ -49,6 +50,7 @@ class _EpisodeState:
     frontier_history: Dict[str, Tuple[str, ...]] = field(default_factory=dict)
     evidence: Dict[str, DetectionEvidence] = field(default_factory=dict)
     target_claim: Optional[TargetClaim] = None
+    claim_evidence: Optional[EvidenceBundle] = None
     entity_counters: Dict[str, int] = field(default_factory=lambda: {
         "track": 0, "frontier": 0, "observation": 0, "claim": 0,
     })
@@ -145,7 +147,7 @@ class RGBDMapper:
         """Atomically process one fresh frame and publish an owned snapshot.
 
         An optional RGB detector publishes spatially associated object tracks
-        and observed room classes. Target claims remain separate work.
+        and observed room classes. A confirmed target latches one terminal claim.
         The flat-floor model bounds base elevation drift by the configured margin;
         camera pose may translate and rotate freely with each observation.
         """
@@ -189,6 +191,16 @@ class RGBDMapper:
             previous.tracks, previous.evidence, detections, observation, cfg,
             previous.entity_counters['track'], previous.entity_counters['observation'])
         track_regions, room_classes = associate_rooms(tracks, request.region_priors)
+        claim = previous.target_claim
+        claim_evidence = previous.claim_evidence
+        claim_counter = previous.entity_counters['claim']
+        if claim is None:
+            claim = confirm_target(tracks, evidence, request.target_class,
+                observation.sequence, observation.timestamp_s, cfg, claim_counter)
+            if claim is not None:
+                claim_counter += 1
+                claim_evidence = EvidenceBundle(request.episode_id, claim.claim_id,
+                    tuple(evidence[key] for key in claim.evidence_observation_ids))
         fuse_observation(observation, cfg, collision_z, working.occupancy,
                          working.coverage, working.free_masks, working.floor_seen)
         revision = previous.revision + 1
@@ -210,7 +222,7 @@ class RGBDMapper:
             previous.entity_counters['frontier'], observation.timestamp_s, cfg)
         state = WorldState("1.0", request.episode_id, revision, observation.timestamp_s,
                            observation.sequence, request.target_class, observation.robot_pose,
-                           occupancy, explored, tuple(tracks.values()), regions, frontiers, None)
+                           occupancy, explored, tuple(tracks.values()), regions, frontiers, claim)
         validate_state(state, oracle_room_labels=request.oracle_room_labels)
         working.revision = revision
         working.last_processed_sequence = observation.sequence
@@ -226,11 +238,20 @@ class RGBDMapper:
         working.tracks = tracks
         working.track_regions = track_regions
         working.evidence = evidence
+        working.target_claim = claim
+        working.claim_evidence = claim_evidence
         working.entity_counters = dict(previous.entity_counters, frontier=counter,
-                                      track=track_counter, observation=observation_counter)
+                                      track=track_counter, observation=observation_counter,
+                                      claim=claim_counter)
         self._state = working
         return state
 
     def get_claim_evidence(self, episode_id: str, claim_id: str) -> EvidenceBundle:
-        # TODO: Validate episode/claim IDs and return retained evidence for scoring.
-        raise NotImplementedError("target claim evidence retrieval is not implemented yet")
+        """Return the immutable evidence frozen at the first claim, for scoring."""
+        state = self._state
+        require(state is not None, "mapper must be reset before evidence retrieval")
+        require(episode_id == state.request.episode_id, "evidence episode mismatch")
+        require(state.target_claim is not None and state.claim_evidence is not None,
+                "no target claim available")
+        require(claim_id == state.target_claim.claim_id, "unknown claim ID")
+        return state.claim_evidence

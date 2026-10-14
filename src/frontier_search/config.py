@@ -45,11 +45,13 @@ class MappingConfig:
             raise ValueError("resolution_m must be finite and positive")
         if min(self.width_cells, self.height_cells) <= 0:
             raise ValueError("grid dimensions must be positive")
-        if self.confirmation_frames < 2:
+        if type(self.confirmation_frames) is not int or self.confirmation_frames < 2:
             raise ValueError("target confirmation requires at least two distinct frames")
-        if not 0 <= self.confidence_threshold <= 1:
+        if (type(self.confidence_threshold) not in (int, float)
+                or not isfinite(self.confidence_threshold) or not 0 <= self.confidence_threshold <= 1):
             raise ValueError("confidence_threshold must lie in [0, 1]")
-        if not isfinite(self.confirmation_window_s) or self.confirmation_window_s <= 0:
+        if (type(self.confirmation_window_s) not in (int, float)
+                or not isfinite(self.confirmation_window_s) or self.confirmation_window_s <= 0):
             raise ValueError("confirmation window must be finite and positive")
         if not isfinite(self.floor_height_m):
             raise ValueError("floor height must be finite")
