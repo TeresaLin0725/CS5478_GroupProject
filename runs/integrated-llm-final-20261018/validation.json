@@ -1,0 +1,166 @@
+{
+  "passed": true,
+  "checks": {
+    "test_suite_passed": true,
+    "native_success": true,
+    "no_recording_in_validation": true,
+    "exact_source": true,
+    "independent_evaluation": true,
+    "physical_evidence_present": true,
+    "test_process_exit_and_source": true,
+    "fresh_capture_barriers": true,
+    "no_pipeline_errors": true,
+    "shared_decision_loop": true,
+    "no_oracle_room_labels": true,
+    "native_calibration_logged": true,
+    "verified_start_area_logged": true,
+    "all_contact_ticks_stop": true,
+    "hosted_llm_responses": true,
+    "llm_no_fallback": true,
+    "llm_responses_eligible": true,
+    "llm_count_matches_summary": true
+  },
+  "source_fingerprint": "87c7ad2f3ac8f3d30db8a7ca898d4008f71fce406af1c0d267b84ca49cd070c6",
+  "profile": "dynamic",
+  "policy": "llm_guided",
+  "tests_count": 367,
+  "tests_file": "D:\\CS5478_PROJECT\\integration\\runs\\integrated-llm-preflight-20261017\\tests-certified.log",
+  "tests_sha256": "5b29a01e062e4176f2a2a664b93b44febddedd47d436e91fe1da0759336495be",
+  "run": "D:\\CS5478_PROJECT\\integration\\runs\\integrated-validation-llm-live-scan-20261017",
+  "summary_sha256": "309f0ac50d3e263fa17efd7eb0397f93cfacf006cf74039b867e11491718943b",
+  "dry_run_summary": {
+    "termination": "success",
+    "decisions": 5,
+    "attempts": 5,
+    "steps": 6121,
+    "simulated_time_s": 204.03333333333333,
+    "wall_time_s": 526.3129999999946,
+    "actual_distance_m": 10.859455020433197,
+    "collisions": 0,
+    "final_revision": 652,
+    "profile": "dynamic",
+    "policy": "llm_guided",
+    "llm_calls": 4,
+    "llm_fallbacks": 0,
+    "source_fingerprint": "87c7ad2f3ac8f3d30db8a7ca898d4008f71fce406af1c0d267b84ca49cd070c6",
+    "source_unchanged": true,
+    "evaluation": {
+      "w3_valid": true,
+      "evidence_distances_m": [
+        0.8004376276757861,
+        0.8001703126838302
+      ],
+      "distinct_times": true,
+      "stationary_evidence": true,
+      "near_evidence": true,
+      "terminal_stopped": true
+    },
+    "detector_runtime": {
+      "device": "0",
+      "torch_version": "2.4.1+cu121",
+      "cuda_version": "12.1",
+      "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    "navigator_events": [
+      [
+        "terminal",
+        "op-1 reached "
+      ],
+      [
+        "plan",
+        "op-2 success=True reason=None"
+      ],
+      [
+        "replan",
+        "op-2 #1 success=True reason=None"
+      ],
+      [
+        "replan",
+        "op-2 #2 success=False reason=FailureReason.INVALID_GOAL"
+      ],
+      [
+        "terminal",
+        "op-2 failed invalid_goal"
+      ],
+      [
+        "plan",
+        "op-3 success=True reason=None"
+      ],
+      [
+        "terminal",
+        "op-3 reached "
+      ],
+      [
+        "terminal",
+        "op-4 reached "
+      ],
+      [
+        "plan",
+        "op-5 success=True reason=None"
+      ],
+      [
+        "terminal",
+        "op-5 reached "
+      ],
+      [
+        "terminal",
+        "op-6 failed blocked"
+      ],
+      [
+        "terminal",
+        "op-7 failed blocked"
+      ],
+      [
+        "plan",
+        "op-8 success=True reason=None"
+      ],
+      [
+        "terminal",
+        "op-8 reached "
+      ],
+      [
+        "terminal",
+        "op-9 reached "
+      ],
+      [
+        "plan",
+        "op-10 success=True reason=None"
+      ],
+      [
+        "terminal",
+        "op-10 reached "
+      ],
+      [
+        "terminal",
+        "op-11 failed blocked"
+      ],
+      [
+        "cancel",
+        "op-12 target_claim"
+      ],
+      [
+        "terminal",
+        "op-12 cancelled "
+      ]
+    ],
+    "recorded": false,
+    "components": {
+      "scene": "Gibson Rs",
+      "robot": "native Locobot",
+      "sensor": "native calibrated eyes RGB-D",
+      "perception": "shared RGBDMapper + official YOLO11s (overlapping RGB target tiles)",
+      "navigation": "shared TeamNavigator",
+      "runner": "shared EpisodeRunner + SpatialRecovery",
+      "evaluator": "independent retained-instance W3 + proximity"
+    },
+    "detector_sha256": "85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5"
+  },
+  "llm_calls": 4,
+  "llm_models": [
+    "gemini-3.8-flash"
+  ],
+  "llm_response_models": [
+    "gemini-3.8-flash"
+  ],
+  "llm_fallbacks": 0
+}

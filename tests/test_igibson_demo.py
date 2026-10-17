@@ -83,6 +83,22 @@ class IGibsonTests(unittest.TestCase):
             x, y, _ = evidence[obs_id]
             self.assertLess(hypot(x - tx, y - ty), 0.2)
 
+    def test_4_two_distant_detections_do_not_complete_close_inspection(self):
+        from frontier_search.simulation.igibson_rs import LEVEL_PITCH_RAD, RGBDMapper
+        world = self.world
+        tx, ty, _ = world.target_position()
+        yaw = atan2(ty - 2.2, tx + .5)
+        body = next(iter(world.robot_bodies))
+        world.p.resetBasePositionAndOrientation(body, (-.5, 2.2, 0), world.p.getQuaternionFromEuler((0, 0, yaw)))
+        world.stop(5)
+        mapper = RGBDMapper(world, 'close-gate', close_distance_m=.85)
+        mapper.observe(LEVEL_PITCH_RAD)
+        world.stop(2)
+        mapper.observe(LEVEL_PITCH_RAD)
+        self.assertGreaterEqual(len(mapper.target_evidence), 2)
+        self.assertIsNone(mapper.claim)
+        self.assertIn('track-cracker_box', mapper.tracks)
+
 
 if __name__ == '__main__':
     unittest.main()

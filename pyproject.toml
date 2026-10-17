@@ -14,3 +14,6 @@ frontier-search = "frontier_search.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"frontier_search.runner" = ["indoor_viewer.html"]

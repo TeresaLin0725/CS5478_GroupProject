@@ -64,7 +64,8 @@ def _ray_voxels(start: Tuple[float, ...], end: Tuple[float, ...],
 def fuse_observation(observation: RGBDObservation, cfg: MappingConfig,
                      collision_z: Tuple[float, float],
                      occupancy: List[List[int]], coverage: List[List[bool]],
-                     free_masks: List[List[int]], floor_seen: List[List[bool]]) -> None:
+                     free_masks: List[List[int]], floor_seen: List[List[bool]],
+                     clear_counts=None, increment_clear_count=True) -> None:
     """Fuse into caller-owned working copies; never touch a published snapshot."""
     low, high = collision_z
     bin_height = cfg.clearance_bin_height_m
@@ -81,7 +82,8 @@ def fuse_observation(observation: RGBDObservation, cfg: MappingConfig,
              (camera[1] - cfg.origin_y_m) / cfg.resolution_m,
              (camera[2] - low) / bin_height)
     bounds = (cfg.width_cells, cfg.height_cells, vertical_extent)
-    for _, _, depth, x, y, z in iter_depth_world(observation):
+    fresh_masks, fresh_floor, hits = {}, set(), set()
+    for _, _, depth, x, y, z in iter_depth_world(observation, cfg.depth_pixel_stride):
         if not cfg.depth_min_m <= depth <= cfg.depth_max_m:
             continue
         column = floor((x - cfg.origin_x_m) / cfg.resolution_m)
@@ -90,8 +92,10 @@ def fuse_observation(observation: RGBDObservation, cfg: MappingConfig,
             coverage[row][column] = True
             if abs(z - cfg.floor_height_m) <= cfg.floor_tolerance_m:
                 floor_seen[row][column] = True
+                fresh_floor.add((row, column))
             elif low <= z <= high:
                 occupancy[row][column] = 100
+                hits.add((row, column))
         # Axial depth margin uses the same parameterization as the measured ray.
         fraction = (depth - cfg.depth_surface_margin_m) / depth
         endpoint = tuple(a + fraction * (b - a)
@@ -102,8 +106,20 @@ def fuse_observation(observation: RGBDObservation, cfg: MappingConfig,
         for c, r, z in _ray_voxels(start, end, bounds):
             coverage[r][c] = True
             free_masks[r][c] |= 1 << z
+            if clear_counts is not None:
+                fresh_masks[r, c] = fresh_masks.get((r, c), 0) | (1 << z)
     for r in range(cfg.height_cells):
         for c in range(cfg.width_cells):
+            if clear_counts is not None and occupancy[r][c] == 100:
+                clear = ((r, c) not in hits and (r, c) in fresh_floor
+                         and fresh_masks.get((r, c), 0) == full_mask)
+                if not clear:
+                    clear_counts[r][c] = 0
+                elif increment_clear_count:
+                    clear_counts[r][c] += 1
+                if clear_counts[r][c] >= cfg.dynamic_clear_frames:
+                    occupancy[r][c] = 0
+                    clear_counts[r][c] = 0
             if (occupancy[r][c] != 100 and floor_seen[r][c]
                     and free_masks[r][c] == full_mask):
                 occupancy[r][c] = 0

@@ -1,5 +1,84 @@
 # Indoor frontier object search
 
+## 演示报告
+
+打开[室内实体机器人目标搜索演示报告](runs/integrated-llm-final-20261018/recording/index.html)。
+报告收录 2 项完整集成管线录制和 12 项场景与策略演示，可切换画面，点击决策、操作及验收记录的时间定位播放。
+其中 3 项为每秒 15 帧连续视频，11 项为按仿真时间展示的采样画面。
+在线大语言模型完整管线本次运行完成目标验收：仿真时间 204.03 秒，实际计算耗时 664.38 秒，行驶 10.86 米，无物理接触，真实在线模型调用 4 次。
+报告如实列出导航失败、观察受阻、恢复过程及预置回答回放的执行范围。
+运行 `data/venv-igibson/Scripts/python.exe scripts/build_demo_report.py` 可根据保存的日志重新生成报告；原始媒体与日志保持不变。
+
+## Integrated native A/B/C + W3 pipeline (2026-10-18)
+
+The main integration entry point is now `frontier_search.runner.integrated`.
+Open [the verified live LLM recording](runs/integrated-llm-final-20261018/recording/index.html).
+It connects native calibrated Rs/Locobot RGB-D, real YOLO11s, the shared A mapper,
+B TeamNavigator, C EpisodeRunner/recovery/policies, and independent retained-frame
+W3 scoring with close stationary evidence. It also handles known-free viewpoint
+recovery when a departed obstacle remains hidden in the camera's near blind area.
+See the [full pipeline, validation gate and recording commands](Documentation/chinese/integrated_pipeline.md).
+
+```powershell
+python scripts/run_integrated.py --profile dynamic --policy llm_guided --output runs/integrated-dryrun
+```
+
+This command does not record video. Recording requires a passing validation report
+for the exact source/model fingerprint and inference runtime. The configured API
+has recovered from HTTP 402 and now serves real `gemini-3.8-flash` responses.
+The LLM recording passed 367 regression tests and a successful non-recording
+acceptance run before recording: 204.03 simulated seconds, 10.86 m,
+zero contacts, two close stationary frames accepted by the independent W3 verifier.
+The recording made four fresh hosted model calls with zero fallbacks. All 3,062
+H.264 frames decode; the 3,061 frames after initialization match poses from physical
+simulation steps. The [LLM verification](runs/integrated-llm-final-20261018/recording/llm-verification.json)
+checks that logged inputs match requests and every returned ID matches the dispatched goal.
+Two local replans and one hosted decision receiving B's failure feedback were
+observed in the recording. The viewer includes actual model reasons and API latency.
+Arrival observations now cover a full rotation to reduce missed corridor views.
+The [earlier Nearest recording](runs/integrated-final-20261017/recording/index.html)
+uses the previous narrower scan configuration and is retained as a historical reference.
+The [connectivity check](scripts/check_llm_connection.py) reports status without printing credentials.
+The standalone recordings below are historical and use a separate demonstration loop.
+
+## Historical standalone iGibson demo
+
+Open [the previous standalone interactive demo](runs/igibson-realistic-final-20261014/index-legacy-before-integration-20261017.html).
+It uses the existing textured **Gibson Rs apartment**, the physical **Locobot**
+URDF and native iGibson rendering. Three configurations cover the original
+apartment, furnished narrow routes, and a moving cart. All four policy conditions
+use measured wheel-driven trajectories, RGB-D mapping and close-range inspection.
+The default dynamic/Nearest recording now plays as continuous 15 fps H.264 video
+with a stable tracking camera. Other historical conditions remain labeled as
+sparse image recordings. New runs record 15 fps by default (`--video-fps 0` disables it).
+The [W3 merge and feedback audit](Documentation/chinese/w3_merge_and_demo.md)
+records the four upstream commits, preserved local changes, and navigation feedback scope.
+
+```powershell
+cd integration # When starting at D:/CS5478_PROJECT.
+$env:PYTHONPATH = "$PWD/src"
+./data/venv-igibson/Scripts/python.exe -m frontier_search.runner.igibson_demo --scenario suite --policy all --backend replay
+```
+
+The PowerShell convenience launcher is also available when script execution is enabled:
+
+```powershell
+./scripts/run_igibson_demo.ps1 -Scenario suite -Policy all -Backend replay
+# One hard scene:
+./scripts/run_igibson_demo.ps1 -Scenario dynamic -Policy nearest
+# Actual model calls, using local .env configuration:
+./scripts/run_igibson_demo.ps1 -Scenario dynamic -Policy llm_guided -Backend live
+```
+
+The offline LLM condition replays authored responses derived from the same
+scenario's Information Gain run. It is labeled in the viewer and logs.
+See [scene resources, difficulty and verification](Documentation/chinese/igibson_demo.md).
+Old standalone PyBullet demos and their launch scripts have been removed;
+previous recordings are archived under `runs/archive-pybullet/`.
+The shared A/B/C production integration has its own acceptance criteria below.
+
+The sections below record the earlier scaffold and integration history.
+
 Python skeleton for comparing Random, Nearest, Information Gain, and LLM-guided
 frontier selection. The [English plan](Documentation/english/robotics_project_detailed_plan.md)
 defines the project; [Interface Freeze 1.0](Documentation/english/interface_freeze.md)
@@ -47,8 +126,7 @@ are recorded in [verification.json](Documentation/w2_runner/verification.json).
 
 The default scaffold runs synthetic **selection decisions**, without simulator or
 network dependencies. The integration branch also contains A's W1 perception
-tools, B's navigation implementation, and C's optional synthetic/PyBullet/iGibson
-demos. The shared A/B/C RGB-D episode loop is still a W2 deliverable; the existing
+tools, B's navigation implementation, and C's synthetic fixtures and native iGibson demo. The shared A/B/C RGB-D episode loop is still a W2 deliverable; the existing
 C demos use their own mapper/navigation implementations. Use Python 3.8 for the
 shared iGibson environment, matching its
 [documented installation setup](https://stanfordvl.github.io/iGibson/installation.html).
@@ -172,61 +250,16 @@ Gemini cases. The full test suite also passes under the Python 3.8 iGibson runti
 (see below). This older synthetic loop remains separate from the new W2 runner;
 use the W2 entry point above to exercise the shared B navigator and lifecycle.
 
-## PyBullet 3D map demo
+## Simulator resources
 
-A separate optional demo now builds a procedural 12 m × 8 m scene with three
-rooms, doorways, furniture and a mug. The robot physically moves in PyBullet;
-partial occupancy comes from ray intersections, candidates from observed/unknown
-boundaries, and paths from the current footprint-inflated known-free map.
-Movement feedback records actual poses, travelled distance and obstacle contacts.
-
-This is an explicitly named **range-sensor / oracle-visible-class ablation**:
-semantic labels and positions are obtained only for objects visible in rendered
-camera segmentation. It is not the planned RGB-D/YOLO pipeline, not an iGibson
-asset, and not a physical robot trial. Full scene geometry is not passed to C.
-The robot is a velocity-actuated holonomic cylinder; scans use a virtual panoramic
-camera. Production recovery and wheel dynamics remain out of scope.
+The project-local iGibson runtime is `data/venv-igibson/Scripts/python.exe`.
+The existing scan is `data/igibson-data/g_dataset/Rs/mesh_z_up.obj`; robot and YCB
+models are under `data/igibson-data/robot_assets/assets/models/`. No licensed
+interactive-scene dataset is required for this demo.
 
 ```powershell
-py -3.10 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements-pybullet.txt
-.\scripts\run_pybullet_demo.ps1 -Policy nearest
-.\scripts\run_pybullet_demo.ps1 -Policy llm_guided
-# Visible interactive scene, with movement paced in real time:
-.\scripts\run_pybullet_demo.ps1 -Policy nearest -Gui
+python scripts/setup_igibson.py # Only when the runtime/assets are absent.
 ```
-
-On this workspace the virtual environment is already installed. Each run writes
-an animated GIF, initial/final PNGs, detailed JSONL and a summary under a new
-`runs/pybullet-*` directory. DIRECT mode renders without opening a desktop window.
-Add `-Blocked` to close the target room door; failure to find the target is then
-the expected negative-test outcome. See [3D demo notes](Documentation/chinese/pybullet_demo.md).
-
-## iGibson Rs demo
-
-The same Nearest / live Gemini loop now also runs in **iGibson 2.2.2**, using the
-public Gibson `Rs` apartment scan and iGibson's differential-drive Locobot. The
-robot moves only through wheel velocity commands. The occupancy map is fused from
-rendered depth, and the YCB target is detected through rendered instance
-segmentation. Furniture classes are hand-annotated scan landmarks, reported only
-when rendered depth confirms they are visible (a landmark oracle, not YOLO).
-
-```powershell
-python scripts/setup_igibson.py          # once: source build + Python 3.8 env + assets
-.\scripts\run_igibson_demo.ps1 -Policy both
-```
-
-Measured on 2026-09-30, from the same start state:
-
-| Policy | Result | Decisions | Distance | Collisions |
-| --- | --- | ---: | ---: | ---: |
-| Nearest | success | 5 | 12.1 m | 0 |
-| Gemini | success | 1 | 4.0 m | 0 |
-
-This is one scene and one start pose, so it is not a statistical comparison.
-Details, two Windows build fixes for upstream iGibson, and limitations are in
-[iGibson demo notes](Documentation/chinese/igibson_demo.md). Animations and
-per-decision records are in `Documentation/igibson_demo/`.
 
 The optional [verified starting-area handoff](Documentation/english/verified_start_area.md)
 describes A's validated initialization/replay support and B's remaining physical

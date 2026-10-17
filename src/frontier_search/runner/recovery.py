@@ -1,6 +1,6 @@
 """Owner C: bounded recovery with episode-long spatial and lineage history."""
 from dataclasses import dataclass, field
-from math import floor
+from math import floor, hypot
 from typing import Protocol, Tuple
 
 
@@ -29,6 +29,7 @@ class _Opportunity:
     timeouts: set = field(default_factory=set)
     # Each restriction survives merges; any still-locked restriction excludes.
     restrictions: list = field(default_factory=list)
+    anchor: object = None
 
 
 class SpatialRecovery:
@@ -38,8 +39,11 @@ class SpatialRecovery:
     point-grid free connectivity plus the candidate neighborhood/approach pose;
     B still reassesses full-footprint reachability after an unlock.
     """
-    def __init__(self, config: RecoveryConfig = RecoveryConfig()) -> None:
+    def __init__(self, config: RecoveryConfig = RecoveryConfig(), locality_radius_m=None) -> None:
         self.config = config
+        if locality_radius_m is not None and locality_radius_m <= 0:
+            raise ValueError('locality radius must be positive')
+        self.locality_radius_m = locality_radius_m
         self.reset('')
 
     def reset(self, episode_id: str) -> None:
@@ -51,9 +55,13 @@ class SpatialRecovery:
         cells = {(c.row, c.column) for c in frontier.support_cells}
         vicinity = {(r+dr, c+dc) for r, c in cells for dr in (-1, 0, 1) for dc in (-1, 0, 1)}
         ids = {frontier.frontier_id, *frontier.parent_frontier_ids}
-        matches = [g for g in self.groups if g.ids & ids or g.support & vicinity]
+        pose = frontier.approach_pose
+        matches = [g for g in self.groups if (g.ids & ids or g.support & vicinity)
+            and (self.locality_radius_m is None or g.anchor is None or
+                 hypot(pose.x_m-g.anchor[0],pose.y_m-g.anchor[1]) <= self.locality_radius_m)]
         group = matches[0] if matches else _Opportunity()
         if not matches:
+            group.anchor = (pose.x_m, pose.y_m)
             self.groups.append(group)
         for other in matches[1:]:
             for key in ('ids', 'support', 'attempts', 'failures', 'no_progress', 'timeouts'):

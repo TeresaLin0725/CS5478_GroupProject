@@ -43,6 +43,17 @@ def build_context(state: WorldState, evaluation: CandidateEvaluation,
                   exclusions: Tuple[FrontierExclusion, ...] = (),
                   previous_attempt: Optional[PlannerAttempt] = None) -> SelectionContext:
     excluded = {e.frontier_id for e in exclusions}
+    reachable = {a.frontier_id for a in evaluation.assessments if a.reachable is True}
+    ordinary = {f.frontier_id for f in state.frontiers if f.kind != 'navigation_probe'}
+    if (reachable-excluded) & ordinary:
+        # Alternate viewpoints are recovery actions, used only when no normal
+        # frontier/target approach can be dispatched. Record explicit exclusions
+        # so the shared reachable-minus-exclusions contract remains exact.
+        deferred = tuple(FrontierExclusion(f.frontier_id,'normal_frontier_available',0,
+                            'no_normal_frontier',None) for f in state.frontiers
+                         if f.kind=='navigation_probe' and f.frontier_id not in excluded)
+        exclusions += deferred
+        excluded.update(e.frontier_id for e in deferred)
     eligible = tuple(sorted(a.frontier_id for a in evaluation.assessments
                             if a.reachable is True and a.frontier_id not in excluded))
     context = SelectionContext(state.episode_id, evaluation, eligible, exclusions, previous_attempt)
@@ -144,8 +155,12 @@ class EpisodeRunner:
                 raise ValueError('W2 geometry mode must not publish target claims')
             raise _Claim()
         if self.active is not None:
+            event_offset = len(getattr(self.navigator, 'events', ()))
             self._call('navigator.update_map', self.navigator.update_map,
                        self.manifest.episode_id, self.active, grid)
+            for kind, detail in getattr(self.navigator, 'events', ())[event_offset:]:
+                self._emit('navigation_map_feedback', kind=kind, detail=detail,
+                           revision=state.revision, simulated_time_s=self.sim_time, goal_id=self.active)
         return state
 
     def _step(self):
@@ -246,6 +261,9 @@ class EpisodeRunner:
         self._capture()  # terminal-time frame, including immediate failure
         self._emit('operation_terminal', feedback=feedback, kind=kind, routine=routine,
                    processed_sequence=self.state.last_processed_sequence)
+        if kind == 'navigate' and feedback.status == NavigationStatus.FAILED:
+            self._emit('replan_request', direction='B_to_C', feedback=feedback,
+                       simulated_time_s=self.sim_time)
         return feedback
 
     def _fresh_pose(self):
@@ -286,6 +304,9 @@ class EpisodeRunner:
             selection = self._call('policy.select', decide, self.policy, self.state, context,
                                    oracle_room_labels=self.manifest.oracle_room_labels)
             self._emit('decision', state=self.state, context=context, selection=selection)
+            if self.previous is not None and self.previous.execution_status == 'failed' and selection.subgoal:
+                self._emit('strategy_replan', direction='C_to_B', previous_attempt=self.previous,
+                           selected=selection.subgoal, simulated_time_s=self.sim_time)
             records = getattr(self.policy, 'call_records', ())
             for record in records[self.llm_records:]:
                 self._emit('llm_call', record=record)
@@ -381,6 +402,11 @@ class EpisodeRunner:
             require(self.sim_time == 0.0, 'episode clock must start at zero')
             self._call('stop', self.simulator.stop)
             clearance = self._call('verify_spawn_clearance', self.simulator.verify_spawn_clearance)
+            if manifest.initial_clearance_mode == 'verified_start_area':
+                verified = self._call('verify_start_area', self.simulator.verify_start_area,
+                                      manifest, 'integrated-scene-column-check-v1')
+                clearance = verified.cells
+                self._emit('verified_start_area', verification=verified)
             require(bool(clearance), 'spawn clearance is empty')
             self._call('mapper.reset', self.mapper.reset, MapperInit(manifest.episode_id, manifest.target_class,
                 manifest.perception_seed, manifest.mapping, manifest.observation, manifest.robot,
@@ -404,7 +430,7 @@ class EpisodeRunner:
                 reason = self._score()
             except Exception as exc:
                 reason = TerminationReason.EVALUATION_ERROR
-                self._emit('pipeline_error', phase='evaluation', error_type=type(exc).__name__)
+                self._emit('pipeline_error', phase='evaluation', error_type=type(exc).__name__, error_message=str(exc))
         except _End as stop:
             reason = stop.reason
         except KeyboardInterrupt:
@@ -412,7 +438,7 @@ class EpisodeRunner:
         except Exception as exc:
             reason = (TerminationReason.INITIALIZATION_FAILED if phase == 'initialization'
                       else TerminationReason.PIPELINE_ERROR)
-            self._emit('pipeline_error', phase=phase, error_type=type(exc).__name__)
+            self._emit('pipeline_error', phase=phase, error_type=type(exc).__name__, error_message=str(exc))
         finally:
             for name, function, args in (
                 ('stop', self.simulator.stop, ()),

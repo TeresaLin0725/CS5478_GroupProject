@@ -70,6 +70,13 @@ def validate_state(state: WorldState, *, oracle_room_labels: bool = False) -> No
         require(0 <= obj.confirmation_count <= len(set(obj.observation_ids)), "invalid confirmation count")
     _unique(tuple(f.frontier_id for f in state.frontiers), 'frontiers')
     for frontier in state.frontiers:
+        require(frontier.kind in ('frontier', 'target_approach', 'navigation_probe'), "unknown candidate kind")
+        require((frontier.kind == 'target_approach' and frontier.target_track_id in track_ids)
+                or (frontier.kind in ('frontier','navigation_probe') and frontier.target_track_id is None),
+                "candidate target track mismatch")
+        if frontier.kind == 'target_approach':
+            track = next(o for o in state.semantic_objects if o.track_id == frontier.target_track_id)
+            require(track.class_name == state.target_class, "approach references a different target class")
         require(frontier.region_id is None or frontier.region_id in region_ids, "unknown region")
         require(frontier.frontier_id not in frontier.parent_frontier_ids, "self-parent frontier")
         require(frontier.information_gain_m2 >= 0 and frontier.distance_from_robot_m >= 0,
@@ -126,4 +133,6 @@ def validate_selection(state: WorldState, context: SelectionContext, result: Sel
         require(goal.frontier_id in context.eligible_frontier_ids, "ineligible subgoal")
         frontier = next(f for f in state.frontiers if f.frontier_id == goal.frontier_id)
         require(goal.approach_pose == frontier.approach_pose, "invented approach pose")
+        require(goal.kind == frontier.kind and goal.target_track_id == frontier.target_track_id,
+                "selection candidate kind/track mismatch")
         require(goal.selected_from_revision == state.revision, "stale selection")

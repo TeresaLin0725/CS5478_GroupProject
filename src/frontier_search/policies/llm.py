@@ -12,7 +12,7 @@ from typing import Callable, List, Optional, Protocol, Tuple
 
 from ..config import PolicyConfig
 from ..contracts import PolicyName, SelectionContext, WorldState
-from .baselines import BaselinePolicy, nearest_id
+from .baselines import BaselinePolicy, nearest_id, nearest_target_approach
 
 
 class LLMClient(Protocol):
@@ -35,6 +35,9 @@ class LLMGuidedPolicy(BaselinePolicy):
         self.call_records.clear()
 
     def _choose(self, state: WorldState, context: SelectionContext) -> Tuple[str, str]:
+        target = nearest_target_approach(state, context)
+        if target is not None:
+            return target, 'approach observed target; visibility alone is not completion'
         costs = {a.frontier_id: a.path_cost_m for a in context.evaluation.assessments}
         payload = {
             'prompt': self.config.llm_prompt,

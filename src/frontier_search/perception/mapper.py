@@ -6,24 +6,27 @@ be independently owned and immutable.
 
 from dataclasses import dataclass, field, replace
 from random import Random
+from math import atan2, hypot, pi
 from typing import Dict, List, Optional, Tuple
 
 from ..config import MappingConfig, ObservationConfig
 from ..contracts import (
     DetectionEvidence, EvidenceBundle, Frontier, GridCell, MapperInit, ObjectTrack,
     RGBDObservation, RobotConfig, TargetClaim, WorldState, OccupancyGrid,
-    ExploredGrid, RegionSummary,
+    ExploredGrid, RegionSummary, Pose,
 )
 from ..immutable import require_immutable
 from ..sensors import CameraIntrinsics
 from ..validation import ContractError, is_finite_number, require, validate_state
 from .fusion import fuse_observation
-from .detection import RGBDetector
+from .detection import RGBDetector, localize_detection, validate_detection
 from .claims import confirm_target
 from .tracking import associate_rooms, update_tracks
-from .frontiers import FrontierMemory, assign_identities, build_candidates
+from .frontiers import FrontierMemory, assign_identities, build_candidates, _clearance
 from .observations import validate_rgbd_observation
 from .priors import rasterize_region, validate_region_priors
+from .gain import camera_yaw_offset
+from ..navigation.geometry import cells_overlapping_footprint
 
 
 @dataclass
@@ -58,6 +61,8 @@ class _EpisodeState:
     last_processed_sequence: Optional[int] = None
     last_timestamp_s: Optional[float] = None
     latest_state: Optional[WorldState] = None
+    inspection_ids: frozenset = frozenset()
+    clear_counts: List[List[int]] = field(default_factory=list)
 
 
 
@@ -141,6 +146,7 @@ class RGBDMapper:
         new_state = _EpisodeState(request, occupancy, coverage, Random(request.seed))
         new_state.free_masks = [[0] * cfg.width_cells for _ in range(cfg.height_cells)]
         new_state.floor_seen = [[False] * cfg.width_cells for _ in range(cfg.height_cells)]
+        new_state.clear_counts = [[0] * cfg.width_cells for _ in range(cfg.height_cells)]
         self._state = new_state
 
     def update(self, observation: RGBDObservation) -> WorldState:
@@ -185,8 +191,26 @@ class RGBDMapper:
             occupancy=[row[:] for row in previous.occupancy],
             coverage=[row[:] for row in previous.coverage],
             free_masks=[row[:] for row in previous.free_masks],
-            floor_seen=[row[:] for row in previous.floor_seen])
+            floor_seen=[row[:] for row in previous.floor_seen],
+            clear_counts=[row[:] for row in previous.clear_counts])
         detections = () if self._detector is None else tuple(self._detector.detect(observation.color_image))
+        if cfg.target_max_extent_m is not None:
+            filtered=[]
+            for detection in detections:
+                validate_detection(detection,observation.color_image)
+                if detection.class_name == request.target_class:
+                    position=localize_detection(detection,observation,cfg)
+                    if position is not None:
+                        matrix=observation.camera_to_world.matrix
+                        depth=sum(matrix[i][2]*(getattr(position,axis)-matrix[i][3])
+                                  for i,axis in enumerate(('x_m','y_m','z_m')))
+                        x0,y0,x1,y1=detection.bbox_xyxy_px
+                        extent=max((x1-x0)*depth/observation.camera_intrinsics.fx,
+                                   (y1-y0)*depth/observation.camera_intrinsics.fy)
+                        if extent>cfg.target_max_extent_m:
+                            continue
+                filtered.append(detection)
+            detections=tuple(filtered)
         tracks, evidence, track_counter, observation_counter = update_tracks(
             previous.tracks, previous.evidence, detections, observation, cfg,
             previous.entity_counters['track'], previous.entity_counters['observation'])
@@ -194,15 +218,39 @@ class RGBDMapper:
         claim = previous.target_claim
         claim_evidence = previous.claim_evidence
         claim_counter = previous.entity_counters['claim']
+        eligible = None
+        if cfg.inspection_distance_m is not None:
+            eligible = set(previous.inspection_ids)
+            dt = observation.timestamp_s - (previous.last_timestamp_s or 0.)
+            old_pose = previous.latest_state.robot_pose if previous.latest_state else None
+            pose = observation.robot_pose
+            stopped = (old_pose is not None and dt > 0 and
+                hypot(pose.x_m-old_pose.x_m, pose.y_m-old_pose.y_m)/dt <= cfg.inspection_linear_speed_mps and
+                abs((pose.yaw_rad-old_pose.yaw_rad+pi) % (2*pi)-pi)/dt <= cfg.inspection_angular_speed_radps)
+            if stopped:
+                eligible.update(key for key, item in evidence.items()
+                    if item.capture_sequence == observation.sequence and item.class_name == request.target_class
+                    and item.position_world is not None and hypot(item.position_world.x_m-pose.x_m,
+                        item.position_world.y_m-pose.y_m) <= cfg.inspection_distance_m)
+            # Keep only the current confirmation window, bounding long episodes.
+            eligible = {key for key in eligible if observation.timestamp_s-evidence[key].timestamp_s
+                        <= cfg.confirmation_window_s + 1e-9}
+            working.inspection_ids = frozenset(eligible)
         if claim is None:
             claim = confirm_target(tracks, evidence, request.target_class,
-                observation.sequence, observation.timestamp_s, cfg, claim_counter)
+                observation.sequence, observation.timestamp_s, cfg, claim_counter, eligible)
             if claim is not None:
                 claim_counter += 1
                 claim_evidence = EvidenceBundle(request.episode_id, claim.claim_id,
                     tuple(evidence[key] for key in claim.evidence_observation_ids))
-        fuse_observation(observation, cfg, collision_z, working.occupancy,
-                         working.coverage, working.free_masks, working.floor_seen)
+        fusion_args = (observation, cfg, collision_z, working.occupancy,
+                       working.coverage, working.free_masks, working.floor_seen)
+        if cfg.dynamic_clear_frames:
+            fuse_observation(*fusion_args, clear_counts=working.clear_counts,
+                increment_clear_count=(previous.last_timestamp_s is None or
+                                       observation.timestamp_s > previous.last_timestamp_s))
+        else:
+            fuse_observation(*fusion_args)
         revision = previous.revision + 1
         geometry = dict(frame_id="world", revision=revision, resolution_m=cfg.resolution_m,
                         origin_x_m=cfg.origin_x_m, origin_y_m=cfg.origin_y_m,
@@ -216,11 +264,16 @@ class RGBDMapper:
             "simulator_annotation" if region.room_type is not None else None)
             for region, cells in zip(request.region_priors, region_cells))
         candidates = build_candidates(occupancy, observation, robot, cfg, request.observation_config,
-            {region.region_id: cells for region, cells in zip(request.region_priors, region_cells)})
+            {region.region_id: cells for region, cells in zip(request.region_priors, region_cells)},
+            cluster_span_m=cfg.frontier_cluster_span_m)
         frontiers, memory, history, counter = assign_identities(
             candidates, previous.frontier_memory, previous.frontier_history,
             previous.entity_counters['frontier'], observation.timestamp_s, cfg)
-        state = WorldState("1.0", request.episode_id, revision, observation.timestamp_s,
+        if cfg.inspection_distance_m is not None and claim is None:
+            frontiers += _target_approaches(occupancy, observation, tracks, request.target_class, cfg,robot)
+            if cfg.dynamic_clear_frames:
+                frontiers += _navigation_probes(occupancy,observation,robot)
+        state = WorldState("1.1" if cfg.inspection_distance_m is not None else "1.0", request.episode_id, revision, observation.timestamp_s,
                            observation.sequence, request.target_class, observation.robot_pose,
                            occupancy, explored, tuple(tracks.values()), regions, frontiers, claim)
         validate_state(state, oracle_room_labels=request.oracle_room_labels)
@@ -255,3 +308,68 @@ class RGBDMapper:
                 "no target claim available")
         require(claim_id == state.target_claim.claim_id, "unknown claim ID")
         return state.claim_evidence
+
+
+def _target_approaches(grid, observation, tracks, target_class, cfg,robot):
+    """Observed target positions propose known-free goals; B checks each full footprint/path."""
+    result = []
+    clearance=None
+    radius=max(hypot(v.x_m,v.y_m) for v in robot.footprint_base)+robot.clearance_margin_m
+    for track in sorted(tracks.values(), key=lambda item: item.track_id):
+        if track.class_name != target_class or track.position_world is None:
+            continue
+        if (track.confirmation_count < cfg.confirmation_frames and
+                observation.timestamp_s-track.last_seen_s > cfg.tentative_target_memory_s):
+            continue
+        if clearance is None:clearance=_clearance(grid)
+        p = track.position_world
+        sectors = {}
+        for r, row in enumerate(grid.data):
+            for c, value in enumerate(row):
+                if value != 0:
+                    continue
+                x = grid.origin_x_m + (c+.5)*grid.resolution_m
+                y = grid.origin_y_m + (r+.5)*grid.resolution_m
+                distance = hypot(x-p.x_m, y-p.y_m)
+                if not .4 <= distance <= cfg.inspection_distance_m-.03:
+                    continue
+                sector = int((atan2(y-p.y_m, x-p.x_m)+pi)/(pi/4)) % 8
+                enough=(clearance[r][c]-.5)*grid.resolution_m>radius
+                score = (not enough,abs(distance-(cfg.inspection_distance_m-.10)),
+                         hypot(x-observation.robot_pose.x_m, y-observation.robot_pose.y_m), r, c)
+                if sector not in sectors or score < sectors[sector][0]:
+                    sectors[sector] = score, x, y, r, c
+        for sector, (_, x, y, r, c) in sorted(sectors.items()):
+            yaw = (atan2(p.y_m-y, p.x_m-x)-camera_yaw_offset(observation)+pi)%(2*pi)-pi
+            result.append(Frontier('approach-%s-%d' % (track.track_id, sector), (),
+                (GridCell(r,c),), Pose(x,y,observation.robot_pose.z_m,yaw), None, 0.,
+                hypot(x-observation.robot_pose.x_m,y-observation.robot_pose.y_m), 'target_approach',track.track_id))
+    return tuple(result)
+
+
+def _navigation_probes(grid,observation,robot):
+    """Known-free alternate viewpoints for stale/occluded routes, assessed by B.
+
+    A fixed RGB-D camera cannot see floor immediately beside the base. Backing
+    away through previously sensed free space can reveal a departed obstacle's
+    entire collision column. No physical scene query or map override is used.
+    """
+    p=observation.robot_pose;sectors={}
+    for r,row in enumerate(grid.data):
+        for c,value in enumerate(row):
+            if value!=0:continue
+            x=grid.origin_x_m+(c+.5)*grid.resolution_m
+            y=grid.origin_y_m+(r+.5)*grid.resolution_m
+            distance=hypot(x-p.x_m,y-p.y_m)
+            if not .75<=distance<=1.05:continue
+            yaw=atan2(p.y_m-y,p.x_m-x)
+            pose=Pose(x,y,p.z_m,yaw)
+            cells=tuple(cells_overlapping_footprint(grid,robot.footprint_base,pose,robot.clearance_margin_m))
+            if not cells or any(not(0<=rr<grid.height_cells and 0<=cc<grid.width_cells)
+                                or grid.data[rr][cc]!=0 for rr,cc in cells):continue
+            sector=int((atan2(y-p.y_m,x-p.x_m)+pi)/(pi/4))%8
+            score=(abs(distance-.85),r,c)
+            if sector not in sectors or score<sectors[sector][0]:sectors[sector]=(score,pose,r,c)
+    return tuple(Frontier('probe-%03d-%03d'%(r,c),(),(GridCell(r,c),),pose,None,0.,
+        hypot(pose.x_m-p.x_m,pose.y_m-p.y_m),'navigation_probe',None)
+        for _,pose,r,c in (value for _,value in sorted(sectors.items())))

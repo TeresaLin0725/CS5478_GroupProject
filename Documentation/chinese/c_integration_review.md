@@ -1,3 +1,9 @@
+# 历史归档：旧 demo 已废弃
+
+当前展示与验收请见 [真实地图与实体机器人演示](igibson_demo.md)。以下保留旧审查记录。
+
+---
+
 # C 模块集成审查与单地图验证
 
 基线：`feat/frontier-search-scaffold`，提交 `811580f1fe4d54eab7d42c5b788155376c495a8f`。

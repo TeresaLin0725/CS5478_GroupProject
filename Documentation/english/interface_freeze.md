@@ -1,5 +1,10 @@
 # Interface Freeze
 
+The current close-object 3D demo opts into the
+[1.1 close-object extension](close_object_search.md): typed observed-target
+approach goals, full-body motion and independently verified arrival at the cup.
+The initial 1.0 definition below remains the contract for legacy fixtures.
+
 This document defines the initial behavioral contract, version **1.0**, for [the implementation plan](robotics_project_detailed_plan.md). Python-like signatures describe data and ownership, not a required serialization library. Numerical configuration is recorded in the experiment manifest before integration.
 
 ## 1. Module Boundaries and Ownership

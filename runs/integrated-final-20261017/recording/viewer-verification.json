@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "mode": "offline DOM execution + video frame inspection separately",
+  "event_buttons": 19,
+  "timeline_seek": true,
+  "native_video_controls": true
+}

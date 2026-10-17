@@ -1,5 +1,84 @@
 # W2 集成现状与执行计划
 
+## 当前展示入口：真实 iGibson 公寓
+
+使用 [真实地图与实体 Locobot 演示](../../runs/igibson-realistic-final-20261014/index.html) 和
+[地图、难度与复现说明](igibson_demo.md)。旧独立 PyBullet 演示已移除。
+当前演示复用 Rs 扫描、原生 Locobot 轮速控制和 iGibson RGB-D 渲染，
+含拥挤布局与动态推车。它采用演示专用建图/规划循环；共享 W2 生产管线的验收状态仍以下方审计为准。
+
+## 历史快照：2026-10-13 分支合并审计
+
+本次先核对远端，再将本地 `integration/w2` 从 `a0c5250` 快进至
+**`1868da0712b2360c102dc7789165d70c52f26ea9`**。此前会议材料检查的是旧快照。
+新增 19 个提交包含 A 的 W2 建图/回放、原生 Locobot 采集，以及 B 的适配器、
+起始区域验证、执行边界和规划半径修正。
+
+**现在已具备生产 A 的离线 A→B 评估→C baseline 联调、B/C mock 执行，
+以及四种策略的离线 demo；统一生产实时 iGibson 闭环仍未验收。**
+
+| 模块 | 当前已实现/已验证 | 尚需交付或验证 |
+| --- | --- | --- |
+| A | `RGBDMapper.update()` 已实现占据/空闲证据融合、覆盖率、区域覆盖、前沿/接近位姿、ID/谱系及到达扫描增益；多帧录制打包、重复回放、地图/HTML 报告；原生固定 `Locobot/eyes` 相机采集 | 真实录制的可达性/移动验收；对象检测接入、跟踪、目标声明、`get_claim_evidence()` 和生产独立验证器仍是 W3 工作 |
+| B | 规划/完整足迹检查/候选评估/执行/扫描/取消；`IGibsonAdapter` 已写出；Locobot 开发参数、起始区域验证、转向守卫与可选较小规划半径；新增 B/C 决策执行回归 | 适配器目前只经 fake backend 验证；实际 `IGibsonBackend`、出生净空、标定/方向、真实窄门与退出需 iGibson 机器验收 |
+| C | 四策略、统一 EpisodeRunner、帧屏障、版本校验、SpatialRecovery、manifest、预算监督和日志；真实 A 输出经 B 评估后可供三种 baseline 离线选择 | 单独的生产实时工厂、共同真实 episode manifest、原生相机下连续选择/移动/扫描验收；生产 LLM client 接入和 W3 目标评分 |
+
+### 历史 Demo（以下旧平面结果已废弃）
+
+本次导出的 [四策略动画与报告入口](../../runs/w2-review-20261013/index.html)：
+
+| 方法 | 今日三房间离线 demo | 统一 W2 mock runner | 当前标准生产实时 iGibson demo |
+| --- | --- | --- | --- |
+| Random | F2 → F3；2 次决策；[动画](../../runs/w2-review-20261013/random.gif) | 可运行 | 尚无 |
+| Nearest | F1 → F2 → F3；3 次决策；[动画](../../runs/w2-review-20261013/nearest.gif) | 可运行 | 尚无；有旧独立演示 |
+| Information Gain | F1 → F2 → F3；3 次决策；[动画](../../runs/w2-review-20261013/information_gain.gif) | 可运行 | 尚无 |
+| LLM-guided | 手工响应回放 F3；1 次决策；[动画](../../runs/w2-review-20261013/llm_guided.gif) | 可运行，但默认无 client，执行 Nearest fallback | 尚无；有旧独立 live 演示 |
+
+三房间动画使用当前 C 的实际策略实现，但 A 按脚本揭示房间，B 是点机器人网格规划。
+四次 fixture 均为 `success`、9 m；不代表实时系统成功或算法性能结论。
+此图信息增益相同，因此 IG 与 Nearest 路线一致。另一个 selection fixture 中，
+Nearest 选 F1，IG 选 F2，可验证策略定义确实不同。
+
+此前独立 iGibson 动画仍可查看：[Nearest](../igibson_demo/nearest.gif)、
+[LLM-guided](../igibson_demo/llm_guided.gif)。它们采用旧 mapper/导航替身、
+相机方向覆盖与分割/人工语义，不能替代原生固定相机的统一生产验收。
+当前仿真 CLI 只列 `nearest/llm_guided/both`，尚未提供四策略同场景实时入口。
+
+### 今日实际复核
+
+- Python 3.8.20，全套 **287 项测试通过，0 失败、0 跳过**，耗时 120.970 s。
+  [完整测试日志](../../runs/w2-review-20261013/tests.log)。
+- 生产 A mapper → B TeamNavigator 评估 → C 三种 baseline 的合成 RGB-D 回放通过：
+  7 帧，known cells 186 → 322，explored cells 246 → 334，69 条可达评估、11 条拒绝、
+  0 条不确定；重复运行哈希一致。[可视报告](../../runs/w2-review-20261013/rgbd-replay/report.html)。
+  0.4 m 是录制输入的位移，不是策略执行距离。
+- 四种策略的统一 mock progress 均完成 2 次导航派发、约 1.8049 m、零碰撞，
+  终止为 `no_frontiers`。该 fixture 每阶段仅一个候选，不能用于比较策略优劣。
+  LLM 无 client 的回退在日志中明确记录。
+- B 的 wall_detour demo：REACHED，计划 3.18 m，执行 2.99 m，零碰撞。
+- 本次未调用付费 LLM 或重新跑 YOLO 权重推理。
+
+### 当前阻碍与下一步
+
+1. **原生固定相机的近场地图证据。** 最近提交的真实全扫描报告（10 月 11 日）
+   有 9 帧、known cells 184 → 1618，但可达评估为 0，最终机器人足迹覆盖 5 个未知格。
+   [原始摘要](../w2_perception/locobot_full_scan_verification.json)。B 后续新增了起始区域验证
+   与较小规划半径选项，但尚无提交的真实复验结果证明该问题已解决。
+2. **真实环境与共同配置。** 已选择未修改的 Locobot 原生 `eyes` 相机；
+   `configs/perception.locobot.json` 是采集配置，仍需共同实测 episode manifest、资产版本、
+   起点、足迹、地图及控制参数。本机有静态 `Rs`，没有交互 `Rs_int` 资源或组员的真实录制包；
+   新适配器当前构造 InteractiveIndoorScene，不能直接改成 `Rs` 代替验收。
+3. **生产运行接线与 W3。** C 应提供真实工厂，将 A 的生产 mapper、B adapter/TeamNavigator
+   接入现有 runner，注入实际 LLM client；先用 Nearest 验收至少两次移动/到达扫描与有限失败，
+   再统一四策略入口。A 的跟踪、证据与独立验证器完成后，才验收完整物体搜索。
+
+本次 demo 原始记录、图片和导出脚本位于 `runs/w2-review-20261013/`，属本机忽略目录。
+Git 同步不会自动分发这些产物；可直接打开本地入口或分享 demo 压缩包。
+
+---
+
+## 2026-10-07 历史记录（以下为旧快照，不代表当前状态）
+
 核对日期：2026-10-07。分支：`integration/w2`。
 
 ## 本次集成

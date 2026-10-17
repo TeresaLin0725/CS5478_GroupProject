@@ -36,8 +36,33 @@ class MappingConfig:
     gain_range_m: float = 3.0
     gain_ray_step_rad: float = 0.05
     object_match_distance_m: float = 0.35
+    depth_pixel_stride: int = 1
+    frontier_cluster_span_m: float = 0.0
+    dynamic_clear_frames: int = 0
+    inspection_distance_m: Optional[float] = None
+    inspection_linear_speed_mps: float = 0.03
+    inspection_angular_speed_radps: float = 0.08
+    target_max_extent_m: Optional[float] = None
+    tentative_target_memory_s: float = 10.0
 
     def __post_init__(self) -> None:
+        if type(self.depth_pixel_stride) is not int or self.depth_pixel_stride < 1:
+            raise ValueError('depth stride must be a positive integer')
+        if not isfinite(self.tentative_target_memory_s) or self.tentative_target_memory_s <= 0:
+            raise ValueError('tentative target memory must be positive')
+        if type(self.dynamic_clear_frames) is not int or self.dynamic_clear_frames < 0:
+            raise ValueError('dynamic clear frames must be a nonnegative integer')
+        if not isfinite(self.frontier_cluster_span_m) or self.frontier_cluster_span_m < 0:
+            raise ValueError('frontier span must be nonnegative')
+        for value in (self.inspection_linear_speed_mps, self.inspection_angular_speed_radps):
+            if not isfinite(value) or value <= 0:
+                raise ValueError('inspection speeds must be positive')
+        if self.inspection_distance_m is not None and (
+                not isfinite(self.inspection_distance_m) or self.inspection_distance_m <= 0):
+            raise ValueError('inspection distance must be positive')
+        if self.target_max_extent_m is not None and (
+                not isfinite(self.target_max_extent_m) or self.target_max_extent_m <= 0):
+            raise ValueError('target extent must be positive')
         if (type(self.object_match_distance_m) not in (int, float)
                 or not isfinite(self.object_match_distance_m) or self.object_match_distance_m <= 0):
             raise ValueError("object match distance must be finite and positive")

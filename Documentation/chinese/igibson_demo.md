@@ -1,94 +1,69 @@
-# iGibson Rs 场景：nearest 与 Gemini 目标搜索
+# 真实地图与实体机器人演示（2026-10-14）
 
-在 iGibson 2.2.2 中重新完成 PyBullet 演示的闭环：官方 Gibson `Rs` 公寓扫描场景，iGibson 自带的 Locobot 差速机器人，iGibson 渲染器输出的 RGB、深度和实例分割。C 的策略、`WorldState`/`SelectionContext` 契约和 Gemini 客户端与 PyBullet 版本完全相同，只替换了仿真、建图和导航替身。原 synthetic case 与 PyBullet demo 保持不变。
+当前主入口为[完整 A/B/C/W3 真实 LLM 管线录像](../../runs/integrated-llm-final-20261018/recording/index.html)，详见[完整管线与验收记录](integrated_pipeline.md)。下文记录历史独立演示。
 
-## 结果（2026-09-30）
+历史入口：[交互回放](../../runs/igibson-realistic-final-20261014/index-legacy-before-integration-20261017.html)。页面可以切换难度和策略、暂停、拖动时间、跳转决策事件。画面直接来自 iGibson 渲染器，第三人称中显示实体 Locobot，旁边同步显示机器人 RGB 视角、RGB-D 地图和扫描平面图。
 
-两次运行从相同初始状态出发。机器人位于客厅 (0.8, −2.4)，目标是 YCB `003_cracker_box`，放在厨房灶台旁的台面上，初始位置看不到。
+2026-10-17：W3 已合并，默认动态场景 Nearest 已重录为 15 fps 连续视频，包含扫描和停车过程，相机改为保持当前侧并平滑换位；其他历史条件明确标为稀疏回放。详见 [W3 合并、流畅度与双向反馈检查](w3_merge_and_demo.md)。
 
-| 条件 | 终止 | 决策数 | 实际移动 | 仿真时间 | 障碍接触步数 | 定位误差 | LLM 调用 / fallback |
-|---|---|---:|---:|---:|---:|---:|---:|
-| nearest | success | 5 | 12.131 m | 87.6 s | 0 | 0.030 m | – |
-| Gemini 3.8 Flash | success | 1 | 4.041 m | 30.2 s | 0 | 0.032 m | 1 / 0 |
+## 项目已有资源
 
-初始扫描后的候选：
+本次没有重新造房屋。复用已下载的 Gibson `Rs` 公寓扫描：`integration/data/igibson-data/g_dataset/Rs/mesh_z_up.obj`、扫描贴图和平面图。机器人使用 `robot_assets/assets/models/locobot/locobot.urdf`，目标使用公开 YCB `003_cracker_box`。运行环境为 `integration/data/venv-igibson`。资源来自 [Stanford iGibson](https://stanfordvl.github.io/iGibson/scenes.html)。
 
-| frontier | 区域 | B 评估路径代价 |
-|---|---|---:|
-| F1 | R1（客厅） | 不可达 |
-| F2 | R1（客厅西侧，通向卧室） | 3.580 m |
-| F3 | R1 | 3.931 m |
-| F4 | R4（厨房方向，已探索 7.1%） | 4.107 m |
+三个难度是同一真实扫描公寓的配置，不是三套独立房屋：
 
-- **nearest**：依次选 F2 → 卧室 F7 → F6 → 卫生间 F10 → 厨房 F9。进入厨房途中两帧实例分割看到目标，当前导航被取消。
-- **Gemini**：第一次决策直接选 F4，理由原文：“A cracker box is typically found in a kitchen or pantry. Region R1 is already over 82% explored and contains living room and dining furniture, whereas frontier F4 leads into unexplored region R4, which may contain a kitchen.” 到达厨房门口后，全景扫描确认目标。单次调用延迟约 6.9 s。
+| 配置 | 难度来源 |
+|---|---|
+| apartment | 客厅、卧室、卫生间、厨房；门洞、扫描家具和台面目标遮挡；初始看不到目标 |
+| clutter | 新增软凳、客厅椅子和卧室椅子；路线需避开家具及安全膨胀范围 |
+| dynamic | 软凳和卧室椅子，另有带轮推车；推车按时间连续横穿通道，再退回；地图只能通过观测更新 |
 
-本次会话 4 次 live 运行中，Gemini 都选了 F4。这只是单一场景、单一起点的结果，不是统计结论；两种策略的差距主要来自该场景的布局和目标位置。
-
-动画：[nearest](../igibson_demo/nearest.gif)、[Gemini](../igibson_demo/llm_guided.gif)。[results.json](../igibson_demo/results.json) 记录每次决策的候选、代价、理由、导航反馈和评分。
-
-![Gemini 最终画面](../igibson_demo/llm_guided-final.png)
-
-画面左侧是 Rs 数据集自带的平面图，仅供观看，红框为隐藏目标（只有评分器使用）；中间是 Locobot 相机画面，检测到目标时标出实例分割框；右侧是融合出的地图、frontier 和实际轨迹。
+新增家具通过 URDF 导入 iGibson，包含椅腿、坐垫、靠背、推车轮子和层板的独立碰撞形状。尺寸、位置和推车运动在 `simulation/indoor_challenges.py` 中固定，便于复现。Locobot 从起点初始化后只接受轮速命令，搜索过程不传送机器人。
 
 ## 运行
 
-```powershell
-# 一次性：构建 iGibson、创建 Python 3.8 环境、下载 Rs 与 assets（约 600 MB）
-python scripts/setup_igibson.py
-
-.\scripts\run_igibson_demo.ps1 -Policy nearest
-.\scripts\run_igibson_demo.ps1 -Policy llm_guided
-.\scripts\run_igibson_demo.ps1 -Policy both
-```
-
-每次在 `runs/igibson-时间戳/` 写出 GIF、首末帧 PNG、完整 JSONL 和 summary。每个 episode 墙钟时间约 10 s，headless 渲染，不开窗口。`both` 会为每个策略各起一个进程，因为 iGibson 渲染器每个进程只持有一个 GL 上下文。导出文档包：`data/venv-igibson/Scripts/python.exe scripts/export_igibson_results.py runs/<目录>`。
-
-Gemini 配置与 PyBullet demo 相同：先读仓库 `.env`，不存在时读上一级 `.env`。密钥不进入日志。
-
-## 管线
-
-1. **场景与机器人**：iGibson `Simulator`（headless，物理步长 1/120 s，控制步长 1/30 s）加载 `StaticIndoorScene('Rs', build_graph=False)`。场景自带的可通行图不加载，规划只用传感器建出的地图。Locobot 使用 `DifferentialDriveController`，只通过轮速指令移动，不 teleport。
-2. **RGB-D 建图**：相机位于 Locobot `eyes` link，320×240，垂直 FOV 60°。行驶时云台俯仰 −25°；每个扫描朝向依次拍 −25° 和 0° 两帧，0° 用于看台面。iGibson 渲染的相机系点云变换到世界系后：高度 0.08 m 至机器人顶部 +0.05 m 的点记为障碍命中（≥3 次判定占据）；只有落在地面上的射线才沿途清除为空闲。栅格 0.1 m。起点半径 0.6 m 视为已知空闲（契约中的 `initial_clearance_cells`），机器人车身实际压过的格子也记为空闲。
-3. **frontier 与 B 替身**：已知空闲且四邻接未知的格子按区域聚类，信息增益为簇周围 1 m 内的未知面积。路径用 8 邻接 Dijkstra，只走距障碍大于 0.23 m（半径 0.18 m + 0.05 m）且不贴未知区的格子；找不到可达接近点的 frontier 记为 `NO_PATH`。
-4. **执行与反馈**：纯追踪控制，前视距离 0.35 m。行驶中每 0.5 s 拍一帧，更新地图、检查剩余路径，必要时重规划（最多 5 次）。以下情况判为 `blocked`：接触持续超过 20 步，或指令前进 3 s 位移小于 5 cm。到达后先转到接近朝向，再做 6 向全景扫描。已到达但未消失的 frontier 以 `no_progress` 排除。
-5. **检测与评分**：目标由 iGibson 实例分割得到（≥40 像素），世界坐标取这些像素的深度点均值。首次看到后，再从下一个仿真时刻补拍一帧，两次独立采集后才提出 claim。评分器独立读取真实位置：只有 claim 证据均来自分割记录，且估计位置误差小于 0.5 m，才判 success。结果不回传策略。
-
-## 简化与边界
-
-- Gibson 静态扫描**没有物体和房间语义**。家具类别（sofa、bed、stove 等 11 类）是按 Rs 平面图手工标注的 3D 框，已逐一对照渲染视图核对。只有当渲染深度确认该框在 4 m 内可见时，才报告类别和标注中心。这是“标注地标 + 可见性 oracle”，不是 YOLO，位置也不是从像素估计的。
-- 目标是真实 YCB 模型，以静态刚体插入：扫描出的台面不平，动态放置会滑进水槽。只有目标的类别来自真实渲染分割。
-- 区域 R1–R4 是按平面图手画的房间框，作为允许的区域先验，沿用契约字段 `igibson_room_prior`；房间类型不提供给策略。
-- 未使用 iGibson 交互场景 `Rs_int`：它需要申请 iGibson 数据集许可。当前只用公开可下载的 `Rs` 与 assets。
-- Locobot 两处实测修正：
-  - 该模型正角速度指令实际顺时针转，控制层取反，保持逆时针为正。
-  - 球形脚轮会卡在扫描网格毫米级的门槛上，因此只让脚轮与 iGibson 平地面碰撞；轮子和车身仍与扫描网格完整碰撞。
-- 无物理恢复策略；无候选时只代表当前地图没有可选 frontier，不能证明目标不存在。
-
-## Windows 构建说明
-
-`scripts/setup_igibson.py` 从官方源码构建 iGibson 2.2.2（commit `7d95982`）。本机为 VS 2026 / MSVC 14.51、CMake 4.4、RTX 4060。需要修两个上游问题：
-
-1. 内置 Crypto++ 调用了新版 MSVC STL 已删除的 `stdext::make_(un)checked_array_iterator`，改走可移植分支。
-2. `MeshRendererContext::loadTexture` 按 RGB 三通道解码，却按文件原始通道数（RGBA 为 4）缩放，会越界读内存；加载带 RGBA 贴图的机器人时直接崩溃。
-
-另外，公开 assets 不含 PBR 环境贴图，PBR 物体会渲染成黑色，所以插入的 YCB 物体用非 PBR 着色。脚本还会处理：CMake 4 需要 `CMAKE_POLICY_VERSION_MINIMUM=3.5`；`setup.py` 期望的 OpenVR DLL 路径需要从 FetchContent 目录补上。依赖版本见 `requirements-igibson.txt`。
-
-补丁函数已在当前源码上验证可重复执行，构建步骤也已在本机逐步执行过；完整脚本尚未在全新机器上从零跑过一遍。
-
-## 检查
+在项目根目录：
 
 ```powershell
+cd integration
 $env:PYTHONPATH = "$PWD/src"
-.\data\venv-igibson\Scripts\python.exe -m unittest discover -s tests -v   # 27 项全过，含 3 项 iGibson
-.\.venv\Scripts\python.exe -m unittest discover -s tests                   # 24 项通过，iGibson 3 项跳过
+./data/venv-igibson/Scripts/python.exe -m frontier_search.runner.igibson_demo --scenario suite --policy all --backend replay
 ```
 
-iGibson 测试检查：
+当前 PowerShell 执行策略禁止 `.ps1` 时，使用上面的 Python 命令。系统允许执行脚本时，也可以从项目根目录使用便捷入口：
 
-- 初始扫描后目标不在策略状态中，且地图同时有未知和占据；
-- 候选路径只经过安全格，初始扫描无接触；
-- 轮速指令符合逆时针为正的约定，直行方向与朝向一致；
-- 从厨房观察时，两帧分割证据生成 claim，定位误差小于 0.2 m。
+```powershell
+./integration/scripts/run_igibson_demo.ps1 -Scenario suite -Policy all -Backend replay
+./integration/scripts/run_igibson_demo.ps1 -Scenario dynamic -Policy nearest
+./integration/scripts/run_igibson_demo.ps1 -Scenario clutter -Policy information_gain
+./integration/scripts/run_igibson_demo.ps1 -Scenario dynamic -Policy llm_guided -Backend live
+```
 
-同时确认整个代码库可在 Python 3.8 下运行（此前 README 注明未在 3.8 实测）。
+默认离线。每次使用新的 `runs/igibson-realistic-时间戳` 目录，保留 JSONL、摘要、WebP 逐帧回放、GIF 和首末帧。suite 逐个启动独立进程，避免多个仿真器共享一个 OpenGL 上下文。环境不存在时再执行 `python integration/scripts/setup_igibson.py`，本机已有资源不必重下载。
+
+LLM 离线条件从同一场景 Information Gain 运行中保存 frontier ID，再通过相同 LLM 接口回放；页面和日志均标明不是模型推理。实时模式读取本地 `.env`，密钥不写入产物。四个策略在观测到目标后都优先接近目标。
+
+## 近距离完成和日志
+
+目标的实例分割需满足像素数要求，位置从渲染深度估计。两帧远距离可见只建立目标 track，不结束搜索。规划从已观测空闲区域寻找目标接近点；需要两次不同仿真时间的停稳观测，估计平面距离不超过 0.85 米。独立验收读取真实目标位置，核对两帧和当前机器人均在 0.93 米内，并核对停稳与定位误差。接近台面时，渲染观察视角会根据已观测目标的位置朝上调整，避免台面物体移出低位相机的视野；这是演示的观察视角控制。
+
+日志记录决策输入、候选可达性、选择、实际行驶距离、重规划、执行失败和独立验收。逐帧 trace 的时间、位姿与距离均来自实际仿真过程。页面不会把基础方块动画当作实测场景。
+
+RGB-D 融合和规划采用演示专用循环。家具类别仍是经过渲染深度可见性检查的手工地标，目标来自实例分割；此版本不声称完成共享 W2 管线或 YOLO 的生产验收。Rs 是静态扫描，扫描家具不可移动；新增推车是脚本驱动的运动障碍。底层物理仍使用 iGibson 自带的 PyBullet 引擎，已移除的是独立基础 PyBullet 演示。
+
+旧运行记录归档到 `runs/archive-pybullet/`。共享矩形车身规划、转身扫掠、目标接近优先级和恢复回归测试保留。
+
+## 本地实测
+
+三种难度 × 四种策略共 12 个 episode 均完成近距离目标验收，全部零障碍接触。默认离线 LLM 回放与同场景 IG 的记录一致。
+
+| Nearest 场景 | 行驶距离 | 重规划 | 导航失败后改选 | 最终距目标 |
+|---|---:|---:|---:|---:|
+| 原始公寓 | 14.87 m | 1 | 0 | 0.78 m |
+| 拥挤布局 | 10.86 m | 1 | 0 | 0.79 m |
+| 动态推车（2026-10-17 重录） | 10.42 m | 1 | 0 | 0.79 m |
+
+[产物完整性检查](../../runs/igibson-realistic-final-20261014/verification.json) 检查逐帧文件、真实位姿/距离、初始目标隐藏、终止验收、回放来源和日志校验和。
+[页面运行检查](../../runs/igibson-realistic-final-20261014/viewer-check.json) 检查难度/策略切换、时间拖动、暂停、重播和事件跳转。当前工具没有可用浏览器，因此页面控制使用离线 DOM 检查；已抽查各场景渲染画面。
+
+[完整回归日志](../../runs/igibson-realistic-final-20261014/tests.log)：2026-10-17 合并后 350 项测试通过，0 失败、0 跳过。

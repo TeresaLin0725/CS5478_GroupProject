@@ -1,0 +1,66 @@
+[
+  {
+    "simulated_time_s": 14.366666666666667,
+    "state_revision": 50,
+    "model": "gemini-3.8-flash",
+    "response_model": "gemini-3.8-flash",
+    "frontier_id": "F000093",
+    "reason": "Frontier F000093 offers the highest information gain among all valid candidates to continue exploring unmapped space.",
+    "latency_s": 6.625,
+    "usage": {
+      "completion_tokens": 55,
+      "prompt_tokens": 8019,
+      "total_tokens": 8668
+    },
+    "previous_failure": null,
+    "raw_response": "```json\n{\n  \"frontier_id\": \"F000093\",\n  \"reason\": \"Frontier F000093 offers the highest information gain among all valid candidates to continue exploring unmapped space.\"\n}\n```"
+  },
+  {
+    "simulated_time_s": 23.333333333333332,
+    "state_revision": 79,
+    "model": "gemini-3.8-flash",
+    "response_model": "gemini-3.8-flash",
+    "frontier_id": "probe-025-049",
+    "reason": "probe-025-049 is an eligible frontier with the lowest path cost to continue exploring areas near dining and kitchen semantics where a cup is likely found.",
+    "latency_s": 4.155999999988126,
+    "usage": {
+      "completion_tokens": 60,
+      "prompt_tokens": 10137,
+      "total_tokens": 10488
+    },
+    "previous_failure": "invalid_goal",
+    "raw_response": "```json\n{\"frontier_id\": \"probe-025-049\", \"reason\": \"probe-025-049 is an eligible frontier with the lowest path cost to continue exploring areas near dining and kitchen semantics where a cup is likely found.\"}\n```"
+  },
+  {
+    "simulated_time_s": 58.96666666666667,
+    "state_revision": 193,
+    "model": "gemini-3.8-flash",
+    "response_model": "gemini-3.8-flash",
+    "frontier_id": "F000151",
+    "reason": "F000151 offers the highest information gain among eligible frontiers to explore remaining unobserved space in search of a cup.",
+    "latency_s": 9.78100000001723,
+    "usage": {
+      "completion_tokens": 51,
+      "prompt_tokens": 17181,
+      "total_tokens": 18067
+    },
+    "previous_failure": null,
+    "raw_response": "```json\n{\"frontier_id\": \"F000151\", \"reason\": \"F000151 offers the highest information gain among eligible frontiers to explore remaining unobserved space in search of a cup.\"}\n```"
+  },
+  {
+    "simulated_time_s": 126.96666666666667,
+    "state_revision": 406,
+    "model": "gemini-3.8-flash",
+    "response_model": "gemini-3.8-flash",
+    "frontier_id": "F000185",
+    "reason": "Region R4 contains kitchen appliances (refrigerator and microwave), making it the most probable area to find a cup. F000185 offers substantial information gain in R4 with the lowest path cost among kitchen frontiers.",
+    "latency_s": 5.984000000025844,
+    "usage": {
+      "completion_tokens": 76,
+      "prompt_tokens": 26827,
+      "total_tokens": 27334
+    },
+    "previous_failure": null,
+    "raw_response": "```json\n{\n  \"frontier_id\": \"F000185\",\n  \"reason\": \"Region R4 contains kitchen appliances (refrigerator and microwave), making it the most probable area to find a cup. F000185 offers substantial information gain in R4 with the lowest path cost among kitchen frontiers.\"\n}\n```"
+  }
+]

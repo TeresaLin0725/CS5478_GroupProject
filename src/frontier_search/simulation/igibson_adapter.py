@@ -91,6 +91,7 @@ class IGibsonAdapter:
         self._steps = 0
         self._sequence = 0
         self.collisions = 0
+        self.contact_this_step = False
         self.executed_distance_m = 0.0
         self.settled_pose = None  # type: Optional[Pose]
 
@@ -120,6 +121,7 @@ class IGibsonAdapter:
         self._paused = self._closed = False
         self._steps = self._sequence = 0
         self.collisions, self.executed_distance_m = 0, 0.0
+        self.contact_this_step = False
 
     def verify_spawn_clearance(self) -> Tuple[GridCell, ...]:
         """Footprint-plus-margin cells at the settled pose, each tested as a full collision column.
@@ -177,7 +179,9 @@ class IGibsonAdapter:
         self._steps += 1
         after = self._backend.pose()
         self.executed_distance_m += hypot(after.x_m - before.x_m, after.y_m - before.y_m)
-        if self._backend.in_contact(after.z_m, self._config.contact_height_above_base_m, self._config.contact_force_n):
+        self.contact_this_step = self._backend.in_contact(after.z_m,
+            self._config.contact_height_above_base_m, self._config.contact_force_n)
+        if self.contact_this_step:
             self.collisions += 1
 
     def stop(self) -> None:
@@ -320,18 +324,21 @@ class IGibsonBackend(IGibsonBackendProtocol):
         def floor_heights(points):
             top, bottom = mapping.floor_height_m + 0.15, mapping.floor_height_m - 0.15
             heights = []
-            for x, y in points:
-                z_from, found = top, None
-                for _ in range(6):  # step past the robot's own body if a ray starts inside it
-                    hit = p.rayTest([x, y, z_from], [x, y, bottom])[0]
-                    if hit[0] == -1:
-                        break
-                    if hit[0] in self._bodies:
-                        z_from = hit[3][2] - 1e-3
-                        continue
-                    found = hit[3][2]
-                    break
-                heights.append(found)
+            # These backends import robot links in Bullet's default group 1.
+            # Exclude the robot from rays rather than repeatedly casting from
+            # inside its convex links, which can hit the same link indefinitely.
+            # This setup-only query never advances physics; restore every link.
+            links = [(body,link) for body in self._bodies
+                     for link in range(-1,p.getNumJoints(body))]
+            try:
+                for body,link in links:
+                    p.setCollisionFilterGroupMask(body,link,2,-1)
+                hits = p.rayTestBatch([[x,y,top] for x,y in points],
+                                     [[x,y,bottom] for x,y in points],collisionFilterMask=1)
+                heights = [hit[3][2] if hit[0] != -1 else None for hit in hits]
+            finally:
+                for body,link in links:
+                    p.setCollisionFilterGroupMask(body,link,1,-1)
             return heights
 
         return CallbackSceneProbe(column_blocked, floor_heights, nominal_floor_z=mapping.floor_height_m,

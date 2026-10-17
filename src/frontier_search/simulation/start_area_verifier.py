@@ -108,7 +108,7 @@ def verify_start_area(manifest, probe: SceneProbe, verifier_id: str) -> StartAre
             passed.add(cell)
 
     seed = set(footprint)
-    failed = sorted(cell for cell in seed if cell not in passed)
+    failed = sorted((cell for cell in seed if cell not in passed),key=lambda cell:(cell.row,cell.column))
     if failed:
         raise ValueError("spawn footprint clearance cannot be verified: %s"
                          % ', '.join('(%d,%d) %s' % (cell.row, cell.column, rejected.get(cell, 'outside radius'))

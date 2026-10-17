@@ -1,0 +1,219 @@
+{
+  "passed": true,
+  "browser": "Chrome headless, real local-file media decoding",
+  "pages": [
+    {
+      "file": "runs\\integrated-llm-final-20261018\\recording\\index.html",
+      "default": "integrated-language",
+      "cases": [
+        {
+          "key": "integrated-language",
+          "decisions": 5,
+          "operations": 12,
+          "seek_buttons": 36,
+          "media": "video"
+        },
+        {
+          "key": "integrated-nearest",
+          "decisions": 6,
+          "operations": 13,
+          "seek_buttons": 35,
+          "media": "video"
+        },
+        {
+          "key": "apartment-random",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 8,
+          "media": "frames"
+        },
+        {
+          "key": "apartment-nearest",
+          "decisions": 6,
+          "operations": 6,
+          "seek_buttons": 20,
+          "media": "frames"
+        },
+        {
+          "key": "apartment-information_gain",
+          "decisions": 6,
+          "operations": 6,
+          "seek_buttons": 20,
+          "media": "frames"
+        },
+        {
+          "key": "apartment-llm_guided",
+          "decisions": 6,
+          "operations": 6,
+          "seek_buttons": 20,
+          "media": "frames"
+        },
+        {
+          "key": "clutter-random",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 8,
+          "media": "frames"
+        },
+        {
+          "key": "clutter-nearest",
+          "decisions": 4,
+          "operations": 4,
+          "seek_buttons": 14,
+          "media": "frames"
+        },
+        {
+          "key": "clutter-information_gain",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 8,
+          "media": "frames"
+        },
+        {
+          "key": "clutter-llm_guided",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 8,
+          "media": "frames"
+        },
+        {
+          "key": "dynamic-random",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 9,
+          "media": "frames"
+        },
+        {
+          "key": "dynamic-nearest",
+          "decisions": 4,
+          "operations": 4,
+          "seek_buttons": 17,
+          "media": "video"
+        },
+        {
+          "key": "dynamic-information_gain",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 9,
+          "media": "frames"
+        },
+        {
+          "key": "dynamic-llm_guided",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 9,
+          "media": "frames"
+        }
+      ]
+    },
+    {
+      "file": "runs\\integrated-final-20261017\\recording\\index.html",
+      "default": "integrated-nearest",
+      "cases": [
+        {
+          "key": "integrated-language",
+          "decisions": 5,
+          "operations": 12,
+          "seek_buttons": 36,
+          "media": "video"
+        },
+        {
+          "key": "integrated-nearest",
+          "decisions": 6,
+          "operations": 13,
+          "seek_buttons": 35,
+          "media": "video"
+        },
+        {
+          "key": "apartment-random",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 8,
+          "media": "frames"
+        },
+        {
+          "key": "apartment-nearest",
+          "decisions": 6,
+          "operations": 6,
+          "seek_buttons": 20,
+          "media": "frames"
+        },
+        {
+          "key": "apartment-information_gain",
+          "decisions": 6,
+          "operations": 6,
+          "seek_buttons": 20,
+          "media": "frames"
+        },
+        {
+          "key": "apartment-llm_guided",
+          "decisions": 6,
+          "operations": 6,
+          "seek_buttons": 20,
+          "media": "frames"
+        },
+        {
+          "key": "clutter-random",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 8,
+          "media": "frames"
+        },
+        {
+          "key": "clutter-nearest",
+          "decisions": 4,
+          "operations": 4,
+          "seek_buttons": 14,
+          "media": "frames"
+        },
+        {
+          "key": "clutter-information_gain",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 8,
+          "media": "frames"
+        },
+        {
+          "key": "clutter-llm_guided",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 8,
+          "media": "frames"
+        },
+        {
+          "key": "dynamic-random",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 9,
+          "media": "frames"
+        },
+        {
+          "key": "dynamic-nearest",
+          "decisions": 4,
+          "operations": 4,
+          "seek_buttons": 17,
+          "media": "video"
+        },
+        {
+          "key": "dynamic-information_gain",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 9,
+          "media": "frames"
+        },
+        {
+          "key": "dynamic-llm_guided",
+          "decisions": 2,
+          "operations": 2,
+          "seek_buttons": 9,
+          "media": "frames"
+        }
+      ]
+    }
+  ],
+  "cases_checked": 28,
+  "timeline_buttons_checked": 442,
+  "raw_videos_unchanged": true,
+  "source_log_correspondence": true,
+  "mobile_no_page_overflow": true
+}

@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "hosted_calls": 4,
+  "fallbacks": 0,
+  "models": [
+    "gemini-3.8-flash"
+  ],
+  "response_models": [
+    "gemini-3.8-flash"
+  ],
+  "all_responses_eligible": true,
+  "all_responses_match_dispatched_goals": true,
+  "logged_inputs_match_requests": true,
+  "provider_host": "generativelanguage.googleapis.com",
+  "usage": {
+    "prompt_tokens": 62164,
+    "completion_tokens": 242,
+    "total_tokens": 64557
+  },
+  "calls_with_navigation_failure_feedback": 1,
+  "local_map_replans": 2,
+  "source_fingerprint": "87c7ad2f3ac8f3d30db8a7ca898d4008f71fce406af1c0d267b84ca49cd070c6"
+}

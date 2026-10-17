@@ -77,13 +77,14 @@ class YOLODetector:
     ML packages. The mapper applies its configured confidence threshold.
     """
 
-    def __init__(self, weights: str, *, device: str = 'cpu') -> None:
+    def __init__(self, weights: str, *, device: str = 'cpu', minimum_confidence: float = 0.0) -> None:
         path = Path(weights)
         if not path.is_file():
             raise FileNotFoundError("detector weights must exist locally: %s" % path)
         from ultralytics import YOLO
         self._model = YOLO(str(path))
         self._device = device
+        self._minimum_confidence = minimum_confidence
 
     def detect(self, image: ImageBuffer) -> Tuple[RGBDetection, ...]:
         import numpy as np
@@ -93,7 +94,7 @@ class YOLODetector:
         rgb = np.frombuffer(image.data, dtype=np.uint8).reshape(image.height, image.width, 3)
         # Ultralytics numpy sources use BGR; copy to own a contiguous buffer.
         bgr = rgb[:, :, ::-1].copy()
-        result = self._model.predict(bgr, imgsz=640, conf=0.0, iou=0.5,
+        result = self._model.predict(bgr, imgsz=640, conf=self._minimum_confidence, iou=0.5,
             device=self._device, rect=False, half=False, agnostic_nms=False,
             max_det=300, verbose=False, save=False)[0]
         detections = []
@@ -110,3 +111,44 @@ class YOLODetector:
             validate_detection(detection, image)
             detections.append(detection)
         return tuple(detections)
+
+
+class TiledYOLODetector(YOLODetector):
+    """RGB-only small-target supplement; overlapping fixed tiles, then class NMS.
+
+    The target class is a task input. Tiles never use geometry, instance IDs,
+    localization estimates or evaluator records. Full-frame semantics remain.
+    """
+    def __init__(self,weights,*,target_class,device='cpu',tile_every_frames=1,minimum_confidence=0.0):
+        super().__init__(weights,device=device,minimum_confidence=minimum_confidence)
+        self.target_class=target_class
+        self.tile_every_frames=tile_every_frames
+        self._tile_calls=0
+
+    def detect(self,image):
+        import numpy as np
+        result=list(super().detect(image))
+        self._tile_calls=getattr(self,'_tile_calls',0)+1
+        if (self._tile_calls-1) % getattr(self,'tile_every_frames',1):
+            return tuple(result)
+        rgb=np.frombuffer(image.data,dtype=np.uint8).reshape(image.height,image.width,3)
+        side=min(image.width,image.height)*2//3
+        for y in sorted({0,image.height-side}):
+            for x in sorted({0,(image.width-side)//2,image.width-side}):
+                tile=np.ascontiguousarray(rgb[y:y+side,x:x+side])
+                for item in YOLODetector.detect(self,ImageBuffer(side,side,'rgb8',tile.tobytes())):
+                    if item.class_name==self.target_class and item.confidence>=.10:
+                        a,b,c,d=item.bbox_xyxy_px
+                        result.append(RGBDetection(item.class_name,item.confidence,(x+a,y+b,x+c,y+d)))
+        kept=[]
+        for item in sorted(result,key=lambda d:-d.confidence):
+            a=item.bbox_xyxy_px
+            duplicate=False
+            for old in kept:
+                if old.class_name!=item.class_name:continue
+                b=old.bbox_xyxy_px
+                overlap=max(0,min(a[2],b[2])-max(a[0],b[0]))*max(0,min(a[3],b[3])-max(a[1],b[1]))
+                union=(a[2]-a[0])*(a[3]-a[1])+(b[2]-b[0])*(b[3]-b[1])-overlap
+                if overlap/union>.5:duplicate=True;break
+            if not duplicate:kept.append(item)
+        return tuple(kept)

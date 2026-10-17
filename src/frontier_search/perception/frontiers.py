@@ -133,8 +133,21 @@ def _approach(grid, support, clearance, robot, observation, config):
 
 def build_candidates(grid: OccupancyGrid, observation: RGBDObservation, robot: RobotConfig,
                      mapping: MappingConfig, routine: ObservationConfig,
-                     region_cells: Dict[str, Tuple[GridCell, ...]]) -> Tuple[FrontierCandidate, ...]:
+                     region_cells: Dict[str, Tuple[GridCell, ...]],
+                     cluster_span_m: float = 0.) -> Tuple[FrontierCandidate, ...]:
     clusters = extract_clusters(grid, mapping)
+    if cluster_span_m > 0:
+        # A connected visible/unknown contour may span several rooms. Local
+        # opportunities must not share a single approach pose and retry budget.
+        span = max(1, int(cluster_span_m / grid.resolution_m))
+        pieces = []
+        for cluster in clusters:
+            buckets = {}
+            for cell in cluster:
+                buckets.setdefault((cell.row // span, cell.column // span), []).append(cell)
+            pieces.extend(tuple(cells) for _, cells in sorted(buckets.items())
+                          if len(cells) >= mapping.frontier_min_cells)
+        clusters = tuple(pieces)
     if not clusters:
         return ()
     clearance = _clearance(grid)

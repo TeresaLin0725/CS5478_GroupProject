@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "branch": "integration/w2",
+  "commit": "a0c52504aff9e9cf1821ba5910f7aec57cf6373f",
+  "python": "3.8.20",
+  "tests": {
+    "command": "data/venv-igibson/Scripts/python.exe -m unittest discover -s tests -v",
+    "PYTHONPATH": "src",
+    "run": 153,
+    "failed": 0,
+    "skipped": 0,
+    "duration_s": 47.471,
+    "result": "OK",
+    "exit_code": 0
+  },
+  "progress_smoke": {
+    "command": "data/venv-igibson/Scripts/python.exe -m frontier_search.runner.w2 --manifest configs/w2.mock.json --log Documentation/chinese/meeting_2026-10-13/progress.jsonl",
+    "source": "synthetic",
+    "log": "../../../runs/meeting_2026-10-13/progress.jsonl",
+    "log_note": "Moved into the ignored runs directory after execution; full events preserved.",
+    "exit_code": 0,
+    "actual_distance_m": 1.8048989023621254,
+    "attempts": 2,
+    "collisions": 0,
+    "decisions": 4,
+    "final_revision": 120,
+    "simulated_time_s": 24.450000000000212,
+    "steps": 489,
+    "termination": "no_frontiers",
+    "wall_time_s": 2.3280000002123415
+  },
+  "limits": [
+    "Local integration snapshot only; unmerged team updates were not inspected.",
+    "ScriptedMapper and FixtureSimulator are test doubles; production A RGBDMapper.update and B IGibsonAdapter are missing.",
+    "no_frontiers is a termination reason, not object-search success.",
+    "No paid LLM request or YOLO model inference was rerun.",
+    "Independent iGibson demo tests do not verify the unified real ABC chain."
+  ]
+}

@@ -333,6 +333,10 @@ class TeamNavigator:
         limit = self._nav_cfg.navigation_deadline_s if op.kind == "navigate" \
             else self._obs_cfg.operation_deadline_s
         op.status = NavigationStatus.EXECUTING
+        if getattr(self._control, 'contact_this_step', False):
+            self._log('contact_stop', '%s physical bumper/contact feedback' % op.goal_id)
+            self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
+            return
         if self._stalled(op, now):
             self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
             return
@@ -378,7 +382,16 @@ class TeamNavigator:
             op.index += 1
         target = op.path[op.index]
         dist = hypot(target.x_m - pose.x_m, target.y_m - pose.y_m)
-        if op.index == last and dist <= robot.position_tolerance_m:
+        # Acquire position inside half the public tolerance before turning to
+        # the goal yaw. Native wheel braking can drift across a single tight
+        # threshold, otherwise switching back to bearing control on every
+        # crossing. Keep yaw acquisition while still within the FULL tolerance;
+        # a real departure must resume position control, never report REACHED.
+        if op.turn_ok == "goal" and dist > robot.position_tolerance_m:
+            op.turn_ok = None
+        position_ready = dist <= robot.position_tolerance_m * .5 or (
+            op.turn_ok == "goal" and dist <= robot.position_tolerance_m)
+        if op.index == last and position_ready:
             yaw_err = _wrap(op.goal_pose.yaw_rad - pose.yaw_rad)
             if abs(yaw_err) <= robot.yaw_tolerance_rad:
                 self._finish(op, NavigationStatus.REACHED, None)
@@ -412,6 +425,11 @@ class TeamNavigator:
         robot, cfg = self._robot, self._obs_cfg
         pose = self._control.current_pose()
         err = _wrap(op.targets[op.leg] - pose.yaw_rad)
+        if op.dwell_until is not None and abs(err) > cfg.heading_tolerance_rad:
+            # Wheel inertia can carry a physical robot out of tolerance after
+            # braking. Reacquire the heading and restart the dwell; never mark
+            # an out-of-tolerance frame as a completed scan.
+            op.dwell_until = None
         if op.dwell_until is None:
             if abs(err) > cfg.heading_tolerance_rad:
                 self._control.set_velocity(0.0, _clip(K_ANGULAR * err, robot.max_angular_speed_radps))

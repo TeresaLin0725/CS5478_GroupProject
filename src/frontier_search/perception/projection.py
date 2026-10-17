@@ -22,7 +22,7 @@ class ProjectedDepthPoint(ImmutableRecord):
 
 
 # Convert valid depth pixels into world-space surface points with pixel correspondence.
-def iter_depth_world(observation: RGBDObservation) -> Iterator[Tuple[int, int, float, float, float, float]]:
+def iter_depth_world(observation: RGBDObservation, stride: int = 1) -> Iterator[Tuple[int, int, float, float, float, float]]:
     """Stream (u, v, depth, world x, y, z) without allocating per-pixel records.
 
     Pixel centres are integer (u, v); camera axes are right/down/forward. The
@@ -38,6 +38,8 @@ def iter_depth_world(observation: RGBDObservation) -> Iterator[Tuple[int, int, f
         if not isfinite(depth_m) or depth_m <= 0:
             continue
         v, u = divmod(index, camera.width)
+        if v % stride or u % stride:
+            continue
         x = (u - camera.cx) * depth_m / camera.fx
         y = (v - camera.cy) * depth_m / camera.fy
         wx = a[0] * x + a[1] * y + a[2] * depth_m + a[3]

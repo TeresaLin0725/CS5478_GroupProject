@@ -36,10 +36,14 @@ class BaselinePolicy:
         fid, rationale = self._choose(state, context)
         frontier = next(f for f in state.frontiers if f.frontier_id == fid)
         return SelectionResult(state.episode_id,
-                               Subgoal(fid, frontier.approach_pose, state.revision, self.name),
+                               Subgoal(fid, frontier.approach_pose, state.revision, self.name,
+                                       frontier.kind, frontier.target_track_id),
                                None, rationale)
 
     def _choose(self, state: WorldState, context: SelectionContext) -> Tuple[str, str]:
+        target = nearest_target_approach(state, context)
+        if target is not None:
+            return target, 'approach observed target; visibility alone is not completion'
         eligible = sorted(context.eligible_frontier_ids)
         if self.name == PolicyName.RANDOM:
             return self.rng.choice(eligible), 'uniform eligible choice'
@@ -49,3 +53,12 @@ class BaselinePolicy:
         costs = {a.frontier_id: a.path_cost_m for a in context.evaluation.assessments}
         fid = min(eligible, key=lambda f: (-gains[f] / (costs[f] + self.config.epsilon_m), f))
         return fid, 'maximum information gain / (path cost + epsilon)'
+
+
+def nearest_target_approach(state: WorldState, context: SelectionContext) -> Optional[str]:
+    candidates = {f.frontier_id for f in state.frontiers if f.kind == 'target_approach'
+                  and f.frontier_id in context.eligible_frontier_ids}
+    if not candidates:
+        return None
+    costs = {a.frontier_id: a.path_cost_m for a in context.evaluation.assessments}
+    return min(candidates, key=lambda fid: (costs[fid], fid))

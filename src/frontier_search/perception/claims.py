@@ -15,7 +15,7 @@ CONFIRMATION_TIME_TOLERANCE_S = 1e-9
 
 def confirm_target(tracks: Dict[str, ObjectTrack], evidence: Dict[str, DetectionEvidence],
                    target_class: str, sequence: int, timestamp_s: float,
-                   cfg: MappingConfig, claim_counter: int) -> Optional[TargetClaim]:
+                   cfg: MappingConfig, claim_counter: int, eligible_ids=None) -> Optional[TargetClaim]:
     """Use the most recent N distinct accepted frames within the closed window.
 
     Require a fresh observation on this update and pairwise spatial consistency
@@ -29,6 +29,8 @@ def confirm_target(tracks: Dict[str, ObjectTrack], evidence: Dict[str, Detection
         by_sequence = {}
         for observation_id in track.observation_ids:
             item = evidence[observation_id]
+            if eligible_ids is not None and observation_id not in eligible_ids:
+                continue
             if (item.track_id == track_id and item.class_name == target_class
                     and item.position_world is not None
                     and item.confidence >= cfg.confidence_threshold
@@ -39,6 +41,8 @@ def confirm_target(tracks: Dict[str, ObjectTrack], evidence: Dict[str, Detection
         samples = sorted(by_sequence.values(), key=lambda item: item.capture_sequence)
         samples = samples[-cfg.confirmation_frames:]
         if len(samples) < cfg.confirmation_frames or samples[-1].capture_sequence != sequence:
+            continue
+        if eligible_ids is not None and len({s.timestamp_s for s in samples}) < cfg.confirmation_frames:
             continue
         consistent = True
         for a, b in combinations(samples, 2):

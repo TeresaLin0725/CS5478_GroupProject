@@ -148,6 +148,10 @@ class Frontier(ImmutableRecord):
     region_id: Optional[str]
     information_gain_m2: float
     distance_from_robot_m: float      # Euclidean diagnostic only
+    # Contract 1.1: the legacy candidate collection also carries observed-target
+    # approach opportunities. Their IDs are distinct from geometric frontiers.
+    kind: str = "frontier"            # frontier / target_approach / navigation_probe
+    target_track_id: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -242,6 +246,8 @@ class Subgoal(ImmutableRecord):
     approach_pose: Pose
     selected_from_revision: int
     policy: PolicyName
+    kind: str = "frontier"
+    target_track_id: Optional[str] = None
 
 
 @dataclass(frozen=True)
