@@ -175,6 +175,20 @@ class IGibsonWorld:
         self.spectator_offset = 0
         self.spectator_last_s = 0.0
         self.camera_pitch = CAMERA_PITCH_RAD
+        self.cart_motion = None
+        self.cart_blocked = False
+        if self.profile == 'dynamic':
+            from .cart_motion import CartMotion
+            cart = next(record for record in self.furniture if record['kind'] == 'cart')
+            try:
+                self.cart_motion = CartMotion(self.p, cart['object'])
+            except Exception:
+                self.close()
+                raise
+            cart['position'] = list(self.cart_motion.start)
+            self.environment_events.append({'time_s': 0.0, 'event': 'cart_route_verified',
+                                            'start': list(self.cart_motion.start),
+                                            'end': list(self.cart_motion.end)})
 
     def _footprint(self):
         """Half-width of the robot's overall AABB about its base (round base, arm stowed)."""
@@ -223,7 +237,7 @@ class IGibsonWorld:
         return touching
 
     def _update_challenge(self, pose):
-        if self.profile != 'dynamic':
+        if self.profile != 'dynamic' or self.cart_blocked:
             return
         if self.cart_started_s is None and self.sim_time > 16 and pose.y_m > -1.4 and pose.x_m > .1:
             self.cart_started_s = self.sim_time
@@ -234,8 +248,10 @@ class IGibsonWorld:
         elapsed = self.sim_time - self.cart_started_s
         # The cart follows its own timed motion. It is never injected into A's map.
         fraction = min(1.0, elapsed / 3.0) if elapsed < 11 else max(0.0, 1 - (elapsed - 11) / 3.0)
-        cart = next(record for record in self.furniture if record['kind'] == 'cart')
-        cart['object'].set_position_orientation([1.40 - .70 * fraction, -.10, 0], [0, 0, 0, 1])
+        if not self.cart_motion.move(fraction):
+            self.cart_blocked = True
+            self.environment_events.append({'time_s': self.sim_time, 'event': 'cart_blocked',
+                                            'text': '推车扫掠空间被占用，停止移动以防穿模'})
 
     def spectator(self):
         """Third-person iGibson render with the entire physical robot visible."""

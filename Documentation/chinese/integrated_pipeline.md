@@ -1,5 +1,7 @@
 # 完整原生管线与录制门槛
 
+推车穿模修正：旧录像中的推车通过直接设置位姿沿固定路线移动，没有检查与扫描家具的重叠；旧的零接触统计仅针对机器人，不能证明推车路线有效。当前动态场景在初始化时检查推车完整包围体的扫掠空间和地面支撑，优先使用原路线，受阻时检查邻近的平行路线；没有可验证路线就拒绝运行。运动期间再次检查每段扫掠空间，遇到新障碍时停住并记录 `cart_blocked`。检查只用于仿真环境，不把场景真值交给感知或策略。推车仍采用脚本位姿运动，未实现受力驱动。此修正尚未在原生 Rs 场景中重录验证；已有录像保持原样，不能作为修正后的验收证据。
+
 入口为 `src/frontier_search/runner/integrated.py`，启动脚本为 `scripts/run_integrated.py`。原 `igibson_demo.py` 仍是历史演示，不能用于声称完成 W3 生产管线验收。
 
 数据流：原生 Gibson Rs / Locobot → `IGibsonAdapter` → 标定后的 `RGBDObservation` → RGB-only YOLO11s → 共享 `RGBDMapper` 的深度融合、跨帧跟踪、区域关联、稳定前沿与冻结目标证据 → `TeamNavigator` 候选评估、A*、实体足迹与旋转检查、轮速控制 → `EpisodeRunner` / 策略 / `SpatialRecovery` → `RetainedTargetEvaluator` 独立验收。
