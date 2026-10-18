@@ -16,9 +16,10 @@ class IntegratedRecorder:
         self.path=[]
         self.started=False
         self.last_picture=None
-        self.font=ImageFont.truetype('C:/Windows/Fonts/consola.ttf',18)
-        self.small=ImageFont.truetype('C:/Windows/Fonts/consola.ttf',15)
-        self.title=ImageFont.truetype('C:/Windows/Fonts/consolab.ttf',28)
+        self.font=ImageFont.truetype('C:/Windows/Fonts/segoeui.ttf',18)
+        self.small=ImageFont.truetype('C:/Windows/Fonts/consola.ttf',14)
+        self.title=ImageFont.truetype('C:/Windows/Fonts/seguisb.ttf',30)
+        self.value_font=ImageFont.truetype('C:/Windows/Fonts/seguisb.ttf',22)
 
     def on_event(self,event,payload):
         if event=='capture_processed' and not self.started:
@@ -46,8 +47,12 @@ class IntegratedRecorder:
             self.caption='C > B: revised goal '+payload['selected'].frontier_id
         elif event=='observation_start':
             self.caption='A/B scan: '+payload['request'].routine
+        elif event=='inspection_start':
+            self.caption='A inspects observed target / brakes held / fresh RGB-D evidence'
+        elif event=='inspection_end':
+            self.caption='Target inspection complete / continue search if unconfirmed'
         if event in ('decision','dispatch','operation_feedback','target_evaluation','observation_start','operation_terminal',
-                     'navigation_map_feedback','replan_request','strategy_replan'):
+                     'navigation_map_feedback','replan_request','strategy_replan','inspection_start','inspection_end'):
             self.events.append(dict(time_s=self.runner.sim_time,event=event,text=self.caption))
         if event=='motion_sample' and self.video and self.video.due(self.sim._backend.world.steps):
             self.capture()
@@ -56,23 +61,40 @@ class IntegratedRecorder:
         world=self.sim._backend.world
         world.sim.sync(force_sync=True)
         state=self.runner.state
-        canvas=Image.new('RGB',(1440,900),'#101720');d=ImageDraw.Draw(canvas)
-        d.text((24,18),'INTEGRATED SEARCH / GIBSON RS',font=self.title,fill='#e7eff8')
-        d.text((26,62),'Native Locobot  |  RGB-D + YOLO11s  >  A mapper  >  B navigation  >  C policy  >  W3 verifier',font=self.small,fill='#80bdce')
-        scene=Image.fromarray(world.spectator()).resize((880,660),Image.Resampling.LANCZOS)
-        canvas.paste(scene,(24,106))
-        d.text((38,118),'PHYSICAL SIMULATOR / 15 FPS',font=self.small,fill='white',stroke_width=1,stroke_fill='black')
+        canvas=Image.new('RGB',(1440,900),'#0a111c');d=ImageDraw.Draw(canvas)
+        accent,muted,ink='#71e2c3','#8394aa','#edf3fa'
+        d.rounded_rectangle((24,24,30,82),radius=3,fill=accent)
+        d.text((48,20),'FRONTIER / OBJECT SEARCH',font=self.title,fill=ink)
+        d.text((49,62),'GIBSON RS   /   LOCOBOT   /   RGB-D + YOLO11s',font=self.small,fill=muted)
+        for x,label,value in ((954,'SIM TIME','%05.1f s'%self.runner.sim_time),
+                              (1120,'DISTANCE','%.2f m'%self.runner.distance),
+                              (1280,'CONTACTS',str(self.sim.collisions))):
+            d.text((x,23),label,font=self.small,fill=muted)
+            d.text((x,47),value,font=self.value_font,fill=accent if label=='CONTACTS' else ink)
+        d.line((24,100,1416,100),fill='#233348')
+        d.text((24,111),'01  /  PHYSICAL SIMULATION',font=self.small,fill=muted)
+        scene=Image.fromarray(world.spectator()).resize((928,696),Image.Resampling.LANCZOS)
+        canvas.paste(scene,(24,140))
+        # The scene remains a real simulator render. UI labels never enter RGB-D.
+        d.rounded_rectangle((40,156,220,187),radius=8,fill='#0a111c')
+        d.ellipse((53,168,60,175),fill=accent)
+        d.text((70,162),'NATIVE  /  15 FPS',font=self.small,fill=ink)
+        d.rounded_rectangle((976,112,1416,520),radius=12,fill='#111e2d',outline='#243348')
+        d.text((996,128),'02  /  OBSERVED MAP',font=self.small,fill=muted)
         if state:
             grid=state.occupancy_map
-            colors=np.array([[[(19,28,40) if v==-1 else (207,215,218) if v==0 else (77,92,104)
+            colors=np.array([[[(17,30,45) if v==-1 else (189,205,213) if v==0 else (63,82,102)
                               for v in row] for row in grid.data]],dtype=np.uint8)[0]
-            map_img=Image.fromarray(colors[::-1]).resize((420,510),Image.Resampling.NEAREST)
-            canvas.paste(map_img,(970,106))
+            scale=min(372/grid.width_cells,320/grid.height_cells)
+            width,height=round(grid.width_cells*scale),round(grid.height_cells*scale)
+            left,top=1196-width//2,158
+            map_img=Image.fromarray(colors[::-1]).resize((width,height),Image.Resampling.NEAREST)
+            canvas.paste(map_img,(left,top))
             def pixel(x,y):
-                return (970+(x-grid.origin_x_m)/grid.resolution_m*6,
-                        616-(y-grid.origin_y_m)/grid.resolution_m*6)
+                return (left+(x-grid.origin_x_m)/grid.resolution_m*width/len(grid.data[0]),
+                        top+height-(y-grid.origin_y_m)/grid.resolution_m*height/len(grid.data))
             route=[pixel(p.x_m,p.y_m) for p in self.path]
-            if len(route)>1:d.line(route,fill='#21a895',width=3)
+            if len(route)>1:d.line(route,fill=accent,width=3)
             for f in state.frontiers:
                 x,y=pixel(f.approach_pose.x_m,f.approach_pose.y_m)
                 d.ellipse((x-2,y-2,x+2,y+2),fill='#ffad47' if f.kind=='target_approach' else '#8a9cff')
@@ -81,10 +103,14 @@ class IntegratedRecorder:
                     x,y=pixel(o.position_world.x_m,o.position_world.y_m)
                     d.ellipse((x-6,y-6,x+6,y+6),outline='#ffbf47',width=2)
             p=self.sim.current_pose();x,y=pixel(p.x_m,p.y_m)
-            d.ellipse((x-6,y-6,x+6,y+6),fill='#23bdd0')
-            d.line((x,y,x+16*cos(p.yaw_rad),y-16*sin(p.yaw_rad)),fill='#23bdd0',width=3)
-            d.text((972,83),'A: OBSERVED MAP / r%d'%state.revision,font=self.small,fill='#bbcbd7')
-            d.text((970,620),'unknown / free / occupied; path by B',font=self.small,fill='#94a6b6')
+            d.ellipse((x-6,y-6,x+6,y+6),fill=accent,outline='#0a111c',width=2)
+            d.line((x,y,x+13*cos(p.yaw_rad),y-13*sin(p.yaw_rad)),fill=accent,width=3)
+            d.text((1328,128),'r%04d'%state.revision,font=self.small,fill=accent)
+            for x,color,label in ((996,accent,'Robot / path'),(1146,'#8a9cff','Frontier'),(1284,'#ffbf47','Target')):
+                d.ellipse((x,493,x+6,499),fill=color)
+                d.text((x+13,487),label,font=self.small,fill=muted)
+        d.rounded_rectangle((976,538,1416,836),radius=12,fill='#111e2d',outline='#243348')
+        d.text((996,552),'03  /  ROBOT VISION',font=self.small,fill=muted)
         detector=self.detector
         if getattr(detector,'last_rgb',None) is not None:
             rgb=Image.fromarray(detector.last_rgb).copy();rd=ImageDraw.Draw(rgb)
@@ -92,12 +118,9 @@ class IntegratedRecorder:
                 if item.confidence<self.runner.manifest.mapping.confidence_threshold:continue
                 rd.rectangle(item.bbox_xyxy_px,outline='#ffd36a',width=2)
                 rd.text(item.bbox_xyxy_px[:2],'%s %.2f'%(item.class_name,item.confidence),fill='#ffd36a')
-            canvas.paste(rgb.resize((300,225),Image.Resampling.LANCZOS),(1026,654))
-            d.text((970,636),'Last processed RGB / detector boxes',font=self.small,fill='#bbcbd7')
-        d.text((26,788),self.caption[:85],font=self.font,fill='#e3edf5')
-        d.text((26,824),'SIM %6.1fs   DIST %5.2fm   CONTACT STEPS %d   DECISIONS %d' % (
-            self.runner.sim_time,self.runner.distance,self.sim.collisions,self.runner.decisions),font=self.font,fill='#9db1c1')
-        d.text((26,858),'Truth retained privately for scoring. Policy sees observations and assessed candidates only.',font=self.small,fill='#788d9f')
+            canvas.paste(rgb.resize((320,240),Image.Resampling.LANCZOS),(1036,582))
+        d.text((26,855),self.caption[:85],font=self.font,fill=ink)
+        d.text((1010,856),'DECISIONS %02d  /  OBSERVED STATE'%self.runner.decisions,font=self.small,fill=muted)
         return canvas
 
     def capture(self):

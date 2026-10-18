@@ -148,6 +148,8 @@ class EpisodeRunner:
         known = sum(v != -1 for row in grid.data for v in row)
         self._emit('capture_processed', sequence=obs.sequence, revision=state.revision,
                    simulated_time_s=self.sim_time, known_cells=known,
+                   odometry_linear_speed_mps=obs.odometry_linear_speed_mps,
+                   odometry_angular_speed_radps=obs.odometry_angular_speed_radps,
                    explored_cells=sum(sum(row) for row in state.explored_map.data))
         self._budget()
         if state.target_claim is not None:
@@ -349,6 +351,12 @@ class EpisodeRunner:
             if feedback.status == NavigationStatus.CANCELLED:
                 raise _End(TerminationReason.EXTERNALLY_CANCELLED)
             if feedback.status == NavigationStatus.REACHED:
+                if (selection.subgoal.kind == 'target_approach' and
+                        self.manifest.observation.inspection_hold_s > 0):
+                    # Shared, fixed micro-sweep: RGB detection can vary with a
+                    # few degrees of view. Each safe heading is held for fresh,
+                    # stationary evidence; no hidden target state is consulted.
+                    self._operation('observe', routine='inspection', heading=selection.subgoal.approach_pose.yaw_rad)
                 arrival = self._operation('observe', routine='arrival', heading=selection.subgoal.approach_pose.yaw_rad)
                 if arrival.status != NavigationStatus.REACHED:
                     self._operation('observe', routine='recovery', heading=self.state.robot_pose.yaw_rad)

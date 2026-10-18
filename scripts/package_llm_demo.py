@@ -59,7 +59,7 @@ def package(directory, baseline):
         '<p>高难度动态场景：%.2f 秒仿真、%.2f 米行驶、%d 次接触；W3 近距离停稳证据验收通过。</p>' %
         (summary['simulated_time_s'],summary['actual_distance_m'],summary['collisions']))
     if not same_source:
-        banner+='<p>早期 Nearest 参考采用较小的到达扫描范围；本次 LLM 采用完整扫描，两段录像的扫描配置不同。</p>'
+        banner+='<p>参考运行的源码或配置不同；各自配置保存在 manifest.json，单次录像差异不代表策略性能的配对比较。</p>'
     if report['calls_with_navigation_failure_feedback']:
         banner+='<p>%d 次模型决策接收了 B 的导航失败反馈；相应上下文与回答保存在模型记录中。</p>' % report['calls_with_navigation_failure_feedback']
     table='<h2>真实模型决策记录</h2><p>时间为仿真时钟；API 耗时为墙钟时间。完整请求与响应保留在事件日志。</p>'

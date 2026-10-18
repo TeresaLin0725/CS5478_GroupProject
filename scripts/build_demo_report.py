@@ -1,5 +1,7 @@
 """Build a local, evidence-linked report without changing simulation artifacts."""
+import argparse
 import copy
+from datetime import datetime, timedelta, timezone
 from html import escape
 import json
 import math
@@ -13,7 +15,7 @@ PROFILES = {'apartment': '公寓室内搜索', 'clutter': '家具拥挤通道搜
 POLICIES = {'random': '随机选择可达探索目标', 'nearest': '最近可达探索目标策略',
             'information_gain': '信息增益与路径代价策略', 'llm_guided': '预置语义回答回放策略'}
 STATUS = {'reached': '完成', 'failed': '失败', 'cancelled': '取消'}
-FAILURES = {'invalid_goal': '地图更新后目标位置失效', 'blocked': '观察运动受阻',
+FAILURES = {'invalid_goal': '地图更新后目标位置失效', 'blocked': '运动受阻',
             'no_path': '未找到可行路径', 'timeout': '超时'}
 
 
@@ -32,14 +34,9 @@ def pose_text(pose):
         pose['x_m'], pose['y_m'], math.degrees(pose['yaw_rad']))
 
 
-def reason_text(selection, hosted_index=None):
-    if hosted_index is not None:
-        return [
-            '从有效候选中选择预计信息增益最高的探索目标，继续观察未知空间。',
-            '选择可达且路径代价较低的探查位置，继续搜索具有餐饮与厨房语义的区域。',
-            '从可达候选中选择预计信息增益最高的位置，继续寻找杯子。',
-            '根据冰箱与微波炉观测推断厨房位置，选择该区域内信息增益较高、路径代价较低的探索目标。',
-        ][hosted_index]
+def reason_text(selection):
+    if not selection['subgoal']:
+        return '本轮未下发导航目标；停止原因：%s。后续恢复与终止处理见操作记录。' % selection['stop_reason']
     if selection['subgoal']['kind'] == 'target_approach':
         return '接近已经观测到的目标，取得近距离停稳证据；仅看到目标不构成任务完成。'
     return {
@@ -50,46 +47,54 @@ def reason_text(selection, hosted_index=None):
     }.get(selection['rationale'], '按已配置的探索目标选择规则执行；完整说明见原始决策记录。')
 
 
-def decision_row(row, number, call=None, hosted_index=None):
+def decision_row(row, number, call=None):
     selection = row['selection']
     goal = selection['subgoal']
     previous = row.get('context', {}).get('previous_attempt')
     failure = previous.get('failure_reason') if previous else None
-    return dict(number=number, time=row['state']['timestamp_s'], goal=pose_text(goal['approach_pose']),
-        kind='接近感知目标' if goal['kind'] == 'target_approach' else '探索与观测',
-        reason=reason_text(selection, hosted_index),
+    return dict(number=number, time=row['state']['timestamp_s'], goal=pose_text(goal['approach_pose']) if goal else '未下发导航目标',
+        kind=('接近感知目标' if goal['kind'] == 'target_approach' else '探索与观测') if goal else '停止请求与恢复判断',
+        reason=call['reason'] if call else reason_text(selection),
         feedback=FAILURES.get(failure, failure) if failure else ('上次导航完成' if previous else '首次目标选择'),
         candidate_count=len(row.get('context', {}).get('eligible_frontier_ids', [])),
         provider=('真实在线模型：' + call['response_model']) if call else
-            ('确定性目标接近控制' if goal['kind'] == 'target_approach' else '本地策略规则'),
+            ('确定性目标接近控制' if goal and goal['kind'] == 'target_approach' else '本地策略规则'),
         latency=call['latency_s'] if call else None,
         raw=dict(selection=selection, previous_failure=failure,
-                 model_reply=call['raw_response'] if call else None), goal_id=goal['frontier_id'])
+                 model_reply=call['raw_response'] if call else None), goal_id=goal['frontier_id'] if goal else None)
 
 
-def integrated(folder, key, title):
-    directory = RUNS / folder / 'recording'
+def integrated(folder, key, title, recording=None):
+    directory = Path(recording).resolve() if recording else RUNS / folder / 'recording'
     summary, manifest = read(directory / 'summary.json'), read(directory / 'manifest.json')
     calls = read(directory / 'llm-calls.json') if (directory / 'llm-calls.json').exists() else []
+    if not calls:
+        for row in logs(directory / 'events.jsonl'):
+            if row['event'] == 'llm_call':
+                record = row['record']; provider = record.get('provider') or {}
+                if provider.get('raw_response') and not record.get('fallback_reason'):
+                    calls.append(dict(simulated_time_s=record['input'].get('timestamp_s', 0),
+                        state_revision=record['state_revision'], response_model=provider.get('response_model', record['model']),
+                        reason=provider.get('reason', ''), latency_s=record['latency_s'],
+                        raw_response=provider['raw_response']))
     call_by_time = {round(c['simulated_time_s'], 6): (n, c) for n, c in enumerate(calls)}
+    call_by_revision = {c['state_revision']: (n, c) for n, c in enumerate(calls) if 'state_revision' in c}
     decisions, operations, feedback = [], [], []
     op_by_id, current_decision = {}, None
     target_evaluation = None
     for row in logs(directory / 'events.jsonl'):
         event = row['event']
         if event == 'decision':
-            if not row['selection']['subgoal']:
-                continue
-            match = call_by_time.get(round(row['state']['timestamp_s'], 6))
+            match = call_by_revision.get(row['state']['revision']) or call_by_time.get(round(row['state']['timestamp_s'], 6))
             current_decision = len(decisions) + 1
-            decisions.append(decision_row(row, current_decision, match[1] if match else None,
-                                          match[0] if match else None))
+            decisions.append(decision_row(row, current_decision, match[1] if match else None))
         elif event in ('dispatch', 'observation_start'):
             request = row['request']
             kind = '导航行驶' if event == 'dispatch' else {
-                'initial': '初始环境观察', 'arrival': '到达位置后观察', 'recovery': '受阻后的恢复观察'
+                'initial': '初始环境观察', 'arrival': '到达位置后观察', 'recovery': '受阻后的恢复观察',
+                'inspection': '停车多视角确认目标'
             }[request['routine']]
-            op = dict(number=len(operations) + 1, time=None, end=None, kind=kind,
+            op = dict(number=len(operations) + 1, time=None, end=None, time_basis=None, kind=kind,
                 decision=current_decision, goal=(pose_text(request['subgoal']['approach_pose'])
                   if event == 'dispatch' else '停驻观察并按计划调整朝向'), status='', detail='', raw={})
             operations.append(op)
@@ -98,11 +103,25 @@ def integrated(folder, key, title):
             f = row['feedback']
             if f['status'] == 'accepted':
                 op_by_id[f['goal_id']]['time'] = f['timestamp_s']
+                op_by_id[f['goal_id']]['time_basis'] = 'accepted'
+        elif event == 'inspection_start':
+            operations.append(dict(number=len(operations)+1, time=row['simulated_time_s'], end=None,
+                time_basis='inspection_start', kind='停车确认目标', decision=current_decision,
+                goal='保持制动，继续物理步进与 RGB-D 采集', status='',
+                detail='感知模块决定是否形成静止证据，独立评估器验收。', raw=row))
+        elif event == 'inspection_end':
+            op=next(o for o in reversed(operations) if o['kind']=='停车确认目标' and o['end'] is None)
+            op.update(end=row['simulated_time_s'],status='完成',
+                detail='停车观察窗口结束；未形成目标声明则继续搜索。')
         elif event == 'operation_terminal':
             f = row['feedback']; op = op_by_id[f['goal_id']]
             op.update(end=f['timestamp_s'], status=STATUS[f['status']],
-                detail=FAILURES.get(f['failure_reason'], f['failure_reason']) or '按操作完成条件结束。',
+                detail=FAILURES.get(f['failure_reason'], f['failure_reason']) or (
+                    '收到停止请求，操作已取消。' if f['status']=='cancelled' else '按操作完成条件结束。'),
                 raw=f)
+            if op['time'] is None:
+                op.update(time=f['timestamp_s'],time_basis='terminal_only',
+                    detail='开始阶段即被拒绝，日志仅记录终态时间；'+op['detail'])
         elif event == 'navigation_map_feedback' and row['kind'] == 'replan':
             ok = 'success=True' in row['detail']
             feedback.append(dict(time=row['simulated_time_s'], kind='导航局部路径重规划',
@@ -121,6 +140,13 @@ def integrated(folder, key, title):
         if op['end'] is None:
             op.update(end=summary['simulated_time_s'], status='任务验收时结束',
                 detail='目标验收通过，整次任务结束；日志未单独记录此观察操作的终态。')
+    scene_names={'cart_route_verified':'动态推车路线通过场景检查',
+                 'cart_crossing':'动态推车开始沿验证路线运动',
+                 'cart_parked':'动态推车已在通道侧方停妥',
+                 'cart_blocked':'动态推车因扫掠空间受阻而停止'}
+    for scene_event in summary.get('scene_events',[]):
+        feedback.append(dict(time=scene_event['time_s'],kind=scene_names.get(scene_event['event'],scene_event['event']),
+            detail='场景事件来自原生仿真；推车运动只通过实际 RGB-D 观测影响感知地图。',raw=scene_event))
     assert len(decisions) == summary['decisions']
     assert sum(op['kind'] == '导航行驶' for op in operations) == summary['attempts']
     distances = summary['evaluation']['evidence_distances_m']
@@ -131,24 +157,30 @@ def integrated(folder, key, title):
     observation_angles = '、'.join('%.0f' % math.degrees(a) for a in manifest['observation']['arrival_headings_rad'])
     media = read(directory / 'video.json')
     return dict(key=key, title=title, group='完整集成管线', directory=str(directory),
+        source_fingerprint=summary['source_fingerprint'], policy=summary['policy'],
         target='杯子', success=summary['termination'] == 'success', duration=summary['simulated_time_s'],
         wall=summary['wall_time_s'], distance=summary['actual_distance_m'], contacts=summary['collisions'],
-        decisions=decisions, operations=operations, feedback=feedback, evidence=evidence,
+        decisions=decisions, operations=operations, feedback=sorted(feedback,key=lambda f:f['time']), evidence=evidence,
         model_calls=summary['llm_calls'], model_fallbacks=summary['llm_fallbacks'],
+        llm_failure_reselections=sum(d['latency'] is not None and bool(d['raw']['previous_failure']) for d in decisions),
         scope='原生仿真彩色与深度相机 → 目标检测模型 YOLO11s → 感知建图模块 → 导航规划与控制模块 → 策略决策与恢复模块 → 独立目标验收模块。',
-        setup='Gibson Rs 公寓纹理扫描场景；Locobot 实体轮式机器人；家具占用与移动推车。到达观察相对朝向依次为 '+observation_angles+' 度，每个朝向驻留 %.1f 秒。' % manifest['observation']['dwell_s'],
+        setup='Gibson Rs 公寓纹理扫描场景；Locobot 实体轮式机器人；'+{
+            'apartment':'原始扫描布局。','clutter':'家具占用与拥挤通道。','dynamic':'家具占用与移动推车。'}[summary['profile']]
+            +'到达观察相对朝向依次为 '+observation_angles+' 度，每个朝向驻留 %.1f 秒。' % manifest['observation']['dwell_s'],
         assessment='导航 %d 次，其中完成 %d 次、失败 %d 次；观察操作受阻 %d 次；局部路径重规划 %d 次。' % (
             summary['attempts'], sum(o['kind']=='导航行驶' and o['status']=='完成' for o in operations),
             sum(o['kind']=='导航行驶' and o['status']=='失败' for o in operations),
             sum(o['kind']!='导航行驶' and o['status']=='失败' for o in operations), len([f for f in feedback if f['kind']=='导航局部路径重规划'])),
         limits='本项仅包含一次完整录制，不能据此估计多次运行成功率。实际计算耗时包含渲染、感知、策略与控制处理，视频按仿真时间回放。',
-        operation_scope='操作时间来自接收与终态反馈；最后一项观察在目标验收通过时随任务结束，未被记为独立完成。',
+        operation_scope='操作起止时间来自接收与终态反馈；开始阶段被拒绝的操作只有终态定位点，不计算执行时长。目标验收时的停止或取消按日志原始状态展示。',
         media_type='video', video=str(directory / 'integrated.mp4'), frames=[], fps=media['fps'],
         frame_count=len(media['frames']), poster=str(directory / 'start.png'), final=str(directory / 'final.png'),
         links=[('运行汇总', directory/'summary.json'), ('完整事件日志', directory/'events.jsonl'),
                ('运行参数', directory/'manifest.json'), ('独立验收证据', directory/'evaluation-only.json'),
                ('录像与物理轨迹核验', directory/'artifact-verification.json')]
-              + ([('模型回答原文', directory/'llm-calls.json'), ('模型调用核验',directory/'llm-verification.json')] if calls else []))
+              + [(label, path) for label, path in [('模型回答原文', directory/'llm-calls.json'),
+                  ('模型调用核验', directory/'llm-verification.json'),
+                  ('运动控制配置', directory/'controller.json')] if path.is_file()])
 
 
 def standalone(profile, policy):
@@ -246,7 +278,7 @@ def relative_case(case, directory):
     return c
 
 
-def build_report(directory, default='integrated-language', cases=None):
+def build_report(directory, default='integrated-language', cases=None, notes=None):
     cases = cases or collect()
     local = [relative_case(c,directory) for c in cases]
     selected = next(c for c in local if c['key']==default)
@@ -258,8 +290,44 @@ def build_report(directory, default='integrated-language', cases=None):
             n,c['key'],escape(c['title']),c['group'],c['target'],strategy,media,c['duration'],c['distance'])
     payload = json.dumps(dict(cases=local, default=default),ensure_ascii=False).replace('</','<\\/')
     template=(ROOT/'scripts/templates/demo_report.html').read_text(encoding='utf-8')
+    template=template.replace('__DEMO_SKIN__',(ROOT/'scripts/templates/demo_skin.css').read_text(encoding='utf-8'))
+    template=template.replace('__DEMO_PLAYER__',(ROOT/'scripts/templates/demo_player.js').read_text(encoding='utf-8'))
+    count=len(cases); pipelines=sum(c['group']=='完整集成管线' for c in cases)
+    videos=sum(c['media_type']=='video' for c in cases)
+    intro='本报告收录 %d 项实际保存的运行，包括 %d 项完整集成管线录制。画面、决策、操作、反馈与验收均关联同次运行的原始证据。' % (count,pipelines)
+    facts=''.join('<div><strong>%d 项</strong><span>%s</span></div>' % (n,label) for n,label in
+        ((count,'实际保存的运行'),(pipelines,'完整集成管线录制'),(videos,'每秒 15 帧连续视频'),(count-videos,'带时间戳的采样画面')))
+    findings=''
+    for c in cases:
+        if c['group']!='完整集成管线': continue
+        models=sorted({d['provider'] for d in c['decisions'] if d['latency'] is not None})
+        findings+='<article class="finding"><h3>'+escape(c['title'])+'</h3>'
+        findings+='<p>本次完成目标搜索及独立验收。仿真 %.2f 秒，实际计算耗时 %.2f 秒，行驶 %.2f 米，物理接触步数 %d。</p>' % (c['duration'],c['wall'],c['distance'],c['contacts'])
+        findings+='<p>策略决策 %d 次（含未下发目标的轮次）；在线模型调用 %d 次，回退 %d 次。</p>' % (len(c['decisions']),c['model_calls'],c['model_fallbacks'] or 0)
+        if models: findings+='<p>'+escape('；'.join(models))+'。模型理由与请求耗时见逐项决策记录。</p>'
+        findings+='<p>'+escape(c['assessment'])+'</p>'
+        findings+='<p>'+escape(c['evidence'][-1]['detail'])+'</p>'
+        findings+='<p class="note">源码与模型指纹：<code>'+escape(c['source_fingerprint'])+'</code></p></article>'
+    template=template.replace('__INTRO__',intro).replace('__FACTS__',facts).replace('__FINDINGS__',findings)
+    if pipelines == count:
+        context='本次运行建立在 Gibson Rs 公寓扫描地图上；场景配置、搜索目标和决策来源见清单。'
+        chooser='在线模型选择探索前沿' if all(c['model_calls'] for c in cases) else '各项按所列策略选择探索前沿，在线大语言模型策略由模型实际回答'
+        note='点击演示名称可定位下方画面及记录。完整集成管线对彩色观测运行 YOLO11s；'+chooser+'，目标接近与恢复由共享的控制和策略规则处理。'
+        boundary='在线调用的模型理由、请求耗时、候选合法性与实际下发目标均保留在原始记录中。暂定视觉候选不等于已经通过目标验收。'
+    else:
+        context='场景建立在 Gibson Rs 公寓扫描地图上。完整集成管线搜索杯子；独立场景演示的目标与运行范围见对应条目。'
+        note='点击演示名称可切换画面及记录。完整集成管线使用目标检测模型；独立场景演示使用预先标注物体的深度可见性与实例分割。预置回答回放条件没有在线模型调用。'
+        boundary='独立场景与预置回答回放不能作为在线模型推理或完整集成管线的证据。媒体保留实际录制内容，数量和结论来自各项日志。'
+    template=template.replace('__INVENTORY_CONTEXT__',context).replace('__INVENTORY_NOTE__',note).replace('__BOUNDARY_EXTRA__',boundary)
+    date=datetime.now(timezone(timedelta(hours=8)))
+    template=template.replace('__REPORT_DATE__',date.strftime('%Y 年 %m 月 %d 日'))
+    scene_note='<p class="scope">'+escape(notes['summary'])+' <a href="scene-update.json">场景版本与验证记录</a></p>' if notes else ''
+    template=template.replace('__SCENE_NOTE__',scene_note)
     page=template.replace('__CATALOG__', rows).replace('__DATA__',payload).replace('__VIDEO__',escape(selected['video'],quote=True))
     page=page.replace('__POSTER__',escape(selected['poster'],quote=True))
+    directory.mkdir(parents=True,exist_ok=True)
+    if notes:
+        (directory/'scene-update.json').write_text(json.dumps(notes,ensure_ascii=False,indent=2),encoding='utf-8')
     path=directory/'index.html'
     backup=directory/'index-before-formal-report.html'
     if path.exists() and not backup.exists():
@@ -269,6 +337,29 @@ def build_report(directory, default='integrated-language', cases=None):
 
 
 def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--recording',type=Path,action='append',help='One or more current recording directories; no historical media required.')
+    parser.add_argument('--output',type=Path,help='Output report directory; defaults to the first recording directory.')
+    parser.add_argument('--notes',type=Path,help='Optional scene-update JSON containing a summary.')
+    args=parser.parse_args()
+    if args.recording:
+        cases=[]
+        for n,recording in enumerate(args.recording):
+            summary=read(recording/'summary.json')
+            artifact=read(recording/'artifact-verification.json')
+            assert summary['termination']=='success' and artifact['passed'], 'Verify each successful recording first.'
+            policy=summary['policy']
+            title=PROFILES[summary['profile']]+' · '+{'llm_guided':'在线大语言模型策略','nearest':'最近可达目标策略',
+                'information_gain':'信息增益策略','random':'随机策略'}[policy]
+            title += ' · 优化版' if (recording/'controller.json').is_file() else ' · 原始录制'
+            cases.append(integrated(None,'current-'+str(n),title,recording=recording))
+        output=(args.output or args.recording[0]).resolve()
+        page=build_report(output,default=cases[0]['key'],cases=cases,notes=read(args.notes) if args.notes else None)
+        (output/'inventory.json').write_text(json.dumps([dict(key=c['key'],title=c['title'],
+            duration_s=c['duration'],distance_m=c['distance'],contacts=c['contacts'],
+            model_calls=c['model_calls'],source_fingerprint=c['source_fingerprint']) for c in cases],
+            ensure_ascii=False,indent=2),encoding='utf-8')
+        print(str(page));return
     cases=collect()
     targets=[(RUNS/'integrated-llm-final-20261018/recording','integrated-language'),
              (RUNS/'integrated-final-20261017/recording','integrated-nearest')]

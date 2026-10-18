@@ -94,6 +94,7 @@ class IGibsonAdapter:
         self.contact_this_step = False
         self.executed_distance_m = 0.0
         self.settled_pose = None  # type: Optional[Pose]
+        self._odometry = (None, None)
 
     # --- SimulatorAdapter ---------------------------------------------------
 
@@ -122,6 +123,8 @@ class IGibsonAdapter:
         self._steps = self._sequence = 0
         self.collisions, self.executed_distance_m = 0, 0.0
         self.contact_this_step = False
+
+        self._odometry = (None, None)
 
     def verify_spawn_clearance(self) -> Tuple[GridCell, ...]:
         """Footprint-plus-margin cells at the settled pose, each tested as a full collision column.
@@ -162,7 +165,8 @@ class IGibsonAdapter:
         self._sequence += 1
         observation, _ = convert_igibson_frames(rgb, xyz, intrinsics, view, self._backend.pose(),
                                                 self._episode_id, self._sequence, self.sim_time_s())
-        return observation
+        return replace(observation, odometry_linear_speed_mps=self._odometry[0],
+                       odometry_angular_speed_radps=self._odometry[1])
 
     def current_pose(self) -> Pose:
         self._require_open()
@@ -178,6 +182,9 @@ class IGibsonAdapter:
         self._backend.step()
         self._steps += 1
         after = self._backend.pose()
+        dt = self._config.control_dt_s
+        self._odometry = (hypot(after.x_m-before.x_m, after.y_m-before.y_m)/dt,
+                          abs((after.yaw_rad-before.yaw_rad+pi) % (2*pi)-pi)/dt)
         self.executed_distance_m += hypot(after.x_m - before.x_m, after.y_m - before.y_m)
         self.contact_this_step = self._backend.in_contact(after.z_m,
             self._config.contact_height_above_base_m, self._config.contact_force_n)

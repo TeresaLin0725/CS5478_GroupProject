@@ -1,5 +1,12 @@
 # Verified starting area: A implementation and B handoff
 
+Historical handoff below. The current integrated native demo implements the
+verification in `simulation/start_area_verifier.py` and `IGibsonAdapter.verify_start_area`.
+Its manifest opts into a 0.65 m radius; only verified connected cells are seeded,
+not a free circle. This remains a stronger initialization prior than the
+footprint-only 1.0 baseline. Current code/evidence and remaining experiments are
+tracked in the [design audit](../chinese/demo_design_review.md).
+
 The native Locobot camera remains unchanged. The 360-degree recording exposed a
 near-floor blind area: the final base overlapped five unknown cells despite 11
 valid goal poses. See [measured results](locobot_multiframe.md). A larger, physically

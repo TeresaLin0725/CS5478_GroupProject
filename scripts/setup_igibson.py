@@ -21,7 +21,7 @@ DATA = ROOT / 'data'
 SOURCE = DATA / 'igibson-src'
 VENV = DATA / 'venv-igibson'
 PYTHON = VENV / 'Scripts' / 'python.exe'
-COMMIT = '7d95982'  # iGibson 2.2.2 (merge of ig-develop, PR #316)
+COMMIT = '7d9598278b95ec1039e1f4366c66b45346521e44'  # iGibson 2.2.2
 
 PATCHES = [
     ('igibson/render/cryptopp/integer.cpp',
@@ -59,14 +59,21 @@ def patch(relative, old, new):
 
 
 def main():
+    if os.name != 'nt':
+        raise RuntimeError('This source-build helper is for Windows; see Documentation/chinese/running.md for Linux.')
     DATA.mkdir(exist_ok=True)
+    os.environ.setdefault('UV_CACHE_DIR', str(DATA / 'uv-cache'))
     if not SOURCE.exists():
         run('git', 'clone', 'https://github.com/StanfordVL/iGibson.git', SOURCE)
         run('git', '-C', SOURCE, 'checkout', COMMIT)
         run('git', '-C', SOURCE, 'submodule', 'update', '--init', '--recursive')
+    revision = subprocess.check_output(['git', '-C', str(SOURCE), 'rev-parse', 'HEAD'], encoding='utf-8').strip()
+    if revision != COMMIT:
+        raise RuntimeError('Existing iGibson source is not the pinned revision; preserve it and use a fresh data/igibson-src.')
     if not PYTHON.exists():
-        run('uv', 'venv', '--python', '3.8', VENV)
-    run('uv', 'pip', 'install', '--python', PYTHON, '-r', ROOT / 'requirements-igibson.txt')
+        run('uv', 'venv', '--python', '3.8.20', VENV)
+    run('uv', 'pip', 'install', '--python', PYTHON, '-r', ROOT / 'requirements-igibson.txt',
+        '-c', ROOT / 'constraints-windows-py38.txt')
     for relative, old, new in PATCHES:
         patch(relative, old, new)
     renderer = SOURCE / 'igibson' / 'render' / 'mesh_renderer'

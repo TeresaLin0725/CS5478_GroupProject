@@ -163,6 +163,7 @@ class WorldState(ImmutableRecord):
     last_processed_sequence: int
     target_class: str
     robot_pose: Pose
+
     occupancy_map: OccupancyGrid
     explored_map: ExploredGrid
     semantic_objects: Tuple[ObjectTrack, ...]
@@ -231,6 +232,10 @@ class RGBDObservation(ImmutableRecord):
     camera_intrinsics: CameraIntrinsics
     camera_to_world: Transform
     robot_pose: Pose
+    # Optional known-pose odometry over the latest control step, not the
+    # lower-rate RGB-D interval. Magnitudes; legacy recordings may omit both.
+    odometry_linear_speed_mps: Optional[float] = None
+    odometry_angular_speed_radps: Optional[float] = None
 
 
 class PolicyName(Enum):
@@ -315,7 +320,7 @@ class ObservationRequest(ImmutableRecord):
     goal_id: str
     occupancy_map: OccupancyGrid
     start_pose: Pose
-    routine: str                     # initial, arrival, recovery
+    routine: str                     # initial, arrival, recovery; optional 1.1 inspection
     heading_rad: float               # reference heading for configured sweep
 
 

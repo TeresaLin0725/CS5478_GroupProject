@@ -127,6 +127,10 @@ class ObservationConfig:
     allow_full_rotation: bool = False
     operation_deadline_s: float = 20.0
     drain_deadline_s: float = 5.0
+    # Optional stopped observation after reaching an observed target approach.
+    # Physics and regular RGB-D captures continue; this does not assert success.
+    inspection_hold_s: float = 0.0
+    inspection_headings_rad: Tuple[float, ...] = (-0.15, 0.0, 0.15)
 
 
 @dataclass(frozen=True)

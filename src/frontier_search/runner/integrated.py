@@ -40,14 +40,15 @@ class DisplayDetector(TiledYOLODetector):
 
 def manifest_for(episode_id, policy='information_gain'):
     robot = RobotConfig(tuple(Point2(x,y) for x,y in ((-.182,-.182),(.182,-.182),(.182,.182),(-.182,.182))),
-        .0,.908,.02,'differential_drive',True,.25,.8,.03,.10)
+        .0,.908,.02,'differential_drive',True,.32,1.1,.03,.10)
     mapping = MappingConfig(resolution_m=.1,width_cells=70,height_cells=85,origin_x_m=-4.5,origin_y_m=-4.5,
         floor_tolerance_m=.04,base_elevation_margin_m=.015,confidence_threshold=.50,
         confirmation_window_s=3.,depth_pixel_stride=4,frontier_cluster_span_m=1.,
-        dynamic_clear_frames=2,inspection_distance_m=.90,gain_ray_step_rad=.15,target_max_extent_m=.25)
+        dynamic_clear_frames=2,inspection_distance_m=.90,inspection_angular_speed_radps=.02,
+        gain_ray_step_rad=.15,target_max_extent_m=.25)
     return EpisodeManifest(episode_id,'Rs','igibson','cup',Pose(.8,-2.4,0.,pi/2),robot,
         policy_name=policy,mapping=mapping,
-        observation=ObservationConfig(allow_full_rotation=True,dwell_s=.6,
+        observation=ObservationConfig(allow_full_rotation=True,dwell_s=.6,inspection_hold_s=4.,
             arrival_headings_rad=(0.,pi/2,pi,-pi/2,0.),recovery_headings_rad=(pi/2,pi,-pi/2,0.),
             operation_deadline_s=400.,drain_deadline_s=30.),
         navigation=NavigationConfig(batch_deadline_s=5.,navigation_deadline_s=400.,max_replans=4,
@@ -134,11 +135,15 @@ def main():
     manifest=manifest_for(args.output.name,args.policy)
     manifest.validate()
     (args.output/'manifest.json').write_text(dumps(manifest),encoding='utf-8')
+    (args.output/'controller.json').write_text(json.dumps(dict(linear_gain_per_s=2.0,
+        path_smoothing=False,control_hz=30,odometry_source='latest control-step known-pose difference'),indent=2),encoding='utf-8')
     store=RetainedFrames()
     sim=RetainingAdapter(manifest.robot,manifest.mapping,
         AdapterConfig(scene_id='Rs',settle_steps=0,image_width=640,image_height=480,vertical_fov_deg=75.),store,args.profile)
     mapper=RGBDMapper(detector)
-    nav=TeamNavigator(sim)
+    # Grid waypoints are only 0.1 m apart. The default 1/s gain made the
+    # robot crawl below its speed limit even on a straight, validated path.
+    nav=TeamNavigator(sim,linear_gain=2.0)
     policy=(LLMGuidedPolicy(GeminiCompatibleClient()) if args.policy=='llm_guided'
             else BaselinePolicy(PolicyName(args.policy)))
     evaluator=CloseRetainedEvaluator(store,sim)
@@ -158,6 +163,7 @@ def main():
         llm_fallbacks=sum(bool(r.get('fallback_reason')) for r in getattr(policy,'call_records',())),
         source_fingerprint=fingerprint,source_unchanged=fingerprint==source_fingerprint(),evaluation=evaluator.metrics,
         detector_runtime=detector_runtime,
+        scene_events=getattr(getattr(getattr(sim,'_backend',None),'world',None),'environment_events',[]),
         navigator_events=nav.events,recorded=args.record,
         components=dict(scene='Gibson Rs',robot='native Locobot',sensor='native calibrated eyes RGB-D',
             perception='shared RGBDMapper + official YOLO11s (overlapping RGB target tiles)',navigation='shared TeamNavigator',

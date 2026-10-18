@@ -74,10 +74,12 @@ class EpisodeManifest:
         require(type(self.navigation.max_replans) is int and self.navigation.max_replans >= 0,
                 'invalid replan budget')
         require(all(isfinite(x) and x >= 0 for x in (self.observation.dwell_s,
+                    self.observation.inspection_hold_s,
                     self.recovery.cooldown_s, self.recovery.minimum_progress_m2)),
                 'invalid dwell, cooldown or progress threshold')
         for headings in (self.observation.initial_headings_rad,
-                         self.observation.arrival_headings_rad, self.observation.recovery_headings_rad):
+                         self.observation.arrival_headings_rad, self.observation.recovery_headings_rad,
+                         self.observation.inspection_headings_rad):
             require(bool(headings) and all(isfinite(x) for x in headings), 'empty/invalid scan headings')
         r = self.robot
         require(len(r.footprint_base) >= 3 and r.can_turn_in_place,
@@ -116,7 +118,8 @@ def load_manifest(path: Path) -> EpisodeManifest:
         if name in data:
             values = dict(data[name])
             if name == 'observation':
-                for key in ('initial_headings_rad', 'arrival_headings_rad', 'recovery_headings_rad'):
+                for key in ('initial_headings_rad', 'arrival_headings_rad', 'recovery_headings_rad',
+                            'inspection_headings_rad'):
                     if key in values:
                         values[key] = tuple(values[key])
             data[name] = cls(**values)

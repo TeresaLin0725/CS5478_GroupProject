@@ -1,0 +1,111 @@
+{
+  "date": "2026-10-18",
+  "upstream_commit": "43617b9d2ea16a68c021f1c40d6e608a3ab7953a",
+  "summary": "Locobot 在 Gibson Rs 公寓中搜索杯子，四种前沿选择策略各收录一段通过独立验收的录像；同一源码、检测模型、控制器与验收条件。检测阈值、目标位置及独立验收条件按原设计执行。",
+  "cart_route": {
+    "start": [
+      0.8,
+      1.15,
+      0
+    ],
+    "end": [
+      0.8,
+      2.7,
+      0
+    ],
+    "sweep_clear": true,
+    "floor_supported": true
+  },
+  "cart_motion": "单程；16 秒仿真时间后启动；保持原 0.7 米 / 3 秒的速度；全程继续做扫掠碰撞检查",
+  "tests": {
+    "returncode": 0,
+    "source_fingerprint": "bbd90a237a14b60bdddcd8e9f32524ea350ada88b94d34028f34caa2fd0140a1",
+    "source_unchanged": true,
+    "tests_count": 384
+  },
+  "diagnostic_scope": "每种策略保留一次通过完整验证的录制及其同源无录制试跑；单次录制只用于展示，不用于估计成功率或比较策略性能，策略比较以 36 回合配对实验为准。",
+  "local_adjustment_files": [
+    "src/frontier_search/navigation/navigator.py",
+    "src/frontier_search/runner/integrated.py",
+    "src/frontier_search/runner/episode.py",
+    "src/frontier_search/config.py",
+    "src/frontier_search/runner/manifest.py",
+    "src/frontier_search/contracts.py",
+    "src/frontier_search/simulation/igibson_adapter.py",
+    "src/frontier_search/perception/mapper.py",
+    "src/frontier_search/perception/observations.py",
+    "src/frontier_search/fixtures/recording.py",
+    "src/frontier_search/runner/integrated_recording.py",
+    "src/frontier_search/runner/demo_video.py",
+    "src/frontier_search/simulation/igibson_rs.py",
+    "src/frontier_search/simulation/indoor_challenges.py",
+    "scripts/build_demo_report.py",
+    "scripts/templates/demo_report.html",
+    "scripts/templates/demo_player.js",
+    "scripts/templates/demo_skin.css"
+  ],
+  "motion": {
+    "linear_gain_per_s": 2.0,
+    "max_linear_mps": 0.32,
+    "max_angular_radps": 1.1,
+    "yaw_tolerance_rad": 0.1,
+    "scan_heading_tolerance_rad": 0.05,
+    "dwell_s": 0.6,
+    "inspection_hold_s": 4.0,
+    "inspection_headings_rad": [
+      -0.15,
+      0.0,
+      0.15
+    ],
+    "perception_still_angular_radps": 0.02,
+    "odometry_source": "latest 30 Hz known-pose control step; no scene geometry"
+  },
+  "display": {
+    "default_playback_rate": 2.0,
+    "source_video_fps": 15,
+    "crf": 18,
+    "spectator_sensor_isolation": {
+      "passed": true,
+      "checks": {
+        "rgb_identical": true,
+        "depth_xyz_identical": true,
+        "instance_segmentation_identical": true,
+        "sensor_view_identical": true,
+        "no_physics_steps": true
+      },
+      "rgb_sha256": "edbb35f5949019bf86f5adb2a1c87ea376ee8b158e5577a155c22bee7c7ef1ac",
+      "scope": "native same-pose sensor render before and after spectator-only material and light changes"
+    }
+  },
+  "asset_sha256": {
+    "006_mustard_bottle/textured_simple.obj": "f156897814cba5889427759c52d76f7d7c7dd7902aef87e38ec898195bbc6d79",
+    "006_mustard_bottle/textured_simple.obj.mtl": "66906c16609d5fc60d520f5cc0e59cfe7c0bb84e66c970da2badcdb15cbebe0a",
+    "006_mustard_bottle/texture_map.png": "5ab81c84e1b0a945c9f1a3f20fe765720ab607ca2841a1da3454b9cf443893b1"
+  },
+  "demos": {
+    "random": {
+      "title": "公寓室内搜索 · 随机策略",
+      "recording": "evidence/demo/random/recording",
+      "dryrun": "evidence/demo/random/dryrun/summary.json",
+      "validation": "evidence/demo/random/validation.json"
+    },
+    "nearest": {
+      "title": "移动推车干扰搜索 · 最近可达目标策略",
+      "recording": "evidence/demo/nearest/recording",
+      "dryrun": "evidence/demo/nearest/dryrun/summary.json",
+      "validation": "evidence/demo/nearest/validation.json"
+    },
+    "information_gain": {
+      "title": "移动推车干扰搜索 · 信息增益策略",
+      "recording": "evidence/demo/information_gain/recording",
+      "dryrun": "evidence/demo/information_gain/dryrun/summary.json",
+      "validation": "evidence/demo/information_gain/validation.json"
+    },
+    "llm_guided": {
+      "title": "移动推车干扰搜索 · 在线大语言模型策略",
+      "recording": "evidence/demo/llm_guided/recording",
+      "dryrun": "evidence/demo/llm_guided/dryrun/summary.json",
+      "validation": "evidence/demo/llm_guided/validation.json"
+    }
+  }
+}

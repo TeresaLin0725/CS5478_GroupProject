@@ -1,0 +1,308 @@
+[
+  {
+    "job_id": "apartment-s17-llm_guided",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 15,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "invalid_goal": 5,
+      "no_path": 10
+    },
+    "observed_cup_tracks": 1,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": 0.7153279603848479,
+      "y_m": 2.196416447856985,
+      "z_m": 0.0024840654537213566,
+      "yaw_rad": -2.9564802738130287
+    },
+    "operation_timeouts": []
+  },
+  {
+    "job_id": "apartment-s29-random",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 14,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "invalid_goal": 5,
+      "no_path": 9
+    },
+    "observed_cup_tracks": 1,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": 0.7888367874162772,
+      "y_m": 2.2639447520232667,
+      "z_m": 0.001353064301859993,
+      "yaw_rad": 3.059098528466661
+    },
+    "operation_timeouts": []
+  },
+  {
+    "job_id": "apartment-s29-nearest",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 11,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "invalid_goal": 5,
+      "no_path": 6
+    },
+    "observed_cup_tracks": 0,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": 0.7982181024425234,
+      "y_m": 1.8884139063926748,
+      "z_m": 0.004163902797034138,
+      "yaw_rad": -2.7388803206944043
+    },
+    "operation_timeouts": []
+  },
+  {
+    "job_id": "apartment-s43-nearest",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 12,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "no_path": 5,
+      "invalid_goal": 7
+    },
+    "observed_cup_tracks": 0,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": 0.4556091549582834,
+      "y_m": 1.968705914583579,
+      "z_m": 0.00750091492115321,
+      "yaw_rad": -2.2672523679561145
+    },
+    "operation_timeouts": []
+  },
+  {
+    "job_id": "apartment-s43-information_gain",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 11,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "no_path": 6,
+      "invalid_goal": 2,
+      "no_progress": 3
+    },
+    "observed_cup_tracks": 0,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": 0.8405481864588262,
+      "y_m": -2.5452232031515174,
+      "z_m": 0.0002757042271749276,
+      "yaw_rad": 1.8302911770105903
+    },
+    "operation_timeouts": []
+  },
+  {
+    "job_id": "clutter-s29-nearest",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 19,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "invalid_goal": 10,
+      "no_path": 8,
+      "no_progress": 1
+    },
+    "observed_cup_tracks": 1,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": 0.6886021487460111,
+      "y_m": 2.079076450271948,
+      "z_m": 0.0039117183866482245,
+      "yaw_rad": -2.989602604955604
+    },
+    "operation_timeouts": []
+  },
+  {
+    "job_id": "clutter-s29-llm_guided",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 15,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "no_path": 5,
+      "invalid_goal": 10
+    },
+    "observed_cup_tracks": 1,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": 0.681260324352719,
+      "y_m": 2.191620787120381,
+      "z_m": 0.0029407991577340246,
+      "yaw_rad": -2.749828183088115
+    },
+    "operation_timeouts": []
+  },
+  {
+    "job_id": "clutter-s43-random",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 24,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "invalid_goal": 13,
+      "no_path": 4,
+      "no_progress": 2
+    },
+    "observed_cup_tracks": 0,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": -1.6175960349519292,
+      "y_m": 0.16128067082442704,
+      "z_m": 0.0005593481994182963,
+      "yaw_rad": 3.0968871296026093
+    },
+    "operation_timeouts": []
+  },
+  {
+    "job_id": "clutter-s43-information_gain",
+    "termination": "search_limit",
+    "final_frontier_count": 17,
+    "last_eligible_frontier_count": 2,
+    "last_exclusion_reasons": {
+      "invalid_goal": 13,
+      "no_path": 2,
+      "normal_frontier_available": 2
+    },
+    "observed_cup_tracks": 0,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": -1.5450684339971101,
+      "y_m": 0.545951837329269,
+      "z_m": 0.0008541513972785284,
+      "yaw_rad": 1.6120859872303752
+    },
+    "operation_timeouts": [
+      {
+        "goal_id": "op-7",
+        "kind": "observe",
+        "elapsed_sim_s": 199.3,
+        "deadline_s": 400.0,
+        "wall_bound_triggered_before_sim_bound": true
+      }
+    ]
+  },
+  {
+    "job_id": "clutter-s43-llm_guided",
+    "termination": "search_limit",
+    "final_frontier_count": 17,
+    "last_eligible_frontier_count": 2,
+    "last_exclusion_reasons": {
+      "invalid_goal": 13,
+      "no_path": 2,
+      "normal_frontier_available": 2
+    },
+    "observed_cup_tracks": 0,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": -1.5450684339971101,
+      "y_m": 0.545951837329269,
+      "z_m": 0.0008541513972785284,
+      "yaw_rad": 1.6120859872303752
+    },
+    "operation_timeouts": [
+      {
+        "goal_id": "op-7",
+        "kind": "observe",
+        "elapsed_sim_s": 199.3,
+        "deadline_s": 400.0,
+        "wall_bound_triggered_before_sim_bound": true
+      }
+    ]
+  },
+  {
+    "job_id": "dynamic-s17-random",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 11,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "invalid_goal": 6,
+      "no_path": 5
+    },
+    "observed_cup_tracks": 0,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": 0.7596119347473294,
+      "y_m": 1.9561889332216238,
+      "z_m": 0.003985244458432693,
+      "yaw_rad": -2.7630039219240774
+    },
+    "operation_timeouts": []
+  },
+  {
+    "job_id": "dynamic-s29-random",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 14,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "invalid_goal": 9,
+      "no_path": 5
+    },
+    "observed_cup_tracks": 1,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": 0.7823281174200187,
+      "y_m": 1.8454059677344454,
+      "z_m": 0.004861778899699583,
+      "yaw_rad": -2.9591777838436357
+    },
+    "operation_timeouts": []
+  },
+  {
+    "job_id": "dynamic-s29-llm_guided",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 13,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "invalid_goal": 6,
+      "no_path": 7
+    },
+    "observed_cup_tracks": 1,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": 0.7813051560548325,
+      "y_m": 1.9624852238748578,
+      "z_m": 0.003832867559488896,
+      "yaw_rad": -2.969014736215277
+    },
+    "operation_timeouts": []
+  },
+  {
+    "job_id": "dynamic-s43-random",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 23,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "invalid_goal": 11,
+      "no_path": 12
+    },
+    "observed_cup_tracks": 2,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": 0.6860736873806533,
+      "y_m": 2.1236436243845964,
+      "z_m": 0.003495648692630862,
+      "yaw_rad": 2.3228928952427603
+    },
+    "operation_timeouts": []
+  },
+  {
+    "job_id": "dynamic-s43-llm_guided",
+    "termination": "no_feasible_frontiers",
+    "final_frontier_count": 13,
+    "last_eligible_frontier_count": 0,
+    "last_exclusion_reasons": {
+      "invalid_goal": 6,
+      "no_path": 7
+    },
+    "observed_cup_tracks": 1,
+    "target_claim_present": false,
+    "final_pose": {
+      "x_m": 0.7933285859978348,
+      "y_m": 1.8547340838015172,
+      "z_m": 0.004581323690503409,
+      "yaw_rad": -2.944251125981466
+    },
+    "operation_timeouts": []
+  }
+]

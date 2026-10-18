@@ -76,3 +76,7 @@ def validate_rgbd_observation(observation: RGBDObservation) -> None:
     pose = observation.robot_pose
     require(isinstance(pose, Pose) and all(is_finite_number(x) for x in
             (pose.x_m, pose.y_m, pose.z_m, pose.yaw_rad)), "robot pose must be finite")
+    motion = (observation.odometry_linear_speed_mps, observation.odometry_angular_speed_radps)
+    require(all(value is None for value in motion) or all(
+        is_finite_number(value) and value >= 0 for value in motion),
+        "control-step odometry speeds must both be absent or finite nonnegative magnitudes")

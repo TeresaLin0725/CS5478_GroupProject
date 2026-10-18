@@ -86,6 +86,21 @@ class FakeBackend(IGibsonBackendProtocol):
 class IGibsonAdapterTests(unittest.TestCase):
     backend_cls = FakeBackend
 
+    def test_odometry_uses_latest_control_step_and_stop_does_not_fake_stillness(self):
+        adapter=self.make()
+        self.reset(adapter)
+        self.assertIsNone(adapter.capture().odometry_angular_speed_radps)
+        adapter.set_velocity(.1,.2)
+        adapter.step()
+        moving=adapter.capture()
+        self.assertAlmostEqual(moving.odometry_linear_speed_mps,.1,places=5)
+        self.assertAlmostEqual(moving.odometry_angular_speed_radps,.2,places=5)
+        adapter.stop()
+        # Applying a brake command must not rewrite a measured past step.
+        self.assertEqual(adapter.capture().odometry_angular_speed_radps,moving.odometry_angular_speed_radps)
+        adapter.step()
+        self.assertEqual(adapter.capture().odometry_angular_speed_radps,0.)
+
     def make(self, **backend_attrs):
         cls = type("B", (FakeBackend,), backend_attrs)
         self.backends = []

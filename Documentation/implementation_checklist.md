@@ -1,5 +1,13 @@
 # Skeleton implementation checklist
 
+Current demo audit (2026-10-18): this checklist contains historical scaffolding
+milestones, not a current release acceptance certificate. See the
+[code-and-evidence design review](chinese/demo_design_review.md) for what is
+implemented and accepted. The current Rs benchmark now completes 36 native
+episodes in 9 paired blocks across three conditions; see the
+[paired results and scope](chinese/paired_benchmark.md). Cross-house
+generalization and the complete W4 native reliability suite remain uncovered.
+
 The English design documents remain authoritative. This file records scaffolding
 status and intended extension points, without changing the contract.
 
@@ -9,8 +17,7 @@ tested implementation using MockSimulator; the B items below are requirements
 to verify against the real adapter, not all unimplemented features. A's real-data
 acceptance and the real B adapter remain pending. C's episode/recovery implementation now
 runs against an authored mapper and B's mock adapter, with process supervision.
-See [current integration status](chinese/w2_integration_status.md) and
-`tests/test_w2_integration.py` for the cross-owner checks and remaining gates.
+See `tests/test_w2_integration.py` for the cross-owner checks and remaining gates.
 
 ## Shared foundation
 
@@ -27,7 +34,7 @@ validation. Reject boundary violations explicitly rather than returning empty da
 
 Completed W1: mapper reset, JSON room-prior loading, RGB-D validation and replay,
 and detector feasibility. See the [handoff](english/w1_perception_handoff.md) for
-ownership and setup, and [detector results](english/detector_feasibility.md) for the comparison.
+ownership and setup.
 
 W2 perception implementation (2026-10-10): `RGBDMapper.update()` fuses observed obstacle endpoints and
 height-binned free-ray evidence, publishes separate geometric/room coverage,
@@ -100,8 +107,7 @@ dependency wiring, termination enum, and fixture JSONL output.
   Gemini-compatible transport cancellation and usage capture are now available in
   `policies/provider.py`; cost is still unknown. A separate contract-based
   three-room synthetic loop and live/replay cases are in `runner/synthetic.py`.
-  These older demos are separate from the W2 lifecycle implementation. See
-  [integration review](chinese/c_integration_review.md).
+  These older demos are separate from the W2 lifecycle implementation.
 - Load/freeze paired manifests with separate RNG streams; log revisions, actual
   executed distance, collisions, replans, barriers, attempts, and terminal outcomes.
 - Report all episode outcomes, paired uncertainty, and explicitly labeled

@@ -15,8 +15,14 @@ class CartMotion:
         self.start = self.end = None
         # Prefer the original corridor; move the crossing away from the scanned
         # dining chairs only when the entire alternative sweep is verified.
-        for y in (-.10, -.35, -.60, -.85, -1.10):
-            start, end = (1.40, y, 0), (.70, y, 0)
+        # The Rs scan also protrudes into the original right-hand start column.
+        # The original start column also intersects the scanned cabinet. The
+        # northern fallback clears the entrance and parks inside the kitchen,
+        # leaving room to turn west after passing the scanned chair backs.
+        # This is scene layout, never mapper/navigation input.
+        candidates = [((1.40, y, 0), (.70, y, 0)) for y in (-.10, -.35, -.60, -.85, -1.10)]
+        candidates.append(((.80, 1.15, 0), (.80, 2.70, 0)))
+        for start, end in candidates:
             if self.clear_sweep(start, end) and self.floor_supported(start, end):
                 self.start, self.end = start, end
                 break
@@ -66,6 +72,8 @@ class CartMotion:
     def move(self, fraction):
         position = [a + (b - a) * fraction for a, b in zip(self.start, self.end)]
         previous = self.cart.get_position()
+        if all(abs(a - b) < 1e-9 for a, b in zip(previous, position)):
+            return True
         if not self.clear_sweep(previous, position):
             return False
         self.cart.set_position_orientation(position, [0, 0, 0, 1])

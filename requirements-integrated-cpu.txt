@@ -1,0 +1,6 @@
+# CPU inference alternative. iGibson still requires a working OpenGL renderer.
+# Install using --extra-index-url https://download.pytorch.org/whl/cpu
+-r requirements-igibson.txt
+torch==2.4.1+cpu
+torchvision==0.19.1+cpu
+ultralytics==8.3.203

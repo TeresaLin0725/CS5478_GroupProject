@@ -177,6 +177,7 @@ class IGibsonWorld:
         self.camera_pitch = CAMERA_PITCH_RAD
         self.cart_motion = None
         self.cart_blocked = False
+        self.cart_finished = False
         if self.profile == 'dynamic':
             from .cart_motion import CartMotion
             cart = next(record for record in self.furniture if record['kind'] == 'cart')
@@ -237,9 +238,14 @@ class IGibsonWorld:
         return touching
 
     def _update_challenge(self, pose):
-        if self.profile != 'dynamic' or self.cart_blocked:
+        if self.profile != 'dynamic' or self.cart_blocked or self.cart_finished:
             return
-        if self.cart_started_s is None and self.sim_time > 16 and pose.y_m > -1.4 and pose.x_m > .1:
+        # The collision-free fallback initially occupies the narrow aisle.
+        # Move on the scene clock, before the robot can be trapped behind it,
+        # then park beyond the entrance. Original viable routes retain their loop.
+        one_way = self.cart_motion.start[0] < 1.4
+        ready = one_way or (pose.y_m > -1.4 and pose.x_m > .1)
+        if self.cart_started_s is None and self.sim_time > 16 and ready:
             self.cart_started_s = self.sim_time
             self.environment_events.append({'time_s': self.sim_time, 'event': 'cart_crossing',
                                             'text': '推车开始横穿客厅通道'})
@@ -247,11 +253,18 @@ class IGibsonWorld:
             return
         elapsed = self.sim_time - self.cart_started_s
         # The cart follows its own timed motion. It is never injected into A's map.
-        fraction = min(1.0, elapsed / 3.0) if elapsed < 11 else max(0.0, 1 - (elapsed - 11) / 3.0)
+        travel_s = 3.0 * hypot(self.cart_motion.end[0] - self.cart_motion.start[0],
+                               self.cart_motion.end[1] - self.cart_motion.start[1]) / self.cart_motion.TRAVEL_M
+        fraction = min(1.0, elapsed / travel_s) if one_way else (
+            min(1.0, elapsed / 3.0) if elapsed < 11 else max(0.0, 1 - (elapsed - 11) / 3.0))
         if not self.cart_motion.move(fraction):
             self.cart_blocked = True
             self.environment_events.append({'time_s': self.sim_time, 'event': 'cart_blocked',
                                             'text': '推车扫掠空间被占用，停止移动以防穿模'})
+        elif one_way and fraction >= 1.0:
+            self.cart_finished = True
+            self.environment_events.append({'time_s': self.sim_time, 'event': 'cart_parked',
+                                            'text': '推车已在通道侧方停妥，保持通道开放'})
 
     def spectator(self):
         """Third-person iGibson render with the entire physical robot visible."""
@@ -290,7 +303,28 @@ class IGibsonWorld:
         self.spectator_last_s = self.sim_time
         renderer.set_fov(72)
         renderer.set_camera(self.spectator_eye, self.spectator_target, np.array([0, 0, 1]))
-        rgb = renderer.render(modes=('rgb',), hidden=[])[0]
+        # Some public Locobot meshes have a zero-valued diffuse material and
+        # appear as silhouettes. A slate presentation finish reveals their
+        # geometry in this spectator pass only. Restore every value before
+        # any sensor/evaluator render can run; physics and RGB-D are untouched.
+        materials = {}
+        for instance in self.robot.renderer_instances:
+            for obj in instance.objects:
+                for vao in obj.VAO_ids:
+                    material = renderer.material_idx_to_material_instance_mapping[renderer.shape_material_idx[vao]]
+                    if not material.is_texture() and max(material.kd[:3]) < .15:
+                        materials[id(material)] = (material, material.kd)
+        lightpos, lightview = renderer.lightpos, renderer.lightV
+        try:
+            for material, _ in materials.values():
+                material.kd = [.24, .28, .34]
+            renderer.set_light_position_direction([pose.x_m+1, pose.y_m-1.1, 3],
+                                                  [pose.x_m, pose.y_m, .4])
+            rgb = renderer.render(modes=('rgb',), hidden=[])[0]
+        finally:
+            for material, original in materials.values():
+                material.kd = original
+            renderer.lightpos, renderer.lightV = lightpos, lightview
         return (np.clip(rgb[:, :, :3], 0, 1) * 255).astype(np.uint8)
 
     def stop(self, steps=3):

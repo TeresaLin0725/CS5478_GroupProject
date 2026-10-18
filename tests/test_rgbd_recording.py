@@ -1,6 +1,7 @@
 """Recording replay uses only the standard library."""
 
 from pathlib import Path
+from dataclasses import replace
 import json
 import tempfile
 import unittest
@@ -11,6 +12,19 @@ from rgbd_support import load_wall_observation
 
 
 class RGBDRecordingTests(unittest.TestCase):
+    def test_optional_control_step_odometry_round_trip_and_legacy_recording(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            directory=Path(tmp)/'capture'
+            observation=replace(load_wall_observation(),odometry_linear_speed_mps=.01,odometry_angular_speed_radps=.12)
+            save_rgbd_recording(directory,observation,{})
+            self.assertEqual(load_rgbd_recording(directory),observation)
+            path=directory/'observation.json'
+            document=json.loads(path.read_text(encoding='utf-8'))
+            document['observation'].pop('odometry_linear_speed_mps')
+            document['observation'].pop('odometry_angular_speed_radps')
+            path.write_text(json.dumps(document),encoding='utf-8')
+            self.assertIsNone(load_rgbd_recording(directory).odometry_linear_speed_mps)
+
     def test_round_trip_and_no_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:
             directory = Path(tmp) / "capture"
@@ -40,6 +54,7 @@ class RGBDRecordingTests(unittest.TestCase):
                 lambda d: d["observation"]["color_image"].update(encoding="bgr8"),
                 lambda d: d["observation"]["depth_image"].update(width=99),
                 lambda d: d["observation"].pop("robot_pose"),
+                lambda d: d["observation"].update(odometry_linear_speed_mps=.1),
             ):
                 document = json.loads(original)
                 change(document)

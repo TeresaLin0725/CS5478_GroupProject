@@ -117,6 +117,7 @@ class _Operation:
         self.targets = []                     # type: List[float]
         self.leg = 0
         self.dwell_until = None               # type: Optional[float]
+        self.dwell_s = 0.0
         self.marks = []                       # type: List[float]
         self.pose = None                      # type: Optional[Pose]
         # stall detection
@@ -128,13 +129,17 @@ class TeamNavigator:
     """B's Navigator. Construct with a control interface, then ``reset``."""
 
     def __init__(self, control: ControlInterface, wall_clock: Callable[[], float] = monotonic,
-                 smooth_paths: bool = False, planning_radius_m: Optional[float] = None) -> None:
+                 smooth_paths: bool = False, planning_radius_m: Optional[float] = None,
+                 linear_gain: float = K_LINEAR) -> None:
         # ``planning_radius_m``: None = circumscribed disc (conservative, default). A smaller value in
         # [inscribed, circumscribed] plans through narrower gaps; see Costmap and the P6 notes.
         self._planning_radius_m = planning_radius_m
         self._control = control
         self._wall_clock = wall_clock
         self._smooth = smooth_paths
+        if not 0 < linear_gain <= 3:
+            raise ValueError('linear_gain must be positive and at most 3 / s')
+        self._linear_gain = linear_gain
         self._episode_id = None               # type: Optional[str]
         self._robot = None                    # type: Optional[RobotConfig]
         self._obs_cfg = None                  # type: Optional[ObservationConfig]
@@ -289,7 +294,7 @@ class TeamNavigator:
 
     def start_observation(self, request: ObservationRequest) -> NavigationFeedback:
         self._require_ready(request.episode_id)
-        if request.routine not in ("initial", "arrival", "recovery"):
+        if request.routine not in ("initial", "arrival", "recovery", "inspection"):
             raise NavigatorBoundaryError("unknown observation routine %r" % request.routine)
         op = self._begin(request.goal_id, "observe")
         live = self._control.current_pose()
@@ -298,12 +303,14 @@ class TeamNavigator:
         op.costmap = self._costmap_for(request.occupancy_map)
         op.pose = live
         cfg = self._obs_cfg
+        op.dwell_s = cfg.inspection_hold_s if request.routine == 'inspection' else cfg.dwell_s
         if request.routine == "initial" and cfg.allow_full_rotation:
             # Full turn in quarter steps, only if clearance permits it.
             op.targets = [_wrap(request.heading_rad + k * pi / 2) for k in range(1, 5)]
         else:
             offsets = {"initial": cfg.initial_headings_rad, "arrival": cfg.arrival_headings_rad,
-                       "recovery": cfg.recovery_headings_rad}[request.routine]
+                       "recovery": cfg.recovery_headings_rad,
+                       "inspection": cfg.inspection_headings_rad}[request.routine]
             op.targets = [_wrap(request.heading_rad + o) for o in offsets]
         safe = (self._robot.can_turn_in_place and op.costmap.pose_valid(live)
                 and self._sweep_safe(op.costmap, live, [live.yaw_rad] + op.targets)
@@ -415,7 +422,7 @@ class TeamNavigator:
             op.turn_ok = op.index
         w = _clip(K_ANGULAR * heading_err, robot.max_angular_speed_radps)
         v = 0.0 if abs(heading_err) > TURN_IN_PLACE_RAD else \
-            min(robot.max_linear_speed_mps, K_LINEAR * dist) * max(0.0, cos(heading_err))
+            min(robot.max_linear_speed_mps, self._linear_gain * dist) * max(0.0, cos(heading_err))
         self._control.set_velocity(v, w)
 
     def _tick_observation(self, op: _Operation, now: float) -> None:
@@ -435,7 +442,7 @@ class TeamNavigator:
                 self._control.set_velocity(0.0, _clip(K_ANGULAR * err, robot.max_angular_speed_radps))
                 return
             self._control.set_velocity(0.0, 0.0)
-            op.dwell_until = now + cfg.dwell_s
+            op.dwell_until = now + op.dwell_s
         if now >= op.dwell_until:
             op.marks.append(now)  # heading reached and dwelled: designated capture
             op.leg += 1

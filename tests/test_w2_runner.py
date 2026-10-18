@@ -43,6 +43,51 @@ def make_runner(scenario='progress', **overrides):
 
 
 class RunnerTests(unittest.TestCase):
+    def inspection_runner(self):
+        m, runner, log = make_runner()
+        m = replace(m, observation=replace(m.observation, inspection_hold_s=1.))
+        update = runner.mapper.update
+        def observed_target(obs):
+            state = update(obs)
+            track = ObjectTrack('observed-cup', 'cup', .9, Point3(3.4, 1.55, .6),
+                                0., obs.timestamp_s, ('observed-frame',), 1)
+            return replace(state, schema_version='1.1', semantic_objects=(track,),
+                frontiers=tuple(replace(f, kind='target_approach', target_track_id=track.track_id)
+                                for f in state.frontiers))
+        runner.mapper.update = observed_target
+        return m, runner, log
+
+    def test_target_inspection_advances_physics_and_fresh_captures_while_braked(self):
+        m, runner, log = self.inspection_runner()
+        self.assertEqual(runner.run(m), TerminationReason.NO_FRONTIERS)
+        starts = [i for i,e in enumerate(log.events) if e['event']=='observation_start'
+                  and e['request'].routine=='inspection']
+        self.assertEqual(len(starts), 2)
+        for index in starts:
+            end = next(i for i in range(index+1,len(log.events))
+                       if log.events[i]['event']=='operation_terminal')
+            records = log.events[index+1:end]
+            barriers = [e for e in records if e['event']=='scan_barrier']
+            self.assertEqual(len(barriers), 3)
+            for barrier in barriers:
+                mark=barrier['mark_s']
+                motion=[e for e in records if e['event']=='motion_sample'
+                        and mark-.8<=e['simulated_time_s']<=mark]
+                captures=[e for e in records if e['event']=='capture_processed'
+                          and mark-.8<=e['simulated_time_s']<=mark]
+                self.assertGreater(len({e['simulated_time_s'] for e in captures}),2)
+                self.assertEqual(len({e['pose'] for e in motion}),1)
+        self.assertEqual(runner.summary['collisions'], 0)
+
+    def test_target_inspection_obeys_external_cancellation(self):
+        m, runner, log = self.inspection_runner()
+        runner.cancelled = lambda: any(e['event']=='observation_start' and e['request'].routine=='inspection'
+                                      for e in log.events)
+        self.assertEqual(runner.run(m), TerminationReason.EXTERNALLY_CANCELLED)
+        self.assertTrue(any(e['event']=='observation_start' and e['request'].routine=='inspection' for e in log.events))
+        self.assertEqual((runner.simulator._v,runner.simulator._w),(0,0))
+        self.assertTrue(runner.simulator._closed)
+
     def test_two_dispatches_continuous_mapping_distance_and_terminal(self):
         m, runner, log = make_runner()
         self.assertEqual(runner.run(m), TerminationReason.NO_FRONTIERS)
@@ -293,7 +338,9 @@ class ManifestAndSupervisorTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 load_manifest(path)
         for m in (replace(value, module_deadline_s=0), replace(value, capture_every_steps=0),
-                  replace(value, observation=replace(value.observation, arrival_headings_rad=()))):
+                  replace(value, observation=replace(value.observation, arrival_headings_rad=())),
+                  replace(value, observation=replace(value.observation, inspection_hold_s=-1)),
+                  replace(value, observation=replace(value.observation, inspection_hold_s=float('inf')))):
             with self.assertRaises(ValueError):
                 m.validate()
 

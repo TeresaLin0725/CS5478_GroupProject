@@ -45,7 +45,7 @@ selection. Only the initial footprint-plus-margin cells seed free space.
 
 Measured on 10 October 2026: 7 frames; known cells 186 → 322; observed cells
 246 → 334; 69 reachable, 11 rejected, 0 inconclusive assessments across frames;
-identical repeat hashes. See [verification](../w2_perception/replay_verification.json).
+identical repeat hashes.
 Assessment totals count repeated observations of candidates, not unique
 opportunities. The recorded translation is descriptive input metadata, not
 policy execution distance or a policy-efficiency result. No object-search

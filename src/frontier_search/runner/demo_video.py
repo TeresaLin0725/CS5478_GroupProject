@@ -12,7 +12,7 @@ class DemoVideo:
         self.frames, self.last_step = [], -1
         self.writer = imageio_ffmpeg.write_frames(str(self.path), (1440, 900), fps=fps,
             codec='libx264', pix_fmt_out='yuv420p', macro_block_size=2,
-            output_params=['-preset', 'veryfast', '-crf', '22', '-movflags', '+faststart'],
+            output_params=['-preset', 'veryfast', '-crf', '18', '-movflags', '+faststart'],
             ffmpeg_log_level='error')
         self.writer.send(None)
 

@@ -3,7 +3,6 @@
 ## 已实现
 
 本次在 Python 3.8.20 下全套 **153 项测试通过，无跳过**；包含新增加的 31 项运行/恢复回归。
-四个 CLI 场景的实测汇总与源代码指纹见 [verification.json](../w2_runner/verification.json)。
 
 `runner/episode.py` 现在实现 `EpisodeRunner.run(EpisodeManifest)`：
 

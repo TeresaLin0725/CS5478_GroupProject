@@ -344,11 +344,13 @@ class NavigatorTests(unittest.TestCase):
     def test_unsafe_observation_fails_instead_of_rotating_blindly(self):
         fixture = load_navigation_fixture('open_space')
         near_unknown = Pose(0.6, 2.05, 0.0, 0.0)
-        sim, navigator = make_navigator(fixture, start=near_unknown)
-        feedback = navigator.start_observation(
-            ObservationRequest('E', 'o', fixture.grid, near_unknown, 'arrival', 0.0))
-        self.assertEqual((feedback.status, feedback.failure_reason),
-                         (NavigationStatus.FAILED, FailureReason.BLOCKED))
+        for routine in ('arrival','inspection'):
+            with self.subTest(routine=routine):
+                sim, navigator = make_navigator(fixture, start=near_unknown)
+                feedback = navigator.start_observation(
+                    ObservationRequest('E', 'o', fixture.grid, near_unknown, routine, 0.0))
+                self.assertEqual((feedback.status, feedback.failure_reason),
+                                 (NavigationStatus.FAILED, FailureReason.BLOCKED))
 
     def test_observation_timeout_is_bounded(self):
         fixture = load_navigation_fixture('open_space')
@@ -444,6 +446,30 @@ class SmoothingTests(unittest.TestCase):
         feedback = run_until_terminal(sim, navigator, 'g')
         self.assertEqual(feedback.status, NavigationStatus.REACHED)
         self.assertEqual(sim.collisions, 0)
+
+
+class ControllerPacingTests(unittest.TestCase):
+    def test_faster_grid_following_still_reaches_and_stops_without_contact(self):
+        fixture = load_navigation_fixture('wall_detour')
+        robot = replace(ROBOT, max_linear_speed_mps=.32, max_angular_speed_radps=1.1,
+                        position_tolerance_m=.03)
+        times = []
+        for gain in (1., 2.):
+            sim = MockSimulator(fixture.grid, robot, dt_s=1/30)
+            sim.reset('E', 'mock', fixture.start_pose, 0)
+            nav = TeamNavigator(sim, linear_gain=gain)
+            nav.reset(NavigatorInit('E', robot, ObservationConfig(), NavigationConfig()))
+            nav.start(NavigationRequest('E', 'g', fixture.grid, fixture.start_pose, goal_of(fixture)))
+            feedback = run_until_terminal(sim, nav, 'g', max_steps=6000)
+            self.assertEqual(feedback.status, NavigationStatus.REACHED)
+            self.assertEqual(sim.collisions, 0)
+            self.assertLessEqual(hypot(sim.current_pose().x_m-fixture.goal_pose.x_m,
+                                       sim.current_pose().y_m-fixture.goal_pose.y_m), .03)
+            stopped_pose = sim.current_pose()
+            sim.step()
+            self.assertEqual(sim.current_pose(), stopped_pose)
+            times.append(feedback.timestamp_s)
+        self.assertLess(times[1], times[0] * .8)
 
 
 class StallDetectionTests(unittest.TestCase):

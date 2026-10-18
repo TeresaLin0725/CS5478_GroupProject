@@ -227,6 +227,9 @@ class RGBDMapper:
             stopped = (old_pose is not None and dt > 0 and
                 hypot(pose.x_m-old_pose.x_m, pose.y_m-old_pose.y_m)/dt <= cfg.inspection_linear_speed_mps and
                 abs((pose.yaw_rad-old_pose.yaw_rad+pi) % (2*pi)-pi)/dt <= cfg.inspection_angular_speed_radps)
+            if observation.odometry_linear_speed_mps is not None:
+                stopped = (stopped and observation.odometry_linear_speed_mps <= cfg.inspection_linear_speed_mps
+                           and observation.odometry_angular_speed_radps <= cfg.inspection_angular_speed_radps)
             if stopped:
                 eligible.update(key for key, item in evidence.items()
                     if item.capture_sequence == observation.sequence and item.class_name == request.target_class

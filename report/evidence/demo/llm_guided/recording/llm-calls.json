@@ -1,0 +1,104 @@
+[
+  {
+    "simulated_time_s": 11.6,
+    "state_revision": 41,
+    "model": "gemini-3.8-flash",
+    "response_model": "gemini-3.8-flash",
+    "frontier_id": "F000087",
+    "reason": "Frontier F000087 provides a balanced information gain with the lowest path cost among all eligible candidates in region R1.",
+    "latency_s": 5.532000000006519,
+    "usage": {
+      "completion_tokens": 52,
+      "prompt_tokens": 6449,
+      "prompt_tokens_details": {
+        "cached_tokens": 4410
+      },
+      "total_tokens": 6991
+    },
+    "previous_failure": null,
+    "raw_response": "```json\n{\"frontier_id\": \"F000087\", \"reason\": \"Frontier F000087 provides a balanced information gain with the lowest path cost among all eligible candidates in region R1.\"}\n```"
+  },
+  {
+    "simulated_time_s": 34.766666666666666,
+    "state_revision": 119,
+    "model": "gemini-3.8-flash",
+    "response_model": "gemini-3.8-flash",
+    "frontier_id": "F000178",
+    "reason": "Region R4 contains kitchen appliances (refrigerator, microwave) where cups are most commonly found, and frontier F000178 provides low path cost exploration into this area.",
+    "latency_s": 13.59399999998277,
+    "usage": {
+      "completion_tokens": 61,
+      "prompt_tokens": 13306,
+      "prompt_tokens_details": {
+        "cached_tokens": 11261
+      },
+      "total_tokens": 14204
+    },
+    "previous_failure": null,
+    "raw_response": "```json\n{\"frontier_id\": \"F000178\", \"reason\": \"Region R4 contains kitchen appliances (refrigerator, microwave) where cups are most commonly found, and frontier F000178 provides low path cost exploration into this area.\"}\n```"
+  },
+  {
+    "simulated_time_s": 59.4,
+    "state_revision": 201,
+    "model": "gemini-3.8-flash",
+    "response_model": "gemini-3.8-flash",
+    "frontier_id": "F000222",
+    "reason": "F000222 is the only available eligible candidate frontier, located in partially explored region R2.",
+    "latency_s": 3.7660000000032596,
+    "usage": {
+      "completion_tokens": 47,
+      "prompt_tokens": 17692,
+      "total_tokens": 17899
+    },
+    "previous_failure": null,
+    "raw_response": "```json\n{\"frontier_id\": \"F000222\", \"reason\": \"F000222 is the only available eligible candidate frontier, located in partially explored region R2.\"}\n```"
+  },
+  {
+    "simulated_time_s": 91.7,
+    "state_revision": 306,
+    "model": "gemini-3.8-flash",
+    "response_model": "gemini-3.8-flash",
+    "frontier_id": "F000222",
+    "reason": "F000222 is the sole eligible frontier candidate available for continuing the search.",
+    "latency_s": 4.76500000001397,
+    "usage": {
+      "completion_tokens": 49,
+      "prompt_tokens": 21966,
+      "total_tokens": 22329
+    },
+    "previous_failure": null,
+    "raw_response": "```json\n{\n  \"frontier_id\": \"F000222\",\n  \"reason\": \"F000222 is the sole eligible frontier candidate available for continuing the search.\"\n}\n```"
+  },
+  {
+    "simulated_time_s": 118.5,
+    "state_revision": 396,
+    "model": "gemini-3.8-flash",
+    "response_model": "gemini-3.8-flash",
+    "frontier_id": "probe-050-038",
+    "reason": "Frontier probe-050-038 is eligible and provides the lowest assessed path cost among the available candidates to search for the cup.",
+    "latency_s": 4.967999999993481,
+    "usage": {
+      "completion_tokens": 56,
+      "prompt_tokens": 23414,
+      "total_tokens": 23847
+    },
+    "previous_failure": null,
+    "raw_response": "```json\n{\"frontier_id\": \"probe-050-038\", \"reason\": \"Frontier probe-050-038 is eligible and provides the lowest assessed path cost among the available candidates to search for the cup.\"}\n```"
+  },
+  {
+    "simulated_time_s": 152.16666666666666,
+    "state_revision": 505,
+    "model": "gemini-3.8-flash",
+    "response_model": "gemini-3.8-flash",
+    "frontier_id": "F000178",
+    "reason": "Frontier F000178 is located in region R4, which exhibits kitchen and dining semantics (microwave, refrigerator, dining table) where cups are commonly found. It also offers the highest information gain and lowest path cost among all available candidates.",
+    "latency_s": 6.030999999959022,
+    "usage": {
+      "completion_tokens": 76,
+      "prompt_tokens": 27863,
+      "total_tokens": 28281
+    },
+    "previous_failure": null,
+    "raw_response": "```json\n{\"frontier_id\": \"F000178\", \"reason\": \"Frontier F000178 is located in region R4, which exhibits kitchen and dining semantics (microwave, refrigerator, dining table) where cups are commonly found. It also offers the highest information gain and lowest path cost among all available candidates.\"}\n```"
+  }
+]

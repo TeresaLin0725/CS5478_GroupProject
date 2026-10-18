@@ -85,9 +85,26 @@ class CartMotionTests(unittest.TestCase):
         self.assertEqual(self.cart.position, list(motion.start))
 
     def test_no_route_fails_before_recording(self):
-        self.p.add_box([1.05, -.6, .4], [.02, 1.0, .3])
+        # Block both the original corridor and the lateral fallback.
+        self.p.add_box([1.05, -.6, .4], [.02, 3.0, .3])
         with self.assertRaisesRegex(RuntimeError, 'No collision-free'):
             CartMotion(self.p, self.cart)
+
+    def test_wall_along_original_start_column_requires_a_lateral_alternative(self):
+        self.p.add_box([1.70, -.60, .4], [.08, 2., .3])
+        motion = CartMotion(self.p, self.cart)
+        self.assertEqual(motion.start, (.8, 1.15, 0))
+        self.assertEqual(motion.end, (.8, 2.7, 0))
+        self.assertTrue(motion.clear_sweep(motion.start, motion.end))
+        self.assertTrue(motion.floor_supported(motion.start, motion.end))
+
+    def test_stationary_cart_does_not_allocate_redundant_query_bodies(self):
+        motion = CartMotion(self.p, self.cart)
+        def unexpected(*args):
+            self.fail('Stationary cart unnecessarily queried a new swept body')
+        motion.clear_sweep = unexpected
+        self.assertTrue(motion.move(0))
+        self.assertEqual(self.cart.position, list(motion.start))
 
     def test_unsupported_route_is_rejected(self):
         self.p.hole = True

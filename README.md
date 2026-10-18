@@ -1,135 +1,81 @@
 # Indoor frontier object search
 
-## 演示报告
+## 最新结果（2026-10-18）
 
-打开[室内实体机器人目标搜索演示报告](runs/integrated-llm-final-20261018/recording/index.html)。
-报告收录 2 项完整集成管线录制和 12 项场景与策略演示，可切换画面，点击决策、操作及验收记录的时间定位播放。
-其中 3 项为每秒 15 帧连续视频，11 项为按仿真时间展示的采样画面。
-在线大语言模型完整管线本次运行完成目标验收：仿真时间 204.03 秒，实际计算耗时 664.38 秒，行驶 10.86 米，无物理接触，真实在线模型调用 4 次。
-报告如实列出导航失败、观察受阻、恢复过程及预置回答回放的执行范围。
-运行 `data/venv-igibson/Scripts/python.exe scripts/build_demo_report.py` 可根据保存的日志重新生成报告；原始媒体与日志保持不变。
+打开 **[report/index.html](report/index.html)**（或根目录 [demo.html](demo.html)）。报告只收录最新一版结果：
 
-## Integrated native A/B/C + W3 pipeline (2026-10-18)
+- **Demo**：四种前沿选择策略各一段 15 fps 原生仿真录像，Locobot 在 Gibson Rs 公寓中搜索杯子，全部通过独立目标验收；页面可切换策略，并按决策、操作和验收记录定位播放。Random 在推车干扰条件下的配对回合均未成功，因此它的 demo 录在公寓原始条件。单次录像只用于展示，策略比较以下方配对实验为准。
 
-The main integration entry point is now `frontier_search.runner.integrated`.
-Open [the verified live LLM recording](runs/integrated-llm-final-20261018/recording/index.html).
+| 策略 | 场景条件 | 仿真时间 | 行驶距离 | 接触 | 策略决策 | 在线调用 |
+|---|---|---:|---:|---:|---:|---:|
+| Random | 公寓原始 | 170.33 s | 11.08 m | 0 | 6 | 0 |
+| Nearest | 移动推车干扰 | 155.00 s | 11.09 m | 0 | 6 | 0 |
+| Information Gain | 移动推车干扰 | 242.00 s | 15.57 m | 0 | 9 | 0 |
+| LLM-guided | 移动推车干扰 | 199.67 s | 11.56 m | 0 | 7 | 6（`gemini-3.8-flash`，0 回退） |
+
+- **四策略配对实验**：[完整统计与 95% 区间](report/benchmark.html)，[逐任务结果、实际轨迹与失败分析](report/analysis.html)。同一 Rs 房屋的原始、拥挤、动态三种条件 × 3 组种子/初始朝向 × 4 策略，36 回合全部完成，9 组严格配对，全部失败计入统计。
+
+| 策略 | 成功 / 全部 | 成功率 | 失败计 600 s 的平均时间 |
+|---|---|---|---|
+| Random | 4 / 9 | 44.4% | 393.0 s |
+| Nearest | 6 / 9 | 66.7% | 307.5 s |
+| Information Gain | 7 / 9 | 77.8% | 291.0 s |
+| LLM-guided | 4 / 9 | 44.4% | 391.0 s |
+
+IG 在本批成功率最高，但小样本下校正后差异不显著；结果仅覆盖一套房屋，不能证明跨房屋泛化。统计口径见[配对实验说明](Documentation/chinese/paired_benchmark.md)，设计落实核对见[审查记录](Documentation/chinese/demo_design_review.md)。
+
+原始证据位于 `report/evidence/`（Git 忽略）：`demo/<策略>/` 是录像、事件日志、模型调用与验收记录及同源无录制试跑与录制许可；`benchmark/` 是 36 回合的事件、manifest、冻结的协议与源码快照、`results.json` 和独立复核 `audit.json`。`report/evidence/relocation.json` 记录了每个文件的来源与 SHA-256。
+
+Git 中只跟踪四段 demo 的 `recording/`。其余原始日志（benchmark 全部回合的事件日志、manifest、冻结快照，以及各 demo 的试跑与录制许可）打包为 [report/raw-logs-20261019.zip](report/raw-logs-20261019.zip)（54 MB，含逐文件 SHA-256 清单）；在 `report/` 目录内解压即可恢复 `report/evidence/`，使统计页的逐回合链接可用。打包命令见 `scripts/package_raw_logs.py`。
+
+## 运行
+
+队友首次运行请先看 **[完整运行说明：环境、依赖、安装、自检、LLM、录制与打包](Documentation/chinese/running.md)**。
+场景说明见[场景同步与录制记录](Documentation/chinese/updated_scene_demo.md)。
+
+```powershell
+# 在包含 pyproject.toml 的仓库根目录；已安装 Git、uv、MSVC x64 / Windows SDK
+python scripts/setup_project.py --device cuda   # YOLO 用 CPU 时改为 --device cpu
+./data/venv-igibson/Scripts/python.exe scripts/check_environment.py --render
+python scripts/run_integrated.py --profile dynamic --policy nearest --output runs/my-first-run
+```
+
+固定环境为 Python 3.8.20 / iGibson 2.2.2 / YOLO11s，含 GPU、CPU 依赖文件及间接依赖约束。无需沿用作者的盘符或复制虚拟环境。Windows x64 已实测；Linux 启动路径受支持，原生安装与完整运行尚未在第二台 Linux 机器验证。
+
+新运行默认写入 Git 忽略的 `runs/`。分享报告用 `scripts/package_demo_report.py`，源码与说明用 `scripts/package_source_handoff.py` 打包。
+
+## Integrated native A/B/C + W3 pipeline
+
+The main integration entry point is `frontier_search.runner.integrated`.
 It connects native calibrated Rs/Locobot RGB-D, real YOLO11s, the shared A mapper,
 B TeamNavigator, C EpisodeRunner/recovery/policies, and independent retained-frame
-W3 scoring with close stationary evidence. It also handles known-free viewpoint
-recovery when a departed obstacle remains hidden in the camera's near blind area.
-See the [full pipeline, validation gate and recording commands](Documentation/chinese/integrated_pipeline.md).
+W3 scoring with close stationary evidence. See the
+[validation gate and recording commands](Documentation/chinese/updated_scene_demo.md#复现).
 
 ```powershell
 python scripts/run_integrated.py --profile dynamic --policy llm_guided --output runs/integrated-dryrun
 ```
 
 This command does not record video. Recording requires a passing validation report
-for the exact source/model fingerprint and inference runtime. The configured API
-has recovered from HTTP 402 and now serves real `gemini-3.8-flash` responses.
-The LLM recording passed 367 regression tests and a successful non-recording
-acceptance run before recording: 204.03 simulated seconds, 10.86 m,
-zero contacts, two close stationary frames accepted by the independent W3 verifier.
-The recording made four fresh hosted model calls with zero fallbacks. All 3,062
-H.264 frames decode; the 3,061 frames after initialization match poses from physical
-simulation steps. The [LLM verification](runs/integrated-llm-final-20261018/recording/llm-verification.json)
-checks that logged inputs match requests and every returned ID matches the dispatched goal.
-Two local replans and one hosted decision receiving B's failure feedback were
-observed in the recording. The viewer includes actual model reasons and API latency.
-Arrival observations now cover a full rotation to reduce missed corridor views.
-The [earlier Nearest recording](runs/integrated-final-20261017/recording/index.html)
-uses the previous narrower scan configuration and is retained as a historical reference.
+for the exact source/model fingerprint and inference runtime.
 The [connectivity check](scripts/check_llm_connection.py) reports status without printing credentials.
-The standalone recordings below are historical and use a separate demonstration loop.
 
-## Historical standalone iGibson demo
+## Design documents
 
-Open [the previous standalone interactive demo](runs/igibson-realistic-final-20261014/index-legacy-before-integration-20261017.html).
-It uses the existing textured **Gibson Rs apartment**, the physical **Locobot**
-URDF and native iGibson rendering. Three configurations cover the original
-apartment, furnished narrow routes, and a moving cart. All four policy conditions
-use measured wheel-driven trajectories, RGB-D mapping and close-range inspection.
-The default dynamic/Nearest recording now plays as continuous 15 fps H.264 video
-with a stable tracking camera. Other historical conditions remain labeled as
-sparse image recordings. New runs record 15 fps by default (`--video-fps 0` disables it).
-The [W3 merge and feedback audit](Documentation/chinese/w3_merge_and_demo.md)
-records the four upstream commits, preserved local changes, and navigation feedback scope.
-
-```powershell
-cd integration # When starting at D:/CS5478_PROJECT.
-$env:PYTHONPATH = "$PWD/src"
-./data/venv-igibson/Scripts/python.exe -m frontier_search.runner.igibson_demo --scenario suite --policy all --backend replay
-```
-
-The PowerShell convenience launcher is also available when script execution is enabled:
-
-```powershell
-./scripts/run_igibson_demo.ps1 -Scenario suite -Policy all -Backend replay
-# One hard scene:
-./scripts/run_igibson_demo.ps1 -Scenario dynamic -Policy nearest
-# Actual model calls, using local .env configuration:
-./scripts/run_igibson_demo.ps1 -Scenario dynamic -Policy llm_guided -Backend live
-```
-
-The offline LLM condition replays authored responses derived from the same
-scenario's Information Gain run. It is labeled in the viewer and logs.
-See [scene resources, difficulty and verification](Documentation/chinese/igibson_demo.md).
-Old standalone PyBullet demos and their launch scripts have been removed;
-previous recordings are archived under `runs/archive-pybullet/`.
-The shared A/B/C production integration has its own acceptance criteria below.
-
-The sections below record the earlier scaffold and integration history.
-
-Python skeleton for comparing Random, Nearest, Information Gain, and LLM-guided
-frontier selection. The [English plan](Documentation/english/robotics_project_detailed_plan.md)
-defines the project; [Interface Freeze 1.0](Documentation/english/interface_freeze.md)
-is authoritative for behavior and ownership.
-
-## W2 integration status (2026-10-07)
-
-`integration/w2` merges A `ab52cf4`, B `224bfcf`, and C `8f817f8` with their
-history preserved. See the [integration report and W2 plan](Documentation/chinese/w2_integration_status.md)
-for ownership, configuration differences, test results and acceptance gates.
-C's `EpisodeRunner.run()` now implements the shared lifecycle, scan barriers,
-spatial recovery, budgets and logs, with a process supervisor for hard deadlines.
-The runnable fixture connects B's actual TeamNavigator to an explicitly scripted
-A test double. A's `RGBDMapper.update()` now publishes occupancy, geometric
-coverage and frontiers with approach poses, stable identity/lineage and predicted
-gain. B's real `IGibsonAdapter`, real recordings/configuration and factory wiring
-remain pending. See [A's W2 mapping implementation](Documentation/english/w2_mapping.md)
-for the evidence model, synthetic A → B → C checks and remaining integration work.
-The [RGB-D sequence replay](Documentation/english/w2_rgbd_replay.md) now provides
-a portable synthetic moving/scanning dataset, checksum-validated packaging for
-existing captures, and repeat-verified A → B assessment → C decisions with HTML
-and map reports. It does not execute the selected goals.
-See [C runner usage](Documentation/chinese/w2_runner.md) and the
-[A/B delivery checklist and acceptance criteria](Documentation/chinese/w2_ab_handoff.md).
-
+The [English plan](Documentation/english/robotics_project_detailed_plan.md)
+defines the project; [Interface Freeze](Documentation/english/interface_freeze.md)
+is authoritative for behavior and ownership, with the
+[close-object search extension](Documentation/english/close_object_search.md) and
+[verified starting area](Documentation/english/verified_start_area.md).
+Component notes: [A mapping](Documentation/english/w2_mapping.md),
+[RGB-D replay](Documentation/english/w2_rgbd_replay.md),
+[W3 detection](Documentation/english/w3_detection.md),
+[W3 verifier](Documentation/english/w3_verifier.md),
+[Locobot A/B/C handoff](Documentation/english/locobot_abc_handoff.md),
+[C runner](Documentation/chinese/w2_runner.md),
+[A/B delivery checklist](Documentation/chinese/w2_ab_handoff.md).
 Perception capture uses **Locobot's native fixed camera**, configured by
 [`configs/perception.locobot.json`](configs/perception.locobot.json).
-See the [capture instructions](Documentation/english/development_fixtures.md#real-igibson-capture-and-replay)
-and [native-camera visibility check](Documentation/english/locobot_camera_check.md).
-For B/C Codex sessions, start with the [Locobot A/B/C handoff](Documentation/english/locobot_abc_handoff.md),
-which records the selected settings, owner tasks, reproduction commands and remaining gates.
-The [continuous Locobot recording guide](Documentation/english/locobot_multiframe.md)
-documents real multiframe replay results and the remaining clearance/goal acceptance gap.
-
-```powershell
-$env:PYTHONPATH = "$PWD/src"
-python -m frontier_search.runner.w2 --manifest configs/w2.mock.json --log runs/w2-progress-001.jsonl
-```
-
-Use a new log filename each time. This runs offline with the standard library.
-The progress fixture dispatches two goals, travels about 1.80 m without collision,
-and terminates as `no_frontiers`; it never claims object-search success.
-All 153 tests pass on Python 3.8.20 with no skips. Measured supervised scenarios
-are recorded in [verification.json](Documentation/w2_runner/verification.json).
-
-The default scaffold runs synthetic **selection decisions**, without simulator or
-network dependencies. The integration branch also contains A's W1 perception
-tools, B's navigation implementation, and C's synthetic fixtures and native iGibson demo. The shared A/B/C RGB-D episode loop is still a W2 deliverable; the existing
-C demos use their own mapper/navigation implementations. Use Python 3.8 for the
-shared iGibson environment, matching its
-[documented installation setup](https://stanfordvl.github.io/iGibson/installation.html).
 
 ## Run the development demo
 
@@ -203,7 +149,7 @@ synthetic fixture metadata is not an extra policy feature.
 `configs/w2.mock.json` is executable development configuration; the older
 `experiment.template.json` remains an experiment checklist. The runner checks
 sensor/frame/geometry/version coherence and scan barriers. Real robot, sensor and
-mapper acceptance still requires the A/B checks linked above.
+mapper acceptance still requires the A/B checks in the design documents.
 
 The LLM seam accepts an injected client and records exact symbolic input, response,
 model settings, latency, and fallback. Its client must enforce transport deadlines;
@@ -211,44 +157,6 @@ independent process-level supervision of stalled modules belongs in the full
 runner. The opt-in provider adapter enforces HTTP deadlines using a killable
 subprocess and records raw responses and provider usage. Pricing/cost remains
 unknown. Credentials are loaded locally and are not committed or logged.
-
-## C integration: nearest and Gemini on one synthetic map
-
-The review and detailed limitations are in
-[C integration notes](Documentation/chinese/c_integration_review.md).
-
-```powershell
-$env:PYTHONPATH = "$PWD/src"
-python -m frontier_search.runner.synthetic --log runs/three-rooms-replay.jsonl
-```
-
-This runs Nearest (F1 → F2 → F3) and an explicitly authored LLM replay (F3).
-Both execute 9 m in the synthetic point-robot fixture. Nearest uses **B-assessed
-path length**, not Euclidean distance. The immutable state, eligibility checks,
-and policy interface are shared with the original scaffold. A terminal claim is
-scored by a separate fixture evaluator before reporting synthetic success.
-
-For a live call, copy `.env.example` to `.env` and fill `LLM_API_KEY`, or pass
-`--env-file` to an existing local file. Process environment variables take
-precedence. In the original workspace, `--env-file ../.env` reuses the existing
-key without copying it into this checkout.
-
-```powershell
-python -m frontier_search.runner.synthetic --backend live --env-file ../.env --log runs/three-rooms-live.jsonl
-python -m unittest discover -s tests -v
-```
-
-Use a new log filename for each run. The live smoke command exits nonzero if
-fallback was needed, even when the Nearest fallback completed the search. Default
-LLM deadline is 10 s and call cap is 10; hosted-model selection is not deterministic.
-JSONL records use `fixture_*` event names and `source=synthetic` to separate them
-from real experiments. The default `python -m frontier_search` selection demo is
-unchanged and does not make network calls.
-
-Verified locally with Python 3.10: original and integration tests; replay and live
-Gemini cases. The full test suite also passes under the Python 3.8 iGibson runtime
-(see below). This older synthetic loop remains separate from the new W2 runner;
-use the W2 entry point above to exercise the shared B navigator and lifecycle.
 
 ## Simulator resources
 

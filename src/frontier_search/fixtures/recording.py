@@ -50,6 +50,8 @@ def load_rgbd_recording(directory: Path) -> RGBDObservation:
             camera_intrinsics=CameraIntrinsics(**calibration),
             camera_to_world=Transform(tuple(tuple(row) for row in record["camera_to_world"]["matrix"])),
             robot_pose=Pose(**record["robot_pose"]),
+            odometry_linear_speed_mps=record.get("odometry_linear_speed_mps"),
+            odometry_angular_speed_radps=record.get("odometry_angular_speed_radps"),
         )
         validate_rgbd_observation(observation)
         return observation

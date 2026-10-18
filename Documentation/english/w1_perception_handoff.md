@@ -7,7 +7,7 @@
 | Mapper reset | Atomic initialization, private seeded RNG, clean episode state; only supplied spawn-clearance cells become free. |
 | Prior loader | Versioned world-polygon JSON; shared geometry/label validation with reset. |
 | RGB-D conventions | Capture conversion, input validation, recording/replay and depth projection implemented. |
-| Detector feasibility | YOLO11s with native 640x480 is the development candidate; [comparison and limitations](detector_feasibility.md). |
+| Detector feasibility | YOLO11s with native 640x480 is the development candidate. |
 
 ## Integration boundaries
 

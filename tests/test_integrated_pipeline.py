@@ -25,9 +25,11 @@ class InspectionTests(unittest.TestCase):
         self.mapper=RGBDMapper(self.detector)
         self.mapper.reset(request(inspection_distance_m=.9))
 
-    def update(self,seq,time,distance=.7,x=0.):
+    def update(self,seq,time,distance=.7,x=0.,odometry=None):
         frame=replace(scene_frame(sequence=seq),timestamp_s=time)
         frame=replace(frame,robot_pose=replace(frame.robot_pose,x_m=x))
+        if odometry is not None:
+            frame=replace(frame,odometry_linear_speed_mps=odometry[0],odometry_angular_speed_radps=odometry[1])
         with patch('frontier_search.perception.tracking.localize_detection',return_value=Point3(distance,0,.5)):
             return self.mapper.update(frame)
 
@@ -48,6 +50,15 @@ class InspectionTests(unittest.TestCase):
         self.assertIsNotNone(state.target_claim)
         self.assertEqual([d.capture_sequence for d in self.mapper.get_claim_evidence(
             state.episode_id,state.target_claim.claim_id).detections],[2,3])
+
+    def test_control_step_turn_is_rejected_even_when_camera_poses_look_stationary(self):
+        self.update(1,1.,odometry=(0.,0.))
+        self.assertIsNone(self.update(2,2.,odometry=(0.,.12)).target_claim)
+        self.assertIsNone(self.update(3,3.,odometry=(0.,0.)).target_claim)
+        state=self.update(4,4.,odometry=(0.,0.))
+        self.assertIsNotNone(state.target_claim)
+        self.assertEqual([d.capture_sequence for d in self.mapper.get_claim_evidence(
+            state.episode_id,state.target_claim.claim_id).detections],[3,4])
 
 
 class PhysicalScanTests(unittest.TestCase):

@@ -7,6 +7,11 @@ dist/
 .pytest_cache/
 .coverage
 runs/
+report/evidence/*
+!report/evidence/demo/
+report/evidence/demo/*/*
+!report/evidence/demo/*/recording/
+report/verification/
 data/
 weights/
 .env

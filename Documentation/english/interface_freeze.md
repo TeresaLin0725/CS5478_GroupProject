@@ -5,6 +5,13 @@ The current close-object 3D demo opts into the
 approach goals, full-body motion and independently verified arrival at the cup.
 The initial 1.0 definition below remains the contract for legacy fixtures.
 
+The current native adapter also supplies the backward-compatible optional
+`RGBDObservation.odometry_linear_speed_mps` and
+`odometry_angular_speed_radps` magnitudes. Both are absent, or both are finite
+and nonnegative. They are derived from the latest 30 Hz **known robot poses**,
+not from hidden scene state. See the close-object extension for their use in
+the shared stillness gate; the lower-rate camera interval can alias base motion.
+
 This document defines the initial behavioral contract, version **1.0**, for [the implementation plan](robotics_project_detailed_plan.md). Python-like signatures describe data and ownership, not a required serialization library. Numerical configuration is recorded in the experiment manifest before integration.
 
 ## 1. Module Boundaries and Ownership
