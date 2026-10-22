@@ -49,14 +49,15 @@ Only the standard library is used; annotations stay Python 3.8 compatible.
 """
 
 from math import atan2, cos, hypot, pi
+from dataclasses import dataclass, replace
 from time import monotonic
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 from ..config import NavigationConfig, ObservationConfig
 from ..contracts import (
     CandidateAssessment, CandidateEvaluation, CandidateEvaluationRequest, FailureReason,
     NavigationFeedback, NavigationRequest, NavigationStatus, NavigatorInit, ObservationRequest,
-    OccupancyGrid, PlannerResult, Pose, RobotConfig,
+    OccupancyGrid, PlannerResult, Point2, Pose, RobotConfig,
 )
 from ..validation import ContractError
 from . import planner
@@ -73,6 +74,27 @@ TURN_IN_PLACE_RAD = 0.6    # rotate without driving above this heading error
 STALL_WINDOW_S = 5.0       # simulated seconds without real movement => blocked
 STALL_MIN_MOVE_M = 0.02    # position change that counts as progress
 STALL_MIN_TURN_RAD = 0.05  # yaw change that counts as progress
+
+
+@dataclass(frozen=True)
+class NearObstacleLimit:
+    """Opt-in speed limit inside a proximity zone around obstacles (B-local, not a shared contract).
+
+    Robotics rationale: in the dynamic-window approach (Fox, Burgard, Thrun 1997) a velocity is only
+    admissible if the robot can still stop before the nearest obstacle, so the allowed speed shrinks
+    with obstacle distance. Impact energy also grows with v squared, so capping v near obstacles
+    turns a would-be collision into a light touch. The controller here is rotate-then-translate with
+    a 0.6 rad in-place threshold: below it the robot turns while driving, and the square body then
+    sweeps its circumscribed radius, which the planner (inscribed-radius planning) does not account
+    for. Limiting v and w only inside the zone removes that sweep risk without slowing open floor.
+    """
+    distance_m: float = 0.06         # zone = footprint grown by margin + distance_m touches a blocked cell
+    max_linear_mps: float = 0.08
+    max_angular_radps: float = 0.6
+
+    def __post_init__(self) -> None:
+        if self.distance_m < 0 or self.max_linear_mps <= 0 or self.max_angular_radps <= 0:
+            raise ValueError("near-obstacle limit needs distance >= 0 and positive speed caps")
 
 
 class NavigatorBoundaryError(ContractError):
@@ -130,10 +152,33 @@ class TeamNavigator:
 
     def __init__(self, control: ControlInterface, wall_clock: Callable[[], float] = monotonic,
                  smooth_paths: bool = False, planning_radius_m: Optional[float] = None,
-                 linear_gain: float = K_LINEAR) -> None:
+                 linear_gain: float = K_LINEAR, near_obstacle_limit: Optional[NearObstacleLimit] = None,
+                 start_margin_m: Optional[float] = None, planning_margin_m: Optional[float] = None,
+                 footprint_override: Optional[Sequence[Point2]] = None) -> None:
+        # ``footprint_override``: None = the footprint of the NavigatorInit robot configuration (default). A polygon
+        # replaces it for every B check (costmap, turns, sweeps) without touching the shared manifest that A and C read,
+        # e.g. the measured round Locobot base instead of the +/-0.181 m square AABB (see locobot_robot.py).
+        # ``planning_margin_m``: None = the robot's configured clearance margin (default); a smaller value
+        # trades safety buffer for reachability. It never changes the exact-footprint physics checks of A.
         # ``planning_radius_m``: None = circumscribed disc (conservative, default). A smaller value in
         # [inscribed, circumscribed] plans through narrower gaps; see Costmap and the P6 notes.
+        # ``near_obstacle_limit``: None = no speed limit (default). ``start_margin_m``: None = the start
+        # pose is checked with the planning margin (default); 0.0 checks it physically (see Costmap).
         self._planning_radius_m = planning_radius_m
+        self._near_limit = near_obstacle_limit
+        if start_margin_m is not None and start_margin_m < 0:
+            raise ValueError('start_margin_m must be nonnegative')
+        self._start_margin_m = start_margin_m
+        if planning_margin_m is not None and planning_margin_m < 0:
+            raise ValueError('planning_margin_m must be nonnegative')
+        self._planning_margin_m = planning_margin_m
+        if footprint_override is not None:
+            polygon = tuple(footprint_override)
+            area = sum(a.x_m * b.y_m - b.x_m * a.y_m for a, b in zip(polygon, polygon[1:] + polygon[:1])) / 2.0
+            if len(polygon) < 3 or abs(area) < 1e-9:
+                raise ValueError('footprint_override needs at least three vertices and a non-zero area')
+            footprint_override = polygon
+        self._footprint_override = footprint_override
         self._control = control
         self._wall_clock = wall_clock
         self._smooth = smooth_paths
@@ -160,14 +205,17 @@ class TeamNavigator:
             # turn in place. Refuse loudly rather than plan paths it cannot drive
             # (use Hybrid A* or a lattice planner for car-like robots).
             raise NavigatorBoundaryError("planner supports only robots that can turn in place")
+        robot = request.robot_config
+        if self._footprint_override is not None:
+            robot = replace(robot, footprint_base=self._footprint_override)
         if self._planning_radius_m is not None:
-            low, high = Costmap.planning_radius_bounds(request.robot_config.footprint_base)
+            low, high = Costmap.planning_radius_bounds(robot.footprint_base)
             if not (low - 1e-9 <= self._planning_radius_m <= high + 1e-9):
                 raise NavigatorBoundaryError("planning radius %.4f m must lie between the inscribed radius "
                                              "%.4f m and the circumscribed radius %.4f m of this robot"
                                              % (self._planning_radius_m, low, high))
         self._episode_id = request.episode_id
-        self._robot = request.robot_config
+        self._robot = robot
         self._obs_cfg = request.observation_config
         self._nav_cfg = request.navigation_config
         self._ops, self._costmap_cache, self._latest_revision = {}, None, -1
@@ -423,7 +471,15 @@ class TeamNavigator:
         w = _clip(K_ANGULAR * heading_err, robot.max_angular_speed_radps)
         v = 0.0 if abs(heading_err) > TURN_IN_PLACE_RAD else \
             min(robot.max_linear_speed_mps, self._linear_gain * dist) * max(0.0, cos(heading_err))
+        v, w = self._limit_near_obstacle(op, pose, v, w)
         self._control.set_velocity(v, w)
+
+    def _limit_near_obstacle(self, op: _Operation, pose: Pose, v: float, w: float) -> Tuple[float, float]:
+        """Cap v and w while the footprint is inside the proximity zone (opt-in; identity when off)."""
+        limit = self._near_limit
+        if limit is None or not op.costmap.near_obstacle(pose, limit.distance_m):
+            return v, w
+        return _clip(v, limit.max_linear_mps), _clip(w, limit.max_angular_radps)
 
     def _tick_observation(self, op: _Operation, now: float) -> None:
         if op.leg >= len(op.targets):
@@ -508,7 +564,8 @@ class TeamNavigator:
         cached = self._costmap_cache
         if cached is not None and cached[0] == grid.revision and cached[1].grid is grid:
             return cached[1]
-        costmap = Costmap.from_robot(grid, self._robot, self._planning_radius_m)
+        costmap = Costmap.from_robot(grid, self._robot, self._planning_radius_m, self._start_margin_m,
+                                    self._planning_margin_m)
         costmap.prepare()  # pay the one-off clearance precompute here, not inside a deadline
         self._costmap_cache = (grid.revision, costmap)
         self._latest_revision = max(self._latest_revision, grid.revision)

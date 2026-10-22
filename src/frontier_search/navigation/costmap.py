@@ -69,14 +69,23 @@ class Costmap:
 
     def __init__(self, grid: OccupancyGrid, footprint_base: Tuple[Point2, ...],
                  clearance_margin_m: float, sample_step_m: Optional[float] = None,
-                 planning_radius_m: Optional[float] = None) -> None:
+                 planning_radius_m: Optional[float] = None,
+                 start_margin_m: Optional[float] = None) -> None:
         if not footprint_base or len(footprint_base) < 3:
             raise ValueError("footprint needs at least three vertices")
         if clearance_margin_m < 0:
             raise ValueError("clearance margin must be nonnegative")
+        if start_margin_m is not None and start_margin_m < 0:
+            raise ValueError("start margin must be nonnegative")
         self.grid = grid
         self.footprint_base = tuple(footprint_base)
         self.margin_m = clearance_margin_m
+        # Margin used ONLY to decide whether the robot's current pose is usable as a plan start. None keeps
+        # the planning margin (default behaviour). The clearance margin is a planning safety buffer in
+        # configuration space, not physics: a robot that is not touching anything is still free to
+        # leave a pose that lies inside the buffer, so a start check at margin 0 avoids declaring a
+        # physically free robot immobile.
+        self.start_margin_m = clearance_margin_m if start_margin_m is None else start_margin_m
         self.radius_m = circumradius(self.footprint_base)
         # Planning disc. Default: the circumscribed disc, safe at every heading (conservative for a
         # long or non-square robot). An explicit smaller radius, never below the inscribed radius,
@@ -142,8 +151,13 @@ class Costmap:
 
     @classmethod
     def from_robot(cls, grid: OccupancyGrid, robot: RobotConfig,
-                   planning_radius_m: Optional[float] = None) -> "Costmap":
-        return cls(grid, robot.footprint_base, robot.clearance_margin_m, planning_radius_m=planning_radius_m)
+                   planning_radius_m: Optional[float] = None,
+                   start_margin_m: Optional[float] = None,
+                   margin_m: Optional[float] = None) -> "Costmap":
+        # ``margin_m`` overrides the robot's configured clearance margin for planning (None = as configured).
+        margin = robot.clearance_margin_m if margin_m is None else margin_m
+        return cls(grid, robot.footprint_base, margin, planning_radius_m=planning_radius_m,
+                   start_margin_m=start_margin_m)
 
     @staticmethod
     def planning_radius_bounds(footprint_base: Tuple[Point2, ...]) -> Tuple[float, float]:
@@ -201,6 +215,18 @@ class Costmap:
     def pose_valid(self, pose: Pose) -> bool:
         """Exact footprint at the pose (with yaw) touches no blocked cell."""
         return not footprint_collides(self.grid, self.footprint_base, pose, self.margin_m)
+
+    def start_pose_valid(self, pose: Pose) -> bool:
+        """Exact footprint at the start pose touches no blocked cell, using ``start_margin_m``."""
+        return not footprint_collides(self.grid, self.footprint_base, pose, self.start_margin_m)
+
+    def near_obstacle(self, pose: Pose, extra_m: float) -> bool:
+        """True if the exact footprint, grown by margin + ``extra_m``, touches a blocked cell.
+
+        Used by the controller to detect proximity (a speed-limit zone around obstacles); it never
+        changes what the planner accepts.
+        """
+        return footprint_collides(self.grid, self.footprint_base, pose, self.margin_m + extra_m)
 
     def segment_valid(self, start: Pose, end: Pose) -> bool:
         """Driving from start to end along a straight line is collision-free.

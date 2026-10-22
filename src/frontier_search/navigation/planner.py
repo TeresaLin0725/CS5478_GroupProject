@@ -63,9 +63,10 @@ def start_is_usable(costmap: Costmap, start: Pose) -> bool:
     """The robot's exact footprint at the start pose must be collision-free.
 
     The start cell itself is allowed to be inflation-blocked (the robot may sit
-    close to a wall after a verified spawn); only the exact pose must be valid.
+    close to a wall after a verified spawn); only the exact pose must be valid. The margin used for
+    this check is ``costmap.start_margin_m`` (default: the planning margin).
     """
-    return costmap.pose_valid(start) and _endpoint_cell(costmap, start) is not None
+    return costmap.start_pose_valid(start) and _endpoint_cell(costmap, start) is not None
 
 
 def goal_is_valid(costmap: Costmap, goal: Pose) -> bool:

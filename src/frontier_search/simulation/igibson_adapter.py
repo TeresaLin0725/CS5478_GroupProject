@@ -74,6 +74,8 @@ class IGibsonBackendProtocol:
     def step(self) -> None: ...
     def render(self): ...          # -> (rgb, xyz, intrinsics 3x3, view matrix 4x4)
     def in_contact(self, base_z: float, min_height_m: float, min_force_n: float) -> bool: ...
+    def peak_contact_force(self, base_z: float, min_height_m: float) -> float:
+        return 0.0  # optional capability: backends that can read contact forces override this
     def scene_probe(self, mapping: MappingConfig) -> SceneProbe: ...
     def close(self) -> None: ...
 
@@ -92,6 +94,12 @@ class IGibsonAdapter:
         self._sequence = 0
         self.collisions = 0
         self.contact_this_step = False
+        # Contact severity, recorded next to the (unchanged) ``collisions`` step counter so that a light
+        # touch can be told from a hard impact: peak normal force over the episode and the longest run of
+        # consecutive contact steps (a long run means the robot is pressing against something).
+        self.peak_contact_force_n = 0.0
+        self.longest_contact_run_steps = 0
+        self._contact_run_steps = 0
         self.executed_distance_m = 0.0
         self.settled_pose = None  # type: Optional[Pose]
         self._odometry = (None, None)
@@ -123,6 +131,7 @@ class IGibsonAdapter:
         self._steps = self._sequence = 0
         self.collisions, self.executed_distance_m = 0, 0.0
         self.contact_this_step = False
+        self.peak_contact_force_n, self.longest_contact_run_steps, self._contact_run_steps = 0.0, 0, 0
 
         self._odometry = (None, None)
 
@@ -190,6 +199,14 @@ class IGibsonAdapter:
             self._config.contact_height_above_base_m, self._config.contact_force_n)
         if self.contact_this_step:
             self.collisions += 1
+            self._contact_run_steps += 1
+            self.longest_contact_run_steps = max(self.longest_contact_run_steps, self._contact_run_steps)
+            peak = getattr(self._backend, "peak_contact_force", None)  # optional backend capability
+            if peak is not None:
+                self.peak_contact_force_n = max(self.peak_contact_force_n, float(
+                    peak(after.z_m, self._config.contact_height_above_base_m)))
+        else:
+            self._contact_run_steps = 0
 
     def stop(self) -> None:
         self._v = self._w = 0.0
@@ -312,6 +329,12 @@ class IGibsonBackend(IGibsonBackendProtocol):
         return any(contact[2] not in self._bodies and contact[6][2] > base_z + min_height_m
                    and contact[9] > min_force_n
                    for body in self._bodies for contact in p.getContactPoints(bodyA=body))
+
+    def peak_contact_force(self, base_z: float, min_height_m: float) -> float:
+        """Largest normal force (N) over the same non-floor, above-base-plane contacts as ``in_contact``."""
+        p = self._p
+        return max((contact[9] for body in self._bodies for contact in p.getContactPoints(bodyA=body)
+                    if contact[2] not in self._bodies and contact[6][2] > base_z + min_height_m), default=0.0)
 
     def scene_probe(self, mapping: MappingConfig) -> SceneProbe:
         p = self._p
