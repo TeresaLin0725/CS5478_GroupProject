@@ -43,7 +43,9 @@ class MappingConfig:
     inspection_linear_speed_mps: float = 0.03
     inspection_angular_speed_radps: float = 0.08
     target_max_extent_m: Optional[float] = None
-    tentative_target_memory_s: float = 10.0
+    # Keep a hypothesis across the roughly 13-second arrival scan, with slack.
+    # This does not extend the independent terminal confirmation window.
+    tentative_target_memory_s: float = 30.0
     # Detection hypotheses may be weak; terminal evidence must be stronger.
     claim_confidence_threshold: float = 0.65
 

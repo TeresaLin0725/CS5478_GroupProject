@@ -17,6 +17,16 @@ from test_mapper_update import request, scene_frame
 
 
 class TargetClaimTests(unittest.TestCase):
+    def test_retained_scan_hypothesis_cannot_confirm_with_stale_evidence(self):
+        self.mapper.reset(request(confidence_threshold=.5))
+        self.assertIsNone(self.update(1, time=70.333).target_claim)
+        state = self.update(2, time=84.1, detections=())
+        self.assertTrue(state.semantic_objects)
+        self.assertIsNone(state.target_claim)
+        # Reacquisition needs two fresh frames, not the pre-scan observation.
+        self.assertIsNone(self.update(3, time=84.5).target_claim)
+        self.assertIsNotNone(self.update(4, time=85.).target_claim)
+
     def test_repeated_weak_detections_remain_tracks_without_claim(self):
         self.mapper.reset(request(confidence_threshold=.5))
         weak = replace(self.detection, confidence=.54)
