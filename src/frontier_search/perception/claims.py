@@ -33,7 +33,8 @@ def confirm_target(tracks: Dict[str, ObjectTrack], evidence: Dict[str, Detection
                 continue
             if (item.track_id == track_id and item.class_name == target_class
                     and item.position_world is not None
-                    and item.confidence >= cfg.confidence_threshold
+                    and item.confidence >= max(cfg.confidence_threshold,
+                                               cfg.claim_confidence_threshold)
                     and 0 <= timestamp_s - item.timestamp_s <= (
                         cfg.confirmation_window_s + CONFIRMATION_TIME_TOLERANCE_S)
                     and item.capture_sequence <= sequence):

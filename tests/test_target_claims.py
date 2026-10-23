@@ -17,6 +17,25 @@ from test_mapper_update import request, scene_frame
 
 
 class TargetClaimTests(unittest.TestCase):
+    def test_repeated_weak_detections_remain_tracks_without_claim(self):
+        self.mapper.reset(request(confidence_threshold=.5))
+        weak = replace(self.detection, confidence=.54)
+        for sequence in range(1, 5):
+            state = self.update(sequence, detections=(weak,))
+            self.assertIsNone(state.target_claim)
+        self.assertEqual(state.semantic_objects[0].confirmation_count, 4)
+        # One stronger frame cannot reuse weak evidence to make a claim.
+        self.assertIsNone(self.update(5).target_claim)
+        claim = self.update(6).target_claim
+        self.assertIsNotNone(claim)
+        bundle = self.mapper.get_claim_evidence('mapping-test', claim.claim_id)
+        self.assertEqual([d.capture_sequence for d in bundle.detections], [5, 6])
+
+    def test_claim_threshold_is_validated(self):
+        for value in (-.1, 1.1, float('nan'), True):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                MappingConfig(claim_confidence_threshold=value)
+
     def setUp(self):
         self.detector = Mock()
         self.detection = RGBDetection('cup', .9, (28, 28, 33, 33))

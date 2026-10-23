@@ -44,8 +44,14 @@ class MappingConfig:
     inspection_angular_speed_radps: float = 0.08
     target_max_extent_m: Optional[float] = None
     tentative_target_memory_s: float = 10.0
+    # Detection hypotheses may be weak; terminal evidence must be stronger.
+    claim_confidence_threshold: float = 0.65
 
     def __post_init__(self) -> None:
+        if (type(self.claim_confidence_threshold) not in (int, float)
+                or not isfinite(self.claim_confidence_threshold)
+                or not 0 <= self.claim_confidence_threshold <= 1):
+            raise ValueError('claim_confidence_threshold must lie in [0, 1]')
         if type(self.depth_pixel_stride) is not int or self.depth_pixel_stride < 1:
             raise ValueError('depth stride must be a positive integer')
         if not isfinite(self.tentative_target_memory_s) or self.tentative_target_memory_s <= 0:
