@@ -5,11 +5,43 @@ from datetime import datetime,timezone
 from pathlib import Path
 from benchmark_protocol import POLICIES,TRIALS,task_specs,validate_pairing
 from benchmark_episode import atomic,read
+from benchmark_watchdog import WatchdogChannel
 
 ROOT=Path(__file__).resolve().parents[1]
-HARNESSES=('benchmark_protocol.py','benchmark_episode.py','run_paired_benchmark.py','build_benchmark_report.py')
+HARNESSES=('benchmark_protocol.py','benchmark_episode.py','benchmark_watchdog.py','run_paired_benchmark.py','build_benchmark_report.py')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def utc():return datetime.now(timezone.utc).isoformat()
+def module_deadline_expired(watch,folder,protocol,now):
+    if not watch.get('deadline_at') or now<=watch['deadline_at']+2:return False
+    # Shared memory is authoritative; an older queued disk event cannot excuse
+    # a genuinely hung current invocation of the same module.
+    if protocol.get('watchdog_transport')=='shared_memory_v1':return True
+    return not module_finished_in_log(folder,watch['pending_module'])
+
+def module_finished_in_log(folder, module):
+    """A flushed end event precedes watchdog-file replacement on Windows."""
+    path=Path(folder)/'events.jsonl'
+    if not path.exists():return False
+    with path.open('rb') as stream:
+        stream.seek(0,2);size=stream.tell();stream.seek(max(0,size-65536))
+        lines=stream.read().splitlines()
+    for line in reversed(lines):
+        try:event=json.loads(line)
+        except (ValueError,UnicodeError):continue
+        if event.get('event') in ('module_begin','module_end'):
+            return event.get('event')=='module_end' and event.get('module')==module
+    return False
+
+def export_partial_calls(folder):
+    """Recover call exports from flushed events when a watchdog kills a worker."""
+    calls=[];path=Path(folder)/'events.jsonl'
+    if path.exists():
+        for line in path.read_text(encoding='utf-8').splitlines():
+            try:event=json.loads(line)
+            except json.JSONDecodeError:continue
+            if event.get('event')=='llm_call':calls.append(event['record'])
+    atomic(Path(folder)/'llm-calls.json',calls)
+    return calls
 def python():
     p=ROOT/'data/venv-igibson/Scripts/python.exe'
     return str(p if p.exists() else Path(sys.executable))
@@ -31,7 +63,7 @@ def freeze(out,workers):
     shutil.copy2(ROOT/'weights/yolo11/yolo11s.pt',snapshot/'weights/yolo11/yolo11s.pt')
     (snapshot/'harness').mkdir()
     for name in HARNESSES:shutil.copy2(ROOT/'scripts'/name,snapshot/'harness'/name)
-    jobs=task_specs();base=manifest_for('template')
+    jobs=task_specs();base=replace(manifest_for('template'),initialization_deadline_s=240.)
     for job in jobs:
         manifest=replace(base,episode_id=job['job_id'],policy_name=job['policy'],
             start_pose=Pose(**job['start_pose']),environment_seed=job['environment_seed'],
@@ -47,6 +79,7 @@ def freeze(out,workers):
     seals={str(p.relative_to(snapshot)).replace('\\','/'):sha(p) for p in snapshot.rglob('*') if p.is_file()}
     protocol=dict(schema_version='1.1',status='frozen_before_first_episode',created_utc=utc(),
         run_root=str(out),snapshot_root=str(snapshot),env_file=str(env_file),engine_fingerprint=engine,
+        watchdog_transport='shared_memory_v1',
         scope='Current Rs benchmark: one physical house, three scene conditions, three seed/initial-heading blocks, four policies; 36 fresh native episodes. Not multi-house generalization.',
         jobs=jobs,seed_heading_blocks=[dict(seed=seed,yaw_rad=yaw) for seed,yaw in TRIALS],
         seed_semantics='Geometry and cup position are fixed. Initial heading is a predeclared task variation. Dedicated policy seed controls Random; deterministic baselines and YOLO need not vary with seed. Hosted LLM is not reproducible from a local seed.',
@@ -55,7 +88,7 @@ def freeze(out,workers):
         policies=list(POLICIES),profiles=['apartment','clutter','dynamic'],
         target_evaluator_only=dict(model='025_mug',class_name='cup',position_world=[-1.4,2.95,.9213],
             reachability='Native collision/floor oracle preflight, parked cart if dynamic; oracle files never read by episode worker.'),
-        runtime=dict(workers=workers,torch_threads=4,device='0',python=sys.version,
+        runtime=dict(workers=workers,torch_threads=4,device='0',python=sys.version,startup_deadline_s=300.,
             wall_time_interpretation='Concurrent shared-resource wall times; not isolated single-robot latency.'),
         regression_certificate=tests,no_episode_retries=True,
         reporting=dict(primary_unit='profile x seed/initial-heading paired block',penalized_failure_s=600.,
@@ -173,22 +206,31 @@ def run(out,only_baselines=False):
             print('episode_started',j['job_id'],flush=True)
         for item in list(active):
             j=item['job'];folder=out/'episodes'/j['job_id'];p=item['proc'];watch=folder/'watchdog.json';reason=None
-            if watch.exists():
+            if protocol.get('watchdog_transport')=='shared_memory_v1':
+                try:
+                    if 'channel' not in item:item['channel']=WatchdogChannel(folder)
+                    sample=item['channel'].read()
+                    if sample is not None:item['watch']=sample
+                except (FileNotFoundError,ValueError,json.JSONDecodeError):pass
+            elif watch.exists():
+
                 try:item['watch']=read(watch)
                 except (OSError,json.JSONDecodeError):pass
             w=item['watch'];now=time.time()
-            if not w and now-item['started']>180:reason='startup_deadline'
-            if w.get('deadline_at') and now>w['deadline_at']+2:reason='module_deadline:'+w['pending_module']
+            if not w and now-item['started']>protocol['runtime'].get('startup_deadline_s',180):reason='startup_deadline'
+            if module_deadline_expired(w,folder,protocol,now):reason='module_deadline:'+w['pending_module']
             if now-item['started']>protocol['base_manifest']['limits']['max_wall_time_s']+180:reason='hard_wall_deadline'
             if reason and p.poll() is None:p.kill()
             if p.poll() is not None:
+                if 'channel' in item:item['channel'].close()
                 item['log'].close();active.remove(item)
                 if not (folder/'summary.json').exists():
+                    calls=export_partial_calls(folder)
                     atomic(folder/'summary.json',dict(j,termination='pipeline_error',detail=reason or 'worker_exit_without_summary',
                         wall_time_s=now-item['started'],simulated_time_s=w.get('simulated_time_s'),
                         actual_distance_m=w.get('actual_distance_m'),collisions=w.get('collisions',0),
                         decisions=w.get('decisions',0),attempts=w.get('attempts',0),steps=w.get('steps',0),
-                        partial_metrics=True,source_fingerprint=protocol['engine_fingerprint'],source_unchanged=True,llm_calls=0))
+                        partial_metrics=True,source_fingerprint=protocol['engine_fingerprint'],source_unchanged=True,llm_calls=len(calls),llm_fallbacks=sum(bool(c.get('fallback_reason')) for c in calls)))
                 atomic(folder/'supervisor.json',dict(returncode=p.returncode,detail=reason,
                     process_wall_s=now-item['started'],workers=protocol['runtime']['workers'],finished_utc=utc()))
                 r=result_row(out,j,protocol);finished.append(r)

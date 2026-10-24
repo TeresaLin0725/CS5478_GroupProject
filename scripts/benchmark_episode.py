@@ -122,21 +122,49 @@ def episode(protocol,job,out):
     mapper=RGBDMapper(detector);nav=TeamNavigator(sim,linear_gain=2.)
     policy=LLMGuidedPolicy(GeminiCompatibleClient()) if job['policy']=='llm_guided' else BaselinePolicy(PolicyName(job['policy']))
     evaluator=CloseRetainedEvaluator(store,sim)
+    from benchmark_watchdog import WatchdogChannel,AsyncEventWriter
+    channel=WatchdogChannel(out,create=True) if protocol.get('watchdog_transport')=='shared_memory_v1' else None
+    last_progress={}
     class WatchedLog(PipelineLog):
+        log_write_total_s=0.
+        log_write_max_s=0.
         ignored={'current_pose','sim_time_s','simulator.step','navigator.on_step','navigator.poll',
                  'capture_marks','stop','pause','resume'}
+        def __init__(self,path):
+            super().__init__(path)
+            self.writer=AsyncEventWriter(super().write) if channel is not None else None
+
+        def close(self):
+            try:
+                if self.writer is not None:self.writer.close()
+            finally:super().close()
+
         def write(self,event,episode_id,**payload):
-            super().write(event,episode_id,**payload)
+            log_started=time.perf_counter()
+            if self.writer is not None:self.writer.submit(event,episode_id,**payload)
+            else:super().write(event,episode_id,**payload)
+            log_elapsed=time.perf_counter()-log_started
+            self.log_write_total_s+=log_elapsed
+            self.log_write_max_s=max(self.log_write_max_s,log_elapsed)
             if event in ('module_begin','module_end') and payload['module'] not in self.ignored:
-                self.file.flush()
+                if channel is None:self.file.flush()
                 r=self.runner
                 progress=dict(job_id=job['job_id'],updated_at=time.time(),
                     pending_module=payload['module'] if event=='module_begin' else None,
                     deadline_at=time.time()+payload['deadline_s'] if event=='module_begin' else None,
                     steps=getattr(r,'steps',0),simulated_time_s=getattr(r,'sim_time',0.),
                     actual_distance_m=getattr(r,'distance',0.),decisions=getattr(r,'decisions',0),
-                    attempts=getattr(r,'attempts',0),collisions=sim.collisions)
-                try:atomic(out/'watchdog.json',progress)
+                    attempts=getattr(r,'attempts',0),collisions=sim.collisions,
+                    peak_contact_force_n=sim.peak_contact_force_n,
+                    longest_contact_run_steps=sim.longest_contact_run_steps,
+                    log_enqueue_total_s=self.log_write_total_s,log_enqueue_max_s=self.log_write_max_s,
+                    log_write_total_s=self.writer.total_s if self.writer else self.log_write_total_s,
+                    log_write_max_s=self.writer.max_s if self.writer else self.log_write_max_s,
+                    log_backlog=self.writer.queue.qsize() if self.writer else 0)
+                last_progress.update(progress)
+                try:
+                    if channel is not None:channel.publish(progress)
+                    else:atomic(out/'watchdog.json',progress)
                 except PermissionError:
                     # Telemetry is best effort. A subsequent update replaces it;
                     # the parent's independent total deadline remains enforced.
@@ -145,7 +173,13 @@ def episode(protocol,job,out):
     runner=EpisodeRunner(sim,mapper,nav,policy,evaluator,logger=log,
         recovery=SpatialRecovery(m.recovery,locality_radius_m=.6),cancelled=lambda:(Path(protocol['run_root'])/'cancel.request').exists())
     log.runner=runner
-    result=runner.run(m);log.close()
+    try:result=runner.run(m)
+    finally:
+        try:log.close()
+        finally:
+            if channel is not None:channel.close()
+    # Final disk export happens after the robot has stopped, outside operation clocks.
+    if last_progress:atomic(out/'watchdog.json',last_progress)
     calls=getattr(policy,'call_records',[])
     summary=dict(runner.summary,**job,recorded=False,source_fingerprint=fingerprint,
         source_unchanged=fingerprint==source_fingerprint(),evaluation=evaluator.metrics,
