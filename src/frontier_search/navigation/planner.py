@@ -30,7 +30,7 @@ from time import monotonic
 from typing import Callable, Dict, List, Optional, Tuple
 
 from ..contracts import FailureReason, GridCell, Pose, PlannerResult
-from .costmap import Costmap
+from .costmap import START_ZONE_M, Costmap
 from .geometry import cell_center, world_to_cell
 
 _SQRT2 = 2 ** 0.5
@@ -183,9 +183,11 @@ def cost_to_goal_m(costmap: Costmap, start: Pose, goal: Pose, field: Dict[Cell, 
 
 def path_valid(costmap: Costmap, path: Tuple[Pose, ...]) -> bool:
     """Exact-footprint check of every segment of a path (execution safety)."""
-    if not path or not costmap.pose_valid(path[0]):
+    if not path or not costmap.start_pose_valid(path[0]):
         return False
-    return all(costmap.segment_valid(a, b) for a, b in zip(path, path[1:]))
+    # path[0] is the robot's real pose: its first segment may leave the planning buffer (see first_move_valid)
+    return all(costmap.segment_valid(a, b, START_ZONE_M if i == 0 else 0.0)
+               for i, (a, b) in enumerate(zip(path, path[1:])))
 
 
 def smooth_path(costmap: Costmap, path: Tuple[Pose, ...]) -> Tuple[Pose, ...]:
@@ -204,7 +206,7 @@ def smooth_path(costmap: Costmap, path: Tuple[Pose, ...]) -> Tuple[Pose, ...]:
     i = 0
     while i < len(path) - 1:
         j = len(path) - 1
-        while j > i + 1 and not costmap.segment_valid(path[i], path[j]):
+        while j > i + 1 and not costmap.segment_valid(path[i], path[j], START_ZONE_M if i == 0 else 0.0):
             j -= 1
         keep.append(j)
         i = j
@@ -251,6 +253,12 @@ def _success(costmap: Costmap, start: Pose, goal: Pose, start_cell: GridCell,
     the requested goal yaw (arrival requires position and yaw tolerances).
     """
     waypoints = [(start.x_m, start.y_m)]
+    if len(cells) > 1 and not costmap.cell_traversable(start_cell.row, start_cell.column):
+        # The start cell may be inflation-blocked (robot parked near a wall). Its centre can then lie
+        # inside the obstacle, and first_move_valid already approved driving straight to the next cell,
+        # so the path must not detour through that centre. The reported cost is unchanged, so it still
+        # matches the distance field used by evaluate_candidates.
+        cells = cells[1:]
     for row, column in cells:
         centre = cell_center(costmap.grid, row, column)
         waypoints.append((centre.x_m, centre.y_m))

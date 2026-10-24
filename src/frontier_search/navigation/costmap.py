@@ -35,6 +35,9 @@ from .geometry import FREE, cell_center, circle_footprint, footprint_collides, i
 
 # 8-connected neighbourhood: (d_row, d_col, step length in cells)
 _SQRT2 = 2 ** 0.5
+# Length of the first drive away from the start pose that is checked with ``start_margin_m`` (m).
+START_ZONE_M = 0.10
+
 NEIGHBOURS = ((1, 0, 1.0), (-1, 0, 1.0), (0, 1, 1.0), (0, -1, 1.0),
               (1, 1, _SQRT2), (1, -1, _SQRT2), (-1, 1, _SQRT2), (-1, -1, _SQRT2))
 
@@ -212,9 +215,13 @@ class Costmap:
 
     # --- exact polygon checks (execution safety) ---------------------------
 
-    def pose_valid(self, pose: Pose) -> bool:
-        """Exact footprint at the pose (with yaw) touches no blocked cell."""
-        return not footprint_collides(self.grid, self.footprint_base, pose, self.margin_m)
+    def pose_valid(self, pose: Pose, margin_m: Optional[float] = None) -> bool:
+        """Exact footprint at the pose (with yaw) touches no blocked cell.
+
+        ``margin_m`` None = the planning margin; the start-pose checks pass ``start_margin_m``.
+        """
+        margin = self.margin_m if margin_m is None else margin_m
+        return not footprint_collides(self.grid, self.footprint_base, pose, margin)
 
     def start_pose_valid(self, pose: Pose) -> bool:
         """Exact footprint at the start pose touches no blocked cell, using ``start_margin_m``."""
@@ -228,11 +235,13 @@ class Costmap:
         """
         return footprint_collides(self.grid, self.footprint_base, pose, self.margin_m + extra_m)
 
-    def segment_valid(self, start: Pose, end: Pose) -> bool:
+    def segment_valid(self, start: Pose, end: Pose, start_zone_m: float = 0.0) -> bool:
         """Driving from start to end along a straight line is collision-free.
 
         The footprint is checked at spacing <= ``sample_step_m`` using the
-        heading of motion, including both end points.
+        heading of motion, including both end points. Samples within ``start_zone_m`` of ``start``
+        use ``start_margin_m`` instead of the planning margin (0 = none, the default): a robot parked
+        inside the planning buffer must be able to drive OUT of it (see ``first_move_valid``).
         """
         dx, dy = end.x_m - start.x_m, end.y_m - start.y_m
         length = hypot(dx, dy)
@@ -241,7 +250,8 @@ class Costmap:
         for i in range(steps + 1):
             t = i / steps
             pose = Pose(start.x_m + t * dx, start.y_m + t * dy, start.z_m, heading)
-            if not self.pose_valid(pose):
+            margin = self.start_margin_m if t * length <= start_zone_m + 1e-9 else None
+            if not self.pose_valid(pose, margin):
                 return False
         return True
 
@@ -253,31 +263,42 @@ class Costmap:
         with the exact footprint. The controller is rotate-then-translate, so the turn is the
         shortest arc from the current yaw to the heading of the move, followed by the straight
         segment. Only the turn that is actually needed is checked (a move straight ahead needs none).
+
+        The turn and the first ``START_ZONE_M`` of the drive are checked with ``start_margin_m``, the
+        same margin that accepted the start pose. Otherwise a robot parked inside the planning buffer
+        (a stopping error, or an obstacle cell that appeared under it) is "valid where it stands" yet
+        every first step fails, so it can never leave. The planning buffer is configuration-space
+        inflation, not physics; the exact footprint is still checked, and past the zone the normal
+        planning margin applies again.
         """
         dx, dy = target_x_m - start.x_m, target_y_m - start.y_m
         heading = atan2(dy, dx) if hypot(dx, dy) > 1e-9 else start.yaw_rad
-        if not self.rotation_valid(start, heading):
+        if not self.rotation_valid(start, heading, margin_m=self.start_margin_m):
             return False
         turned = Pose(start.x_m, start.y_m, start.z_m, heading)
-        return self.segment_valid(turned, Pose(target_x_m, target_y_m, start.z_m, heading))
+        return self.segment_valid(turned, Pose(target_x_m, target_y_m, start.z_m, heading),
+                                  start_zone_m=START_ZONE_M)
 
-    def rotation_valid(self, pose: Pose, target_yaw_rad: float, step_rad: float = 0.1) -> bool:
+    def rotation_valid(self, pose: Pose, target_yaw_rad: float, step_rad: float = 0.1,
+                       margin_m: Optional[float] = None) -> bool:
         """Turning in place from ``pose.yaw_rad`` to ``target_yaw_rad`` along the
-        shortest arc is collision-free (checked at ``step_rad`` increments)."""
+        shortest arc is collision-free (checked at ``step_rad`` increments).
+        ``margin_m`` None = the planning margin."""
         delta = (target_yaw_rad - pose.yaw_rad + pi) % (2 * pi) - pi
-        return self._sweep_valid(pose, pose.yaw_rad, delta, step_rad)
+        return self._sweep_valid(pose, pose.yaw_rad, delta, step_rad, margin_m)
 
-    def full_rotation_valid(self, pose: Pose, step_rad: float = 0.1) -> bool:
+    def full_rotation_valid(self, pose: Pose, step_rad: float = 0.1,
+                            margin_m: Optional[float] = None) -> bool:
         """A complete 360-degree turn in place is collision-free."""
-        return self._sweep_valid(pose, pose.yaw_rad, 2 * pi, step_rad)
+        return self._sweep_valid(pose, pose.yaw_rad, 2 * pi, step_rad, margin_m)
 
     def _sweep_valid(self, pose: Pose, start_yaw: float, total_rad: float,
-                     step_rad: float) -> bool:
+                     step_rad: float, margin_m: Optional[float] = None) -> bool:
         if step_rad <= 0:
             raise ValueError("step_rad must be positive")
         steps = max(1, int(abs(total_rad) / step_rad + 0.999999))
         for i in range(steps + 1):
             yaw = start_yaw + total_rad * i / steps
-            if not self.pose_valid(Pose(pose.x_m, pose.y_m, pose.z_m, yaw)):
+            if not self.pose_valid(Pose(pose.x_m, pose.y_m, pose.z_m, yaw), margin_m):
                 return False
         return True
