@@ -1,6 +1,0 @@
-{
-  "linear_gain_per_s": 2.0,
-  "path_smoothing": false,
-  "control_hz": 30,
-  "odometry_source": "latest control-step known-pose difference"
-}
