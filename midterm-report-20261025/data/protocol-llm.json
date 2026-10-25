@@ -1,0 +1,1097 @@
+{
+  "schema_version": "1.1",
+  "status": "frozen_before_first_episode",
+  "created_utc": "2026-10-24T21:48:48.104331+00:00",
+  "run_root": "D:\\CS5478_PROJECT\\w2-latest\\runs\\benchmark-w2latest-llm35-20261025",
+  "snapshot_root": "D:\\CS5478_PROJECT\\w2-latest\\runs\\benchmark-w2latest-llm35-20261025\\frozen",
+  "env_file": "D:\\CS5478_PROJECT\\.env",
+  "engine_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c",
+  "watchdog_transport": "shared_memory_v1",
+  "scope": "Current Rs benchmark: one physical house, three scene conditions, three seed/initial-heading blocks, four policies; 36 fresh native episodes. Not multi-house generalization.",
+  "jobs": [
+    {
+      "job_id": "apartment-s17-random",
+      "pair_id": "apartment-s17",
+      "profile": "apartment",
+      "policy": "random",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/apartment-s17-random.json",
+      "manifest_sha256": "1cee6484666ec4b728e739b9746e0a16ab6bfb87409a1ca9830b26221a31eef0"
+    },
+    {
+      "job_id": "apartment-s17-nearest",
+      "pair_id": "apartment-s17",
+      "profile": "apartment",
+      "policy": "nearest",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/apartment-s17-nearest.json",
+      "manifest_sha256": "9dc82a5686ed0c28356d2451fd11657dc6556add5b28163350a6aea97331c566"
+    },
+    {
+      "job_id": "apartment-s17-information_gain",
+      "pair_id": "apartment-s17",
+      "profile": "apartment",
+      "policy": "information_gain",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/apartment-s17-information_gain.json",
+      "manifest_sha256": "85318d68dd0e7b8c83b7327d52f96754abd1d4aca1416d216563fdb3702c0274"
+    },
+    {
+      "job_id": "apartment-s17-llm_guided",
+      "pair_id": "apartment-s17",
+      "profile": "apartment",
+      "policy": "llm_guided",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/apartment-s17-llm_guided.json",
+      "manifest_sha256": "12ce3646ca09cbb797483ee169c4729df1f11738c841afe4f4c966a3cbcd001b"
+    },
+    {
+      "job_id": "clutter-s17-random",
+      "pair_id": "clutter-s17",
+      "profile": "clutter",
+      "policy": "random",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/clutter-s17-random.json",
+      "manifest_sha256": "c0bd151e27ad77d743465d3c366b294950d0eb4dc74690345a9345cd3f3f4176"
+    },
+    {
+      "job_id": "clutter-s17-nearest",
+      "pair_id": "clutter-s17",
+      "profile": "clutter",
+      "policy": "nearest",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/clutter-s17-nearest.json",
+      "manifest_sha256": "8b3a1528f09298ccc2cb9ced08e84e07641e11edf995578f3829d776b9bac752"
+    },
+    {
+      "job_id": "clutter-s17-information_gain",
+      "pair_id": "clutter-s17",
+      "profile": "clutter",
+      "policy": "information_gain",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/clutter-s17-information_gain.json",
+      "manifest_sha256": "cae066ea774a647c843869e63e3beab0a01b4cb3942eba59526ca691e31c46e2"
+    },
+    {
+      "job_id": "clutter-s17-llm_guided",
+      "pair_id": "clutter-s17",
+      "profile": "clutter",
+      "policy": "llm_guided",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/clutter-s17-llm_guided.json",
+      "manifest_sha256": "03a7c8d9af322ce6c2d886091b0b7323cf12209d83b9c90b1b5167711417c421"
+    },
+    {
+      "job_id": "dynamic-s17-random",
+      "pair_id": "dynamic-s17",
+      "profile": "dynamic",
+      "policy": "random",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/dynamic-s17-random.json",
+      "manifest_sha256": "c62038c9ec04d4c9311778a371ed847e8db53004f97378ed87874f19f75db218"
+    },
+    {
+      "job_id": "dynamic-s17-nearest",
+      "pair_id": "dynamic-s17",
+      "profile": "dynamic",
+      "policy": "nearest",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/dynamic-s17-nearest.json",
+      "manifest_sha256": "807282281dd2e948b640407c67965edc885a611add9b3c61c50b62d02258ff4a"
+    },
+    {
+      "job_id": "dynamic-s17-information_gain",
+      "pair_id": "dynamic-s17",
+      "profile": "dynamic",
+      "policy": "information_gain",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/dynamic-s17-information_gain.json",
+      "manifest_sha256": "fa7e25d445c3c47d7abcd742e3922f9bde1efd7da232babd9a0856223582b755"
+    },
+    {
+      "job_id": "dynamic-s17-llm_guided",
+      "pair_id": "dynamic-s17",
+      "profile": "dynamic",
+      "policy": "llm_guided",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/dynamic-s17-llm_guided.json",
+      "manifest_sha256": "a970f1e9b10f42ff65e0ed7a93d4421bbf67bc51e5ecb8e8b4feb539caf52d43"
+    },
+    {
+      "job_id": "apartment-s29-random",
+      "pair_id": "apartment-s29",
+      "profile": "apartment",
+      "policy": "random",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "manifest_path": "manifests/apartment-s29-random.json",
+      "manifest_sha256": "2725982a12ae91af37985cdc983093f98cbe1442431ac581dbf63d3092ae9980"
+    },
+    {
+      "job_id": "apartment-s29-nearest",
+      "pair_id": "apartment-s29",
+      "profile": "apartment",
+      "policy": "nearest",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "manifest_path": "manifests/apartment-s29-nearest.json",
+      "manifest_sha256": "39924239d646a3c5321b946763a5bc888958f00a2a97346822a2e206b32410ef"
+    },
+    {
+      "job_id": "apartment-s29-information_gain",
+      "pair_id": "apartment-s29",
+      "profile": "apartment",
+      "policy": "information_gain",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "manifest_path": "manifests/apartment-s29-information_gain.json",
+      "manifest_sha256": "7f509bd3bc33dbbab613c6fbcffe2874705cc4e4358e5d49347d5c2e2bcbe4ee"
+    },
+    {
+      "job_id": "apartment-s29-llm_guided",
+      "pair_id": "apartment-s29",
+      "profile": "apartment",
+      "policy": "llm_guided",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "manifest_path": "manifests/apartment-s29-llm_guided.json",
+      "manifest_sha256": "a1b95752d382e3146edcb471a3b927d0904b498d780d4beddd46094783a65d6d"
+    },
+    {
+      "job_id": "clutter-s29-random",
+      "pair_id": "clutter-s29",
+      "profile": "clutter",
+      "policy": "random",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "manifest_path": "manifests/clutter-s29-random.json",
+      "manifest_sha256": "e8311ea47029ebf458d7bb71cc87be72c0781391f630e6b52287f2add24db1e6"
+    },
+    {
+      "job_id": "clutter-s29-nearest",
+      "pair_id": "clutter-s29",
+      "profile": "clutter",
+      "policy": "nearest",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "manifest_path": "manifests/clutter-s29-nearest.json",
+      "manifest_sha256": "7b3008611db8877f6d50b1e48b5514b6c7b37d18b170e8e96b55bd0eb8fb7f9f"
+    },
+    {
+      "job_id": "clutter-s29-information_gain",
+      "pair_id": "clutter-s29",
+      "profile": "clutter",
+      "policy": "information_gain",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "manifest_path": "manifests/clutter-s29-information_gain.json",
+      "manifest_sha256": "a31f14893f508015a1b22970da80561cfeff993de72e8cff4d5fdff5cb15d774"
+    },
+    {
+      "job_id": "clutter-s29-llm_guided",
+      "pair_id": "clutter-s29",
+      "profile": "clutter",
+      "policy": "llm_guided",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "manifest_path": "manifests/clutter-s29-llm_guided.json",
+      "manifest_sha256": "c2a37bf81e6b424ee3d81308fd9be2c4bea298f671c5097e1771e5ae54eadf22"
+    },
+    {
+      "job_id": "dynamic-s29-random",
+      "pair_id": "dynamic-s29",
+      "profile": "dynamic",
+      "policy": "random",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "manifest_path": "manifests/dynamic-s29-random.json",
+      "manifest_sha256": "70b1de24db8d190f97029f0a74a629322960530beb096d474e766453046fff96"
+    },
+    {
+      "job_id": "dynamic-s29-nearest",
+      "pair_id": "dynamic-s29",
+      "profile": "dynamic",
+      "policy": "nearest",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "manifest_path": "manifests/dynamic-s29-nearest.json",
+      "manifest_sha256": "7b4cb61055a1728e596d69360af70b8f83fed710cadfb3934751c22afaf57631"
+    },
+    {
+      "job_id": "dynamic-s29-information_gain",
+      "pair_id": "dynamic-s29",
+      "profile": "dynamic",
+      "policy": "information_gain",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "manifest_path": "manifests/dynamic-s29-information_gain.json",
+      "manifest_sha256": "ec5dc21c270dd2dabe4eec36752f6a0bf529bf478650ba56716e7fd5d6103ae5"
+    },
+    {
+      "job_id": "dynamic-s29-llm_guided",
+      "pair_id": "dynamic-s29",
+      "profile": "dynamic",
+      "policy": "llm_guided",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "manifest_path": "manifests/dynamic-s29-llm_guided.json",
+      "manifest_sha256": "5059aa9957c961894d114cf184bcced0eda88e47601205d847b0097b799503ef"
+    },
+    {
+      "job_id": "apartment-s43-random",
+      "pair_id": "apartment-s43",
+      "profile": "apartment",
+      "policy": "random",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "manifest_path": "manifests/apartment-s43-random.json",
+      "manifest_sha256": "c748c4d2e5543a219b3fabb98743fece4b4da644c8b088f529e99e29c2115605"
+    },
+    {
+      "job_id": "apartment-s43-nearest",
+      "pair_id": "apartment-s43",
+      "profile": "apartment",
+      "policy": "nearest",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "manifest_path": "manifests/apartment-s43-nearest.json",
+      "manifest_sha256": "ae355bf2910e65b7647b91c1f681dc660e03d7d657ab3283e6343bc9b05a2463"
+    },
+    {
+      "job_id": "apartment-s43-information_gain",
+      "pair_id": "apartment-s43",
+      "profile": "apartment",
+      "policy": "information_gain",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "manifest_path": "manifests/apartment-s43-information_gain.json",
+      "manifest_sha256": "3252efa2c216e67394bfc74c1dd70b5563ba3d8ba22d32f23cee8911630877e7"
+    },
+    {
+      "job_id": "apartment-s43-llm_guided",
+      "pair_id": "apartment-s43",
+      "profile": "apartment",
+      "policy": "llm_guided",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "manifest_path": "manifests/apartment-s43-llm_guided.json",
+      "manifest_sha256": "b708c137a8f8459398a2364bf95a624cff9f85733e390eb62d76776415ec07d9"
+    },
+    {
+      "job_id": "clutter-s43-random",
+      "pair_id": "clutter-s43",
+      "profile": "clutter",
+      "policy": "random",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "manifest_path": "manifests/clutter-s43-random.json",
+      "manifest_sha256": "9b749bcb3219190da08b6fd89456aa4011c7a89dc1baf8b84fe8dd980917790d"
+    },
+    {
+      "job_id": "clutter-s43-nearest",
+      "pair_id": "clutter-s43",
+      "profile": "clutter",
+      "policy": "nearest",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "manifest_path": "manifests/clutter-s43-nearest.json",
+      "manifest_sha256": "1d0034d1369184a0d20c4b29e2b991f6ea8a8620cb1b5bd15b44ee81d5a425aa"
+    },
+    {
+      "job_id": "clutter-s43-information_gain",
+      "pair_id": "clutter-s43",
+      "profile": "clutter",
+      "policy": "information_gain",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "manifest_path": "manifests/clutter-s43-information_gain.json",
+      "manifest_sha256": "f495d153d26c599be6f2d329cb2138e46a592de234ce1cde18dcfdf3c75d400f"
+    },
+    {
+      "job_id": "clutter-s43-llm_guided",
+      "pair_id": "clutter-s43",
+      "profile": "clutter",
+      "policy": "llm_guided",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "manifest_path": "manifests/clutter-s43-llm_guided.json",
+      "manifest_sha256": "d81f0bcbecba085e9101a70a384ce3378504e23acc673ed868ddaf065a13af43"
+    },
+    {
+      "job_id": "dynamic-s43-random",
+      "pair_id": "dynamic-s43",
+      "profile": "dynamic",
+      "policy": "random",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "manifest_path": "manifests/dynamic-s43-random.json",
+      "manifest_sha256": "775158aef7b7e2536b7766b1fb9a91485d05c1f4600bb99d167401729d69d1f7"
+    },
+    {
+      "job_id": "dynamic-s43-nearest",
+      "pair_id": "dynamic-s43",
+      "profile": "dynamic",
+      "policy": "nearest",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "manifest_path": "manifests/dynamic-s43-nearest.json",
+      "manifest_sha256": "bf3c4f349c259a6ac06cdf4dd6b76c32a5532894a85e0946aa831f9c2573b5ef"
+    },
+    {
+      "job_id": "dynamic-s43-information_gain",
+      "pair_id": "dynamic-s43",
+      "profile": "dynamic",
+      "policy": "information_gain",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "manifest_path": "manifests/dynamic-s43-information_gain.json",
+      "manifest_sha256": "aec9ac50a35d321a6de186f8df54ebd4d25e1bcfd1c96db89c5432681c93c46e"
+    },
+    {
+      "job_id": "dynamic-s43-llm_guided",
+      "pair_id": "dynamic-s43",
+      "profile": "dynamic",
+      "policy": "llm_guided",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "manifest_path": "manifests/dynamic-s43-llm_guided.json",
+      "manifest_sha256": "3b20b3e66c1427c1515dd5dee68f04d5cc504673b06998a9c220e7680e28e3f7"
+    }
+  ],
+  "seed_heading_blocks": [
+    {
+      "seed": 17,
+      "yaw_rad": 1.5707963267948966
+    },
+    {
+      "seed": 29,
+      "yaw_rad": 0.0
+    },
+    {
+      "seed": 43,
+      "yaw_rad": -1.5707963267948966
+    }
+  ],
+  "seed_semantics": "Geometry and cup position are fixed. Initial heading is a predeclared task variation. Dedicated policy seed controls Random; deterministic baselines and YOLO need not vary with seed. Hosted LLM is not reproducible from a local seed.",
+  "asset_paths": {
+    "robot_assets": "D:\\CS5478_PROJECT\\w2-latest\\data\\igibson-data\\robot_assets\\assets",
+    "scenes": "D:\\CS5478_PROJECT\\w2-latest\\data\\igibson-data\\g_dataset"
+  },
+  "asset_hashes": {
+    "g_dataset/Rs/.ipynb_checkpoints/combine_texture-checkpoint.ipynb": "a1c3887c1c0e3203bf1dd98b1c872d3d1bdeb3538df7da9addebef98d8c1408b",
+    "g_dataset/Rs/27bd2a4f3cae42c686254fe08a9b848e.mtl": "18c19e64dc39a3fb2b0614816996794626955588d6ac28c6e53713049f56f9e6",
+    "g_dataset/Rs/27bd2a4f3cae42c686254fe08a9b848e.obj": "0ab7d6025b69a98cb9e056d27c9aac916687cf9f7ad6e3da5594edd638aeff11",
+    "g_dataset/Rs/ceilingcolorplan.pdf": "b25f8db50f5eb5ef2a9d048492578e3beb411dc8d7a037cb0fcc0f1d4f050a25",
+    "g_dataset/Rs/ceilingcolorplan_000.jpg": "1e9a7ee746d0e2789452e739c554fdc17a1fc1e531ed56f50e686d589b85513e",
+    "g_dataset/Rs/colorplan.pdf": "c7108928fbf30b0ceeaa1935c3e982ff04b6dc7c63138cb8f3e298b0f294c365",
+    "g_dataset/Rs/colorplan_000.jpg": "e0159182ea3e8b26b4a8db9a74fa8dc4dba9e7a00df3b7ba17bef63ac6d1f380",
+    "g_dataset/Rs/combine_texture.ipynb": "7b0af11443647bb2f5c8ca7b504558698c3c0757fb47a8d59dd466767a86d01f",
+    "g_dataset/Rs/combined.jpg": "7166253fffd2bf0ac718ec968f9a8c30eb5e354684892fe9f86992e4724f7e6d",
+    "g_dataset/Rs/floor_0.png": "d76fc6cb73c7e2f76d0a1432ef8b99d8f821c6fc33c97c105c5473869489755d",
+    "g_dataset/Rs/floor_0.yaml": "7d6e2f8730d395964756c4aead260506e5c625562e6bca7d26c2e05c9809475a",
+    "g_dataset/Rs/floor_trav_0.png": "52d9ad5b1bd747ad03a7260735067e41f7bf356f563b941e7e4362dd0bdc5668",
+    "g_dataset/Rs/floorplan.png": "bc43c441381328eb155efd0631e453c25f64f97ee04fbe159a03dc198c71b6f0",
+    "g_dataset/Rs/floors.txt": "024501d69082a58642e2f94bf460c11ccef8924922b4eaaa28cc3a681ddd8aa7",
+    "g_dataset/Rs/mesh_z_up.obj": "d9cae3429f403456b31c1ad0214f85b8912d80921558940b59b983d30b581367",
+    "g_dataset/Rs/mesh_z_up.obj.mtl": "6976830d0309a1c5a61028cbff72d1350944a89e379f8c90187ce1fb13a25457",
+    "g_dataset/Rs/test.mtl": "ff33cc8e34818b7520288a5447021773be86b22b142bb995569af5ebf4f8c2f3",
+    "robot_assets/assets/models/locobot/.ipynb_checkpoints/Untitled-checkpoint.ipynb": "7d7553ade79234c9ecd138650b4296925fbcb5cbb936f0daf3902b4a9a155f9d",
+    "robot_assets/assets/models/locobot/locobot.urdf": "6264b0e5c24bb16790a9b86f974780d8795a8cd4f59974552488d6808350060a",
+    "robot_assets/assets/models/locobot/locobot_original.urdf": "a3da5063adeb60364be2233620f30e1cb3fa8e0cb4cf06ed5e1291a11df5a5c3",
+    "robot_assets/assets/models/locobot/meshes/ar_tag.obj": "4e1ad6f6613e350255564f213c561dc7bd0d3495f97e48c1e7c9c992297dc945",
+    "robot_assets/assets/models/locobot/meshes/ar_tag.STL": "91bb77fb91f93bd14a000a51c99cac533b05aaf64b285e3662d8f37da829b21e",
+    "robot_assets/assets/models/locobot/meshes/arm_base_link.obj": "3e502c1fad5fed14fceca8baf116fcca5f6e2ff777207e92cf682a9127f18761",
+    "robot_assets/assets/models/locobot/meshes/arm_base_link.STL": "ab1be66b921cea9d149cc2436c13bb0e69657f154b7d84a10d5afe7f4636a506",
+    "robot_assets/assets/models/locobot/meshes/base_link.obj": "0d744cdfd6d8a865ccf806e3dfe4bd2fe2c9ffb5295f082a2e6436bb12387985",
+    "robot_assets/assets/models/locobot/meshes/base_link.STL": "e03b3d86cad9540a32cdad262a2e2b19c31adb9760c7c9cd41e5243240e5d589",
+    "robot_assets/assets/models/locobot/meshes/cam_mount.obj": "861aec788fd2fbc9366a9e0f753e7bbbd55d3b4e286233b26b608ecf4a0c8d7a",
+    "robot_assets/assets/models/locobot/meshes/cam_mount.STL": "b9aca16d1dc16e7175272fa5e056002c554676c6d0577c99d100c9749ff76f1e",
+    "robot_assets/assets/models/locobot/meshes/camera_link.obj": "4712a1e3f654d371efa6ef9614fef0072ab6fa513519adc2555fdbe1f3cb29f3",
+    "robot_assets/assets/models/locobot/meshes/camera_link.STL": "9e650e2fbdeac65499e04d0f44a84d9a49ff499b5414a053ba8104c7805a18af",
+    "robot_assets/assets/models/locobot/meshes/elbow_link.obj": "0e7b99e6fe9ad039a198e8676ff95d708ab1423a535fae8e898bd4daba110b1c",
+    "robot_assets/assets/models/locobot/meshes/elbow_link.STL": "f21685a3b3ca64387c5c0730a00c0175548dfcc24e7541edfdcbc8bb818b1a19",
+    "robot_assets/assets/models/locobot/meshes/finger_l.obj": "c6f180645c57b32bb0da14633020bcf048f31592322033d3ae30b13fc45c7ad2",
+    "robot_assets/assets/models/locobot/meshes/finger_l.STL": "dd0ab4606af47fefdeccd97718bc229e80c7120e38eede59fc5cca411306a68b",
+    "robot_assets/assets/models/locobot/meshes/finger_r.obj": "7b9379004a95df9ada1eb7b1c4547b7a86642a7b4d7a5cbf5a647b4d455ee843",
+    "robot_assets/assets/models/locobot/meshes/finger_r.STL": "0b5ee7c113210f4dc331ee887f5d23bca90eb9acf03df2c8ec9d0c396ea2c1fd",
+    "robot_assets/assets/models/locobot/meshes/forearm_link.obj": "920f64b6a230a2fd2d8ca3f6e3f24ac346e6a5fe38046a675e45ca6df06875e5",
+    "robot_assets/assets/models/locobot/meshes/forearm_link.STL": "7bbcdb40d5094a5f1f350aed02a7c8aeea0c8c209e44350bec8c662a79d96e73",
+    "robot_assets/assets/models/locobot/meshes/gripper_link.obj": "ba847c7931a7ac68c748e0402d44638a9d67b07edc09722d637489eea57643c2",
+    "robot_assets/assets/models/locobot/meshes/gripper_link.STL": "d07a249becc7ddbaf1ed643b31505c48520dc8e852c96f371b83f39965388602",
+    "robot_assets/assets/models/locobot/meshes/images/main_body.jpg": "4a922225298c5708e9d5f779698256ed5e9ef2a4744cc943bb13d27bdbc00314",
+    "robot_assets/assets/models/locobot/meshes/images/main_body.png": "c56067cf6f70443de2a11f76a63fd02de5585b8770ff66587b1fc5afe7b1c7f2",
+    "robot_assets/assets/models/locobot/meshes/images/wheel.jpg": "a17c56ca928ee7b2d18d15b1bb57c5bc6a8d49cf8ece679c93c380e061aa5738",
+    "robot_assets/assets/models/locobot/meshes/images/wheel.png": "a18ff833d99333cdb5f0d8f2d4485528608d576ca25a4799e1d19f84af3196bc",
+    "robot_assets/assets/models/locobot/meshes/main_body.dae": "b7f51d593290f175fb1156a02b2d63324201f4f7a0412c9179ca9109b9cfc6b1",
+    "robot_assets/assets/models/locobot/meshes/main_body.obj": "3cc219ea4c69eb22486bfcf04f6007c2c833f1c6bf9f3be0967b6d6ed12c9ed1",
+    "robot_assets/assets/models/locobot/meshes/main_body.obj.mtl": "9cbe3f1227125d618aacf9b085d528eab52acfb7abc2dcc2fc602af8f7784c8f",
+    "robot_assets/assets/models/locobot/meshes/plate.obj": "6ca3a509deb96791e25633815405899e23d81d0ed3c423089369b1ceb874d404",
+    "robot_assets/assets/models/locobot/meshes/plate.STL": "a8982edd3ed70be057d50b043ef7d87243a31d65678a6c3826530a907d4e957d",
+    "robot_assets/assets/models/locobot/meshes/roll_link.obj": "70e337758bfb4d78c440e9925366d18535117ef3656397439bd2212978506ab6",
+    "robot_assets/assets/models/locobot/meshes/roll_link.STL": "1172795f735170d8100bdcf6de9937b1493af40d1c997d3c642aa9aa7e5f56e9",
+    "robot_assets/assets/models/locobot/meshes/shoulder_link.obj": "b1c7f7e64a9d1bac305585537912aa950b5e10479bb1bd9d99133525f19ac8e5",
+    "robot_assets/assets/models/locobot/meshes/shoulder_link.STL": "388cdcac6aaef3f1fbfcc36c3109a241f31617c20da83ce9f9a7897d6a0832c8",
+    "robot_assets/assets/models/locobot/meshes/tilt_link.obj": "1092282b4aff53f7ebbb55b2997e21e063e3c81789e4cccde6ab1d9e7f9c113b",
+    "robot_assets/assets/models/locobot/meshes/tilt_link.STL": "f63932a62587755cb1ec468fcc752b450c496e99df286675e20c4401928744ec",
+    "robot_assets/assets/models/locobot/meshes/wheel.dae": "f2d76c17f32af7ce3e20dfc83d83c572de918b5596ba97b1600dd762bab9d37a",
+    "robot_assets/assets/models/locobot/meshes/wheel.obj": "b06cd1419dea4a51897d8d4ea65e8a7b8b48a395994caed98f9e5010b23f8ca9",
+    "robot_assets/assets/models/locobot/meshes/wheel.obj.mtl": "6e2315714b7bd745b67c93684d0f273bba6d178be8e57325291efac7fa8bc9f1",
+    "robot_assets/assets/models/locobot/meshes/wrist_link.obj": "8b8f976bbd81468761de6edd4841b2ce28d548a7f35a4e3ae3a6913e390866af",
+    "robot_assets/assets/models/locobot/meshes/wrist_link.STL": "190f87921a86cd7c13f0d6023ebeb4441dafc03a1b4252926d9068c72b4520d9",
+    "robot_assets/assets/models/locobot/meshes/yaw_link.obj": "232efb2c810c67d378d01bf01e0bd0cf1cab17163fe953c3aa7fa4bc01bf0077",
+    "robot_assets/assets/models/locobot/meshes/yaw_link.STL": "336465452485090e2511b67f1cc20e4c895c2246fa2f0d8d91cf79c0a4672e1c",
+    "robot_assets/assets/models/locobot/test_urdf.py": "b3b441c87f73797fe7c9d2b79d4d23b54b8eaf5608100502f9ff98e37d68a3df",
+    "robot_assets/assets/models/ycb/025_mug/025_mug.xml": "7159b101cd6048cc81fd01160fdd54076ac3cc8ba2c79786090904f0d245a1d9",
+    "robot_assets/assets/models/ycb/025_mug/texture_map.png": "dc8066a0782cabb3a479f1c91ae4274b8cbc4e0c625f91e7317a7788dc9cc3b3",
+    "robot_assets/assets/models/ycb/025_mug/textured_simple.obj": "5ed579ff021939935bfc200aa1652ff1e1ff6a85f791aa30cd5ab96c3604e858",
+    "robot_assets/assets/models/ycb/025_mug/textured_simple.obj.mtl": "66906c16609d5fc60d520f5cc0e59cfe7c0bb84e66c970da2badcdb15cbebe0a",
+    "robot_assets/assets/models/ycb/025_mug/textured_simple_vhacd.obj": "8ecbfbf75759a3db181fd4f35cd15aef7b9b6eca57a08de43cbe28dd458a4ee4",
+    "robot_assets/assets/models/ycb/006_mustard_bottle/006_mustard_bottle.xml": "7159b101cd6048cc81fd01160fdd54076ac3cc8ba2c79786090904f0d245a1d9",
+    "robot_assets/assets/models/ycb/006_mustard_bottle/texture_map.png": "5ab81c84e1b0a945c9f1a3f20fe765720ab607ca2841a1da3454b9cf443893b1",
+    "robot_assets/assets/models/ycb/006_mustard_bottle/textured_simple.obj": "f156897814cba5889427759c52d76f7d7c7dd7902aef87e38ec898195bbc6d79",
+    "robot_assets/assets/models/ycb/006_mustard_bottle/textured_simple.obj.mtl": "66906c16609d5fc60d520f5cc0e59cfe7c0bb84e66c970da2badcdb15cbebe0a",
+    "robot_assets/assets/models/ycb/006_mustard_bottle/textured_simple_vhacd.obj": "30cfbee77d90a12c07afa52066995da8b1595e0bb79a25065e9a3c2a364ec604"
+  },
+  "snapshot_seals": {
+    "harness/benchmark_episode.py": "801f0b28ca55fda587ea74d586d48973e64c9856ee155ffaf13d4f73b5879fb6",
+    "harness/benchmark_protocol.py": "b7b89266f8618ec92b50361d16a00f1a7d083e4c79b998c79848ca23bab6530a",
+    "harness/benchmark_watchdog.py": "76592e685960af135898af7046b35924d94b549cf40352788a33f271aaac2c1c",
+    "harness/build_benchmark_report.py": "c76ac9823d1e610a0821896d0ac1ae7ac2daf0a4d418b51815fefad132a33c31",
+    "harness/run_paired_benchmark.py": "340158fbd80eff8e6b3dae3850ccdc754d84ab63f2e49ce77033ee63f0631766",
+    "src/frontier_search/cli.py": "80363b671f39def80f056134403506acfd1b9a4ad1fe5dc6847ad7997d94a137",
+    "src/frontier_search/config.py": "db336f6fef74b64b1bd1efa8c6c2562e8fadb0eec5b50153170f96311693f890",
+    "src/frontier_search/contracts.py": "7ea48d3d9151f6729a742cdfbd9c0a78f92590a48cf631431a1f7bcc363ac0aa",
+    "src/frontier_search/immutable.py": "ec4e5ba47b9764c5f2ea74afa571e19159c2c7a2234baa6665d1295e49160aba",
+    "src/frontier_search/sensors.py": "9590d2e42535eed7598555da3240e715a0fad6da51f0e87e6550cc4cb2c8e449",
+    "src/frontier_search/validation.py": "a25c7c19158ab92a28c953a2ee26a0739da8d3fa81cf6877faa4349e0080c744",
+    "src/frontier_search/__init__.py": "9ccf508b6614bc9a919f7ffd2d36ac9603acbda31df95ebbde5ba6483eaed723",
+    "src/frontier_search/__main__.py": "c13eb66970ae37b8b044f428b309e67868814b90a8bb408806f3316ce4dfbc5b",
+    "src/frontier_search/evaluation/api.py": "481dc537e2b8a418391de2dc1ed30613bbe2cbf4600b6d3b995f87c78e39ec14",
+    "src/frontier_search/evaluation/proximity.py": "0bc6c9bf5e2f5cd18feed471d8571d727d46af23b782d2584a5442b6c33941b8",
+    "src/frontier_search/evaluation/retained.py": "2291564dfc689202cc28d36e689ac4167990fd9e2364207228fe23d24477894f",
+    "src/frontier_search/evaluation/verifier.py": "950113d1ad9a7ed341ea24419986ee375b54be6bd593abd8ccfdf3454a56c87d",
+    "src/frontier_search/evaluation/__init__.py": "2e024d228f6b76955d1d5b3c3b0c2b8dd16b6c4524dfdc16ff67084d30bd0985",
+    "src/frontier_search/experiments/logging.py": "fe845e21ad004fc533962132f44b259945b2cb7611bddc910688ca9d01e90013",
+    "src/frontier_search/experiments/__init__.py": "3adc152fa3965fd2891d9059487850dc046340b57ce0bb3495db32cf46f44bb0",
+    "src/frontier_search/fixtures/analytic_rgbd.py": "5e6bfee7da223a9ad8c86ba60a129f251fca0f63ea562a88dac3ce0458fbff98",
+    "src/frontier_search/fixtures/clearance.py": "942e1c41d82449f07cb00138567485799f9493bd6e99db783ac57c8b38d62838",
+    "src/frontier_search/fixtures/loader.py": "5652b594c3f45cd7efe45844017454272eb3eec562d1dfc006a0e27ca19eb10d",
+    "src/frontier_search/fixtures/recording.py": "5060164551157825b38e127c211244e74c8bfe61340df25e7ba3579970dd1245",
+    "src/frontier_search/fixtures/sequence.py": "c98fc1959674ab07c70dc06d6985fb1a9efc472809440826b3026e97dcaa788c",
+    "src/frontier_search/fixtures/three_rooms.py": "d074930510acaf6fbde39d1be63c1222669812177bcac7dde14f20bd4e6e64ed",
+    "src/frontier_search/fixtures/w2_episode.py": "8be1e27f511d6848fc7b4041e74448b184c4205c0c297a6f0c705e3dce08d638",
+    "src/frontier_search/fixtures/__init__.py": "ee5347aa4a4f1285b0439a1675295bb8788ff275080020c14544ce01902fe8da",
+    "src/frontier_search/navigation/api.py": "cd01e69b36044f9f07f689c3cb2fde5e2886299595d5973d275345c8cf2426a6",
+    "src/frontier_search/navigation/costmap.py": "28e80883c2c4a0d5ebf970258964f3125bfc5ec887d8c384a201e6e87661b742",
+    "src/frontier_search/navigation/demo.py": "e3ce363246aa7a66318a18cf630458becd45b588eda7dcc0090e03d063f04c12",
+    "src/frontier_search/navigation/dev_robot.py": "e182bec2a941fcb7e915049f0ce66ff4a06274ce0568f2d3aeb01bfd06206e45",
+    "src/frontier_search/navigation/geometry.py": "fe3420454eafe4eaac4100f963181bca386166c3dd0f8de40288f216a9e59bc7",
+    "src/frontier_search/navigation/lattice.py": "bfb0c73aacd5e13562de4535d43ccf91d264079633ddcd86a0964e1f1baaf15b",
+    "src/frontier_search/navigation/locobot_robot.py": "d86436b385dad7180c8e08915d5c302e548ccd3de175fc3938b4a8d3e37c1905",
+    "src/frontier_search/navigation/navigator.py": "8f4dd2cc390db434e7b6688e98cc913114bfae84bf29bbc7b7ac16677c4abe34",
+    "src/frontier_search/navigation/planner.py": "b9f2d1d1ea36c39468833873b1ae27146d3ebd8fa70ab39607312f6ee5de2432",
+    "src/frontier_search/navigation/__init__.py": "1f04cc1dc78876885c638ac6a5bf67a26e617551fc9ce72f2e65945c79c7fae8",
+    "src/frontier_search/perception/api.py": "af6475c325c2daf7ee5d5ec90fc9cd88e4851f77eb5322ca711a1ebb2bb1d713",
+    "src/frontier_search/perception/claims.py": "93feefc2bbe3fc05879053767a06020b4f597fe9ec2415216fa2f1168fe00b2e",
+    "src/frontier_search/perception/detection.py": "6d89f629f9bc892ed62e8f8d4ae36bb63d45467923188f908695962a3f3f4907",
+    "src/frontier_search/perception/frontiers.py": "241340556d93feda6c81993ea8bd39e8b755071d2d22f3f653b4ca15a4aebe0d",
+    "src/frontier_search/perception/fusion.py": "a612a405dce7405ee66bd19fc2c58c18974b41e83ecea31a2a55bd5fdd02ff9e",
+    "src/frontier_search/perception/gain.py": "df8ff54ae7443b56f39fed57aa19e6c6cee8f4a8800aa87d810bdaca6b521286",
+    "src/frontier_search/perception/mapper.py": "ced706568fc6df60550bd5a5bd8461ff9ae3fefb1d7c515c6b8ef5d481c38c51",
+    "src/frontier_search/perception/observations.py": "ca7127be53542e9cab5f30e733a24a017f98c58b2922699a4254061c0e6ceb50",
+    "src/frontier_search/perception/occupancy.py": "aa769611d96f6b6b71c81b27ad4a5bc499601e1eb53234f18a144593be4735b4",
+    "src/frontier_search/perception/priors.py": "b6375c7750c9ee46ff63cc71182efb6324d2a960b0751f923db8519a94b47343",
+    "src/frontier_search/perception/projection.py": "d000f0601c7c5f2ebc75ca646bc0bd0c7efca8aae58f68c39b3f438da2bc8516",
+    "src/frontier_search/perception/tracking.py": "ee6ad3dedb22b82f9edc29bb6abe9e21fd9074f0e26c57a9a26623cce2234a61",
+    "src/frontier_search/perception/__init__.py": "fb4e91cc76c69dec8fd3628e13889aac369b3cfce83cd714da16e0f2bab637d2",
+    "src/frontier_search/policies/api.py": "f2cae4bacd7884eba6a50cbb8f18345dfbc6ebd9208856ca1f966c2462912825",
+    "src/frontier_search/policies/baselines.py": "1b30574ed52098c3d8ea8a3b107b5f48c9d25a415cccc2e55338a407ce4a66f3",
+    "src/frontier_search/policies/llm.py": "638b21bb29cd50b23cde8e7c020daa66e33775ec65e8861ba026b2836711f443",
+    "src/frontier_search/policies/provider.py": "4a363aafba5c9f8538f2b5c72f5349225029a8f03a2b0ee9477cee388ccbd9e7",
+    "src/frontier_search/policies/transport.py": "7c5e4c80cd699a80b7e8ef51326c12aa0a90be9e0ee2fd90497614f964c0559d",
+    "src/frontier_search/policies/__init__.py": "9ae475c7ce6b8aa467dc24a68dafff15697f4da376032722afae70bbfabdff89",
+    "src/frontier_search/runner/demo_video.py": "b7fc2bb21e9acbf87f63f0c7f1c7bbe14ca0428c3ea470e84790ddbe50e6a0bb",
+    "src/frontier_search/runner/diagnose_clearance.py": "e5e45e7c8b57b3f206de881a1305d20d649b0424d02ec614b7093fd30911e95c",
+    "src/frontier_search/runner/episode.py": "b80760358f58a12ac3fdaeb5684b2470b3e1c7c6ca1018025a3ebb82a8a923ff",
+    "src/frontier_search/runner/igibson_demo.py": "e081d5f10e2221588833316a0b89603a1ce93fff6595db81cc6d2e993f492a6f",
+    "src/frontier_search/runner/indoor_viewer.html": "d35d3ec5485bcebe9675a4c94de4d95056ac424f07bdd66096e4714d5687f375",
+    "src/frontier_search/runner/indoor_viewer.py": "4bdfb2c965f6a98865cd0bf06d54a8d1ac17f3400f4d10deb77f89a5459fbcca",
+    "src/frontier_search/runner/integrated.py": "feaee4ce8b0c5315590ee0a1325a670a97d456ab159610482630f6542072c8fb",
+    "src/frontier_search/runner/integrated_recording.py": "655c914a504caa4d7ee05a19730cf37d9ecb79c1b00a48a57b5227238f5ce586",
+    "src/frontier_search/runner/manifest.py": "3fa9f847ef7764f6155ff0754ffe20b584d44317f9ee9a43c5d51582fb958b8f",
+    "src/frontier_search/runner/recovery.py": "1b2e38a7205c59ecf9231f85b5156b97e7a642f19db670415d9ab3b06ab4e11b",
+    "src/frontier_search/runner/replay.py": "e41785d710f7c3e0c964db4138a11a9397229422949adeccbc477a790885399f",
+    "src/frontier_search/runner/supervisor.py": "04c169900a028b5e25034ad9338869b23b4ce874b6d798b68cdcd74685d41017",
+    "src/frontier_search/runner/synthetic.py": "d73b28a5dace0656ba1eed2ebd72df95fd9477a39577b2945180b9d1fe978651",
+    "src/frontier_search/runner/w2.py": "a04c39b1aae3f1894284e3fbc1a2a846c3e90ab590d55cce1d91fb8377e9dcea",
+    "src/frontier_search/runner/__init__.py": "e12259290ca70fc848df09bf53c00ba3b264325dbf33d50a43d8f47edf2afb7f",
+    "src/frontier_search/simulation/api.py": "2c8af8289432def135c4ef6b40fe04a8fde123429b8706962a62c4bf3241c980",
+    "src/frontier_search/simulation/capture_igibson.py": "bbb83ed5f9a59b9b12123a2578859be91a404d0ad39a7fffc4a0af25053bf3c0",
+    "src/frontier_search/simulation/cart_motion.py": "3aa03b5f0b300ece1c005728a93fd9a784d2e5ff125915324ecf7c90380ad41e",
+    "src/frontier_search/simulation/igibson_adapter.py": "91063ac817976606b9ebe1b28664a6f05cac0d9bbed2495c24cd92c51e8fcfba",
+    "src/frontier_search/simulation/igibson_rs.py": "71ee7db67d6d341432386d0b5027f366e2e3f9b95049fa1e7a3dd0784a379c2f",
+    "src/frontier_search/simulation/indoor_challenges.py": "d82385a1546cd5a20c1831ff49c0b26db729baad225993d08a31dfd43200725b",
+    "src/frontier_search/simulation/integrated_rs.py": "b0d6a0ef41226f5e2d8d0291bceebbcd41fc78496af54c662f53680b46696311",
+    "src/frontier_search/simulation/mock_adapter.py": "6a0cb4611b94b325da38d120e7c05ec6354b7070298570b9683d3b14fa6609fb",
+    "src/frontier_search/simulation/record_sequence.py": "be25d4015aa7ac52e32c8274dc95b3f73828f50383e69f4497f77ce7a95cd3d6",
+    "src/frontier_search/simulation/rgbd.py": "bb7e00b6b675b8087e4ecf6937e8c1e85871b55b1d1dfe8aa540cfe94e5d5e4e",
+    "src/frontier_search/simulation/start_area_verifier.py": "8aafb9c4e4f2b70d7849f3d2937e8110497b613ab73689f9a26408968d335b1c",
+    "src/frontier_search/simulation/__init__.py": "3b0211966bd653b67fed274068959f0677959d3bdef7ec960793309855d56cfc",
+    "weights/yolo11/yolo11s.pt": "85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5"
+  },
+  "base_manifest": {
+    "episode_id": "template",
+    "scene_id": "Rs",
+    "source": "igibson",
+    "target_class": "cup",
+    "start_pose": {
+      "x_m": 0.8,
+      "y_m": -2.4,
+      "z_m": 0.0,
+      "yaw_rad": 1.5707963267948966
+    },
+    "robot": {
+      "footprint_base": [
+        {
+          "x_m": -0.182,
+          "y_m": -0.182
+        },
+        {
+          "x_m": 0.182,
+          "y_m": -0.182
+        },
+        {
+          "x_m": 0.182,
+          "y_m": 0.182
+        },
+        {
+          "x_m": -0.182,
+          "y_m": 0.182
+        }
+      ],
+      "collision_z_min_m": 0.0,
+      "collision_z_max_m": 0.908,
+      "clearance_margin_m": 0.02,
+      "motion_model": "differential_drive",
+      "can_turn_in_place": true,
+      "max_linear_speed_mps": 0.32,
+      "max_angular_speed_radps": 1.1,
+      "position_tolerance_m": 0.03,
+      "yaw_tolerance_rad": 0.1
+    },
+    "policy_name": "information_gain",
+    "mapping": {
+      "resolution_m": 0.1,
+      "width_cells": 70,
+      "height_cells": 85,
+      "origin_x_m": -4.5,
+      "origin_y_m": -4.5,
+      "confirmation_frames": 2,
+      "confirmation_window_s": 3.0,
+      "confidence_threshold": 0.5,
+      "floor_height_m": 0.0,
+      "floor_tolerance_m": 0.04,
+      "depth_min_m": 0.1,
+      "depth_max_m": 5.0,
+      "clearance_bin_height_m": 0.05,
+      "depth_surface_margin_m": 0.02,
+      "base_elevation_margin_m": 0.015,
+      "frontier_min_cells": 2,
+      "frontier_connectivity": 4,
+      "frontier_approach_search_m": 1.0,
+      "frontier_match_tolerance_cells": 1,
+      "frontier_match_fraction": 0.25,
+      "frontier_history_s": 30.0,
+      "gain_range_m": 3.0,
+      "gain_ray_step_rad": 0.15,
+      "object_match_distance_m": 0.35,
+      "depth_pixel_stride": 4,
+      "frontier_cluster_span_m": 1.0,
+      "dynamic_clear_frames": 2,
+      "inspection_distance_m": 0.9,
+      "inspection_linear_speed_mps": 0.03,
+      "inspection_angular_speed_radps": 0.02,
+      "target_max_extent_m": 0.25,
+      "tentative_target_memory_s": 10.0
+    },
+    "observation": {
+      "initial_headings_rad": [
+        0.0,
+        1.57,
+        -1.57,
+        0.0
+      ],
+      "arrival_headings_rad": [
+        0.0,
+        1.5707963267948966,
+        3.141592653589793,
+        -1.5707963267948966,
+        0.0
+      ],
+      "recovery_headings_rad": [
+        1.5707963267948966,
+        3.141592653589793,
+        -1.5707963267948966,
+        0.0
+      ],
+      "heading_tolerance_rad": 0.05,
+      "dwell_s": 0.6,
+      "processed_samples_per_heading": 1,
+      "allow_full_rotation": true,
+      "operation_deadline_s": 400.0,
+      "drain_deadline_s": 30.0,
+      "inspection_hold_s": 4.0,
+      "inspection_headings_rad": [
+        -0.15,
+        0.0,
+        0.15
+      ]
+    },
+    "navigation": {
+      "batch_deadline_s": 5.0,
+      "navigation_deadline_s": 400.0,
+      "max_replans": 4,
+      "pose_freshness_m": 0.05,
+      "map_freshness_s": 0.4
+    },
+    "policy": {
+      "epsilon_m": 0.1,
+      "llm_model": "gemini-3.5-flash",
+      "llm_reasoning": null,
+      "llm_deadline_s": 30.0,
+      "llm_call_cap": 30,
+      "llm_prompt": "Return exactly one eligible frontier ID."
+    },
+    "recovery": {
+      "cooldown_s": 5.0,
+      "evaluation_retry_cap": 2,
+      "navigation_retry_cap": 2,
+      "opportunity_attempt_cap": 6,
+      "no_progress_cap": 2,
+      "progress_radius_m": 1.0,
+      "minimum_progress_m2": 0.1,
+      "max_cycles_without_navigation": 3
+    },
+    "limits": {
+      "max_attempts": 45,
+      "max_steps": 18000,
+      "max_simulated_time_s": 600.0,
+      "max_wall_time_s": 2400.0,
+      "max_decisions": 80
+    },
+    "evaluation": {
+      "minimum_visibility": 0.1,
+      "minimum_bbox_iou": 0.5,
+      "localization_tolerance_m": 0.25,
+      "required_evidence_frames": 2,
+      "deadline_s": 5.0
+    },
+    "region_priors": [
+      {
+        "region_id": "R1",
+        "boundary_world": [
+          {
+            "x_m": -2.05,
+            "y_m": -4.2
+          },
+          {
+            "x_m": 1.95,
+            "y_m": -4.2
+          },
+          {
+            "x_m": 1.95,
+            "y_m": 1.5
+          },
+          {
+            "x_m": -2.05,
+            "y_m": 1.5
+          }
+        ],
+        "room_type": null
+      },
+      {
+        "region_id": "R2",
+        "boundary_world": [
+          {
+            "x_m": -4.1,
+            "y_m": -2.2
+          },
+          {
+            "x_m": -2.05,
+            "y_m": -2.2
+          },
+          {
+            "x_m": -2.05,
+            "y_m": 1.5
+          },
+          {
+            "x_m": -4.1,
+            "y_m": 1.5
+          }
+        ],
+        "room_type": null
+      },
+      {
+        "region_id": "R3",
+        "boundary_world": [
+          {
+            "x_m": -4.1,
+            "y_m": 1.5
+          },
+          {
+            "x_m": -2.1,
+            "y_m": 1.5
+          },
+          {
+            "x_m": -2.1,
+            "y_m": 3.6
+          },
+          {
+            "x_m": -4.1,
+            "y_m": 3.6
+          }
+        ],
+        "room_type": null
+      },
+      {
+        "region_id": "R4",
+        "boundary_world": [
+          {
+            "x_m": -2.1,
+            "y_m": 1.5
+          },
+          {
+            "x_m": 1.95,
+            "y_m": 1.5
+          },
+          {
+            "x_m": 1.95,
+            "y_m": 3.6
+          },
+          {
+            "x_m": -2.1,
+            "y_m": 3.6
+          }
+        ],
+        "room_type": null
+      }
+    ],
+    "environment_seed": 0,
+    "perception_seed": 1,
+    "policy_seed": 2,
+    "oracle_room_labels": false,
+    "capture_every_steps": 10,
+    "module_deadline_s": 60.0,
+    "enable_target_evaluation": true,
+    "initial_clearance_mode": "verified_start_area",
+    "initial_clearance_radius_m": 0.65,
+    "initialization_deadline_s": 240.0
+  },
+  "policies": [
+    "random",
+    "nearest",
+    "information_gain",
+    "llm_guided"
+  ],
+  "profiles": [
+    "apartment",
+    "clutter",
+    "dynamic"
+  ],
+  "target_evaluator_only": {
+    "model": "025_mug",
+    "class_name": "cup",
+    "position_world": [
+      -1.4,
+      2.95,
+      0.9213
+    ],
+    "reachability": "Native collision/floor oracle preflight, parked cart if dynamic; oracle files never read by episode worker."
+  },
+  "runtime": {
+    "workers": 3,
+    "torch_threads": 4,
+    "device": "0",
+    "python": "3.12.7 | packaged by Anaconda, Inc. | (main, Oct  4 2024, 13:17:27) [MSC v.1929 64 bit (AMD64)]",
+    "startup_deadline_s": 300.0,
+    "wall_time_interpretation": "Concurrent shared-resource wall times; not isolated single-robot latency."
+  },
+  "regression_certificate": {
+    "returncode": 0,
+    "source_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c",
+    "source_unchanged": true,
+    "tests_count": 447
+  },
+  "no_episode_retries": true,
+  "reporting": {
+    "primary_unit": "profile x seed/initial-heading paired block",
+    "penalized_failure_s": 600.0,
+    "confidence": "Wilson descriptive success intervals; 10000 paired stratified bootstrap draws, RNG 20261018; exact McNemar with Holm correction for six comparisons.",
+    "include_all_terminations": true,
+    "success_conditioned_metrics_include_n": true
+  }
+}

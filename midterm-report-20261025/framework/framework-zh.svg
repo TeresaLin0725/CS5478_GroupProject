@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1040" viewBox="0 0 1680 1040">
+<title>Implemented closed-loop framework and future optimization directions</title>
+<desc>Solid boxes show implemented modules. Dashed amber boxes show proposed optimization. All module data flows are coordinated by EpisodeRunner.</desc>
+<rect x="0" y="0" width="1680" height="1040" rx="0" fill="#FFFFFF" stroke="none" stroke-width="1.5"/>
+<text x="42" y="55.920" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="32.000" font-weight="700" text-anchor="start" fill="#20313F">具身室内目标搜索：已实现框架与未来优化</text>
+<text x="44" y="94.010" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="21.000" font-weight="400" text-anchor="start" fill="#536674">目标驱动的感知、搜索决策与导航执行闭环</text>
+<rect x="1280" y="34" width="30" height="19" rx="2" fill="#FFFFFF" stroke="#536675" stroke-width="1.5"/>
+<text x="1320" y="47.390" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="19.000" font-weight="400" text-anchor="start" fill="#20313F">已实现</text>
+<rect x="1452" y="34" width="30" height="19" rx="2" fill="#FFFCF4" stroke="#9B682B" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="1492" y="47.390" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="19.000" font-weight="400" text-anchor="start" fill="#9B682B">待优化</text>
+<rect x="42" y="126" width="224" height="77" rx="7" fill="#F6F8FA" stroke="#BDCAD2" stroke-width="1.5"/>
+<text x="154" y="158.010" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="21.000" font-weight="700" text-anchor="middle" fill="#20313F">任务输入</text>
+<text x="154" y="189.200" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="20.000" font-weight="400" text-anchor="middle" fill="#20313F">目标类别：cup</text>
+<rect x="330" y="126" width="1308" height="77" rx="7" fill="#F6F8FA" stroke="#BDCAD2" stroke-width="1.5"/>
+<text x="355" y="157.820" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="22.000" font-weight="700" text-anchor="start" fill="#20313F">允许的先验与公共配置</text>
+<text x="355" y="191.010" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="21.000" font-weight="400" text-anchor="start" fill="#536674">已知机器人位姿 / 相机标定 / 区域几何先验 / 机器人足迹与预算</text>
+<path d="M 154,203 L 154,216 L 370,216 L 370,229" fill="none" stroke="#536675" stroke-width="1.4" stroke-linejoin="round"/>
+<polygon points="370,229 374.0,220.5 366.0,220.5" fill="#536675"/>
+<path d="M 984,203 L 984,229" fill="none" stroke="#536675" stroke-width="1.4" stroke-linejoin="round"/>
+<polygon points="984,229 988.0,220.5 980.0,220.5" fill="#536675"/>
+<rect x="306" y="229" width="1332" height="422" rx="9" fill="#F6F8FA" stroke="#BDCAD2" stroke-width="1.6"/>
+<text x="330" y="266.250" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="25.000" font-weight="700" text-anchor="start" fill="#20313F">统一运行与编排  EpisodeRunner</text>
+<text x="330" y="296.390" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="19.000" font-weight="400" text-anchor="start" fill="#536674">生命周期与预算监督 · 新鲜帧/状态校验 · 冷却、重试与有界恢复</text>
+<rect x="42" y="326" width="224" height="272" rx="8" fill="#FFFFFF" stroke="#536675" stroke-width="1.8"/>
+<text x="154" y="366.440" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="24.000" font-weight="700" text-anchor="middle" fill="#20313F">仿真与机器人</text>
+<text x="154" y="404.630" font-family="Arial, sans-serif" font-size="23.000" font-weight="400" text-anchor="middle" fill="#20313F">iGibson Rs</text>
+<text x="154" y="437.630" font-family="Arial, sans-serif" font-size="23.000" font-weight="400" text-anchor="middle" fill="#20313F">Locobot</text>
+<rect x="85" y="465" width="139" height="90" rx="2" fill="#F6F8FA" stroke="#BDCAD2" stroke-width="1.5"/>
+<path d="M 135,465 L 135,504 L 151,504" fill="none" stroke="#BDCAD2" stroke-width="2" stroke-linejoin="round"/>
+<path d="M 135,526 L 135,555" fill="none" stroke="#BDCAD2" stroke-width="2" stroke-linejoin="round"/>
+<path d="M 174,465 L 174,490 L 224,490" fill="none" stroke="#BDCAD2" stroke-width="2" stroke-linejoin="round"/>
+<rect x="98" y="511" width="22" height="28" rx="5" fill="#EDF5F9" stroke="#216A8C" stroke-width="1.5"/>
+<path d="M 109,512 L 109,493" fill="none" stroke="#216A8C" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="109,493 105.0,501.5 113.0,501.5" fill="#216A8C"/>
+<text x="154" y="582.150" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="15.000" font-weight="400" text-anchor="middle" fill="#536674">原生 RGB-D 与物理步进</text>
+<rect x="330" y="326" width="350" height="272" rx="8" fill="#EDF5F9" stroke="#216A8C" stroke-width="1.8"/>
+<text x="350" y="367.870" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="27.000" font-weight="700" text-anchor="start" fill="#216A8C">A  感知与建图</text>
+<text x="350" y="397.770" font-family="Arial, sans-serif" font-size="17.000" font-weight="400" text-anchor="start" fill="#536674">RGBDMapper</text>
+<path d="M 350,416 L 660,416" fill="none" stroke="#216A8C" stroke-width="1.1" stroke-linejoin="round"/>
+<text x="350" y="456.630" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="23.000" font-weight="400" text-anchor="start" fill="#20313F">RGB-D 融合与占据建图</text>
+<text x="350" y="494.630" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="23.000" font-weight="400" text-anchor="start" fill="#20313F">前沿提取与信息增益</text>
+<text x="350" y="532.630" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="23.000" font-weight="400" text-anchor="start" fill="#20313F">YOLO11s 检测与多帧跟踪</text>
+<text x="350" y="570.630" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="23.000" font-weight="400" text-anchor="start" fill="#20313F">目标定位与确认声明</text>
+<rect x="782" y="326" width="390" height="272" rx="8" fill="#F3F0F8" stroke="#68548D" stroke-width="1.8"/>
+<text x="802" y="367.870" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="27.000" font-weight="700" text-anchor="start" fill="#68548D">C  搜索策略</text>
+<text x="802" y="397.770" font-family="Arial, sans-serif" font-size="17.000" font-weight="400" text-anchor="start" fill="#536674">SearchPolicy</text>
+<path d="M 802,416 L 1152,416" fill="none" stroke="#68548D" stroke-width="1.1" stroke-linejoin="round"/>
+<text x="802" y="453.820" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="22.000" font-weight="400" text-anchor="start" fill="#20313F">仅在合格候选集合中选择</text>
+<rect x="802" y="476" width="167" height="34" rx="4" fill="#FFFFFF" stroke="#B9ABCF" stroke-width="1.0"/>
+<text x="885.5" y="498.580" font-family="Arial, sans-serif" font-size="18.000" font-weight="400" text-anchor="middle" fill="#68548D">Random</text>
+<rect x="986" y="476" width="166" height="34" rx="4" fill="#FFFFFF" stroke="#B9ABCF" stroke-width="1.0"/>
+<text x="1069.0" y="498.580" font-family="Arial, sans-serif" font-size="18.000" font-weight="400" text-anchor="middle" fill="#68548D">Nearest</text>
+<rect x="802" y="520" width="167" height="34" rx="4" fill="#FFFFFF" stroke="#B9ABCF" stroke-width="1.0"/>
+<text x="885.5" y="542.580" font-family="Arial, sans-serif" font-size="18.000" font-weight="400" text-anchor="middle" fill="#68548D">Information Gain</text>
+<rect x="986" y="520" width="166" height="34" rx="4" fill="#FFFFFF" stroke="#B9ABCF" stroke-width="1.0"/>
+<text x="1069.0" y="542.580" font-family="Arial, sans-serif" font-size="18.000" font-weight="400" text-anchor="middle" fill="#68548D">LLM-guided</text>
+<text x="977.0" y="585.390" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="19.000" font-weight="400" text-anchor="middle" fill="#536674">目标已观测时优先接近确认</text>
+<rect x="1290" y="326" width="324" height="272" rx="8" fill="#EFF6F2" stroke="#39735E" stroke-width="1.8"/>
+<text x="1310" y="367.870" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="27.000" font-weight="700" text-anchor="start" fill="#39735E">B  导航与执行</text>
+<text x="1310" y="397.770" font-family="Arial, sans-serif" font-size="17.000" font-weight="400" text-anchor="start" fill="#536674">TeamNavigator</text>
+<path d="M 1310,416 L 1594,416" fill="none" stroke="#39735E" stroke-width="1.1" stroke-linejoin="round"/>
+<text x="1310" y="456.630" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="23.000" font-weight="400" text-anchor="start" fill="#20313F">可达性与路径代价评估</text>
+<text x="1310" y="494.630" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="23.000" font-weight="400" text-anchor="start" fill="#20313F">足迹代价图与 A* 规划</text>
+<text x="1310" y="532.630" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="23.000" font-weight="400" text-anchor="start" fill="#20313F">轮速执行、避障与扫描</text>
+<text x="1310" y="570.630" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="23.000" font-weight="400" text-anchor="start" fill="#20313F">目标接近与停稳观察</text>
+<path d="M 266,457 L 330,457" fill="none" stroke="#536675" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="330,457 321.5,453.0 321.5,461.0" fill="#536675"/>
+<rect x="268.611572265625" y="424" width="58.77685546875001" height="25" rx="0" fill="#FFFFFF" stroke="none" stroke-width="1.5"/>
+<text x="298" y="440.770" font-family="Arial, sans-serif" font-size="17.000" font-weight="400" text-anchor="middle" fill="#20313F">RGB-D</text>
+<text x="298" y="486.770" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="17.000" font-weight="400" text-anchor="middle" fill="#536674">位姿</text>
+<path d="M 680,456 L 782,456" fill="none" stroke="#536675" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="782,456 773.5,452.0 773.5,460.0" fill="#536675"/>
+<rect x="693.0" y="420" width="76.00000000000001" height="26" rx="0" fill="#FFFFFF" stroke="none" stroke-width="1.5"/>
+<text x="731" y="437.580" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="18.000" font-weight="400" text-anchor="middle" fill="#20313F">世界状态</text>
+<path d="M 1172,413 L 1290,413" fill="none" stroke="#536675" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="1290,413 1281.5,409.0 1281.5,417.0" fill="#536675"/>
+<rect x="1196.0" y="379" width="70.0" height="26" rx="0" fill="#FFFFFF" stroke="none" stroke-width="1.5"/>
+<text x="1231" y="396.580" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="18.000" font-weight="400" text-anchor="middle" fill="#20313F">子目标</text>
+<path d="M 1290,521 L 1172,521" fill="none" stroke="#536675" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="1172,521 1180.5,525.0 1180.5,517.0" fill="#536675"/>
+<rect x="1176.25" y="484" width="109.5" height="25" rx="0" fill="#FFFFFF" stroke="none" stroke-width="1.5"/>
+<text x="1231" y="500.770" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="17.000" font-weight="400" text-anchor="middle" fill="#20313F">代价 / 反馈</text>
+<path d="M 1452,598 L 1452,625 L 225,625 L 225,598" fill="none" stroke="#536675" stroke-width="1.9" stroke-linejoin="round"/>
+<polygon points="225,598 221.0,606.5 229.0,606.5" fill="#536675"/>
+<rect x="708.0" y="610" width="434.0" height="27" rx="0" fill="#FFFFFF" stroke="none" stroke-width="1.5"/>
+<text x="925" y="628.390" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="19.000" font-weight="400" text-anchor="middle" fill="#20313F">轮速控制与观测动作；运动中持续采集并更新地图</text>
+<text x="330" y="680.580" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="18.000" font-weight="400" text-anchor="start" fill="#536674">图中模块间箭头均表示由 Runner 转发的数据流。</text>
+<path d="M 95,598 L 95,716" fill="none" stroke="#536675" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="95,716 99.0,707.5 91.0,707.5" fill="#536675"/>
+<rect x="110.0" y="683" width="112.0" height="24" rx="0" fill="#FFFFFF" stroke="none" stroke-width="1.5"/>
+<text x="166" y="698.960" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="16.000" font-weight="400" text-anchor="middle" fill="#20313F">私有真值通道</text>
+<path d="M 1532,651 L 1532,716" fill="none" stroke="#536675" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="1532,716 1536.0,707.5 1528.0,707.5" fill="#536675"/>
+<rect x="1317.25" y="683" width="177.5" height="25" rx="0" fill="#FFFFFF" stroke="none" stroke-width="1.5"/>
+<text x="1406" y="699.770" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="17.000" font-weight="400" text-anchor="middle" fill="#20313F">终止声明 + 冻结证据</text>
+<rect x="42" y="716" width="1596" height="100" rx="7" fill="#FFFFFF" stroke="#536675" stroke-width="1.6"/>
+<text x="64" y="754.250" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="25.000" font-weight="700" text-anchor="start" fill="#20313F">独立目标验收</text>
+<text x="64" y="789.580" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="18.000" font-weight="400" text-anchor="start" fill="#536674">终止后评分，结果仅写日志</text>
+<path d="M 401,736 L 401,796" fill="none" stroke="#BDCAD2" stroke-width="1.1" stroke-linejoin="round"/>
+<text x="428" y="752.010" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="21.000" font-weight="400" text-anchor="start" fill="#20313F">真实目标实例匹配 · 不同采集时刻的证据</text>
+<text x="428" y="788.010" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="21.000" font-weight="400" text-anchor="start" fill="#20313F">近距离与停稳检查 · 验收结果不回传搜索策略</text>
+<path d="M 1254,736 L 1254,796" fill="none" stroke="#BDCAD2" stroke-width="1.1" stroke-linejoin="round"/>
+<text x="1280" y="752.630" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="23.000" font-weight="700" text-anchor="start" fill="#20313F">实验记录与评测</text>
+<text x="1280" y="789.580" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="18.000" font-weight="400" text-anchor="start" fill="#536674">成功率 / 时间 / 距离 / 失败</text>
+<text x="42" y="867.630" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="23.000" font-weight="700" text-anchor="start" fill="#9B682B">后续优化方向</text>
+<rect x="42" y="886" width="772" height="126" rx="7" fill="#FFFCF4" stroke="#9B682B" stroke-width="1.8" stroke-dasharray="7,5"/>
+<text x="64" y="922.440" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="24.000" font-weight="700" text-anchor="start" fill="#9B682B">搜索优化  |  C</text>
+<text x="64" y="963.010" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="21.000" font-weight="400" text-anchor="start" fill="#20313F">语义线索、信息增益与路径 / 失败代价联合评分</text>
+<text x="64" y="995.010" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="21.000" font-weight="400" text-anchor="start" fill="#20313F">Top-K 候选压缩与更丰富的跨决策搜索记忆</text>
+<rect x="844" y="886" width="794" height="126" rx="7" fill="#FFFCF4" stroke="#9B682B" stroke-width="1.8" stroke-dasharray="7,5"/>
+<text x="866" y="922.440" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="24.000" font-weight="700" text-anchor="start" fill="#9B682B">双向通讯与恢复优化  |  C / B</text>
+<text x="866" y="963.010" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="21.000" font-weight="400" text-anchor="start" fill="#20313F">更细的失败原因与局部几何证据反馈</text>
+<text x="866" y="995.010" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="21.000" font-weight="400" text-anchor="start" fill="#20313F">反馈驱动的替代视点、目标接近与重规划增强</text>
+</svg>

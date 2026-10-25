@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "decoded_frames": 2701,
+  "fps": 15,
+  "physical_frames_matched": 2700,
+  "video_max_gap_s": 0.066667,
+  "termination": "success",
+  "collisions": 0,
+  "llm_calls": 0,
+  "llm_fallbacks": 0,
+  "source_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c",
+  "video_sha256": "9b0fc939442b69540f0e444dbef376d9be8aa22d592b47719369c45822e9dbac"
+}

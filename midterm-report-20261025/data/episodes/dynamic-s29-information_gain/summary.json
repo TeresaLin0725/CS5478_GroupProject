@@ -1,0 +1,162 @@
+{
+  "termination": "no_feasible_frontiers",
+  "decisions": 9,
+  "attempts": 7,
+  "steps": 6618,
+  "simulated_time_s": 220.6,
+  "wall_time_s": 520.890999999945,
+  "actual_distance_m": 14.000128712156375,
+  "collisions": 0,
+  "final_revision": 734,
+  "job_id": "dynamic-s29-information_gain",
+  "pair_id": "dynamic-s29",
+  "profile": "dynamic",
+  "policy": "information_gain",
+  "environment_seed": 29,
+  "perception_seed": 10029,
+  "policy_seed": 20029,
+  "start_pose": {
+    "x_m": 0.8,
+    "y_m": -2.4,
+    "z_m": 0.0,
+    "yaw_rad": 0.0
+  },
+  "manifest_path": "manifests/dynamic-s29-information_gain.json",
+  "manifest_sha256": "6b10c2a315223b85ef44cc33c2aa187b2147eb4f23175fa1a942e4b37249e695",
+  "recorded": false,
+  "source_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c",
+  "source_unchanged": true,
+  "evaluation": {},
+  "llm_calls": 0,
+  "llm_fallbacks": 0,
+  "detector_runtime": {
+    "device": "0",
+    "torch_version": "2.4.1+cu121",
+    "cuda_version": "12.1",
+    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "navigator_events": [
+    [
+      "terminal",
+      "op-1 reached "
+    ],
+    [
+      "plan",
+      "op-2 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-2 reached "
+    ],
+    [
+      "terminal",
+      "op-3 reached "
+    ],
+    [
+      "plan",
+      "op-4 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-4 reached "
+    ],
+    [
+      "terminal",
+      "op-5 reached "
+    ],
+    [
+      "plan",
+      "op-6 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-6 reached "
+    ],
+    [
+      "terminal",
+      "op-7 failed blocked"
+    ],
+    [
+      "terminal",
+      "op-8 reached "
+    ],
+    [
+      "plan",
+      "op-9 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-9 reached "
+    ],
+    [
+      "terminal",
+      "op-10 reached "
+    ],
+    [
+      "plan",
+      "op-11 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-11 reached "
+    ],
+    [
+      "terminal",
+      "op-12 reached "
+    ],
+    [
+      "plan",
+      "op-13 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-13 reached "
+    ],
+    [
+      "terminal",
+      "op-14 reached "
+    ],
+    [
+      "plan",
+      "op-15 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-15 reached "
+    ],
+    [
+      "terminal",
+      "op-16 reached "
+    ],
+    [
+      "terminal",
+      "op-17 reached "
+    ]
+  ],
+  "scene_events": [
+    {
+      "time_s": 0.0,
+      "event": "cart_route_verified",
+      "start": [
+        0.8,
+        1.15,
+        0
+      ],
+      "end": [
+        0.8,
+        2.7,
+        0
+      ]
+    },
+    {
+      "time_s": 16.03333333333333,
+      "event": "cart_crossing",
+      "text": "推车开始横穿客厅通道"
+    },
+    {
+      "time_s": 22.7,
+      "event": "cart_parked",
+      "text": "推车已在通道侧方停妥，保持通道开放"
+    }
+  ]
+}

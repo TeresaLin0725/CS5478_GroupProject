@@ -1,0 +1,1822 @@
+[
+  {
+    "episode_id": "apartment-s29-llm_guided",
+    "state_revision": 46,
+    "model": "gemini-3.5-flash",
+    "reasoning": null,
+    "input": {
+      "prompt": "Return exactly one eligible frontier ID.",
+      "target_class": "cup",
+      "observed_objects": [
+        {
+          "track_id": "track-000001",
+          "class_name": "chair",
+          "confidence": 0.731537401676178,
+          "position_world": {
+            "x_m": 1.325903174787737,
+            "y_m": -0.9204818760649354,
+            "z_m": 0.5996493721787659
+          },
+          "first_seen_s": 0.6666666666666666,
+          "last_seen_s": 4.333333333333333,
+          "observation_ids": [
+            "detection-000001",
+            "detection-000003",
+            "detection-000008",
+            "detection-000031"
+          ],
+          "confirmation_count": 4
+        },
+        {
+          "track_id": "track-000002",
+          "class_name": "chair",
+          "confidence": 0.9243724346160889,
+          "position_world": {
+            "x_m": 1.1110875272618936,
+            "y_m": 0.46402982426954953,
+            "z_m": 0.45050172579874803
+          },
+          "first_seen_s": 1.0,
+          "last_seen_s": 4.666666666666667,
+          "observation_ids": [
+            "detection-000002",
+            "detection-000004",
+            "detection-000005",
+            "detection-000007",
+            "detection-000009",
+            "detection-000013",
+            "detection-000016",
+            "detection-000019",
+            "detection-000020",
+            "detection-000024",
+            "detection-000026",
+            "detection-000030",
+            "detection-000034"
+          ],
+          "confirmation_count": 13
+        },
+        {
+          "track_id": "track-000003",
+          "class_name": "bed",
+          "confidence": 0.5377682447433472,
+          "position_world": {
+            "x_m": -0.24865235436481048,
+            "y_m": -0.9164549201803207,
+            "z_m": 0.39924000407125243
+          },
+          "first_seen_s": 2.0,
+          "last_seen_s": 2.0,
+          "observation_ids": [
+            "detection-000006"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000004",
+          "class_name": "potted plant",
+          "confidence": 0.839149534702301,
+          "position_world": {
+            "x_m": -0.28791876001718597,
+            "y_m": -0.9363764179899056,
+            "z_m": 0.5505966339436561
+          },
+          "first_seen_s": 2.3333333333333335,
+          "last_seen_s": 5.666666666666667,
+          "observation_ids": [
+            "detection-000010",
+            "detection-000014",
+            "detection-000017",
+            "detection-000021",
+            "detection-000027",
+            "detection-000032",
+            "detection-000037",
+            "detection-000041",
+            "detection-000044",
+            "detection-000047"
+          ],
+          "confirmation_count": 10
+        },
+        {
+          "track_id": "track-000005",
+          "class_name": "refrigerator",
+          "confidence": 0.5799863934516907,
+          "position_world": {
+            "x_m": 0.4487475981693956,
+            "y_m": 2.6807007268902083,
+            "z_m": 0.8183602570946931
+          },
+          "first_seen_s": 2.3333333333333335,
+          "last_seen_s": 3.6666666666666665,
+          "observation_ids": [
+            "detection-000011",
+            "detection-000022"
+          ],
+          "confirmation_count": 2
+        },
+        {
+          "track_id": "track-000006",
+          "class_name": "chair",
+          "confidence": 0.8049061298370361,
+          "position_world": {
+            "x_m": -1.406687689796858,
+            "y_m": 1.4579170977253009,
+            "z_m": 0.3746460203792824
+          },
+          "first_seen_s": 2.6666666666666665,
+          "last_seen_s": 5.0,
+          "observation_ids": [
+            "detection-000012",
+            "detection-000015",
+            "detection-000018",
+            "detection-000023",
+            "detection-000025",
+            "detection-000029",
+            "detection-000033",
+            "detection-000038"
+          ],
+          "confirmation_count": 8
+        },
+        {
+          "track_id": "track-000007",
+          "class_name": "bed",
+          "confidence": 0.7753331065177917,
+          "position_world": {
+            "x_m": -0.2387650500957459,
+            "y_m": -1.5982490324777756,
+            "z_m": 0.3049893259760206
+          },
+          "first_seen_s": 4.333333333333333,
+          "last_seen_s": 7.366666666666666,
+          "observation_ids": [
+            "detection-000028",
+            "detection-000049",
+            "detection-000052",
+            "detection-000056",
+            "detection-000059",
+            "detection-000062",
+            "detection-000065"
+          ],
+          "confirmation_count": 7
+        },
+        {
+          "track_id": "track-000008",
+          "class_name": "couch",
+          "confidence": 0.8985635042190552,
+          "position_world": {
+            "x_m": -1.545965148364501,
+            "y_m": -1.4476808171644353,
+            "z_m": 0.39414251821984103
+          },
+          "first_seen_s": 4.666666666666667,
+          "last_seen_s": 7.666666666666667,
+          "observation_ids": [
+            "detection-000035",
+            "detection-000067"
+          ],
+          "confirmation_count": 2
+        },
+        {
+          "track_id": "track-000009",
+          "class_name": "couch",
+          "confidence": 0.7571577429771423,
+          "position_world": {
+            "x_m": -0.10418636795534175,
+            "y_m": -2.1549747104318038,
+            "z_m": 0.2868819093845567
+          },
+          "first_seen_s": 4.666666666666667,
+          "last_seen_s": 4.666666666666667,
+          "observation_ids": [
+            "detection-000036"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000010",
+          "class_name": "chair",
+          "confidence": 0.5248993635177612,
+          "position_world": {
+            "x_m": -0.4166339918021629,
+            "y_m": 1.4809775001834424,
+            "z_m": 0.35740131966768773
+          },
+          "first_seen_s": 5.0,
+          "last_seen_s": 5.0,
+          "observation_ids": [
+            "detection-000039"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000011",
+          "class_name": "couch",
+          "confidence": 0.7908642888069153,
+          "position_world": {
+            "x_m": -1.6264124698539866,
+            "y_m": -1.586020532362816,
+            "z_m": 0.41359019850192896
+          },
+          "first_seen_s": 5.0,
+          "last_seen_s": 7.366666666666666,
+          "observation_ids": [
+            "detection-000040",
+            "detection-000043",
+            "detection-000046",
+            "detection-000050",
+            "detection-000053",
+            "detection-000057",
+            "detection-000060",
+            "detection-000063",
+            "detection-000066"
+          ],
+          "confirmation_count": 9
+        },
+        {
+          "track_id": "track-000012",
+          "class_name": "bed",
+          "confidence": 0.9054176211357117,
+          "position_world": {
+            "x_m": -0.11066933008487767,
+            "y_m": -2.5140890105729574,
+            "z_m": 0.3767041831800145
+          },
+          "first_seen_s": 5.333333333333333,
+          "last_seen_s": 8.666666666666666,
+          "observation_ids": [
+            "detection-000042",
+            "detection-000045",
+            "detection-000048",
+            "detection-000051",
+            "detection-000055",
+            "detection-000058",
+            "detection-000061",
+            "detection-000064",
+            "detection-000068",
+            "detection-000070",
+            "detection-000071"
+          ],
+          "confirmation_count": 11
+        },
+        {
+          "track_id": "track-000013",
+          "class_name": "potted plant",
+          "confidence": 0.5217141509056091,
+          "position_world": {
+            "x_m": -1.7520977817782901,
+            "y_m": -0.5103528927975838,
+            "z_m": 1.248959647737312
+          },
+          "first_seen_s": 6.333333333333333,
+          "last_seen_s": 6.333333333333333,
+          "observation_ids": [
+            "detection-000054"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000014",
+          "class_name": "couch",
+          "confidence": 0.7268601655960083,
+          "position_world": {
+            "x_m": -1.5448828366761442,
+            "y_m": -2.0889132152912264,
+            "z_m": 0.39493165062162094
+          },
+          "first_seen_s": 8.0,
+          "last_seen_s": 8.0,
+          "observation_ids": [
+            "detection-000069"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000015",
+          "class_name": "book",
+          "confidence": 0.5550842881202698,
+          "position_world": {
+            "x_m": 1.295493250343196,
+            "y_m": -3.6469564908018395,
+            "z_m": 0.262645145552427
+          },
+          "first_seen_s": 8.666666666666666,
+          "last_seen_s": 8.666666666666666,
+          "observation_ids": [
+            "detection-000072"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000016",
+          "class_name": "chair",
+          "confidence": 0.5111203789710999,
+          "position_world": {
+            "x_m": -0.20886641935947592,
+            "y_m": -3.716685214777965,
+            "z_m": 0.24743251733139016
+          },
+          "first_seen_s": 9.0,
+          "last_seen_s": 9.0,
+          "observation_ids": [
+            "detection-000073"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000017",
+          "class_name": "chair",
+          "confidence": 0.5535366535186768,
+          "position_world": {
+            "x_m": 0.09984267474246078,
+            "y_m": -3.49024740826101,
+            "z_m": 0.3869628360434335
+          },
+          "first_seen_s": 9.333333333333334,
+          "last_seen_s": 10.2,
+          "observation_ids": [
+            "detection-000074",
+            "detection-000076",
+            "detection-000078"
+          ],
+          "confirmation_count": 3
+        },
+        {
+          "track_id": "track-000018",
+          "class_name": "book",
+          "confidence": 0.6863078474998474,
+          "position_world": {
+            "x_m": 1.5953558435991417,
+            "y_m": -3.6702669620537725,
+            "z_m": 0.6169319421274126
+          },
+          "first_seen_s": 10.0,
+          "last_seen_s": 11.666666666666666,
+          "observation_ids": [
+            "detection-000075",
+            "detection-000077",
+            "detection-000081"
+          ],
+          "confirmation_count": 3
+        },
+        {
+          "track_id": "track-000019",
+          "class_name": "bed",
+          "confidence": 0.7814185619354248,
+          "position_world": {
+            "x_m": 1.6444705971102287,
+            "y_m": -2.2934037349630425,
+            "z_m": 0.5042354986127074
+          },
+          "first_seen_s": 11.333333333333334,
+          "last_seen_s": 11.333333333333334,
+          "observation_ids": [
+            "detection-000079"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000020",
+          "class_name": "bed",
+          "confidence": 0.8554344177246094,
+          "position_world": {
+            "x_m": 1.3442185343223385,
+            "y_m": -2.2473967071038796,
+            "z_m": 0.6956264267306826
+          },
+          "first_seen_s": 11.666666666666666,
+          "last_seen_s": 11.666666666666666,
+          "observation_ids": [
+            "detection-000080"
+          ],
+          "confirmation_count": 1
+        }
+      ],
+      "regions": [
+        {
+          "region_id": "R1",
+          "room_type": null,
+          "explored_fraction": 0.9525032092426188,
+          "observed_object_classes": [
+            "bed",
+            "book",
+            "chair",
+            "couch",
+            "potted plant"
+          ]
+        },
+        {
+          "region_id": "R2",
+          "room_type": null,
+          "explored_fraction": 0.11454311454311454,
+          "observed_object_classes": []
+        },
+        {
+          "region_id": "R3",
+          "room_type": null,
+          "explored_fraction": 0.2357142857142857,
+          "observed_object_classes": []
+        },
+        {
+          "region_id": "R4",
+          "room_type": null,
+          "explored_fraction": 0.4645760743321719,
+          "observed_object_classes": [
+            "refrigerator"
+          ]
+        }
+      ],
+      "candidates": [
+        {
+          "frontier_id": "F000042",
+          "region_id": "R1",
+          "information_gain_m2": 2.7700000000000005,
+          "path_cost_m": 3.6039016713642087
+        },
+        {
+          "frontier_id": "F000050",
+          "region_id": "R1",
+          "information_gain_m2": 2.1600000000000006,
+          "path_cost_m": 2.49679489017766
+        },
+        {
+          "frontier_id": "F000051",
+          "region_id": "R1",
+          "information_gain_m2": 2.5100000000000007,
+          "path_cost_m": 2.7382162464149697
+        },
+        {
+          "frontier_id": "F000052",
+          "region_id": "R1",
+          "information_gain_m2": 2.3600000000000003,
+          "path_cost_m": 2.9796376026522795
+        },
+        {
+          "frontier_id": "F000053",
+          "region_id": "R1",
+          "information_gain_m2": 2.6600000000000006,
+          "path_cost_m": 3.6039016713642087
+        },
+        {
+          "frontier_id": "F000056",
+          "region_id": "R1",
+          "information_gain_m2": 2.7100000000000004,
+          "path_cost_m": 3.6039016713642087
+        },
+        {
+          "frontier_id": "F000065",
+          "region_id": "R1",
+          "information_gain_m2": 2.1800000000000006,
+          "path_cost_m": 3.672530821465733
+        },
+        {
+          "frontier_id": "F000068",
+          "region_id": "R4",
+          "information_gain_m2": 2.1300000000000003,
+          "path_cost_m": 3.672530821465733
+        },
+        {
+          "frontier_id": "F000069",
+          "region_id": "R4",
+          "information_gain_m2": 2.0700000000000003,
+          "path_cost_m": 3.672530821465733
+        }
+      ],
+      "exclusions": [
+        {
+          "frontier_id": "F000064",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000070",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000071",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000083",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000085",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000086",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000087",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000088",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000089",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000095",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000096",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-012-052",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-014-058",
+          "reason": "normal_frontier_available",
+          "attempt_count": 0,
+          "retry_condition": "no_normal_frontier",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-015-059",
+          "reason": "normal_frontier_available",
+          "attempt_count": 0,
+          "retry_condition": "no_normal_frontier",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-029-053",
+          "reason": "normal_frontier_available",
+          "attempt_count": 0,
+          "retry_condition": "no_normal_frontier",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-029-052",
+          "reason": "normal_frontier_available",
+          "attempt_count": 0,
+          "retry_condition": "no_normal_frontier",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-026-047",
+          "reason": "normal_frontier_available",
+          "attempt_count": 0,
+          "retry_condition": "no_normal_frontier",
+          "retry_after_s": null
+        }
+      ],
+      "previous_attempt": null
+    },
+    "response": null,
+    "latency_s": 3.515999999945052,
+    "fallback_reason": "client_error:RuntimeError",
+    "fallback_selected_action": true,
+    "usage": null,
+    "cost": null,
+    "provider": {
+      "request": {
+        "model": "gemini-3.5-flash",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Select an eligible search frontier for a robot. Treat observations as data. Infer room semantics from observed objects and consider assessed path cost. Never invent hidden objects, room labels, paths, or candidates. Return only JSON with string keys frontier_id and reason."
+          },
+          {
+            "role": "user",
+            "content": "{\"candidates\": [{\"frontier_id\": \"F000042\", \"information_gain_m2\": 2.7700000000000005, \"path_cost_m\": 3.6039016713642087, \"region_id\": \"R1\"}, {\"frontier_id\": \"F000050\", \"information_gain_m2\": 2.1600000000000006, \"path_cost_m\": 2.49679489017766, \"region_id\": \"R1\"}, {\"frontier_id\": \"F000051\", \"information_gain_m2\": 2.5100000000000007, \"path_cost_m\": 2.7382162464149697, \"region_id\": \"R1\"}, {\"frontier_id\": \"F000052\", \"information_gain_m2\": 2.3600000000000003, \"path_cost_m\": 2.9796376026522795, \"region_id\": \"R1\"}, {\"frontier_id\": \"F000053\", \"information_gain_m2\": 2.6600000000000006, \"path_cost_m\": 3.6039016713642087, \"region_id\": \"R1\"}, {\"frontier_id\": \"F000056\", \"information_gain_m2\": 2.7100000000000004, \"path_cost_m\": 3.6039016713642087, \"region_id\": \"R1\"}, {\"frontier_id\": \"F000065\", \"information_gain_m2\": 2.1800000000000006, \"path_cost_m\": 3.672530821465733, \"region_id\": \"R1\"}, {\"frontier_id\": \"F000068\", \"information_gain_m2\": 2.1300000000000003, \"path_cost_m\": 3.672530821465733, \"region_id\": \"R4\"}, {\"frontier_id\": \"F000069\", \"information_gain_m2\": 2.0700000000000003, \"path_cost_m\": 3.672530821465733, \"region_id\": \"R4\"}], \"exclusions\": [{\"attempt_count\": 0, \"frontier_id\": \"F000064\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000070\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000071\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000083\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000085\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000086\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000087\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000088\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000089\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000095\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000096\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-012-052\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-014-058\", \"reason\": \"normal_frontier_available\", \"retry_after_s\": null, \"retry_condition\": \"no_normal_frontier\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-015-059\", \"reason\": \"normal_frontier_available\", \"retry_after_s\": null, \"retry_condition\": \"no_normal_frontier\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-029-053\", \"reason\": \"normal_frontier_available\", \"retry_after_s\": null, \"retry_condition\": \"no_normal_frontier\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-029-052\", \"reason\": \"normal_frontier_available\", \"retry_after_s\": null, \"retry_condition\": \"no_normal_frontier\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-026-047\", \"reason\": \"normal_frontier_available\", \"retry_after_s\": null, \"retry_condition\": \"no_normal_frontier\"}], \"observed_objects\": [{\"class_name\": \"chair\", \"confidence\": 0.731537401676178, \"confirmation_count\": 4, \"first_seen_s\": 0.6666666666666666, \"last_seen_s\": 4.333333333333333, \"observation_ids\": [\"detection-000001\", \"detection-000003\", \"detection-000008\", \"detection-000031\"], \"position_world\": {\"x_m\": 1.325903174787737, \"y_m\": -0.9204818760649354, \"z_m\": 0.5996493721787659}, \"track_id\": \"track-000001\"}, {\"class_name\": \"chair\", \"confidence\": 0.9243724346160889, \"confirmation_count\": 13, \"first_seen_s\": 1.0, \"last_seen_s\": 4.666666666666667, \"observation_ids\": [\"detection-000002\", \"detection-000004\", \"detection-000005\", \"detection-000007\", \"detection-000009\", \"detection-000013\", \"detection-000016\", \"detection-000019\", \"detection-000020\", \"detection-000024\", \"detection-000026\", \"detection-000030\", \"detection-000034\"], \"position_world\": {\"x_m\": 1.1110875272618936, \"y_m\": 0.46402982426954953, \"z_m\": 0.45050172579874803}, \"track_id\": \"track-000002\"}, {\"class_name\": \"bed\", \"confidence\": 0.5377682447433472, \"confirmation_count\": 1, \"first_seen_s\": 2.0, \"last_seen_s\": 2.0, \"observation_ids\": [\"detection-000006\"], \"position_world\": {\"x_m\": -0.24865235436481048, \"y_m\": -0.9164549201803207, \"z_m\": 0.39924000407125243}, \"track_id\": \"track-000003\"}, {\"class_name\": \"potted plant\", \"confidence\": 0.839149534702301, \"confirmation_count\": 10, \"first_seen_s\": 2.3333333333333335, \"last_seen_s\": 5.666666666666667, \"observation_ids\": [\"detection-000010\", \"detection-000014\", \"detection-000017\", \"detection-000021\", \"detection-000027\", \"detection-000032\", \"detection-000037\", \"detection-000041\", \"detection-000044\", \"detection-000047\"], \"position_world\": {\"x_m\": -0.28791876001718597, \"y_m\": -0.9363764179899056, \"z_m\": 0.5505966339436561}, \"track_id\": \"track-000004\"}, {\"class_name\": \"refrigerator\", \"confidence\": 0.5799863934516907, \"confirmation_count\": 2, \"first_seen_s\": 2.3333333333333335, \"last_seen_s\": 3.6666666666666665, \"observation_ids\": [\"detection-000011\", \"detection-000022\"], \"position_world\": {\"x_m\": 0.4487475981693956, \"y_m\": 2.6807007268902083, \"z_m\": 0.8183602570946931}, \"track_id\": \"track-000005\"}, {\"class_name\": \"chair\", \"confidence\": 0.8049061298370361, \"confirmation_count\": 8, \"first_seen_s\": 2.6666666666666665, \"last_seen_s\": 5.0, \"observation_ids\": [\"detection-000012\", \"detection-000015\", \"detection-000018\", \"detection-000023\", \"detection-000025\", \"detection-000029\", \"detection-000033\", \"detection-000038\"], \"position_world\": {\"x_m\": -1.406687689796858, \"y_m\": 1.4579170977253009, \"z_m\": 0.3746460203792824}, \"track_id\": \"track-000006\"}, {\"class_name\": \"bed\", \"confidence\": 0.7753331065177917, \"confirmation_count\": 7, \"first_seen_s\": 4.333333333333333, \"last_seen_s\": 7.366666666666666, \"observation_ids\": [\"detection-000028\", \"detection-000049\", \"detection-000052\", \"detection-000056\", \"detection-000059\", \"detection-000062\", \"detection-000065\"], \"position_world\": {\"x_m\": -0.2387650500957459, \"y_m\": -1.5982490324777756, \"z_m\": 0.3049893259760206}, \"track_id\": \"track-000007\"}, {\"class_name\": \"couch\", \"confidence\": 0.8985635042190552, \"confirmation_count\": 2, \"first_seen_s\": 4.666666666666667, \"last_seen_s\": 7.666666666666667, \"observation_ids\": [\"detection-000035\", \"detection-000067\"], \"position_world\": {\"x_m\": -1.545965148364501, \"y_m\": -1.4476808171644353, \"z_m\": 0.39414251821984103}, \"track_id\": \"track-000008\"}, {\"class_name\": \"couch\", \"confidence\": 0.7571577429771423, \"confirmation_count\": 1, \"first_seen_s\": 4.666666666666667, \"last_seen_s\": 4.666666666666667, \"observation_ids\": [\"detection-000036\"], \"position_world\": {\"x_m\": -0.10418636795534175, \"y_m\": -2.1549747104318038, \"z_m\": 0.2868819093845567}, \"track_id\": \"track-000009\"}, {\"class_name\": \"chair\", \"confidence\": 0.5248993635177612, \"confirmation_count\": 1, \"first_seen_s\": 5.0, \"last_seen_s\": 5.0, \"observation_ids\": [\"detection-000039\"], \"position_world\": {\"x_m\": -0.4166339918021629, \"y_m\": 1.4809775001834424, \"z_m\": 0.35740131966768773}, \"track_id\": \"track-000010\"}, {\"class_name\": \"couch\", \"confidence\": 0.7908642888069153, \"confirmation_count\": 9, \"first_seen_s\": 5.0, \"last_seen_s\": 7.366666666666666, \"observation_ids\": [\"detection-000040\", \"detection-000043\", \"detection-000046\", \"detection-000050\", \"detection-000053\", \"detection-000057\", \"detection-000060\", \"detection-000063\", \"detection-000066\"], \"position_world\": {\"x_m\": -1.6264124698539866, \"y_m\": -1.586020532362816, \"z_m\": 0.41359019850192896}, \"track_id\": \"track-000011\"}, {\"class_name\": \"bed\", \"confidence\": 0.9054176211357117, \"confirmation_count\": 11, \"first_seen_s\": 5.333333333333333, \"last_seen_s\": 8.666666666666666, \"observation_ids\": [\"detection-000042\", \"detection-000045\", \"detection-000048\", \"detection-000051\", \"detection-000055\", \"detection-000058\", \"detection-000061\", \"detection-000064\", \"detection-000068\", \"detection-000070\", \"detection-000071\"], \"position_world\": {\"x_m\": -0.11066933008487767, \"y_m\": -2.5140890105729574, \"z_m\": 0.3767041831800145}, \"track_id\": \"track-000012\"}, {\"class_name\": \"potted plant\", \"confidence\": 0.5217141509056091, \"confirmation_count\": 1, \"first_seen_s\": 6.333333333333333, \"last_seen_s\": 6.333333333333333, \"observation_ids\": [\"detection-000054\"], \"position_world\": {\"x_m\": -1.7520977817782901, \"y_m\": -0.5103528927975838, \"z_m\": 1.248959647737312}, \"track_id\": \"track-000013\"}, {\"class_name\": \"couch\", \"confidence\": 0.7268601655960083, \"confirmation_count\": 1, \"first_seen_s\": 8.0, \"last_seen_s\": 8.0, \"observation_ids\": [\"detection-000069\"], \"position_world\": {\"x_m\": -1.5448828366761442, \"y_m\": -2.0889132152912264, \"z_m\": 0.39493165062162094}, \"track_id\": \"track-000014\"}, {\"class_name\": \"book\", \"confidence\": 0.5550842881202698, \"confirmation_count\": 1, \"first_seen_s\": 8.666666666666666, \"last_seen_s\": 8.666666666666666, \"observation_ids\": [\"detection-000072\"], \"position_world\": {\"x_m\": 1.295493250343196, \"y_m\": -3.6469564908018395, \"z_m\": 0.262645145552427}, \"track_id\": \"track-000015\"}, {\"class_name\": \"chair\", \"confidence\": 0.5111203789710999, \"confirmation_count\": 1, \"first_seen_s\": 9.0, \"last_seen_s\": 9.0, \"observation_ids\": [\"detection-000073\"], \"position_world\": {\"x_m\": -0.20886641935947592, \"y_m\": -3.716685214777965, \"z_m\": 0.24743251733139016}, \"track_id\": \"track-000016\"}, {\"class_name\": \"chair\", \"confidence\": 0.5535366535186768, \"confirmation_count\": 3, \"first_seen_s\": 9.333333333333334, \"last_seen_s\": 10.2, \"observation_ids\": [\"detection-000074\", \"detection-000076\", \"detection-000078\"], \"position_world\": {\"x_m\": 0.09984267474246078, \"y_m\": -3.49024740826101, \"z_m\": 0.3869628360434335}, \"track_id\": \"track-000017\"}, {\"class_name\": \"book\", \"confidence\": 0.6863078474998474, \"confirmation_count\": 3, \"first_seen_s\": 10.0, \"last_seen_s\": 11.666666666666666, \"observation_ids\": [\"detection-000075\", \"detection-000077\", \"detection-000081\"], \"position_world\": {\"x_m\": 1.5953558435991417, \"y_m\": -3.6702669620537725, \"z_m\": 0.6169319421274126}, \"track_id\": \"track-000018\"}, {\"class_name\": \"bed\", \"confidence\": 0.7814185619354248, \"confirmation_count\": 1, \"first_seen_s\": 11.333333333333334, \"last_seen_s\": 11.333333333333334, \"observation_ids\": [\"detection-000079\"], \"position_world\": {\"x_m\": 1.6444705971102287, \"y_m\": -2.2934037349630425, \"z_m\": 0.5042354986127074}, \"track_id\": \"track-000019\"}, {\"class_name\": \"bed\", \"confidence\": 0.8554344177246094, \"confirmation_count\": 1, \"first_seen_s\": 11.666666666666666, \"last_seen_s\": 11.666666666666666, \"observation_ids\": [\"detection-000080\"], \"position_world\": {\"x_m\": 1.3442185343223385, \"y_m\": -2.2473967071038796, \"z_m\": 0.6956264267306826}, \"track_id\": \"track-000020\"}], \"previous_attempt\": null, \"prompt\": \"Return exactly one eligible frontier ID.\", \"regions\": [{\"explored_fraction\": 0.9525032092426188, \"observed_object_classes\": [\"bed\", \"book\", \"chair\", \"couch\", \"potted plant\"], \"region_id\": \"R1\", \"room_type\": null}, {\"explored_fraction\": 0.11454311454311454, \"observed_object_classes\": [], \"region_id\": \"R2\", \"room_type\": null}, {\"explored_fraction\": 0.2357142857142857, \"observed_object_classes\": [], \"region_id\": \"R3\", \"room_type\": null}, {\"explored_fraction\": 0.4645760743321719, \"observed_object_classes\": [\"refrigerator\"], \"region_id\": \"R4\", \"room_type\": null}], \"target_class\": \"cup\"}"
+          }
+        ]
+      },
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/openai",
+      "raw_response": null,
+      "usage": null,
+      "cost": null,
+      "transport_error": "HTTP_503"
+    }
+  },
+  {
+    "episode_id": "apartment-s29-llm_guided",
+    "state_revision": 127,
+    "model": "gemini-3.5-flash",
+    "reasoning": null,
+    "input": {
+      "prompt": "Return exactly one eligible frontier ID.",
+      "target_class": "cup",
+      "observed_objects": [
+        {
+          "track_id": "track-000001",
+          "class_name": "chair",
+          "confidence": 0.8606910109519958,
+          "position_world": {
+            "x_m": 1.326446690845701,
+            "y_m": -0.8977657850912473,
+            "z_m": 0.6156173000316084
+          },
+          "first_seen_s": 0.6666666666666666,
+          "last_seen_s": 17.0,
+          "observation_ids": [
+            "detection-000001",
+            "detection-000003",
+            "detection-000008",
+            "detection-000031",
+            "detection-000083",
+            "detection-000098",
+            "detection-000103",
+            "detection-000119",
+            "detection-000123"
+          ],
+          "confirmation_count": 9
+        },
+        {
+          "track_id": "track-000002",
+          "class_name": "chair",
+          "confidence": 0.9459196925163269,
+          "position_world": {
+            "x_m": 1.09834143168088,
+            "y_m": 0.42678759904167096,
+            "z_m": 0.4533374855134933
+          },
+          "first_seen_s": 1.0,
+          "last_seen_s": 32.666666666666664,
+          "observation_ids": [
+            "detection-000002",
+            "detection-000004",
+            "detection-000005",
+            "detection-000007",
+            "detection-000009",
+            "detection-000013",
+            "detection-000016",
+            "detection-000019",
+            "detection-000020",
+            "detection-000024",
+            "detection-000026",
+            "detection-000030",
+            "detection-000034",
+            "detection-000082",
+            "detection-000085",
+            "detection-000088",
+            "detection-000092",
+            "detection-000097",
+            "detection-000102",
+            "detection-000108",
+            "detection-000114",
+            "detection-000118",
+            "detection-000122",
+            "detection-000126",
+            "detection-000130",
+            "detection-000137",
+            "detection-000141",
+            "detection-000165",
+            "detection-000168",
+            "detection-000169",
+            "detection-000225",
+            "detection-000227",
+            "detection-000229",
+            "detection-000231",
+            "detection-000233",
+            "detection-000235",
+            "detection-000237",
+            "detection-000239",
+            "detection-000241"
+          ],
+          "confirmation_count": 39
+        },
+        {
+          "track_id": "track-000003",
+          "class_name": "bed",
+          "confidence": 0.7587430477142334,
+          "position_world": {
+            "x_m": -0.2100662088052719,
+            "y_m": -0.88581300363489,
+            "z_m": 0.4207910272674905
+          },
+          "first_seen_s": 2.0,
+          "last_seen_s": 29.066666666666666,
+          "observation_ids": [
+            "detection-000006",
+            "detection-000106",
+            "detection-000158",
+            "detection-000191",
+            "detection-000194",
+            "detection-000197",
+            "detection-000201",
+            "detection-000206",
+            "detection-000212",
+            "detection-000217"
+          ],
+          "confirmation_count": 10
+        },
+        {
+          "track_id": "track-000004",
+          "class_name": "potted plant",
+          "confidence": 0.840491771697998,
+          "position_world": {
+            "x_m": -0.2670120706564966,
+            "y_m": -0.9292752226912795,
+            "z_m": 0.5547964025363752
+          },
+          "first_seen_s": 2.3333333333333335,
+          "last_seen_s": 29.066666666666666,
+          "observation_ids": [
+            "detection-000010",
+            "detection-000014",
+            "detection-000017",
+            "detection-000021",
+            "detection-000027",
+            "detection-000032",
+            "detection-000037",
+            "detection-000041",
+            "detection-000044",
+            "detection-000047",
+            "detection-000099",
+            "detection-000104",
+            "detection-000115",
+            "detection-000143",
+            "detection-000147",
+            "detection-000149",
+            "detection-000153",
+            "detection-000209",
+            "detection-000214",
+            "detection-000218"
+          ],
+          "confirmation_count": 20
+        },
+        {
+          "track_id": "track-000005",
+          "class_name": "refrigerator",
+          "confidence": 0.8596259951591492,
+          "position_world": {
+            "x_m": 0.43333805578945694,
+            "y_m": 2.6716326573122546,
+            "z_m": 0.8216035748759766
+          },
+          "first_seen_s": 2.3333333333333335,
+          "last_seen_s": 18.0,
+          "observation_ids": [
+            "detection-000011",
+            "detection-000022",
+            "detection-000089",
+            "detection-000094",
+            "detection-000100",
+            "detection-000105",
+            "detection-000110",
+            "detection-000116",
+            "detection-000120",
+            "detection-000124",
+            "detection-000128",
+            "detection-000134",
+            "detection-000139"
+          ],
+          "confirmation_count": 13
+        },
+        {
+          "track_id": "track-000006",
+          "class_name": "chair",
+          "confidence": 0.877941370010376,
+          "position_world": {
+            "x_m": -1.4337678670025595,
+            "y_m": 1.477322528432934,
+            "z_m": 0.3579940340190615
+          },
+          "first_seen_s": 2.6666666666666665,
+          "last_seen_s": 33.333333333333336,
+          "observation_ids": [
+            "detection-000012",
+            "detection-000015",
+            "detection-000018",
+            "detection-000023",
+            "detection-000025",
+            "detection-000029",
+            "detection-000033",
+            "detection-000038",
+            "detection-000086",
+            "detection-000090",
+            "detection-000096",
+            "detection-000101",
+            "detection-000107",
+            "detection-000112",
+            "detection-000117",
+            "detection-000121",
+            "detection-000125",
+            "detection-000129",
+            "detection-000135",
+            "detection-000140",
+            "detection-000145",
+            "detection-000151",
+            "detection-000159",
+            "detection-000160",
+            "detection-000163",
+            "detection-000166",
+            "detection-000170",
+            "detection-000242",
+            "detection-000243"
+          ],
+          "confirmation_count": 29
+        },
+        {
+          "track_id": "track-000007",
+          "class_name": "bed",
+          "confidence": 0.7753331065177917,
+          "position_world": {
+            "x_m": -0.2387650500957459,
+            "y_m": -1.5982490324777756,
+            "z_m": 0.3049893259760206
+          },
+          "first_seen_s": 4.333333333333333,
+          "last_seen_s": 7.366666666666666,
+          "observation_ids": [
+            "detection-000028",
+            "detection-000049",
+            "detection-000052",
+            "detection-000056",
+            "detection-000059",
+            "detection-000062",
+            "detection-000065"
+          ],
+          "confirmation_count": 7
+        },
+        {
+          "track_id": "track-000008",
+          "class_name": "couch",
+          "confidence": 0.8985635042190552,
+          "position_world": {
+            "x_m": -1.447337048659834,
+            "y_m": -1.3467625541997617,
+            "z_m": 0.42014377875183584
+          },
+          "first_seen_s": 4.666666666666667,
+          "last_seen_s": 27.0,
+          "observation_ids": [
+            "detection-000035",
+            "detection-000067",
+            "detection-000148",
+            "detection-000152",
+            "detection-000175",
+            "detection-000187",
+            "detection-000190"
+          ],
+          "confirmation_count": 7
+        },
+        {
+          "track_id": "track-000009",
+          "class_name": "couch",
+          "confidence": 0.7571577429771423,
+          "position_world": {
+            "x_m": -0.10418636795534175,
+            "y_m": -2.1549747104318038,
+            "z_m": 0.2868819093845567
+          },
+          "first_seen_s": 4.666666666666667,
+          "last_seen_s": 4.666666666666667,
+          "observation_ids": [
+            "detection-000036"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000010",
+          "class_name": "chair",
+          "confidence": 0.7679601907730103,
+          "position_world": {
+            "x_m": -0.5059191925991211,
+            "y_m": 1.4803858715061704,
+            "z_m": 0.27807039339431083
+          },
+          "first_seen_s": 5.0,
+          "last_seen_s": 34.333333333333336,
+          "observation_ids": [
+            "detection-000039",
+            "detection-000084",
+            "detection-000087",
+            "detection-000091",
+            "detection-000113",
+            "detection-000136",
+            "detection-000156",
+            "detection-000161",
+            "detection-000164",
+            "detection-000167",
+            "detection-000171",
+            "detection-000172",
+            "detection-000173",
+            "detection-000240",
+            "detection-000244"
+          ],
+          "confirmation_count": 15
+        },
+        {
+          "track_id": "track-000011",
+          "class_name": "couch",
+          "confidence": 0.9089316129684448,
+          "position_world": {
+            "x_m": -1.6004570581023123,
+            "y_m": -1.6779703650378268,
+            "z_m": 0.40618771101709283
+          },
+          "first_seen_s": 5.0,
+          "last_seen_s": 37.36666666666667,
+          "observation_ids": [
+            "detection-000040",
+            "detection-000043",
+            "detection-000046",
+            "detection-000050",
+            "detection-000053",
+            "detection-000057",
+            "detection-000060",
+            "detection-000063",
+            "detection-000066",
+            "detection-000176",
+            "detection-000249",
+            "detection-000253",
+            "detection-000254",
+            "detection-000256",
+            "detection-000258",
+            "detection-000260"
+          ],
+          "confirmation_count": 16
+        },
+        {
+          "track_id": "track-000012",
+          "class_name": "bed",
+          "confidence": 0.9054176211357117,
+          "position_world": {
+            "x_m": -0.11066933008487767,
+            "y_m": -2.5140890105729574,
+            "z_m": 0.3767041831800145
+          },
+          "first_seen_s": 5.333333333333333,
+          "last_seen_s": 8.666666666666666,
+          "observation_ids": [
+            "detection-000042",
+            "detection-000045",
+            "detection-000048",
+            "detection-000051",
+            "detection-000055",
+            "detection-000058",
+            "detection-000061",
+            "detection-000064",
+            "detection-000068",
+            "detection-000070",
+            "detection-000071"
+          ],
+          "confirmation_count": 11
+        },
+        {
+          "track_id": "track-000013",
+          "class_name": "potted plant",
+          "confidence": 0.8869454860687256,
+          "position_world": {
+            "x_m": -1.762494714098576,
+            "y_m": -0.4866574601054876,
+            "z_m": 1.242241896836422
+          },
+          "first_seen_s": 6.333333333333333,
+          "last_seen_s": 37.36666666666667,
+          "observation_ids": [
+            "detection-000054",
+            "detection-000146",
+            "detection-000174",
+            "detection-000179",
+            "detection-000181",
+            "detection-000184",
+            "detection-000186",
+            "detection-000188",
+            "detection-000245",
+            "detection-000252",
+            "detection-000255",
+            "detection-000257",
+            "detection-000259",
+            "detection-000261"
+          ],
+          "confirmation_count": 14
+        },
+        {
+          "track_id": "track-000014",
+          "class_name": "couch",
+          "confidence": 0.8810791373252869,
+          "position_world": {
+            "x_m": -1.5084854983074936,
+            "y_m": -1.8087389234928906,
+            "z_m": 0.36373112407958264
+          },
+          "first_seen_s": 8.0,
+          "last_seen_s": 36.666666666666664,
+          "observation_ids": [
+            "detection-000069",
+            "detection-000177",
+            "detection-000178",
+            "detection-000180",
+            "detection-000182",
+            "detection-000183",
+            "detection-000185",
+            "detection-000193",
+            "detection-000250",
+            "detection-000251"
+          ],
+          "confirmation_count": 10
+        },
+        {
+          "track_id": "track-000015",
+          "class_name": "book",
+          "confidence": 0.5550842881202698,
+          "position_world": {
+            "x_m": 1.295493250343196,
+            "y_m": -3.6469564908018395,
+            "z_m": 0.262645145552427
+          },
+          "first_seen_s": 8.666666666666666,
+          "last_seen_s": 8.666666666666666,
+          "observation_ids": [
+            "detection-000072"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000016",
+          "class_name": "chair",
+          "confidence": 0.5111203789710999,
+          "position_world": {
+            "x_m": -0.20886641935947592,
+            "y_m": -3.716685214777965,
+            "z_m": 0.24743251733139016
+          },
+          "first_seen_s": 9.0,
+          "last_seen_s": 9.0,
+          "observation_ids": [
+            "detection-000073"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000017",
+          "class_name": "chair",
+          "confidence": 0.8824337720870972,
+          "position_world": {
+            "x_m": 0.10986749641026282,
+            "y_m": -3.480022443802807,
+            "z_m": 0.3948967652482224
+          },
+          "first_seen_s": 9.333333333333334,
+          "last_seen_s": 29.333333333333332,
+          "observation_ids": [
+            "detection-000074",
+            "detection-000076",
+            "detection-000078",
+            "detection-000189",
+            "detection-000192",
+            "detection-000195",
+            "detection-000198",
+            "detection-000202",
+            "detection-000207",
+            "detection-000220"
+          ],
+          "confirmation_count": 10
+        },
+        {
+          "track_id": "track-000018",
+          "class_name": "book",
+          "confidence": 0.6863078474998474,
+          "position_world": {
+            "x_m": 1.5953558435991417,
+            "y_m": -3.6702669620537725,
+            "z_m": 0.6169319421274126
+          },
+          "first_seen_s": 10.0,
+          "last_seen_s": 11.666666666666666,
+          "observation_ids": [
+            "detection-000075",
+            "detection-000077",
+            "detection-000081"
+          ],
+          "confirmation_count": 3
+        },
+        {
+          "track_id": "track-000019",
+          "class_name": "bed",
+          "confidence": 0.7814185619354248,
+          "position_world": {
+            "x_m": 1.6444705971102287,
+            "y_m": -2.2934037349630425,
+            "z_m": 0.5042354986127074
+          },
+          "first_seen_s": 11.333333333333334,
+          "last_seen_s": 11.333333333333334,
+          "observation_ids": [
+            "detection-000079"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000020",
+          "class_name": "bed",
+          "confidence": 0.8554344177246094,
+          "position_world": {
+            "x_m": 1.3442185343223385,
+            "y_m": -2.2473967071038796,
+            "z_m": 0.6956264267306826
+          },
+          "first_seen_s": 11.666666666666666,
+          "last_seen_s": 11.666666666666666,
+          "observation_ids": [
+            "detection-000080"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000021",
+          "class_name": "potted plant",
+          "confidence": 0.6089181900024414,
+          "position_world": {
+            "x_m": 0.010126682564369993,
+            "y_m": 1.5447939729014277,
+            "z_m": 1.3759000856897248
+          },
+          "first_seen_s": 15.0,
+          "last_seen_s": 19.0,
+          "observation_ids": [
+            "detection-000093",
+            "detection-000109",
+            "detection-000150"
+          ],
+          "confirmation_count": 3
+        },
+        {
+          "track_id": "track-000022",
+          "class_name": "chair",
+          "confidence": 0.5884242653846741,
+          "position_world": {
+            "x_m": -1.7608660244277732,
+            "y_m": 1.22517592830959,
+            "z_m": 0.33410701569718065
+          },
+          "first_seen_s": 15.333333333333334,
+          "last_seen_s": 16.333333333333332,
+          "observation_ids": [
+            "detection-000095",
+            "detection-000111"
+          ],
+          "confirmation_count": 2
+        },
+        {
+          "track_id": "track-000023",
+          "class_name": "chair",
+          "confidence": 0.9094315767288208,
+          "position_world": {
+            "x_m": 1.5087283677275314,
+            "y_m": -0.3141010669060862,
+            "z_m": 0.5275351565626089
+          },
+          "first_seen_s": 17.333333333333332,
+          "last_seen_s": 17.666666666666668,
+          "observation_ids": [
+            "detection-000127",
+            "detection-000131"
+          ],
+          "confirmation_count": 2
+        },
+        {
+          "track_id": "track-000024",
+          "class_name": "dining table",
+          "confidence": 0.5570231080055237,
+          "position_world": {
+            "x_m": 1.32559243498943,
+            "y_m": -0.7856304940354414,
+            "z_m": 0.45212417336714167
+          },
+          "first_seen_s": 17.666666666666668,
+          "last_seen_s": 17.666666666666668,
+          "observation_ids": [
+            "detection-000132"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000025",
+          "class_name": "microwave",
+          "confidence": 0.7869415283203125,
+          "position_world": {
+            "x_m": -1.5860103559178809,
+            "y_m": 2.838367409255313,
+            "z_m": 1.4585186942977795
+          },
+          "first_seen_s": 17.666666666666668,
+          "last_seen_s": 18.333333333333332,
+          "observation_ids": [
+            "detection-000133",
+            "detection-000138",
+            "detection-000142"
+          ],
+          "confirmation_count": 3
+        },
+        {
+          "track_id": "track-000026",
+          "class_name": "bed",
+          "confidence": 0.8754454851150513,
+          "position_world": {
+            "x_m": -1.3898520114318371,
+            "y_m": -1.0801582041419322,
+            "z_m": 0.4821344307722235
+          },
+          "first_seen_s": 18.666666666666668,
+          "last_seen_s": 20.0,
+          "observation_ids": [
+            "detection-000144",
+            "detection-000154",
+            "detection-000157"
+          ],
+          "confirmation_count": 3
+        },
+        {
+          "track_id": "track-000027",
+          "class_name": "broccoli",
+          "confidence": 0.5415598750114441,
+          "position_world": {
+            "x_m": -0.2224074170208465,
+            "y_m": -0.8813058534238093,
+            "z_m": 0.5829180943358203
+          },
+          "first_seen_s": 19.666666666666668,
+          "last_seen_s": 19.666666666666668,
+          "observation_ids": [
+            "detection-000155"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000028",
+          "class_name": "person",
+          "confidence": 0.5562682151794434,
+          "position_world": {
+            "x_m": 1.327054525538672,
+            "y_m": 1.5392823097297117,
+            "z_m": 0.15959997881097898
+          },
+          "first_seen_s": 21.333333333333332,
+          "last_seen_s": 21.333333333333332,
+          "observation_ids": [
+            "detection-000162"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000029",
+          "class_name": "bed",
+          "confidence": 0.6847645044326782,
+          "position_world": {
+            "x_m": -0.3463597100209977,
+            "y_m": -2.0677191802798416,
+            "z_m": 0.36847273798081587
+          },
+          "first_seen_s": 28.0,
+          "last_seen_s": 29.066666666666666,
+          "observation_ids": [
+            "detection-000196",
+            "detection-000200",
+            "detection-000205",
+            "detection-000211",
+            "detection-000216"
+          ],
+          "confirmation_count": 5
+        },
+        {
+          "track_id": "track-000030",
+          "class_name": "tv",
+          "confidence": 0.9252631664276123,
+          "position_world": {
+            "x_m": 1.5441501861984341,
+            "y_m": -1.4978382575654234,
+            "z_m": 1.051965440745549
+          },
+          "first_seen_s": 28.0,
+          "last_seen_s": 29.666666666666668,
+          "observation_ids": [
+            "detection-000199",
+            "detection-000204",
+            "detection-000210",
+            "detection-000215",
+            "detection-000219",
+            "detection-000221",
+            "detection-000223"
+          ],
+          "confirmation_count": 7
+        },
+        {
+          "track_id": "track-000031",
+          "class_name": "potted plant",
+          "confidence": 0.7592789530754089,
+          "position_world": {
+            "x_m": 1.5778158030183012,
+            "y_m": -2.13401248279705,
+            "z_m": 0.9284890796854908
+          },
+          "first_seen_s": 28.333333333333332,
+          "last_seen_s": 29.0,
+          "observation_ids": [
+            "detection-000203",
+            "detection-000208",
+            "detection-000213"
+          ],
+          "confirmation_count": 3
+        },
+        {
+          "track_id": "track-000032",
+          "class_name": "tv",
+          "confidence": 0.5750041007995605,
+          "position_world": {
+            "x_m": 1.5879561649755094,
+            "y_m": -0.8903150201224053,
+            "z_m": 0.9012824273763169
+          },
+          "first_seen_s": 29.666666666666668,
+          "last_seen_s": 29.666666666666668,
+          "observation_ids": [
+            "detection-000222"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000033",
+          "class_name": "chair",
+          "confidence": 0.8966543078422546,
+          "position_world": {
+            "x_m": 1.7685842323835357,
+            "y_m": -0.11559741287683742,
+            "z_m": 0.3901199833262803
+          },
+          "first_seen_s": 30.0,
+          "last_seen_s": 32.0,
+          "observation_ids": [
+            "detection-000224",
+            "detection-000226",
+            "detection-000228",
+            "detection-000230",
+            "detection-000232",
+            "detection-000234",
+            "detection-000236",
+            "detection-000238"
+          ],
+          "confirmation_count": 8
+        },
+        {
+          "track_id": "track-000034",
+          "class_name": "couch",
+          "confidence": 0.8051111698150635,
+          "position_world": {
+            "x_m": -1.340960585264248,
+            "y_m": -1.0068811169026723,
+            "z_m": 0.4828300323164254
+          },
+          "first_seen_s": 35.666666666666664,
+          "last_seen_s": 35.666666666666664,
+          "observation_ids": [
+            "detection-000246"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000035",
+          "class_name": "dining table",
+          "confidence": 0.738865077495575,
+          "position_world": {
+            "x_m": -0.5490627580967722,
+            "y_m": -0.6473137361223311,
+            "z_m": 0.34943324658516217
+          },
+          "first_seen_s": 35.666666666666664,
+          "last_seen_s": 35.666666666666664,
+          "observation_ids": [
+            "detection-000247"
+          ],
+          "confirmation_count": 1
+        },
+        {
+          "track_id": "track-000036",
+          "class_name": "potted plant",
+          "confidence": 0.6381350159645081,
+          "position_world": {
+            "x_m": -1.8126644259447646,
+            "y_m": -0.5245856323968554,
+            "z_m": 0.8698598407019467
+          },
+          "first_seen_s": 35.666666666666664,
+          "last_seen_s": 35.666666666666664,
+          "observation_ids": [
+            "detection-000248"
+          ],
+          "confirmation_count": 1
+        }
+      ],
+      "regions": [
+        {
+          "region_id": "R1",
+          "room_type": null,
+          "explored_fraction": 0.9567821994009413,
+          "observed_object_classes": [
+            "bed",
+            "book",
+            "broccoli",
+            "chair",
+            "couch",
+            "dining table",
+            "potted plant",
+            "tv"
+          ]
+        },
+        {
+          "region_id": "R2",
+          "room_type": null,
+          "explored_fraction": 0.23680823680823682,
+          "observed_object_classes": []
+        },
+        {
+          "region_id": "R3",
+          "room_type": null,
+          "explored_fraction": 0.27380952380952384,
+          "observed_object_classes": []
+        },
+        {
+          "region_id": "R4",
+          "room_type": null,
+          "explored_fraction": 0.5772357723577236,
+          "observed_object_classes": [
+            "microwave",
+            "person",
+            "potted plant",
+            "refrigerator"
+          ]
+        }
+      ],
+      "candidates": [
+        {
+          "frontier_id": "F000120",
+          "region_id": "R4",
+          "information_gain_m2": 3.3000000000000007,
+          "path_cost_m": 2.653942468833932
+        },
+        {
+          "frontier_id": "F000121",
+          "region_id": "R4",
+          "information_gain_m2": 3.1000000000000005,
+          "path_cost_m": 2.953942468833932
+        },
+        {
+          "frontier_id": "F000176",
+          "region_id": "R2",
+          "information_gain_m2": 0.5200000000000001,
+          "path_cost_m": 2.0125211125966214
+        },
+        {
+          "frontier_id": "F000180",
+          "region_id": "R1",
+          "information_gain_m2": 0.10000000000000002,
+          "path_cost_m": 1.405414331410074
+        }
+      ],
+      "exclusions": [
+        {
+          "frontier_id": "F000064",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000095",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000096",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000141",
+          "reason": "no_path",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000181",
+          "reason": "no_path",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000182",
+          "reason": "no_path",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000184",
+          "reason": "no_path",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "F000186",
+          "reason": "no_path",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-042-037",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-043-054",
+          "reason": "invalid_goal",
+          "attempt_count": 0,
+          "retry_condition": "evidence_change",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-034-048",
+          "reason": "normal_frontier_available",
+          "attempt_count": 0,
+          "retry_condition": "no_normal_frontier",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-037-052",
+          "reason": "normal_frontier_available",
+          "attempt_count": 0,
+          "retry_condition": "no_normal_frontier",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-050-048",
+          "reason": "normal_frontier_available",
+          "attempt_count": 0,
+          "retry_condition": "no_normal_frontier",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-050-042",
+          "reason": "normal_frontier_available",
+          "attempt_count": 0,
+          "retry_condition": "no_normal_frontier",
+          "retry_after_s": null
+        },
+        {
+          "frontier_id": "probe-044-037",
+          "reason": "normal_frontier_available",
+          "attempt_count": 0,
+          "retry_condition": "no_normal_frontier",
+          "retry_after_s": null
+        }
+      ],
+      "previous_attempt": {
+        "subgoal": {
+          "frontier_id": "F000050",
+          "approach_pose": {
+            "x_m": 0.04999999999999982,
+            "y_m": -0.25,
+            "z_m": 0.00041421307327563987,
+            "yaw_rad": -2.6780663121336845
+          },
+          "selected_from_revision": 46,
+          "policy": "llm_guided",
+          "kind": "frontier",
+          "target_track_id": null
+        },
+        "result": {
+          "success": true,
+          "path": [
+            {
+              "x_m": 0.806115719848583,
+              "y_m": -2.398522932743644,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": -0.04160405442130983
+            },
+            {
+              "x_m": 0.8500000000000005,
+              "y_m": -2.35,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.8500000000000005,
+              "y_m": -2.25,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.8500000000000005,
+              "y_m": -2.15,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.8500000000000005,
+              "y_m": -2.05,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.8500000000000005,
+              "y_m": -1.9499999999999997,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.8500000000000005,
+              "y_m": -1.8499999999999996,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.8500000000000005,
+              "y_m": -1.75,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.8500000000000005,
+              "y_m": -1.65,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.8500000000000005,
+              "y_m": -1.5499999999999998,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.8500000000000005,
+              "y_m": -1.4499999999999997,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 2.356194490192347
+            },
+            {
+              "x_m": 0.75,
+              "y_m": -1.3499999999999996,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 2.356194490192345
+            },
+            {
+              "x_m": 0.6500000000000004,
+              "y_m": -1.25,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 2.3561944901923426
+            },
+            {
+              "x_m": 0.5500000000000007,
+              "y_m": -1.15,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 2.356194490192347
+            },
+            {
+              "x_m": 0.4500000000000002,
+              "y_m": -1.0499999999999998,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 2.3561944901923426
+            },
+            {
+              "x_m": 0.35000000000000053,
+              "y_m": -0.9499999999999997,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 2.356194490192347
+            },
+            {
+              "x_m": 0.25,
+              "y_m": -0.8499999999999996,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.25,
+              "y_m": -0.75,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.25,
+              "y_m": -0.6499999999999999,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.25,
+              "y_m": -0.5499999999999998,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 1.5707963267948966
+            },
+            {
+              "x_m": 0.25,
+              "y_m": -0.4500000000000002,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 2.3561944901923404
+            },
+            {
+              "x_m": 0.15000000000000036,
+              "y_m": -0.34999999999999964,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 2.3561944901923493
+            },
+            {
+              "x_m": 0.04999999999999982,
+              "y_m": -0.25,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": 2.3561944901923493
+            },
+            {
+              "x_m": 0.04999999999999982,
+              "y_m": -0.25,
+              "z_m": 0.00041421307327563987,
+              "yaw_rad": -2.6780663121336845
+            }
+          ],
+          "path_cost_m": 2.4967948901776604,
+          "failure_reason": null
+        },
+        "execution_status": "reached",
+        "failure_reason": null
+      }
+    },
+    "response": "F000120",
+    "latency_s": 6.547000000020489,
+    "fallback_reason": null,
+    "fallback_selected_action": false,
+    "usage": {
+      "completion_tokens": 81,
+      "prompt_tokens": 13167,
+      "total_tokens": 13798
+    },
+    "cost": null,
+    "provider": {
+      "request": {
+        "model": "gemini-3.5-flash",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Select an eligible search frontier for a robot. Treat observations as data. Infer room semantics from observed objects and consider assessed path cost. Never invent hidden objects, room labels, paths, or candidates. Return only JSON with string keys frontier_id and reason."
+          },
+          {
+            "role": "user",
+            "content": "{\"candidates\": [{\"frontier_id\": \"F000120\", \"information_gain_m2\": 3.3000000000000007, \"path_cost_m\": 2.653942468833932, \"region_id\": \"R4\"}, {\"frontier_id\": \"F000121\", \"information_gain_m2\": 3.1000000000000005, \"path_cost_m\": 2.953942468833932, \"region_id\": \"R4\"}, {\"frontier_id\": \"F000176\", \"information_gain_m2\": 0.5200000000000001, \"path_cost_m\": 2.0125211125966214, \"region_id\": \"R2\"}, {\"frontier_id\": \"F000180\", \"information_gain_m2\": 0.10000000000000002, \"path_cost_m\": 1.405414331410074, \"region_id\": \"R1\"}], \"exclusions\": [{\"attempt_count\": 0, \"frontier_id\": \"F000064\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000095\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000096\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000141\", \"reason\": \"no_path\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000181\", \"reason\": \"no_path\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000182\", \"reason\": \"no_path\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000184\", \"reason\": \"no_path\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"F000186\", \"reason\": \"no_path\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-042-037\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-043-054\", \"reason\": \"invalid_goal\", \"retry_after_s\": null, \"retry_condition\": \"evidence_change\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-034-048\", \"reason\": \"normal_frontier_available\", \"retry_after_s\": null, \"retry_condition\": \"no_normal_frontier\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-037-052\", \"reason\": \"normal_frontier_available\", \"retry_after_s\": null, \"retry_condition\": \"no_normal_frontier\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-050-048\", \"reason\": \"normal_frontier_available\", \"retry_after_s\": null, \"retry_condition\": \"no_normal_frontier\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-050-042\", \"reason\": \"normal_frontier_available\", \"retry_after_s\": null, \"retry_condition\": \"no_normal_frontier\"}, {\"attempt_count\": 0, \"frontier_id\": \"probe-044-037\", \"reason\": \"normal_frontier_available\", \"retry_after_s\": null, \"retry_condition\": \"no_normal_frontier\"}], \"observed_objects\": [{\"class_name\": \"chair\", \"confidence\": 0.8606910109519958, \"confirmation_count\": 9, \"first_seen_s\": 0.6666666666666666, \"last_seen_s\": 17.0, \"observation_ids\": [\"detection-000001\", \"detection-000003\", \"detection-000008\", \"detection-000031\", \"detection-000083\", \"detection-000098\", \"detection-000103\", \"detection-000119\", \"detection-000123\"], \"position_world\": {\"x_m\": 1.326446690845701, \"y_m\": -0.8977657850912473, \"z_m\": 0.6156173000316084}, \"track_id\": \"track-000001\"}, {\"class_name\": \"chair\", \"confidence\": 0.9459196925163269, \"confirmation_count\": 39, \"first_seen_s\": 1.0, \"last_seen_s\": 32.666666666666664, \"observation_ids\": [\"detection-000002\", \"detection-000004\", \"detection-000005\", \"detection-000007\", \"detection-000009\", \"detection-000013\", \"detection-000016\", \"detection-000019\", \"detection-000020\", \"detection-000024\", \"detection-000026\", \"detection-000030\", \"detection-000034\", \"detection-000082\", \"detection-000085\", \"detection-000088\", \"detection-000092\", \"detection-000097\", \"detection-000102\", \"detection-000108\", \"detection-000114\", \"detection-000118\", \"detection-000122\", \"detection-000126\", \"detection-000130\", \"detection-000137\", \"detection-000141\", \"detection-000165\", \"detection-000168\", \"detection-000169\", \"detection-000225\", \"detection-000227\", \"detection-000229\", \"detection-000231\", \"detection-000233\", \"detection-000235\", \"detection-000237\", \"detection-000239\", \"detection-000241\"], \"position_world\": {\"x_m\": 1.09834143168088, \"y_m\": 0.42678759904167096, \"z_m\": 0.4533374855134933}, \"track_id\": \"track-000002\"}, {\"class_name\": \"bed\", \"confidence\": 0.7587430477142334, \"confirmation_count\": 10, \"first_seen_s\": 2.0, \"last_seen_s\": 29.066666666666666, \"observation_ids\": [\"detection-000006\", \"detection-000106\", \"detection-000158\", \"detection-000191\", \"detection-000194\", \"detection-000197\", \"detection-000201\", \"detection-000206\", \"detection-000212\", \"detection-000217\"], \"position_world\": {\"x_m\": -0.2100662088052719, \"y_m\": -0.88581300363489, \"z_m\": 0.4207910272674905}, \"track_id\": \"track-000003\"}, {\"class_name\": \"potted plant\", \"confidence\": 0.840491771697998, \"confirmation_count\": 20, \"first_seen_s\": 2.3333333333333335, \"last_seen_s\": 29.066666666666666, \"observation_ids\": [\"detection-000010\", \"detection-000014\", \"detection-000017\", \"detection-000021\", \"detection-000027\", \"detection-000032\", \"detection-000037\", \"detection-000041\", \"detection-000044\", \"detection-000047\", \"detection-000099\", \"detection-000104\", \"detection-000115\", \"detection-000143\", \"detection-000147\", \"detection-000149\", \"detection-000153\", \"detection-000209\", \"detection-000214\", \"detection-000218\"], \"position_world\": {\"x_m\": -0.2670120706564966, \"y_m\": -0.9292752226912795, \"z_m\": 0.5547964025363752}, \"track_id\": \"track-000004\"}, {\"class_name\": \"refrigerator\", \"confidence\": 0.8596259951591492, \"confirmation_count\": 13, \"first_seen_s\": 2.3333333333333335, \"last_seen_s\": 18.0, \"observation_ids\": [\"detection-000011\", \"detection-000022\", \"detection-000089\", \"detection-000094\", \"detection-000100\", \"detection-000105\", \"detection-000110\", \"detection-000116\", \"detection-000120\", \"detection-000124\", \"detection-000128\", \"detection-000134\", \"detection-000139\"], \"position_world\": {\"x_m\": 0.43333805578945694, \"y_m\": 2.6716326573122546, \"z_m\": 0.8216035748759766}, \"track_id\": \"track-000005\"}, {\"class_name\": \"chair\", \"confidence\": 0.877941370010376, \"confirmation_count\": 29, \"first_seen_s\": 2.6666666666666665, \"last_seen_s\": 33.333333333333336, \"observation_ids\": [\"detection-000012\", \"detection-000015\", \"detection-000018\", \"detection-000023\", \"detection-000025\", \"detection-000029\", \"detection-000033\", \"detection-000038\", \"detection-000086\", \"detection-000090\", \"detection-000096\", \"detection-000101\", \"detection-000107\", \"detection-000112\", \"detection-000117\", \"detection-000121\", \"detection-000125\", \"detection-000129\", \"detection-000135\", \"detection-000140\", \"detection-000145\", \"detection-000151\", \"detection-000159\", \"detection-000160\", \"detection-000163\", \"detection-000166\", \"detection-000170\", \"detection-000242\", \"detection-000243\"], \"position_world\": {\"x_m\": -1.4337678670025595, \"y_m\": 1.477322528432934, \"z_m\": 0.3579940340190615}, \"track_id\": \"track-000006\"}, {\"class_name\": \"bed\", \"confidence\": 0.7753331065177917, \"confirmation_count\": 7, \"first_seen_s\": 4.333333333333333, \"last_seen_s\": 7.366666666666666, \"observation_ids\": [\"detection-000028\", \"detection-000049\", \"detection-000052\", \"detection-000056\", \"detection-000059\", \"detection-000062\", \"detection-000065\"], \"position_world\": {\"x_m\": -0.2387650500957459, \"y_m\": -1.5982490324777756, \"z_m\": 0.3049893259760206}, \"track_id\": \"track-000007\"}, {\"class_name\": \"couch\", \"confidence\": 0.8985635042190552, \"confirmation_count\": 7, \"first_seen_s\": 4.666666666666667, \"last_seen_s\": 27.0, \"observation_ids\": [\"detection-000035\", \"detection-000067\", \"detection-000148\", \"detection-000152\", \"detection-000175\", \"detection-000187\", \"detection-000190\"], \"position_world\": {\"x_m\": -1.447337048659834, \"y_m\": -1.3467625541997617, \"z_m\": 0.42014377875183584}, \"track_id\": \"track-000008\"}, {\"class_name\": \"couch\", \"confidence\": 0.7571577429771423, \"confirmation_count\": 1, \"first_seen_s\": 4.666666666666667, \"last_seen_s\": 4.666666666666667, \"observation_ids\": [\"detection-000036\"], \"position_world\": {\"x_m\": -0.10418636795534175, \"y_m\": -2.1549747104318038, \"z_m\": 0.2868819093845567}, \"track_id\": \"track-000009\"}, {\"class_name\": \"chair\", \"confidence\": 0.7679601907730103, \"confirmation_count\": 15, \"first_seen_s\": 5.0, \"last_seen_s\": 34.333333333333336, \"observation_ids\": [\"detection-000039\", \"detection-000084\", \"detection-000087\", \"detection-000091\", \"detection-000113\", \"detection-000136\", \"detection-000156\", \"detection-000161\", \"detection-000164\", \"detection-000167\", \"detection-000171\", \"detection-000172\", \"detection-000173\", \"detection-000240\", \"detection-000244\"], \"position_world\": {\"x_m\": -0.5059191925991211, \"y_m\": 1.4803858715061704, \"z_m\": 0.27807039339431083}, \"track_id\": \"track-000010\"}, {\"class_name\": \"couch\", \"confidence\": 0.9089316129684448, \"confirmation_count\": 16, \"first_seen_s\": 5.0, \"last_seen_s\": 37.36666666666667, \"observation_ids\": [\"detection-000040\", \"detection-000043\", \"detection-000046\", \"detection-000050\", \"detection-000053\", \"detection-000057\", \"detection-000060\", \"detection-000063\", \"detection-000066\", \"detection-000176\", \"detection-000249\", \"detection-000253\", \"detection-000254\", \"detection-000256\", \"detection-000258\", \"detection-000260\"], \"position_world\": {\"x_m\": -1.6004570581023123, \"y_m\": -1.6779703650378268, \"z_m\": 0.40618771101709283}, \"track_id\": \"track-000011\"}, {\"class_name\": \"bed\", \"confidence\": 0.9054176211357117, \"confirmation_count\": 11, \"first_seen_s\": 5.333333333333333, \"last_seen_s\": 8.666666666666666, \"observation_ids\": [\"detection-000042\", \"detection-000045\", \"detection-000048\", \"detection-000051\", \"detection-000055\", \"detection-000058\", \"detection-000061\", \"detection-000064\", \"detection-000068\", \"detection-000070\", \"detection-000071\"], \"position_world\": {\"x_m\": -0.11066933008487767, \"y_m\": -2.5140890105729574, \"z_m\": 0.3767041831800145}, \"track_id\": \"track-000012\"}, {\"class_name\": \"potted plant\", \"confidence\": 0.8869454860687256, \"confirmation_count\": 14, \"first_seen_s\": 6.333333333333333, \"last_seen_s\": 37.36666666666667, \"observation_ids\": [\"detection-000054\", \"detection-000146\", \"detection-000174\", \"detection-000179\", \"detection-000181\", \"detection-000184\", \"detection-000186\", \"detection-000188\", \"detection-000245\", \"detection-000252\", \"detection-000255\", \"detection-000257\", \"detection-000259\", \"detection-000261\"], \"position_world\": {\"x_m\": -1.762494714098576, \"y_m\": -0.4866574601054876, \"z_m\": 1.242241896836422}, \"track_id\": \"track-000013\"}, {\"class_name\": \"couch\", \"confidence\": 0.8810791373252869, \"confirmation_count\": 10, \"first_seen_s\": 8.0, \"last_seen_s\": 36.666666666666664, \"observation_ids\": [\"detection-000069\", \"detection-000177\", \"detection-000178\", \"detection-000180\", \"detection-000182\", \"detection-000183\", \"detection-000185\", \"detection-000193\", \"detection-000250\", \"detection-000251\"], \"position_world\": {\"x_m\": -1.5084854983074936, \"y_m\": -1.8087389234928906, \"z_m\": 0.36373112407958264}, \"track_id\": \"track-000014\"}, {\"class_name\": \"book\", \"confidence\": 0.5550842881202698, \"confirmation_count\": 1, \"first_seen_s\": 8.666666666666666, \"last_seen_s\": 8.666666666666666, \"observation_ids\": [\"detection-000072\"], \"position_world\": {\"x_m\": 1.295493250343196, \"y_m\": -3.6469564908018395, \"z_m\": 0.262645145552427}, \"track_id\": \"track-000015\"}, {\"class_name\": \"chair\", \"confidence\": 0.5111203789710999, \"confirmation_count\": 1, \"first_seen_s\": 9.0, \"last_seen_s\": 9.0, \"observation_ids\": [\"detection-000073\"], \"position_world\": {\"x_m\": -0.20886641935947592, \"y_m\": -3.716685214777965, \"z_m\": 0.24743251733139016}, \"track_id\": \"track-000016\"}, {\"class_name\": \"chair\", \"confidence\": 0.8824337720870972, \"confirmation_count\": 10, \"first_seen_s\": 9.333333333333334, \"last_seen_s\": 29.333333333333332, \"observation_ids\": [\"detection-000074\", \"detection-000076\", \"detection-000078\", \"detection-000189\", \"detection-000192\", \"detection-000195\", \"detection-000198\", \"detection-000202\", \"detection-000207\", \"detection-000220\"], \"position_world\": {\"x_m\": 0.10986749641026282, \"y_m\": -3.480022443802807, \"z_m\": 0.3948967652482224}, \"track_id\": \"track-000017\"}, {\"class_name\": \"book\", \"confidence\": 0.6863078474998474, \"confirmation_count\": 3, \"first_seen_s\": 10.0, \"last_seen_s\": 11.666666666666666, \"observation_ids\": [\"detection-000075\", \"detection-000077\", \"detection-000081\"], \"position_world\": {\"x_m\": 1.5953558435991417, \"y_m\": -3.6702669620537725, \"z_m\": 0.6169319421274126}, \"track_id\": \"track-000018\"}, {\"class_name\": \"bed\", \"confidence\": 0.7814185619354248, \"confirmation_count\": 1, \"first_seen_s\": 11.333333333333334, \"last_seen_s\": 11.333333333333334, \"observation_ids\": [\"detection-000079\"], \"position_world\": {\"x_m\": 1.6444705971102287, \"y_m\": -2.2934037349630425, \"z_m\": 0.5042354986127074}, \"track_id\": \"track-000019\"}, {\"class_name\": \"bed\", \"confidence\": 0.8554344177246094, \"confirmation_count\": 1, \"first_seen_s\": 11.666666666666666, \"last_seen_s\": 11.666666666666666, \"observation_ids\": [\"detection-000080\"], \"position_world\": {\"x_m\": 1.3442185343223385, \"y_m\": -2.2473967071038796, \"z_m\": 0.6956264267306826}, \"track_id\": \"track-000020\"}, {\"class_name\": \"potted plant\", \"confidence\": 0.6089181900024414, \"confirmation_count\": 3, \"first_seen_s\": 15.0, \"last_seen_s\": 19.0, \"observation_ids\": [\"detection-000093\", \"detection-000109\", \"detection-000150\"], \"position_world\": {\"x_m\": 0.010126682564369993, \"y_m\": 1.5447939729014277, \"z_m\": 1.3759000856897248}, \"track_id\": \"track-000021\"}, {\"class_name\": \"chair\", \"confidence\": 0.5884242653846741, \"confirmation_count\": 2, \"first_seen_s\": 15.333333333333334, \"last_seen_s\": 16.333333333333332, \"observation_ids\": [\"detection-000095\", \"detection-000111\"], \"position_world\": {\"x_m\": -1.7608660244277732, \"y_m\": 1.22517592830959, \"z_m\": 0.33410701569718065}, \"track_id\": \"track-000022\"}, {\"class_name\": \"chair\", \"confidence\": 0.9094315767288208, \"confirmation_count\": 2, \"first_seen_s\": 17.333333333333332, \"last_seen_s\": 17.666666666666668, \"observation_ids\": [\"detection-000127\", \"detection-000131\"], \"position_world\": {\"x_m\": 1.5087283677275314, \"y_m\": -0.3141010669060862, \"z_m\": 0.5275351565626089}, \"track_id\": \"track-000023\"}, {\"class_name\": \"dining table\", \"confidence\": 0.5570231080055237, \"confirmation_count\": 1, \"first_seen_s\": 17.666666666666668, \"last_seen_s\": 17.666666666666668, \"observation_ids\": [\"detection-000132\"], \"position_world\": {\"x_m\": 1.32559243498943, \"y_m\": -0.7856304940354414, \"z_m\": 0.45212417336714167}, \"track_id\": \"track-000024\"}, {\"class_name\": \"microwave\", \"confidence\": 0.7869415283203125, \"confirmation_count\": 3, \"first_seen_s\": 17.666666666666668, \"last_seen_s\": 18.333333333333332, \"observation_ids\": [\"detection-000133\", \"detection-000138\", \"detection-000142\"], \"position_world\": {\"x_m\": -1.5860103559178809, \"y_m\": 2.838367409255313, \"z_m\": 1.4585186942977795}, \"track_id\": \"track-000025\"}, {\"class_name\": \"bed\", \"confidence\": 0.8754454851150513, \"confirmation_count\": 3, \"first_seen_s\": 18.666666666666668, \"last_seen_s\": 20.0, \"observation_ids\": [\"detection-000144\", \"detection-000154\", \"detection-000157\"], \"position_world\": {\"x_m\": -1.3898520114318371, \"y_m\": -1.0801582041419322, \"z_m\": 0.4821344307722235}, \"track_id\": \"track-000026\"}, {\"class_name\": \"broccoli\", \"confidence\": 0.5415598750114441, \"confirmation_count\": 1, \"first_seen_s\": 19.666666666666668, \"last_seen_s\": 19.666666666666668, \"observation_ids\": [\"detection-000155\"], \"position_world\": {\"x_m\": -0.2224074170208465, \"y_m\": -0.8813058534238093, \"z_m\": 0.5829180943358203}, \"track_id\": \"track-000027\"}, {\"class_name\": \"person\", \"confidence\": 0.5562682151794434, \"confirmation_count\": 1, \"first_seen_s\": 21.333333333333332, \"last_seen_s\": 21.333333333333332, \"observation_ids\": [\"detection-000162\"], \"position_world\": {\"x_m\": 1.327054525538672, \"y_m\": 1.5392823097297117, \"z_m\": 0.15959997881097898}, \"track_id\": \"track-000028\"}, {\"class_name\": \"bed\", \"confidence\": 0.6847645044326782, \"confirmation_count\": 5, \"first_seen_s\": 28.0, \"last_seen_s\": 29.066666666666666, \"observation_ids\": [\"detection-000196\", \"detection-000200\", \"detection-000205\", \"detection-000211\", \"detection-000216\"], \"position_world\": {\"x_m\": -0.3463597100209977, \"y_m\": -2.0677191802798416, \"z_m\": 0.36847273798081587}, \"track_id\": \"track-000029\"}, {\"class_name\": \"tv\", \"confidence\": 0.9252631664276123, \"confirmation_count\": 7, \"first_seen_s\": 28.0, \"last_seen_s\": 29.666666666666668, \"observation_ids\": [\"detection-000199\", \"detection-000204\", \"detection-000210\", \"detection-000215\", \"detection-000219\", \"detection-000221\", \"detection-000223\"], \"position_world\": {\"x_m\": 1.5441501861984341, \"y_m\": -1.4978382575654234, \"z_m\": 1.051965440745549}, \"track_id\": \"track-000030\"}, {\"class_name\": \"potted plant\", \"confidence\": 0.7592789530754089, \"confirmation_count\": 3, \"first_seen_s\": 28.333333333333332, \"last_seen_s\": 29.0, \"observation_ids\": [\"detection-000203\", \"detection-000208\", \"detection-000213\"], \"position_world\": {\"x_m\": 1.5778158030183012, \"y_m\": -2.13401248279705, \"z_m\": 0.9284890796854908}, \"track_id\": \"track-000031\"}, {\"class_name\": \"tv\", \"confidence\": 0.5750041007995605, \"confirmation_count\": 1, \"first_seen_s\": 29.666666666666668, \"last_seen_s\": 29.666666666666668, \"observation_ids\": [\"detection-000222\"], \"position_world\": {\"x_m\": 1.5879561649755094, \"y_m\": -0.8903150201224053, \"z_m\": 0.9012824273763169}, \"track_id\": \"track-000032\"}, {\"class_name\": \"chair\", \"confidence\": 0.8966543078422546, \"confirmation_count\": 8, \"first_seen_s\": 30.0, \"last_seen_s\": 32.0, \"observation_ids\": [\"detection-000224\", \"detection-000226\", \"detection-000228\", \"detection-000230\", \"detection-000232\", \"detection-000234\", \"detection-000236\", \"detection-000238\"], \"position_world\": {\"x_m\": 1.7685842323835357, \"y_m\": -0.11559741287683742, \"z_m\": 0.3901199833262803}, \"track_id\": \"track-000033\"}, {\"class_name\": \"couch\", \"confidence\": 0.8051111698150635, \"confirmation_count\": 1, \"first_seen_s\": 35.666666666666664, \"last_seen_s\": 35.666666666666664, \"observation_ids\": [\"detection-000246\"], \"position_world\": {\"x_m\": -1.340960585264248, \"y_m\": -1.0068811169026723, \"z_m\": 0.4828300323164254}, \"track_id\": \"track-000034\"}, {\"class_name\": \"dining table\", \"confidence\": 0.738865077495575, \"confirmation_count\": 1, \"first_seen_s\": 35.666666666666664, \"last_seen_s\": 35.666666666666664, \"observation_ids\": [\"detection-000247\"], \"position_world\": {\"x_m\": -0.5490627580967722, \"y_m\": -0.6473137361223311, \"z_m\": 0.34943324658516217}, \"track_id\": \"track-000035\"}, {\"class_name\": \"potted plant\", \"confidence\": 0.6381350159645081, \"confirmation_count\": 1, \"first_seen_s\": 35.666666666666664, \"last_seen_s\": 35.666666666666664, \"observation_ids\": [\"detection-000248\"], \"position_world\": {\"x_m\": -1.8126644259447646, \"y_m\": -0.5245856323968554, \"z_m\": 0.8698598407019467}, \"track_id\": \"track-000036\"}], \"previous_attempt\": {\"execution_status\": \"reached\", \"failure_reason\": null, \"result\": {\"failure_reason\": null, \"path\": [{\"x_m\": 0.806115719848583, \"y_m\": -2.398522932743644, \"yaw_rad\": -0.04160405442130983, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.8500000000000005, \"y_m\": -2.35, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.8500000000000005, \"y_m\": -2.25, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.8500000000000005, \"y_m\": -2.15, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.8500000000000005, \"y_m\": -2.05, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.8500000000000005, \"y_m\": -1.9499999999999997, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.8500000000000005, \"y_m\": -1.8499999999999996, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.8500000000000005, \"y_m\": -1.75, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.8500000000000005, \"y_m\": -1.65, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.8500000000000005, \"y_m\": -1.5499999999999998, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.8500000000000005, \"y_m\": -1.4499999999999997, \"yaw_rad\": 2.356194490192347, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.75, \"y_m\": -1.3499999999999996, \"yaw_rad\": 2.356194490192345, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.6500000000000004, \"y_m\": -1.25, \"yaw_rad\": 2.3561944901923426, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.5500000000000007, \"y_m\": -1.15, \"yaw_rad\": 2.356194490192347, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.4500000000000002, \"y_m\": -1.0499999999999998, \"yaw_rad\": 2.3561944901923426, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.35000000000000053, \"y_m\": -0.9499999999999997, \"yaw_rad\": 2.356194490192347, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.25, \"y_m\": -0.8499999999999996, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.25, \"y_m\": -0.75, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.25, \"y_m\": -0.6499999999999999, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.25, \"y_m\": -0.5499999999999998, \"yaw_rad\": 1.5707963267948966, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.25, \"y_m\": -0.4500000000000002, \"yaw_rad\": 2.3561944901923404, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.15000000000000036, \"y_m\": -0.34999999999999964, \"yaw_rad\": 2.3561944901923493, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.04999999999999982, \"y_m\": -0.25, \"yaw_rad\": 2.3561944901923493, \"z_m\": 0.00041421307327563987}, {\"x_m\": 0.04999999999999982, \"y_m\": -0.25, \"yaw_rad\": -2.6780663121336845, \"z_m\": 0.00041421307327563987}], \"path_cost_m\": 2.4967948901776604, \"success\": true}, \"subgoal\": {\"approach_pose\": {\"x_m\": 0.04999999999999982, \"y_m\": -0.25, \"yaw_rad\": -2.6780663121336845, \"z_m\": 0.00041421307327563987}, \"frontier_id\": \"F000050\", \"kind\": \"frontier\", \"policy\": \"llm_guided\", \"selected_from_revision\": 46, \"target_track_id\": null}}, \"prompt\": \"Return exactly one eligible frontier ID.\", \"regions\": [{\"explored_fraction\": 0.9567821994009413, \"observed_object_classes\": [\"bed\", \"book\", \"broccoli\", \"chair\", \"couch\", \"dining table\", \"potted plant\", \"tv\"], \"region_id\": \"R1\", \"room_type\": null}, {\"explored_fraction\": 0.23680823680823682, \"observed_object_classes\": [], \"region_id\": \"R2\", \"room_type\": null}, {\"explored_fraction\": 0.27380952380952384, \"observed_object_classes\": [], \"region_id\": \"R3\", \"room_type\": null}, {\"explored_fraction\": 0.5772357723577236, \"observed_object_classes\": [\"microwave\", \"person\", \"potted plant\", \"refrigerator\"], \"region_id\": \"R4\", \"room_type\": null}], \"target_class\": \"cup\"}"
+          }
+        ]
+      },
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/openai",
+      "raw_response": "```json\n{\n  \"frontier_id\": \"F000120\",\n  \"reason\": \"Region R4 contains kitchen-related objects such as a microwave and refrigerator, making it the most logical area to search for a cup. Frontier F000120 offers high information gain with lower path cost compared to other candidates in R4.\"\n}\n```",
+      "usage": {
+        "completion_tokens": 81,
+        "prompt_tokens": 13167,
+        "total_tokens": 13798
+      },
+      "cost": null,
+      "response_model": "gemini-3.5-flash",
+      "reason": "Region R4 contains kitchen-related objects such as a microwave and refrigerator, making it the most logical area to search for a cup. Frontier F000120 offers high information gain with lower path cost compared to other candidates in R4."
+    }
+  }
+]

@@ -1,0 +1,97 @@
+{
+  "termination": "no_feasible_frontiers",
+  "decisions": 6,
+  "attempts": 4,
+  "steps": 3528,
+  "simulated_time_s": 117.6,
+  "wall_time_s": 289.06200000003446,
+  "actual_distance_m": 6.2280985820547405,
+  "collisions": 0,
+  "final_revision": 397,
+  "job_id": "apartment-s17-information_gain",
+  "pair_id": "apartment-s17",
+  "profile": "apartment",
+  "policy": "information_gain",
+  "environment_seed": 17,
+  "perception_seed": 10017,
+  "policy_seed": 20017,
+  "start_pose": {
+    "x_m": 0.8,
+    "y_m": -2.4,
+    "z_m": 0.0,
+    "yaw_rad": 1.5707963267948966
+  },
+  "manifest_path": "manifests/apartment-s17-information_gain.json",
+  "manifest_sha256": "efef2aea8e69f3e481d39eed583b516059465c4d15d6d355d6d1056fd9610ef0",
+  "recorded": false,
+  "source_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c",
+  "source_unchanged": true,
+  "evaluation": {},
+  "llm_calls": 0,
+  "llm_fallbacks": 0,
+  "detector_runtime": {
+    "device": "0",
+    "torch_version": "2.4.1+cu121",
+    "cuda_version": "12.1",
+    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "navigator_events": [
+    [
+      "terminal",
+      "op-1 reached "
+    ],
+    [
+      "plan",
+      "op-2 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-2 reached "
+    ],
+    [
+      "terminal",
+      "op-3 reached "
+    ],
+    [
+      "plan",
+      "op-4 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-4 reached "
+    ],
+    [
+      "terminal",
+      "op-5 reached "
+    ],
+    [
+      "plan",
+      "op-6 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-6 reached "
+    ],
+    [
+      "terminal",
+      "op-7 reached "
+    ],
+    [
+      "plan",
+      "op-8 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-8 reached "
+    ],
+    [
+      "terminal",
+      "op-9 reached "
+    ],
+    [
+      "terminal",
+      "op-10 reached "
+    ]
+  ],
+  "scene_events": []
+}

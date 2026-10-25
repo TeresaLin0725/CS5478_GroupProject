@@ -1,0 +1,38 @@
+[
+  {
+    "key": "current-0",
+    "title": "移动推车干扰搜索 · 随机策略 · 优化版",
+    "duration_s": 225.33333333333334,
+    "distance_m": 12.790835899857095,
+    "contacts": 0,
+    "model_calls": 0,
+    "source_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c"
+  },
+  {
+    "key": "current-1",
+    "title": "公寓室内搜索 · 最近可达目标策略 · 优化版",
+    "duration_s": 180.0,
+    "distance_m": 11.250865120620844,
+    "contacts": 0,
+    "model_calls": 0,
+    "source_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c"
+  },
+  {
+    "key": "current-2",
+    "title": "移动推车干扰搜索 · 信息增益策略 · 优化版",
+    "duration_s": 197.0,
+    "distance_m": 16.311777755952562,
+    "contacts": 0,
+    "model_calls": 0,
+    "source_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c"
+  },
+  {
+    "key": "current-3",
+    "title": "公寓室内搜索 · 在线大语言模型策略 · 优化版",
+    "duration_s": 77.0,
+    "distance_m": 6.698727746669238,
+    "contacts": 0,
+    "model_calls": 2,
+    "source_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c"
+  }
+]
