@@ -169,7 +169,7 @@ class RecoveryViewpointTests(unittest.TestCase):
         self.assertTrue(all(p.kind=='target_approach' and p.target_track_id=='tentative' for p in proposals))
         after_scan=replace(scene_frame(),timestamp_s=7.)
         self.assertTrue(_target_approaches(grid,after_scan,{'tentative':track},'cup',cfg,req.robot_config))
-        old=replace(scene_frame(),timestamp_s=20.)
+        old=replace(scene_frame(),timestamp_s=track.last_seen_s+cfg.tentative_target_memory_s+.001)
         self.assertFalse(_target_approaches(grid,old,{'tentative':track},'cup',cfg,req.robot_config))
         confirmed=replace(track,confirmation_count=2)
         self.assertTrue(_target_approaches(grid,old,{'tentative':confirmed},'cup',cfg,req.robot_config))

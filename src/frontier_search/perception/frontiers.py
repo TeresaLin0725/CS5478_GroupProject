@@ -8,6 +8,7 @@ from typing import Dict, List, Optional, Tuple
 from ..config import MappingConfig, ObservationConfig
 from ..contracts import Frontier, GridCell, OccupancyGrid, Pose, RGBDObservation, RobotConfig
 from .gain import camera_yaw_offset, estimate_gain
+from ..navigation.geometry import footprint_collides
 
 
 CARDINAL = ((-1, 0), (0, -1), (0, 1), (1, 0))
@@ -86,11 +87,11 @@ def _clearance(grid: OccupancyGrid) -> List[List[int]]:
 
 
 def _approach(grid, support, clearance, robot, observation, config):
-    """Retreat into free cells; B still owns footprint validity and reachability.
+    """Retreat into free cells; B still owns path reachability.
 
     Prefer the nearest interior cell with conservative disc clearance; otherwise
-    use the best available free cell. Both choices remain candidates for B to
-    reject. No costmap or robot connectivity is published/assumed here.
+    check remaining cells against the exact footprint. Never publish a pose
+    that overlaps blocked space. Recomputed for every observed map revision.
     """
     radius = max(hypot(p.x_m, p.y_m) for p in robot.footprint_base) + robot.clearance_margin_m
     middle_r = sum(c.row for c in support) / len(support)
@@ -113,7 +114,14 @@ def _approach(grid, support, clearance, robot, observation, config):
         enough = (clearance[r][c] - 0.5) * grid.resolution_m > radius
         return (not enough, distance[cell] if enough else -clearance[r][c],
                 (r - middle_r) ** 2 + (c - middle_c) ** 2, r, c)
-    r, c = min(distance, key=ranking)
+    for r, c in sorted(distance, key=ranking):
+        pose = _oriented_pose(grid, support, middle_r, middle_c, r, c, observation)
+        if not footprint_collides(grid, robot.footprint_base, pose, robot.clearance_margin_m):
+            return pose
+    return None
+
+
+def _oriented_pose(grid, support, middle_r, middle_c, r, c, observation):
     # Pick a representative boundary/unknown pair, without averaging opposing
     # normals (which cancel on a closed frontier around a free island).
     unknown = []
@@ -155,6 +163,8 @@ def build_candidates(grid: OccupancyGrid, observation: RGBDObservation, robot: R
     result = []
     for support in clusters:
         pose = _approach(grid, support, clearance, robot, observation, mapping)
+        if pose is None:
+            continue
         counts = [(sum(cell in cells for cell in support), name) for name, cells in regions.items()]
         # Associate with the majority of boundary support; deterministic ID tie.
         positive = sorted((-count, name) for count, name in counts if count)

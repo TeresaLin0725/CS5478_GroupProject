@@ -1,0 +1,249 @@
+{
+  "episode_id": "apartment-s17-nearest",
+  "scene_id": "Rs",
+  "source": "igibson",
+  "target_class": "cup",
+  "start_pose": {
+    "x_m": 0.8,
+    "y_m": -2.4,
+    "z_m": 0.0,
+    "yaw_rad": 1.5707963267948966
+  },
+  "robot": {
+    "footprint_base": [
+      {
+        "x_m": -0.182,
+        "y_m": -0.182
+      },
+      {
+        "x_m": 0.182,
+        "y_m": -0.182
+      },
+      {
+        "x_m": 0.182,
+        "y_m": 0.182
+      },
+      {
+        "x_m": -0.182,
+        "y_m": 0.182
+      }
+    ],
+    "collision_z_min_m": 0.0,
+    "collision_z_max_m": 0.908,
+    "clearance_margin_m": 0.02,
+    "motion_model": "differential_drive",
+    "can_turn_in_place": true,
+    "max_linear_speed_mps": 0.32,
+    "max_angular_speed_radps": 1.1,
+    "position_tolerance_m": 0.03,
+    "yaw_tolerance_rad": 0.1
+  },
+  "policy_name": "nearest",
+  "mapping": {
+    "resolution_m": 0.1,
+    "width_cells": 70,
+    "height_cells": 85,
+    "origin_x_m": -4.5,
+    "origin_y_m": -4.5,
+    "confirmation_frames": 2,
+    "confirmation_window_s": 3.0,
+    "confidence_threshold": 0.5,
+    "floor_height_m": 0.0,
+    "floor_tolerance_m": 0.04,
+    "depth_min_m": 0.1,
+    "depth_max_m": 5.0,
+    "clearance_bin_height_m": 0.05,
+    "depth_surface_margin_m": 0.02,
+    "base_elevation_margin_m": 0.015,
+    "frontier_min_cells": 2,
+    "frontier_connectivity": 4,
+    "frontier_approach_search_m": 1.0,
+    "frontier_match_tolerance_cells": 1,
+    "frontier_match_fraction": 0.25,
+    "frontier_history_s": 30.0,
+    "gain_range_m": 3.0,
+    "gain_ray_step_rad": 0.15,
+    "object_match_distance_m": 0.35,
+    "depth_pixel_stride": 4,
+    "frontier_cluster_span_m": 1.0,
+    "dynamic_clear_frames": 2,
+    "inspection_distance_m": 0.9,
+    "inspection_linear_speed_mps": 0.03,
+    "inspection_angular_speed_radps": 0.02,
+    "target_max_extent_m": 0.25,
+    "tentative_target_memory_s": 30.0,
+    "claim_confidence_threshold": 0.65
+  },
+  "observation": {
+    "initial_headings_rad": [
+      0.0,
+      1.57,
+      -1.57,
+      0.0
+    ],
+    "arrival_headings_rad": [
+      0.0,
+      1.5707963267948966,
+      3.141592653589793,
+      -1.5707963267948966,
+      0.0
+    ],
+    "recovery_headings_rad": [
+      1.5707963267948966,
+      3.141592653589793,
+      -1.5707963267948966,
+      0.0
+    ],
+    "heading_tolerance_rad": 0.05,
+    "dwell_s": 0.6,
+    "processed_samples_per_heading": 1,
+    "allow_full_rotation": true,
+    "operation_deadline_s": 400.0,
+    "drain_deadline_s": 30.0,
+    "inspection_hold_s": 4.0,
+    "inspection_headings_rad": [
+      -0.15,
+      0.0,
+      0.15
+    ]
+  },
+  "navigation": {
+    "batch_deadline_s": 5.0,
+    "navigation_deadline_s": 400.0,
+    "max_replans": 4,
+    "pose_freshness_m": 0.05,
+    "map_freshness_s": 0.4
+  },
+  "policy": {
+    "epsilon_m": 0.1,
+    "llm_model": "gemini-3.5-flash-lite",
+    "llm_reasoning": null,
+    "llm_deadline_s": 30.0,
+    "llm_call_cap": 30,
+    "llm_prompt": "Return exactly one eligible frontier ID."
+  },
+  "recovery": {
+    "cooldown_s": 5.0,
+    "evaluation_retry_cap": 2,
+    "navigation_retry_cap": 2,
+    "opportunity_attempt_cap": 6,
+    "no_progress_cap": 2,
+    "progress_radius_m": 1.0,
+    "minimum_progress_m2": 0.1,
+    "max_cycles_without_navigation": 3
+  },
+  "limits": {
+    "max_attempts": 45,
+    "max_steps": 18000,
+    "max_simulated_time_s": 600.0,
+    "max_wall_time_s": 7200.0,
+    "max_decisions": 80
+  },
+  "evaluation": {
+    "minimum_visibility": 0.1,
+    "minimum_bbox_iou": 0.5,
+    "localization_tolerance_m": 0.25,
+    "required_evidence_frames": 2,
+    "deadline_s": 5.0
+  },
+  "region_priors": [
+    {
+      "region_id": "R1",
+      "boundary_world": [
+        {
+          "x_m": -2.05,
+          "y_m": -4.2
+        },
+        {
+          "x_m": 1.95,
+          "y_m": -4.2
+        },
+        {
+          "x_m": 1.95,
+          "y_m": 1.5
+        },
+        {
+          "x_m": -2.05,
+          "y_m": 1.5
+        }
+      ],
+      "room_type": null
+    },
+    {
+      "region_id": "R2",
+      "boundary_world": [
+        {
+          "x_m": -4.1,
+          "y_m": -2.2
+        },
+        {
+          "x_m": -2.05,
+          "y_m": -2.2
+        },
+        {
+          "x_m": -2.05,
+          "y_m": 1.5
+        },
+        {
+          "x_m": -4.1,
+          "y_m": 1.5
+        }
+      ],
+      "room_type": null
+    },
+    {
+      "region_id": "R3",
+      "boundary_world": [
+        {
+          "x_m": -4.1,
+          "y_m": 1.5
+        },
+        {
+          "x_m": -2.1,
+          "y_m": 1.5
+        },
+        {
+          "x_m": -2.1,
+          "y_m": 3.6
+        },
+        {
+          "x_m": -4.1,
+          "y_m": 3.6
+        }
+      ],
+      "room_type": null
+    },
+    {
+      "region_id": "R4",
+      "boundary_world": [
+        {
+          "x_m": -2.1,
+          "y_m": 1.5
+        },
+        {
+          "x_m": 1.95,
+          "y_m": 1.5
+        },
+        {
+          "x_m": 1.95,
+          "y_m": 3.6
+        },
+        {
+          "x_m": -2.1,
+          "y_m": 3.6
+        }
+      ],
+      "room_type": null
+    }
+  ],
+  "environment_seed": 17,
+  "perception_seed": 10017,
+  "policy_seed": 20017,
+  "oracle_room_labels": false,
+  "capture_every_steps": 10,
+  "module_deadline_s": 60.0,
+  "enable_target_evaluation": true,
+  "initial_clearance_mode": "verified_start_area",
+  "initial_clearance_radius_m": 0.65,
+  "initialization_deadline_s": 240.0
+}

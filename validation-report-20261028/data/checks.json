@@ -1,0 +1,41 @@
+{
+  "full_suite_before_stale_fixture_correction": [
+    {
+      "python": "3.8.20",
+      "tests": 464,
+      "passed": 463,
+      "failures": 1,
+      "skipped": 0
+    },
+    {
+      "python": "3.11.9",
+      "tests": 464,
+      "passed": 459,
+      "failures": 1,
+      "skipped": 4
+    }
+  ],
+  "corrected_test": "test_integrated_pipeline.RecoveryViewpointTests.test_one_localized_view_can_propose_inspection_but_cannot_claim_success",
+  "correction": "Use track.last_seen_s + configured tentative_target_memory_s + 0.001 rather than hard-coded timestamp 20; production behavior unchanged.",
+  "after_correction": {
+    "command": "python -B -m unittest test_integrated_pipeline test_close_object_search",
+    "python": "3.8.20",
+    "tests": 27,
+    "passed": 27,
+    "failures": 0
+  },
+  "native_validation": {
+    "episodes": 4,
+    "successful": 4,
+    "independent_target_validation_passed": 4,
+    "contact_ticks": 0,
+    "llm_calls": 2,
+    "llm_fallbacks": 0
+  },
+  "artifact_checks": {
+    "snapshot_seals": true,
+    "report_links": true,
+    "zip_integrity": true,
+    "configured_credential_absent": true
+  }
+}

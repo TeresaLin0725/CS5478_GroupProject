@@ -874,7 +874,7 @@
       "inspection_linear_speed_mps": 0.03,
       "inspection_angular_speed_radps": 0.02,
       "target_max_extent_m": 0.25,
-      "tentative_target_memory_s": 10.0
+      "tentative_target_memory_s": 30.0
     },
     "observation": {
       "initial_headings_rad": [

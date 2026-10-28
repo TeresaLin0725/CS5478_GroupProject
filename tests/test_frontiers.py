@@ -100,14 +100,26 @@ class FrontierGeometryTests(unittest.TestCase):
         frame = replace(self.frame, robot_pose=replace(self.frame.robot_pose, yaw_rad=2 * pi))
         self.assertEqual(self.candidates(frame=frame), self.candidates())
 
-    def test_thin_free_strip_remains_a_candidate_for_b_to_reject(self):
+    def test_thin_free_strip_does_not_publish_colliding_goal(self):
         data = [[100] * 8 for _ in range(8)]
         for r in range(1, 7):
             data[r][3], data[r][4] = 0, -1
         narrow = grid(data)
-        f, = self.candidates(grid=narrow)
-        self.assertFalse(Costmap.from_robot(narrow, self.robot).pose_valid(f.approach_pose))
-        self.assertEqual(narrow.data[floor(f.approach_pose.y_m / .2)][3], 0)
+        self.assertTrue(extract_clusters(narrow, self.mapping))
+        self.assertEqual(self.candidates(grid=narrow), ())
+
+    def test_new_obstacle_reselects_approach_on_updated_map(self):
+        original, = self.candidates()
+        data = [list(row) for row in self.grid.data]
+        p = original.approach_pose
+        data[floor(p.y_m / .2)][floor(p.x_m / .2)] = 100
+        updated = replace(self.grid, revision=self.grid.revision + 1,
+                          data=tuple(tuple(row) for row in data))
+        candidates = self.candidates(grid=updated)
+        self.assertTrue(candidates)
+        for candidate in candidates:
+            self.assertNotEqual(candidate.approach_pose, p)
+            self.assertTrue(Costmap.from_robot(updated, self.robot).pose_valid(candidate.approach_pose))
 
     def test_all_frontier_settings_reject_invalid_values(self):
         for changes in ({'frontier_min_cells': 0}, {'frontier_min_cells': True},
@@ -248,7 +260,8 @@ class MapperFrontierIntegrationTests(unittest.TestCase):
         context = build_context(state, evaluation)
         self.assertTrue(context.eligible_frontier_ids)
         rejected = {a.frontier_id for a in evaluation.assessments if a.reachable is False}
-        self.assertTrue(rejected)
+        costmap = Costmap.from_robot(state.occupancy_map, init.robot_config)
+        self.assertTrue(all(costmap.pose_valid(f.approach_pose) for f in state.frontiers))
         self.assertFalse(rejected.intersection(context.eligible_frontier_ids))
         policy = BaselinePolicy(PolicyName.NEAREST)
         policy.reset(state.episode_id, 0, PolicyConfig())

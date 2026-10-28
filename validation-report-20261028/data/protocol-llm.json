@@ -1,0 +1,379 @@
+{
+  "schema_version": "simple-llm-extension-v1",
+  "created_utc": "2026-10-28T10:25:57.423889+00:00",
+  "run_root": "D:\\Projects\\CS5478_GroupProject\\runs\\a-simple-llm-20261028",
+  "snapshot_root": "D:\\Projects\\CS5478_GroupProject\\runs\\a-simple-baselines-20261028\\frozen",
+  "env_file": "D:\\Projects\\CS5478_GroupProject\\.env",
+  "engine_fingerprint": "f6a21e35bfaa73d4a91c0470d1d698323b3250263336ab4cb54f3ac9d4014e5d",
+  "source_commit": "062a7c780a64138b10dc789aeeab10255e394069",
+  "scope": "One network-enabled apartment-s17 LLM episode; same frozen source and common setup as three completed baselines.",
+  "navigation_preset": "round_footprint_override",
+  "jobs": [
+    {
+      "job_id": "apartment-s17-llm_guided",
+      "pair_id": "apartment-s17",
+      "profile": "apartment",
+      "policy": "llm_guided",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "manifest_path": "manifests/apartment-s17-llm_guided.json",
+      "manifest_sha256": "4db584025c0a4cd7238bdeef0394b457743421be6fc974b54fcfe6c5b795991c"
+    }
+  ],
+  "base_manifest": {
+    "episode_id": "apartment-s17-llm_guided",
+    "scene_id": "Rs",
+    "source": "igibson",
+    "target_class": "cup",
+    "start_pose": {
+      "x_m": 0.8,
+      "y_m": -2.4,
+      "z_m": 0.0,
+      "yaw_rad": 1.5707963267948966
+    },
+    "robot": {
+      "footprint_base": [
+        {
+          "x_m": -0.182,
+          "y_m": -0.182
+        },
+        {
+          "x_m": 0.182,
+          "y_m": -0.182
+        },
+        {
+          "x_m": 0.182,
+          "y_m": 0.182
+        },
+        {
+          "x_m": -0.182,
+          "y_m": 0.182
+        }
+      ],
+      "collision_z_min_m": 0.0,
+      "collision_z_max_m": 0.908,
+      "clearance_margin_m": 0.02,
+      "motion_model": "differential_drive",
+      "can_turn_in_place": true,
+      "max_linear_speed_mps": 0.32,
+      "max_angular_speed_radps": 1.1,
+      "position_tolerance_m": 0.03,
+      "yaw_tolerance_rad": 0.1
+    },
+    "policy_name": "llm_guided",
+    "mapping": {
+      "resolution_m": 0.1,
+      "width_cells": 70,
+      "height_cells": 85,
+      "origin_x_m": -4.5,
+      "origin_y_m": -4.5,
+      "confirmation_frames": 2,
+      "confirmation_window_s": 3.0,
+      "confidence_threshold": 0.5,
+      "floor_height_m": 0.0,
+      "floor_tolerance_m": 0.04,
+      "depth_min_m": 0.1,
+      "depth_max_m": 5.0,
+      "clearance_bin_height_m": 0.05,
+      "depth_surface_margin_m": 0.02,
+      "base_elevation_margin_m": 0.015,
+      "frontier_min_cells": 2,
+      "frontier_connectivity": 4,
+      "frontier_approach_search_m": 1.0,
+      "frontier_match_tolerance_cells": 1,
+      "frontier_match_fraction": 0.25,
+      "frontier_history_s": 30.0,
+      "gain_range_m": 3.0,
+      "gain_ray_step_rad": 0.15,
+      "object_match_distance_m": 0.35,
+      "depth_pixel_stride": 4,
+      "frontier_cluster_span_m": 1.0,
+      "dynamic_clear_frames": 2,
+      "inspection_distance_m": 0.9,
+      "inspection_linear_speed_mps": 0.03,
+      "inspection_angular_speed_radps": 0.02,
+      "target_max_extent_m": 0.25,
+      "tentative_target_memory_s": 30.0,
+      "claim_confidence_threshold": 0.65
+    },
+    "observation": {
+      "initial_headings_rad": [
+        0.0,
+        1.57,
+        -1.57,
+        0.0
+      ],
+      "arrival_headings_rad": [
+        0.0,
+        1.5707963267948966,
+        3.141592653589793,
+        -1.5707963267948966,
+        0.0
+      ],
+      "recovery_headings_rad": [
+        1.5707963267948966,
+        3.141592653589793,
+        -1.5707963267948966,
+        0.0
+      ],
+      "heading_tolerance_rad": 0.05,
+      "dwell_s": 0.6,
+      "processed_samples_per_heading": 1,
+      "allow_full_rotation": true,
+      "operation_deadline_s": 400.0,
+      "drain_deadline_s": 30.0,
+      "inspection_hold_s": 4.0,
+      "inspection_headings_rad": [
+        -0.15,
+        0.0,
+        0.15
+      ]
+    },
+    "navigation": {
+      "batch_deadline_s": 5.0,
+      "navigation_deadline_s": 400.0,
+      "max_replans": 4,
+      "pose_freshness_m": 0.05,
+      "map_freshness_s": 0.4
+    },
+    "policy": {
+      "epsilon_m": 0.1,
+      "llm_model": "gemini-3.5-flash-lite",
+      "llm_reasoning": null,
+      "llm_deadline_s": 30.0,
+      "llm_call_cap": 30,
+      "llm_prompt": "Return exactly one eligible frontier ID."
+    },
+    "recovery": {
+      "cooldown_s": 5.0,
+      "evaluation_retry_cap": 2,
+      "navigation_retry_cap": 2,
+      "opportunity_attempt_cap": 6,
+      "no_progress_cap": 2,
+      "progress_radius_m": 1.0,
+      "minimum_progress_m2": 0.1,
+      "max_cycles_without_navigation": 3
+    },
+    "limits": {
+      "max_attempts": 45,
+      "max_steps": 18000,
+      "max_simulated_time_s": 600.0,
+      "max_wall_time_s": 7200.0,
+      "max_decisions": 80
+    },
+    "evaluation": {
+      "minimum_visibility": 0.1,
+      "minimum_bbox_iou": 0.5,
+      "localization_tolerance_m": 0.25,
+      "required_evidence_frames": 2,
+      "deadline_s": 5.0
+    },
+    "region_priors": [
+      {
+        "region_id": "R1",
+        "boundary_world": [
+          {
+            "x_m": -2.05,
+            "y_m": -4.2
+          },
+          {
+            "x_m": 1.95,
+            "y_m": -4.2
+          },
+          {
+            "x_m": 1.95,
+            "y_m": 1.5
+          },
+          {
+            "x_m": -2.05,
+            "y_m": 1.5
+          }
+        ],
+        "room_type": null
+      },
+      {
+        "region_id": "R2",
+        "boundary_world": [
+          {
+            "x_m": -4.1,
+            "y_m": -2.2
+          },
+          {
+            "x_m": -2.05,
+            "y_m": -2.2
+          },
+          {
+            "x_m": -2.05,
+            "y_m": 1.5
+          },
+          {
+            "x_m": -4.1,
+            "y_m": 1.5
+          }
+        ],
+        "room_type": null
+      },
+      {
+        "region_id": "R3",
+        "boundary_world": [
+          {
+            "x_m": -4.1,
+            "y_m": 1.5
+          },
+          {
+            "x_m": -2.1,
+            "y_m": 1.5
+          },
+          {
+            "x_m": -2.1,
+            "y_m": 3.6
+          },
+          {
+            "x_m": -4.1,
+            "y_m": 3.6
+          }
+        ],
+        "room_type": null
+      },
+      {
+        "region_id": "R4",
+        "boundary_world": [
+          {
+            "x_m": -2.1,
+            "y_m": 1.5
+          },
+          {
+            "x_m": 1.95,
+            "y_m": 1.5
+          },
+          {
+            "x_m": 1.95,
+            "y_m": 3.6
+          },
+          {
+            "x_m": -2.1,
+            "y_m": 3.6
+          }
+        ],
+        "room_type": null
+      }
+    ],
+    "environment_seed": 17,
+    "perception_seed": 10017,
+    "policy_seed": 20017,
+    "oracle_room_labels": false,
+    "capture_every_steps": 10,
+    "module_deadline_s": 60.0,
+    "enable_target_evaluation": true,
+    "initial_clearance_mode": "verified_start_area",
+    "initial_clearance_radius_m": 0.65,
+    "initialization_deadline_s": 240.0
+  },
+  "runtime": {
+    "workers": 1,
+    "torch_threads": 4,
+    "device": "0",
+    "startup_deadline_s": 300.0
+  },
+  "asset_paths": {
+    "robot_assets": "D:\\Projects\\CS5478_GroupProject\\data\\igibson-data\\robot_assets\\assets",
+    "scenes": "D:\\Projects\\CS5478_GroupProject\\data\\igibson-data\\g_dataset"
+  },
+  "watchdog_transport": "shared_memory_v1",
+  "previous_run": "D:\\Projects\\CS5478_GroupProject\\runs\\b-recovered-benchmark-20261024",
+  "snapshot_seals": {
+    "harness/benchmark_episode.py": "2a12e52f45bccbbcd7b46a3454d153908869016f4b103c5d2df114a3911f35bf",
+    "harness/benchmark_watchdog.py": "76592e685960af135898af7046b35924d94b549cf40352788a33f271aaac2c1c",
+    "src/frontier_search/cli.py": "a52af031f44f31ee13925068fd4866036c74e46f290808720361a4b35ec6f1dd",
+    "src/frontier_search/config.py": "9da9d5e208fffdc28086ca654380efdede13cb1f5f0079b1c2ff4824ef6abe0e",
+    "src/frontier_search/contracts.py": "7ea48d3d9151f6729a742cdfbd9c0a78f92590a48cf631431a1f7bcc363ac0aa",
+    "src/frontier_search/immutable.py": "bb7095340bafa978835c184029b102486a0f70953b997a1302c42bfd05a68887",
+    "src/frontier_search/sensors.py": "571bb8cb5916bc50637c05a6cdefbbda0c51d655c64beb20e36e5421b822e528",
+    "src/frontier_search/validation.py": "a25c7c19158ab92a28c953a2ee26a0739da8d3fa81cf6877faa4349e0080c744",
+    "src/frontier_search/__init__.py": "747c7ae6cf57e4584518a8e5d039287f8ac79938633aa170a9a432939b46afca",
+    "src/frontier_search/__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+    "src/frontier_search/evaluation/api.py": "481dc537e2b8a418391de2dc1ed30613bbe2cbf4600b6d3b995f87c78e39ec14",
+    "src/frontier_search/evaluation/proximity.py": "0bc6c9bf5e2f5cd18feed471d8571d727d46af23b782d2584a5442b6c33941b8",
+    "src/frontier_search/evaluation/retained.py": "2291564dfc689202cc28d36e689ac4167990fd9e2364207228fe23d24477894f",
+    "src/frontier_search/evaluation/verifier.py": "950113d1ad9a7ed341ea24419986ee375b54be6bd593abd8ccfdf3454a56c87d",
+    "src/frontier_search/evaluation/__init__.py": "2e024d228f6b76955d1d5b3c3b0c2b8dd16b6c4524dfdc16ff67084d30bd0985",
+    "src/frontier_search/experiments/logging.py": "fe845e21ad004fc533962132f44b259945b2cb7611bddc910688ca9d01e90013",
+    "src/frontier_search/experiments/__init__.py": "3adc152fa3965fd2891d9059487850dc046340b57ce0bb3495db32cf46f44bb0",
+    "src/frontier_search/fixtures/analytic_rgbd.py": "5e6bfee7da223a9ad8c86ba60a129f251fca0f63ea562a88dac3ce0458fbff98",
+    "src/frontier_search/fixtures/clearance.py": "942e1c41d82449f07cb00138567485799f9493bd6e99db783ac57c8b38d62838",
+    "src/frontier_search/fixtures/loader.py": "5652b594c3f45cd7efe45844017454272eb3eec562d1dfc006a0e27ca19eb10d",
+    "src/frontier_search/fixtures/recording.py": "5060164551157825b38e127c211244e74c8bfe61340df25e7ba3579970dd1245",
+    "src/frontier_search/fixtures/sequence.py": "c98fc1959674ab07c70dc06d6985fb1a9efc472809440826b3026e97dcaa788c",
+    "src/frontier_search/fixtures/three_rooms.py": "d074930510acaf6fbde39d1be63c1222669812177bcac7dde14f20bd4e6e64ed",
+    "src/frontier_search/fixtures/w2_episode.py": "8be1e27f511d6848fc7b4041e74448b184c4205c0c297a6f0c705e3dce08d638",
+    "src/frontier_search/fixtures/__init__.py": "ee5347aa4a4f1285b0439a1675295bb8788ff275080020c14544ce01902fe8da",
+    "src/frontier_search/navigation/api.py": "cd01e69b36044f9f07f689c3cb2fde5e2886299595d5973d275345c8cf2426a6",
+    "src/frontier_search/navigation/costmap.py": "28e80883c2c4a0d5ebf970258964f3125bfc5ec887d8c384a201e6e87661b742",
+    "src/frontier_search/navigation/demo.py": "e3ce363246aa7a66318a18cf630458becd45b588eda7dcc0090e03d063f04c12",
+    "src/frontier_search/navigation/dev_robot.py": "e182bec2a941fcb7e915049f0ce66ff4a06274ce0568f2d3aeb01bfd06206e45",
+    "src/frontier_search/navigation/geometry.py": "fe3420454eafe4eaac4100f963181bca386166c3dd0f8de40288f216a9e59bc7",
+    "src/frontier_search/navigation/lattice.py": "bfb0c73aacd5e13562de4535d43ccf91d264079633ddcd86a0964e1f1baaf15b",
+    "src/frontier_search/navigation/locobot_robot.py": "d86436b385dad7180c8e08915d5c302e548ccd3de175fc3938b4a8d3e37c1905",
+    "src/frontier_search/navigation/navigator.py": "8f4dd2cc390db434e7b6688e98cc913114bfae84bf29bbc7b7ac16677c4abe34",
+    "src/frontier_search/navigation/planner.py": "b9f2d1d1ea36c39468833873b1ae27146d3ebd8fa70ab39607312f6ee5de2432",
+    "src/frontier_search/navigation/__init__.py": "1f04cc1dc78876885c638ac6a5bf67a26e617551fc9ce72f2e65945c79c7fae8",
+    "src/frontier_search/perception/api.py": "af6475c325c2daf7ee5d5ec90fc9cd88e4851f77eb5322ca711a1ebb2bb1d713",
+    "src/frontier_search/perception/claims.py": "cfd1e158c893865eb680ffdc1544cd749520bb796cad3405e92e0eaf26fe8f37",
+    "src/frontier_search/perception/detection.py": "6d89f629f9bc892ed62e8f8d4ae36bb63d45467923188f908695962a3f3f4907",
+    "src/frontier_search/perception/frontiers.py": "03b67336257f77f237b9bd88837cc295fedcc57b3c727b1ea7c3eee90a68bc55",
+    "src/frontier_search/perception/fusion.py": "2ba11ace8c9fa2f9ad5c3430aaeee8ef674f288e25b6e17f92742fb8241166ed",
+    "src/frontier_search/perception/gain.py": "df8ff54ae7443b56f39fed57aa19e6c6cee8f4a8800aa87d810bdaca6b521286",
+    "src/frontier_search/perception/mapper.py": "ced706568fc6df60550bd5a5bd8461ff9ae3fefb1d7c515c6b8ef5d481c38c51",
+    "src/frontier_search/perception/observations.py": "ca7127be53542e9cab5f30e733a24a017f98c58b2922699a4254061c0e6ceb50",
+    "src/frontier_search/perception/occupancy.py": "31ca6372a7e8a5aae35fbd44a4a98855ae35cbefa044bc2428cd0070c2efddba",
+    "src/frontier_search/perception/priors.py": "b6375c7750c9ee46ff63cc71182efb6324d2a960b0751f923db8519a94b47343",
+    "src/frontier_search/perception/profiling.py": "2228ee662fac25c69def0a5f6e886710b1d14b2aa89977f439aa303d27eae82c",
+    "src/frontier_search/perception/projection.py": "fb95a65287b096591aff60bc9ed47a902f0a8c392754ba7a7dab418898ecd31e",
+    "src/frontier_search/perception/tracking.py": "ee6ad3dedb22b82f9edc29bb6abe9e21fd9074f0e26c57a9a26623cce2234a61",
+    "src/frontier_search/perception/__init__.py": "fb4e91cc76c69dec8fd3628e13889aac369b3cfce83cd714da16e0f2bab637d2",
+    "src/frontier_search/policies/api.py": "f2cae4bacd7884eba6a50cbb8f18345dfbc6ebd9208856ca1f966c2462912825",
+    "src/frontier_search/policies/baselines.py": "1b30574ed52098c3d8ea8a3b107b5f48c9d25a415cccc2e55338a407ce4a66f3",
+    "src/frontier_search/policies/llm.py": "638b21bb29cd50b23cde8e7c020daa66e33775ec65e8861ba026b2836711f443",
+    "src/frontier_search/policies/provider.py": "4a363aafba5c9f8538f2b5c72f5349225029a8f03a2b0ee9477cee388ccbd9e7",
+    "src/frontier_search/policies/transport.py": "7c5e4c80cd699a80b7e8ef51326c12aa0a90be9e0ee2fd90497614f964c0559d",
+    "src/frontier_search/policies/__init__.py": "9ae475c7ce6b8aa467dc24a68dafff15697f4da376032722afae70bbfabdff89",
+    "src/frontier_search/runner/demo_video.py": "b7fc2bb21e9acbf87f63f0c7f1c7bbe14ca0428c3ea470e84790ddbe50e6a0bb",
+    "src/frontier_search/runner/diagnose_clearance.py": "e5e45e7c8b57b3f206de881a1305d20d649b0424d02ec614b7093fd30911e95c",
+    "src/frontier_search/runner/episode.py": "b80760358f58a12ac3fdaeb5684b2470b3e1c7c6ca1018025a3ebb82a8a923ff",
+    "src/frontier_search/runner/igibson_demo.py": "e081d5f10e2221588833316a0b89603a1ce93fff6595db81cc6d2e993f492a6f",
+    "src/frontier_search/runner/indoor_viewer.html": "d35d3ec5485bcebe9675a4c94de4d95056ac424f07bdd66096e4714d5687f375",
+    "src/frontier_search/runner/indoor_viewer.py": "4bdfb2c965f6a98865cd0bf06d54a8d1ac17f3400f4d10deb77f89a5459fbcca",
+    "src/frontier_search/runner/integrated.py": "feaee4ce8b0c5315590ee0a1325a670a97d456ab159610482630f6542072c8fb",
+    "src/frontier_search/runner/integrated_recording.py": "655c914a504caa4d7ee05a19730cf37d9ecb79c1b00a48a57b5227238f5ce586",
+    "src/frontier_search/runner/manifest.py": "3fa9f847ef7764f6155ff0754ffe20b584d44317f9ee9a43c5d51582fb958b8f",
+    "src/frontier_search/runner/recovery.py": "1b2e38a7205c59ecf9231f85b5156b97e7a642f19db670415d9ab3b06ab4e11b",
+    "src/frontier_search/runner/replay.py": "e41785d710f7c3e0c964db4138a11a9397229422949adeccbc477a790885399f",
+    "src/frontier_search/runner/supervisor.py": "04c169900a028b5e25034ad9338869b23b4ce874b6d798b68cdcd74685d41017",
+    "src/frontier_search/runner/synthetic.py": "d73b28a5dace0656ba1eed2ebd72df95fd9477a39577b2945180b9d1fe978651",
+    "src/frontier_search/runner/w2.py": "a04c39b1aae3f1894284e3fbc1a2a846c3e90ab590d55cce1d91fb8377e9dcea",
+    "src/frontier_search/runner/__init__.py": "e12259290ca70fc848df09bf53c00ba3b264325dbf33d50a43d8f47edf2afb7f",
+    "src/frontier_search/simulation/api.py": "2c8af8289432def135c4ef6b40fe04a8fde123429b8706962a62c4bf3241c980",
+    "src/frontier_search/simulation/capture_igibson.py": "bbb83ed5f9a59b9b12123a2578859be91a404d0ad39a7fffc4a0af25053bf3c0",
+    "src/frontier_search/simulation/cart_motion.py": "3aa03b5f0b300ece1c005728a93fd9a784d2e5ff125915324ecf7c90380ad41e",
+    "src/frontier_search/simulation/igibson_adapter.py": "91063ac817976606b9ebe1b28664a6f05cac0d9bbed2495c24cd92c51e8fcfba",
+    "src/frontier_search/simulation/igibson_rs.py": "71ee7db67d6d341432386d0b5027f366e2e3f9b95049fa1e7a3dd0784a379c2f",
+    "src/frontier_search/simulation/indoor_challenges.py": "d82385a1546cd5a20c1831ff49c0b26db729baad225993d08a31dfd43200725b",
+    "src/frontier_search/simulation/integrated_rs.py": "b0d6a0ef41226f5e2d8d0291bceebbcd41fc78496af54c662f53680b46696311",
+    "src/frontier_search/simulation/mock_adapter.py": "6a0cb4611b94b325da38d120e7c05ec6354b7070298570b9683d3b14fa6609fb",
+    "src/frontier_search/simulation/record_sequence.py": "be25d4015aa7ac52e32c8274dc95b3f73828f50383e69f4497f77ce7a95cd3d6",
+    "src/frontier_search/simulation/rgbd.py": "bb7e00b6b675b8087e4ecf6937e8c1e85871b55b1d1dfe8aa540cfe94e5d5e4e",
+    "src/frontier_search/simulation/start_area_verifier.py": "8aafb9c4e4f2b70d7849f3d2937e8110497b613ab73689f9a26408968d335b1c",
+    "src/frontier_search/simulation/__init__.py": "3b0211966bd653b67fed274068959f0677959d3bdef7ec960793309855d56cfc",
+    "weights/yolo11/yolo11s.pt": "85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5"
+  },
+  "parent_baselines": "D:\\Projects\\CS5478_GroupProject\\runs\\a-simple-baselines-20261028",
+  "connectivity_check": "connectivity.json",
+  "interruption_policy": "Preserve completed results; archive incomplete user-cancelled attempts; explicit resume restarts incomplete episode."
+}

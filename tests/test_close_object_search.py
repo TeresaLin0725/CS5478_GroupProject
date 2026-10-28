@@ -9,6 +9,23 @@ HAS_DEPS=all(importlib.util.find_spec(m) for m in ('numpy',))
 
 @unittest.skipUnless(HAS_DEPS,'optional numpy not installed')
 class CloseObjectSearchTests(unittest.TestCase):
+    def test_tentative_target_survives_arrival_scan_but_expires(self):
+        from frontier_search.config import MappingConfig
+        from frontier_search.contracts import ObjectTrack, Point3
+        from frontier_search.perception.mapper import _target_approaches
+        from test_mapper_update import request, scene_frame
+        cfg = MappingConfig(inspection_distance_m=.8)
+        track = ObjectTrack('cup', 'cup', .7, Point3(1.4, 1.4, .8),
+                            70.333, 70.333, ('seen-once',), 1)
+        frame = replace(scene_frame(), timestamp_s=84.1)
+        def approaches(time, config=cfg):
+            return _target_approaches(self.grid(), replace(frame, timestamp_s=time),
+                {'cup': track}, 'cup', config, request().robot_config)
+        self.assertEqual(approaches(84.1, replace(cfg, tentative_target_memory_s=10.)), ())
+        self.assertTrue(approaches(84.1))
+        self.assertTrue(approaches(track.last_seen_s + 30.))
+        self.assertEqual(approaches(track.last_seen_s + 30.001), ())
+
     def test_diagonal_observed_boundary_survives_frontier_size_filter(self):
         from frontier_search.config import MappingConfig
         from frontier_search.contracts import OccupancyGrid

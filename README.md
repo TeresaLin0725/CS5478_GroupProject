@@ -1,5 +1,9 @@
 # Indoor frontier object search
 
+2026-10-28 原始公寓单案例验证：[四策略报告](validation-report-20261028/report/index.html)、
+[结果与限制](Documentation/chinese/simple_apartment_validation.md)。四策略均成功、零接触步；
+LLM 两次在线调用、零回退。本次为 apartment-s17 验证，不替代完整 36 回合配对实验。
+
 ## 最新结果（2026-10-18）
 
 打开 **[report/index.html](report/index.html)**（或根目录 [demo.html](demo.html)）。报告只收录最新一版结果：
@@ -68,6 +72,7 @@ is authoritative for behavior and ownership, with the
 [close-object search extension](Documentation/english/close_object_search.md) and
 [verified starting area](Documentation/english/verified_start_area.md).
 Component notes: [A mapping](Documentation/english/w2_mapping.md),
+[fusion profiling and evidence baseline](Documentation/chinese/fusion_profiling.md),
 [RGB-D replay](Documentation/english/w2_rgbd_replay.md),
 [W3 detection](Documentation/english/w3_detection.md),
 [W3 verifier](Documentation/english/w3_verifier.md),
