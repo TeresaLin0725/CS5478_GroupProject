@@ -45,19 +45,37 @@ def _ray_voxels(start: Tuple[float, ...], end: Tuple[float, ...],
     increments = [abs(1 / d) if d else float('inf') for d in delta]
     steps = [1 if d > 0 else -1 if d < 0 else 0 for d in delta]
     limits = [ceil(b) for b in bounds]
+    # Keep voxel indices/crossings in local scalars. The original loop created
+    # enumerate tuples and indexed three lists for every crossed voxel.
+    c, r, z = cells
+    tx, ty, tz = crossings
+    ix, iy, iz = increments
+    sx, sy, sz = steps
+    nx, ny, nz = limits
     current = enter
     while current < leave:
-        following = min(leave, crossings[0], crossings[1], crossings[2])
+        following = min(leave, tx, ty, tz)
         if following - current > 1e-12:
-            yield tuple(cells)
+            yield c, r, z
         if following >= leave:
             break
-        for axis, crossing in enumerate(crossings):
-            if crossing <= following + 1e-12:
-                cells[axis] += steps[axis]
-                if cells[axis] < 0 or cells[axis] >= limits[axis]:
-                    return
-                crossings[axis] += increments[axis]
+        # Preserve axis order and tolerance, including simultaneous crossings.
+        threshold = following + 1e-12
+        if tx <= threshold:
+            c += sx
+            if c < 0 or c >= nx:
+                return
+            tx += ix
+        if ty <= threshold:
+            r += sy
+            if r < 0 or r >= ny:
+                return
+            ty += iy
+        if tz <= threshold:
+            z += sz
+            if z < 0 or z >= nz:
+                return
+            tz += iz
         current = following
 
 
@@ -82,7 +100,11 @@ def fuse_observation(observation: RGBDObservation, cfg: MappingConfig,
              (camera[1] - cfg.origin_y_m) / cfg.resolution_m,
              (camera[2] - low) / bin_height)
     bounds = (cfg.width_cells, cfg.height_cells, vertical_extent)
-    fresh_masks, fresh_floor, hits = {}, set(), set()
+    # Dense evidence avoids allocating/hashing (row, column) keys for each voxel.
+    # This is frame-local: accumulated masks cannot prove that an obstacle left.
+    fresh_masks = ([[0] * cfg.width_cells for _ in range(cfg.height_cells)]
+                   if clear_counts is not None else None)
+    fresh_floor, hits = set(), set()
     for _, _, depth, x, y, z in iter_depth_world(observation, cfg.depth_pixel_stride):
         if not cfg.depth_min_m <= depth <= cfg.depth_max_m:
             continue
@@ -105,14 +127,26 @@ def fuse_observation(observation: RGBDObservation, cfg: MappingConfig,
                (endpoint[2] - low) / bin_height)
         for c, r, z in _ray_voxels(start, end, bounds):
             coverage[r][c] = True
-            free_masks[r][c] |= 1 << z
-            if clear_counts is not None:
-                fresh_masks[r, c] = fresh_masks.get((r, c), 0) | (1 << z)
+            bit = 1 << z
+            free_masks[r][c] |= bit
+            if fresh_masks is not None:
+                fresh_masks[r][c] |= bit
+    _finalize_free_space(cfg, occupancy, free_masks, floor_seen, clear_counts,
+                         increment_clear_count, fresh_masks, fresh_floor, hits, full_mask)
+
+
+def _finalize_free_space(cfg, occupancy, free_masks, floor_seen, clear_counts,
+                         increment_clear_count, fresh_masks, fresh_floor, hits, full_mask):
+    """Apply the unchanged floor/column and consecutive-fresh-frame rules.
+
+    Keep this phase separate so the offline profiler can distinguish final map
+    decisions from ray traversal and evidence writes without per-cell timers.
+    """
     for r in range(cfg.height_cells):
         for c in range(cfg.width_cells):
             if clear_counts is not None and occupancy[r][c] == 100:
                 clear = ((r, c) not in hits and (r, c) in fresh_floor
-                         and fresh_masks.get((r, c), 0) == full_mask)
+                         and fresh_masks[r][c] == full_mask)
                 if not clear:
                     clear_counts[r][c] = 0
                 elif increment_clear_count:

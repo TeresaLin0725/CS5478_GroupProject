@@ -68,6 +68,7 @@ is authoritative for behavior and ownership, with the
 [close-object search extension](Documentation/english/close_object_search.md) and
 [verified starting area](Documentation/english/verified_start_area.md).
 Component notes: [A mapping](Documentation/english/w2_mapping.md),
+[fusion profiling and evidence baseline](Documentation/chinese/fusion_profiling.md),
 [RGB-D replay](Documentation/english/w2_rgbd_replay.md),
 [W3 detection](Documentation/english/w3_detection.md),
 [W3 verifier](Documentation/english/w3_verifier.md),
