@@ -1,0 +1,122 @@
+{
+  "evidence": {
+    "episode_id": "clutter-s43-information_gain",
+    "claim_id": "claim-000001",
+    "detections": [
+      {
+        "observation_id": "detection-001181",
+        "capture_sequence": 678,
+        "timestamp_s": 204.66666666666666,
+        "track_id": "track-000109",
+        "class_name": "cup",
+        "confidence": 0.6644905209541321,
+        "bbox_xyxy_px": [
+          246,
+          71,
+          290,
+          113
+        ],
+        "position_world": {
+          "x_m": -1.3732291243296189,
+          "y_m": 2.9271265664918276,
+          "z_m": 0.9251358604086302
+        }
+      },
+      {
+        "observation_id": "detection-001185",
+        "capture_sequence": 681,
+        "timestamp_s": 205.66666666666666,
+        "track_id": "track-000109",
+        "class_name": "cup",
+        "confidence": 0.6576902270317078,
+        "bbox_xyxy_px": [
+          246,
+          71,
+          289,
+          113
+        ],
+        "position_world": {
+          "x_m": -1.3734328724713754,
+          "y_m": 2.9273098368221686,
+          "z_m": 0.9251814592290217
+        }
+      }
+    ]
+  },
+  "frames": [
+    {
+      "episode_id": "clutter-s43-information_gain",
+      "capture_sequence": 678,
+      "timestamp_s": 204.66666666666666,
+      "width": 640,
+      "height": 480,
+      "instances": [
+        {
+          "instance_id": "Rs-inserted-mug",
+          "class_name": "cup",
+          "visibility": 0.9519350811485643,
+          "bbox_xyxy_px": [
+            246,
+            71,
+            289,
+            113
+          ],
+          "position_world": {
+            "x_m": -1.3710126187155884,
+            "y_m": 2.9261813260446004,
+            "z_m": 0.9259558248272639
+          }
+        }
+      ]
+    },
+    {
+      "episode_id": "clutter-s43-information_gain",
+      "capture_sequence": 681,
+      "timestamp_s": 205.66666666666666,
+      "width": 640,
+      "height": 480,
+      "instances": [
+        {
+          "instance_id": "Rs-inserted-mug",
+          "class_name": "cup",
+          "visibility": 0.9524405506883604,
+          "bbox_xyxy_px": [
+            246,
+            71,
+            289,
+            113
+          ],
+          "position_world": {
+            "x_m": -1.371001956736821,
+            "y_m": 2.926350484146612,
+            "z_m": 0.925983931553216
+          }
+        }
+      ]
+    }
+  ],
+  "motion": {
+    "678": {
+      "pose": {
+        "x_m": -0.7406881405798286,
+        "y_m": 2.4485984810271746,
+        "z_m": 0.0003817456995852281,
+        "yaw_rad": 2.3541041737541506
+      },
+      "linear_mps": 0.0015913723892751893,
+      "angular_radps": 0.019206652554508173,
+      "command_stopped": true
+    },
+    "681": {
+      "pose": {
+        "x_m": -0.7401294722346714,
+        "y_m": 2.448158903310484,
+        "z_m": 0.00038216388710198934,
+        "yaw_rad": 2.352919646755428
+      },
+      "linear_mps": 0.0010943921631126504,
+      "angular_radps": 0.0016662627199303588,
+      "command_stopped": true
+    }
+  }
+}

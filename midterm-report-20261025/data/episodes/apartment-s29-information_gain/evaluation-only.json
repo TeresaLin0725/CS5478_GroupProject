@@ -1,0 +1,122 @@
+{
+  "evidence": {
+    "episode_id": "apartment-s29-information_gain",
+    "claim_id": "claim-000001",
+    "detections": [
+      {
+        "observation_id": "detection-000478",
+        "capture_sequence": 264,
+        "timestamp_s": 80.0,
+        "track_id": "track-000057",
+        "class_name": "cup",
+        "confidence": 0.6707742810249329,
+        "bbox_xyxy_px": [
+          261,
+          73,
+          304,
+          114
+        ],
+        "position_world": {
+          "x_m": -1.3741112419287034,
+          "y_m": 2.926582484133598,
+          "z_m": 0.9239691049847039
+        }
+      },
+      {
+        "observation_id": "detection-000482",
+        "capture_sequence": 273,
+        "timestamp_s": 83.0,
+        "track_id": "track-000057",
+        "class_name": "cup",
+        "confidence": 0.6009341478347778,
+        "bbox_xyxy_px": [
+          234,
+          72,
+          278,
+          114
+        ],
+        "position_world": {
+          "x_m": -1.3738994537766924,
+          "y_m": 2.9263063249386048,
+          "z_m": 0.9239872148665966
+        }
+      }
+    ]
+  },
+  "frames": [
+    {
+      "episode_id": "apartment-s29-information_gain",
+      "capture_sequence": 264,
+      "timestamp_s": 80.0,
+      "width": 640,
+      "height": 480,
+      "instances": [
+        {
+          "instance_id": "Rs-inserted-mug",
+          "class_name": "cup",
+          "visibility": 0.9540453074433657,
+          "bbox_xyxy_px": [
+            261,
+            73,
+            304,
+            114
+          ],
+          "position_world": {
+            "x_m": -1.3711600916382198,
+            "y_m": 2.9259863430698037,
+            "z_m": 0.9259616481967671
+          }
+        }
+      ]
+    },
+    {
+      "episode_id": "apartment-s29-information_gain",
+      "capture_sequence": 273,
+      "timestamp_s": 83.0,
+      "width": 640,
+      "height": 480,
+      "instances": [
+        {
+          "instance_id": "Rs-inserted-mug",
+          "class_name": "cup",
+          "visibility": 0.9518221124150711,
+          "bbox_xyxy_px": [
+            234,
+            72,
+            278,
+            114
+          ],
+          "position_world": {
+            "x_m": -1.3712769168549128,
+            "y_m": 2.9259948100701347,
+            "z_m": 0.9259526910629128
+          }
+        }
+      ]
+    }
+  ],
+  "motion": {
+    "264": {
+      "pose": {
+        "x_m": -0.7409743753363468,
+        "y_m": 2.431622802394837,
+        "z_m": 0.00035322337189731704,
+        "yaw_rad": 2.3777766641621656
+      },
+      "linear_mps": 0.013061053725752404,
+      "angular_radps": 4.154550360853631e-05,
+      "command_stopped": false
+    },
+    "273": {
+      "pose": {
+        "x_m": -0.745085727688559,
+        "y_m": 2.4361821422759053,
+        "z_m": 0.0005688503849650902,
+        "yaw_rad": 2.3083402672896445
+      },
+      "linear_mps": 0.0024490723623032382,
+      "angular_radps": 0.012907310634197058,
+      "command_stopped": true
+    }
+  }
+}

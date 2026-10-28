@@ -93,13 +93,14 @@ class EpisodeRunner:
 
     def _call(self, name, function, *args, **kwargs):
         deadline = kwargs.pop('_deadline', self.manifest.module_deadline_s)
-        started = self.clock()
         self._emit('module_begin', module=name, deadline_s=deadline)
+        started = self.clock()
         try:
             value = function(*args, **kwargs)
         finally:
-            self._emit('module_end', module=name, elapsed_s=self.clock()-started)
-        if self.clock()-started > deadline:
+            elapsed = self.clock()-started
+            self._emit('module_end', module=name, elapsed_s=elapsed)
+        if elapsed > deadline:
             raise TimeoutError('module exceeded deadline: ' + name)
         return value
 
@@ -405,7 +406,8 @@ class EpisodeRunner:
             manifest.validate()
             self._emit('episode_start', manifest=manifest)
             self._call('simulator.reset', self.simulator.reset, manifest.episode_id, manifest.scene_id,
-                       manifest.start_pose, manifest.environment_seed)
+                       manifest.start_pose, manifest.environment_seed,
+                       _deadline=manifest.initialization_deadline_s or manifest.module_deadline_s)
             self.sim_time = self._call('sim_time_s', self.simulator.sim_time_s)
             require(self.sim_time == 0.0, 'episode clock must start at zero')
             self._call('stop', self.simulator.stop)

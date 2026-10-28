@@ -1,0 +1,122 @@
+{
+  "evidence": {
+    "episode_id": "clutter-s29-random",
+    "claim_id": "claim-000001",
+    "detections": [
+      {
+        "observation_id": "detection-001173",
+        "capture_sequence": 681,
+        "timestamp_s": 202.66666666666666,
+        "track_id": "track-000106",
+        "class_name": "cup",
+        "confidence": 0.5681630969047546,
+        "bbox_xyxy_px": [
+          250,
+          72,
+          293,
+          113
+        ],
+        "position_world": {
+          "x_m": -1.3742878026632384,
+          "y_m": 2.92607238138119,
+          "z_m": 0.9246704086339989
+        }
+      },
+      {
+        "observation_id": "detection-001176",
+        "capture_sequence": 687,
+        "timestamp_s": 204.66666666666666,
+        "track_id": "track-000106",
+        "class_name": "cup",
+        "confidence": 0.7317562699317932,
+        "bbox_xyxy_px": [
+          257,
+          72,
+          301,
+          113
+        ],
+        "position_world": {
+          "x_m": -1.3746053420525386,
+          "y_m": 2.9254991972892603,
+          "z_m": 0.9243807033009799
+        }
+      }
+    ]
+  },
+  "frames": [
+    {
+      "episode_id": "clutter-s29-random",
+      "capture_sequence": 681,
+      "timestamp_s": 202.66666666666666,
+      "width": 640,
+      "height": 480,
+      "instances": [
+        {
+          "instance_id": "Rs-inserted-mug",
+          "class_name": "cup",
+          "visibility": 0.9507174048658765,
+          "bbox_xyxy_px": [
+            250,
+            72,
+            293,
+            113
+          ],
+          "position_world": {
+            "x_m": -1.3712466572815738,
+            "y_m": 2.9260252681765593,
+            "z_m": 0.9260697718554186
+          }
+        }
+      ]
+    },
+    {
+      "episode_id": "clutter-s29-random",
+      "capture_sequence": 687,
+      "timestamp_s": 204.66666666666666,
+      "width": 640,
+      "height": 480,
+      "instances": [
+        {
+          "instance_id": "Rs-inserted-mug",
+          "class_name": "cup",
+          "visibility": 0.9539141414141414,
+          "bbox_xyxy_px": [
+            258,
+            72,
+            301,
+            113
+          ],
+          "position_world": {
+            "x_m": -1.371072238927928,
+            "y_m": 2.926021872646497,
+            "z_m": 0.9261310147523959
+          }
+        }
+      ]
+    }
+  ],
+  "motion": {
+    "681": {
+      "pose": {
+        "x_m": -0.7472651843371041,
+        "y_m": 2.4417901071470762,
+        "z_m": 0.00032723750629868844,
+        "yaw_rad": 2.3534734853791455
+      },
+      "linear_mps": 0.0015330896336831605,
+      "angular_radps": 0.015234506657265473,
+      "command_stopped": true
+    },
+    "687": {
+      "pose": {
+        "x_m": -0.746575931977323,
+        "y_m": 2.441024901062521,
+        "z_m": 0.0004110083709446225,
+        "yaw_rad": 2.374505684568435
+      },
+      "linear_mps": 0.0015360595073769367,
+      "angular_radps": 0.003461995293360129,
+      "command_stopped": true
+    }
+  }
+}

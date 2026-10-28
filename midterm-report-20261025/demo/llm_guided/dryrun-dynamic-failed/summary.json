@@ -1,0 +1,135 @@
+{
+  "termination": "no_feasible_frontiers",
+  "decisions": 7,
+  "attempts": 5,
+  "steps": 4667,
+  "simulated_time_s": 155.56666666666666,
+  "wall_time_s": 485.625,
+  "actual_distance_m": 9.811055914379363,
+  "collisions": 0,
+  "final_revision": 522,
+  "profile": "dynamic",
+  "policy": "llm_guided",
+  "llm_calls": 5,
+  "llm_fallbacks": 0,
+  "source_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c",
+  "source_unchanged": true,
+  "evaluation": {},
+  "detector_runtime": {
+    "device": "0",
+    "torch_version": "2.4.1+cu121",
+    "cuda_version": "12.1",
+    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "scene_events": [
+    {
+      "time_s": 0.0,
+      "event": "cart_route_verified",
+      "start": [
+        0.8,
+        1.15,
+        0
+      ],
+      "end": [
+        0.8,
+        2.7,
+        0
+      ]
+    },
+    {
+      "time_s": 16.03333333333333,
+      "event": "cart_crossing",
+      "text": "推车开始横穿客厅通道"
+    },
+    {
+      "time_s": 22.7,
+      "event": "cart_parked",
+      "text": "推车已在通道侧方停妥，保持通道开放"
+    }
+  ],
+  "navigator_events": [
+    [
+      "terminal",
+      "op-1 reached "
+    ],
+    [
+      "plan",
+      "op-2 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-2 reached "
+    ],
+    [
+      "terminal",
+      "op-3 reached "
+    ],
+    [
+      "plan",
+      "op-4 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-4 reached "
+    ],
+    [
+      "terminal",
+      "op-5 reached "
+    ],
+    [
+      "plan",
+      "op-6 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-6 reached "
+    ],
+    [
+      "terminal",
+      "op-7 failed blocked"
+    ],
+    [
+      "terminal",
+      "op-8 reached "
+    ],
+    [
+      "plan",
+      "op-9 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-9 reached "
+    ],
+    [
+      "terminal",
+      "op-10 reached "
+    ],
+    [
+      "plan",
+      "op-11 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-11 reached "
+    ],
+    [
+      "terminal",
+      "op-12 reached "
+    ],
+    [
+      "terminal",
+      "op-13 reached "
+    ]
+  ],
+  "recorded": false,
+  "components": {
+    "scene": "Gibson Rs",
+    "robot": "native Locobot",
+    "sensor": "native calibrated eyes RGB-D",
+    "perception": "shared RGBDMapper + official YOLO11s (overlapping RGB target tiles)",
+    "navigation": "shared TeamNavigator",
+    "runner": "shared EpisodeRunner + SpatialRecovery",
+    "evaluator": "independent retained-instance W3 + proximity"
+  },
+  "detector_sha256": "85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5"
+}

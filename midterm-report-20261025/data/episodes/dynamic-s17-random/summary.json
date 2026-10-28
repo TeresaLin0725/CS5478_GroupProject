@@ -1,0 +1,110 @@
+{
+  "termination": "no_feasible_frontiers",
+  "decisions": 5,
+  "attempts": 3,
+  "steps": 3177,
+  "simulated_time_s": 105.89999999999999,
+  "wall_time_s": 272.5469999999041,
+  "actual_distance_m": 7.974819539669583,
+  "collisions": 0,
+  "final_revision": 354,
+  "job_id": "dynamic-s17-random",
+  "pair_id": "dynamic-s17",
+  "profile": "dynamic",
+  "policy": "random",
+  "environment_seed": 17,
+  "perception_seed": 10017,
+  "policy_seed": 20017,
+  "start_pose": {
+    "x_m": 0.8,
+    "y_m": -2.4,
+    "z_m": 0.0,
+    "yaw_rad": 1.5707963267948966
+  },
+  "manifest_path": "manifests/dynamic-s17-random.json",
+  "manifest_sha256": "7b4455553ef0010ece9ed54dd5da41e216e9ef6807c01a1719f144cac9c7fbb8",
+  "recorded": false,
+  "source_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c",
+  "source_unchanged": true,
+  "evaluation": {},
+  "llm_calls": 0,
+  "llm_fallbacks": 0,
+  "detector_runtime": {
+    "device": "0",
+    "torch_version": "2.4.1+cu121",
+    "cuda_version": "12.1",
+    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "navigator_events": [
+    [
+      "terminal",
+      "op-1 reached "
+    ],
+    [
+      "plan",
+      "op-2 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-2 reached "
+    ],
+    [
+      "terminal",
+      "op-3 reached "
+    ],
+    [
+      "plan",
+      "op-4 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-4 reached "
+    ],
+    [
+      "terminal",
+      "op-5 reached "
+    ],
+    [
+      "plan",
+      "op-6 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-6 reached "
+    ],
+    [
+      "terminal",
+      "op-7 reached "
+    ],
+    [
+      "terminal",
+      "op-8 reached "
+    ]
+  ],
+  "scene_events": [
+    {
+      "time_s": 0.0,
+      "event": "cart_route_verified",
+      "start": [
+        0.8,
+        1.15,
+        0
+      ],
+      "end": [
+        0.8,
+        2.7,
+        0
+      ]
+    },
+    {
+      "time_s": 16.03333333333333,
+      "event": "cart_crossing",
+      "text": "推车开始横穿客厅通道"
+    },
+    {
+      "time_s": 22.7,
+      "event": "cart_parked",
+      "text": "推车已在通道侧方停妥，保持通道开放"
+    }
+  ]
+}

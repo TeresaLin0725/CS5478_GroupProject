@@ -1,0 +1,266 @@
+{
+  "termination": "no_feasible_frontiers",
+  "decisions": 17,
+  "attempts": 16,
+  "steps": 10520,
+  "simulated_time_s": 350.6666666666667,
+  "wall_time_s": 864.8129999999655,
+  "actual_distance_m": 20.044321068949923,
+  "collisions": 0,
+  "final_revision": 1179,
+  "job_id": "dynamic-s17-nearest",
+  "pair_id": "dynamic-s17",
+  "profile": "dynamic",
+  "policy": "nearest",
+  "environment_seed": 17,
+  "perception_seed": 10017,
+  "policy_seed": 20017,
+  "start_pose": {
+    "x_m": 0.8,
+    "y_m": -2.4,
+    "z_m": 0.0,
+    "yaw_rad": 1.5707963267948966
+  },
+  "manifest_path": "manifests/dynamic-s17-nearest.json",
+  "manifest_sha256": "86a85ac003b8bd699c14bd9b09d2a46933484fc79945c0b45c524422111f115a",
+  "recorded": false,
+  "source_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c",
+  "source_unchanged": true,
+  "evaluation": {},
+  "llm_calls": 0,
+  "llm_fallbacks": 0,
+  "detector_runtime": {
+    "device": "0",
+    "torch_version": "2.4.1+cu121",
+    "cuda_version": "12.1",
+    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "navigator_events": [
+    [
+      "terminal",
+      "op-1 reached "
+    ],
+    [
+      "plan",
+      "op-2 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-2 reached "
+    ],
+    [
+      "terminal",
+      "op-3 reached "
+    ],
+    [
+      "plan",
+      "op-4 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-4 reached "
+    ],
+    [
+      "terminal",
+      "op-5 reached "
+    ],
+    [
+      "plan",
+      "op-6 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-6 reached "
+    ],
+    [
+      "terminal",
+      "op-7 reached "
+    ],
+    [
+      "plan",
+      "op-8 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-8 reached "
+    ],
+    [
+      "terminal",
+      "op-9 reached "
+    ],
+    [
+      "plan",
+      "op-10 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-10 reached "
+    ],
+    [
+      "terminal",
+      "op-11 reached "
+    ],
+    [
+      "plan",
+      "op-12 success=True reason=None"
+    ],
+    [
+      "replan",
+      "op-12 #1 success=False reason=FailureReason.NO_PATH"
+    ],
+    [
+      "terminal",
+      "op-12 failed no_path"
+    ],
+    [
+      "plan",
+      "op-13 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-13 reached "
+    ],
+    [
+      "terminal",
+      "op-14 reached "
+    ],
+    [
+      "plan",
+      "op-15 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-15 reached "
+    ],
+    [
+      "terminal",
+      "op-16 reached "
+    ],
+    [
+      "plan",
+      "op-17 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-17 reached "
+    ],
+    [
+      "terminal",
+      "op-18 reached "
+    ],
+    [
+      "plan",
+      "op-19 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-19 reached "
+    ],
+    [
+      "terminal",
+      "op-20 reached "
+    ],
+    [
+      "plan",
+      "op-21 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-21 reached "
+    ],
+    [
+      "terminal",
+      "op-22 reached "
+    ],
+    [
+      "plan",
+      "op-23 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-23 reached "
+    ],
+    [
+      "terminal",
+      "op-24 reached "
+    ],
+    [
+      "plan",
+      "op-25 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-25 reached "
+    ],
+    [
+      "terminal",
+      "op-26 reached "
+    ],
+    [
+      "plan",
+      "op-27 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-27 reached "
+    ],
+    [
+      "terminal",
+      "op-28 reached "
+    ],
+    [
+      "plan",
+      "op-29 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-29 reached "
+    ],
+    [
+      "terminal",
+      "op-30 reached "
+    ],
+    [
+      "plan",
+      "op-31 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-31 reached "
+    ],
+    [
+      "terminal",
+      "op-32 failed blocked"
+    ],
+    [
+      "terminal",
+      "op-33 failed blocked"
+    ]
+  ],
+  "scene_events": [
+    {
+      "time_s": 0.0,
+      "event": "cart_route_verified",
+      "start": [
+        0.8,
+        1.15,
+        0
+      ],
+      "end": [
+        0.8,
+        2.7,
+        0
+      ]
+    },
+    {
+      "time_s": 16.03333333333333,
+      "event": "cart_crossing",
+      "text": "推车开始横穿客厅通道"
+    },
+    {
+      "time_s": 22.7,
+      "event": "cart_parked",
+      "text": "推车已在通道侧方停妥，保持通道开放"
+    }
+  ]
+}

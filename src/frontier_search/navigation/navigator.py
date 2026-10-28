@@ -61,7 +61,7 @@ from ..contracts import (
 )
 from ..validation import ContractError
 from . import planner
-from .costmap import Costmap
+from .costmap import START_ZONE_M, Costmap
 
 try:  # typing.Protocol exists from Python 3.8
     from typing import Protocol
@@ -69,6 +69,7 @@ except ImportError:  # pragma: no cover
     Protocol = object  # type: ignore
 
 K_ANGULAR = 2.0            # proportional gain on heading error (1/s)
+MIN_TURN_RADPS = 0.2       # floor on the commanded turn rate while a heading is still out of tolerance
 K_LINEAR = 1.0             # proportional gain on distance (1/s)
 TURN_IN_PLACE_RAD = 0.6    # rotate without driving above this heading error
 STALL_WINDOW_S = 5.0       # simulated seconds without real movement => blocked
@@ -113,6 +114,18 @@ def _wrap(angle: float) -> float:
     return (angle + pi) % (2 * pi) - pi
 
 
+def _turn_rate(error_rad: float, max_radps: float) -> float:
+    """Proportional turn command with a floor.
+
+    A pure P law gives K * error, which near the tolerance edge (0.05 rad -> 0.1 rad/s) is below what
+    static friction of a real chassis lets through, so the robot sits just outside the tolerance and
+    never arrives. The floor keeps the command above stiction while the error is still outside the
+    tolerance; callers only use it then, and it never exceeds the robot's own limit.
+    """
+    rate = max(abs(K_ANGULAR * error_rad), min(MIN_TURN_RADPS, max_radps))
+    return _clip(rate if error_rad >= 0 else -rate, max_radps)
+
+
 def _clip(value: float, limit: float) -> float:
     return max(-limit, min(limit, value))
 
@@ -135,6 +148,7 @@ class _Operation:
         self.index = 1                        # next waypoint (0 is the start pose)
         self.turn_ok = None                   # type: Optional[object]  # turn already checked safe (waypoint index / "goal")
         self.replans = 0
+        self.start_pose = None                # type: Optional[Pose]  # real pose when the goal was accepted
         # observation
         self.targets = []                     # type: List[float]
         self.leg = 0
@@ -279,6 +293,7 @@ class TeamNavigator:
         if not self._fresh(request.occupancy_map, request.start_pose, live):
             return self._finish(op, NavigationStatus.FAILED, FailureReason.INVALID_GOAL)
         op.costmap = self._costmap_for(request.occupancy_map)
+        op.start_pose = live
         result = planner.plan(op.costmap, live, goal, self._nav_cfg.batch_deadline_s,
                               clock=self._wall_clock, smooth=self._smooth)
         op.planner_result = result
@@ -360,10 +375,10 @@ class TeamNavigator:
                        "recovery": cfg.recovery_headings_rad,
                        "inspection": cfg.inspection_headings_rad}[request.routine]
             op.targets = [_wrap(request.heading_rad + o) for o in offsets]
-        safe = (self._robot.can_turn_in_place and op.costmap.pose_valid(live)
+        safe = (self._robot.can_turn_in_place and op.costmap.start_pose_valid(live)
                 and self._sweep_safe(op.costmap, live, [live.yaw_rad] + op.targets)
                 and (not (request.routine == "initial" and cfg.allow_full_rotation)
-                     or op.costmap.full_rotation_valid(live)))
+                     or op.costmap.full_rotation_valid(live, margin_m=op.costmap.start_margin_m)))
         if not safe:  # never rotate blindly
             return self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
         return self._feedback(op)  # ACCEPTED
@@ -413,12 +428,17 @@ class TeamNavigator:
 
         Catches a robot held up by something the belief map does not show (a
         physical obstacle, a wheel stuck). Deliberate stillness during an
-        observation dwell is exempt.
+        observation dwell is exempt, but it does NOT restart the window: a robot
+        jittering across the heading tolerance re-enters the dwell every few
+        steps, and restarting the window each time would hide a real stall until
+        the operation deadline. The window restarts when a scan heading is
+        completed (see ``_tick_observation``).
         """
         pose = self._control.current_pose()
-        dwelling = op.kind == "observe" and op.dwell_until is not None
+        if op.kind == "observe" and op.dwell_until is not None:
+            return False
         ref = op.stall_pose
-        moved = ref is None or dwelling \
+        moved = ref is None \
             or hypot(pose.x_m - ref.x_m, pose.y_m - ref.y_m) > STALL_MIN_MOVE_M \
             or abs(_wrap(pose.yaw_rad - ref.yaw_rad)) > STALL_MIN_TURN_RAD
         if moved:
@@ -456,7 +476,7 @@ class TeamNavigator:
                     self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
                     return
                 op.turn_ok = "goal"
-            self._control.set_velocity(0.0, _clip(K_ANGULAR * yaw_err, robot.max_angular_speed_radps))
+            self._control.set_velocity(0.0, _turn_rate(yaw_err, robot.max_angular_speed_radps))
             return
         target_heading = atan2(target.y_m - pose.y_m, target.x_m - pose.x_m)
         heading_err = _wrap(target_heading - pose.yaw_rad)
@@ -464,7 +484,10 @@ class TeamNavigator:
             # An in-place turn is about to be commanded. Planning checked the first move toward the
             # nearest waypoint, but the controller may aim at a later one (lookahead) or the map
             # may have changed, so check the turn it will actually perform, once per waypoint.
-            if not op.costmap.rotation_valid(pose, target_heading):
+            near_start = op.start_pose is not None and hypot(
+                pose.x_m - op.start_pose.x_m, pose.y_m - op.start_pose.y_m) <= START_ZONE_M
+            if not op.costmap.rotation_valid(pose, target_heading,
+                                             margin_m=op.costmap.start_margin_m if near_start else None):
                 self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
                 return
             op.turn_ok = op.index
@@ -495,7 +518,7 @@ class TeamNavigator:
             op.dwell_until = None
         if op.dwell_until is None:
             if abs(err) > cfg.heading_tolerance_rad:
-                self._control.set_velocity(0.0, _clip(K_ANGULAR * err, robot.max_angular_speed_radps))
+                self._control.set_velocity(0.0, _turn_rate(err, robot.max_angular_speed_radps))
                 return
             self._control.set_velocity(0.0, 0.0)
             op.dwell_until = now + op.dwell_s
@@ -503,6 +526,7 @@ class TeamNavigator:
             op.marks.append(now)  # heading reached and dwelled: designated capture
             op.leg += 1
             op.dwell_until = None
+            op.stall_pose, op.stall_since_s = pose, now  # progress: the next heading starts a fresh window
             if op.leg >= len(op.targets):
                 self._finish(op, NavigationStatus.REACHED, None)
 
@@ -530,8 +554,14 @@ class TeamNavigator:
 
     @staticmethod
     def _sweep_safe(costmap: Costmap, pose: Pose, yaws: List[float]) -> bool:
-        """Every leg of a yaw sequence (turning in place at ``pose``) is collision-free."""
-        return all(costmap.rotation_valid(Pose(pose.x_m, pose.y_m, pose.z_m, yaws[i]), nxt)
+        """Every leg of a yaw sequence (turning in place at ``pose``) is collision-free.
+
+        The robot never leaves ``pose``, so the sweep uses the same ``start_margin_m`` that accepted
+        the pose; a stricter margin here would make a scan "blocked" for a robot parked inside the
+        planning buffer even though its start pose was accepted.
+        """
+        return all(costmap.rotation_valid(Pose(pose.x_m, pose.y_m, pose.z_m, yaws[i]), nxt,
+                                          margin_m=costmap.start_margin_m)
                    for i, nxt in enumerate(yaws[1:]))
 
     # --- internals: bookkeeping -------------------------------------------

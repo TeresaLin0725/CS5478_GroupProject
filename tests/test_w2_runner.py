@@ -43,6 +43,31 @@ def make_runner(scenario='progress', **overrides):
 
 
 class RunnerTests(unittest.TestCase):
+    def test_initialization_has_separate_deadline_with_legacy_fallback(self):
+        for limit in (None,240.):
+            manifest,runner,logger=make_runner()
+            runner.run(replace(manifest,initialization_deadline_s=limit))
+            begin=next(e for e in logger.events
+                       if e['event']=='module_begin' and e['module']=='simulator.reset')
+            self.assertEqual(begin['deadline_s'],limit or manifest.module_deadline_s)
+
+    def test_slow_logging_does_not_count_as_module_execution(self):
+        manifest, runner, logger = make_runner()
+        runner.manifest = manifest
+        now = [0.]
+        runner.clock = lambda: now[0]
+        def slow_log(*args, **kwargs):
+            now[0] += 40.
+        logger.write = slow_log
+        def operation():
+            now[0] += 2.
+            return 'done'
+        self.assertEqual(runner._call('mapper.update', operation, _deadline=30.), 'done')
+        def slow_operation():
+            now[0] += 31.
+        with self.assertRaises(TimeoutError):
+            runner._call('mapper.update', slow_operation, _deadline=30.)
+
     def inspection_runner(self):
         m, runner, log = make_runner()
         m = replace(m, observation=replace(m.observation, inspection_hold_s=1.))

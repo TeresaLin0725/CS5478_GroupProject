@@ -3,7 +3,7 @@ from dataclasses import dataclass, field, fields
 import json
 from math import isfinite
 from pathlib import Path
-from typing import Tuple
+from typing import Optional, Tuple
 
 from ..config import (EpisodeLimits, EvaluationConfig, MappingConfig, NavigationConfig,
                       ObservationConfig, PolicyConfig, RecoveryConfig)
@@ -39,9 +39,14 @@ class EpisodeManifest:
     enable_target_evaluation: bool = False
     initial_clearance_mode: str = 'footprint'
     initial_clearance_radius_m: float = 0.0
+    initialization_deadline_s: Optional[float] = None
 
     def validate(self) -> None:
         require_immutable(self)
+        if self.initialization_deadline_s is not None:
+            require(type(self.initialization_deadline_s) in (int,float)
+                    and isfinite(self.initialization_deadline_s)
+                    and self.initialization_deadline_s>0, 'invalid initialization deadline')
         require(bool(self.episode_id.strip() and self.scene_id.strip() and self.target_class.strip()),
                 'episode, scene and target must be nonempty')
         require(self.source in ('synthetic', 'rgbd_replay', 'igibson'), 'invalid source')

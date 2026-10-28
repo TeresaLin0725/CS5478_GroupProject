@@ -1,0 +1,95 @@
+{
+  "termination": "success",
+  "decisions": 3,
+  "attempts": 3,
+  "steps": 2520,
+  "simulated_time_s": 84.0,
+  "wall_time_s": 207.5779999999795,
+  "actual_distance_m": 7.203431293648221,
+  "collisions": 0,
+  "final_revision": 276,
+  "job_id": "apartment-s29-random",
+  "pair_id": "apartment-s29",
+  "profile": "apartment",
+  "policy": "random",
+  "environment_seed": 29,
+  "perception_seed": 10029,
+  "policy_seed": 20029,
+  "start_pose": {
+    "x_m": 0.8,
+    "y_m": -2.4,
+    "z_m": 0.0,
+    "yaw_rad": 0.0
+  },
+  "manifest_path": "manifests/apartment-s29-random.json",
+  "manifest_sha256": "60fd9ca35a3551c6fb14323e8c11c5fb028ee80ccb86d7b10d4e756de6c3ce64",
+  "recorded": false,
+  "source_fingerprint": "35ea7a8f7bffa672eb7987240f4ccfdb9ceff87e0f4d55213a16fd152ce1397c",
+  "source_unchanged": true,
+  "evaluation": {
+    "w3_valid": true,
+    "evidence_distances_m": [
+      0.7974477121124509,
+      0.7953922336858683
+    ],
+    "distinct_times": true,
+    "stationary_evidence": true,
+    "near_evidence": true,
+    "terminal_stopped": true
+  },
+  "llm_calls": 0,
+  "llm_fallbacks": 0,
+  "detector_runtime": {
+    "device": "0",
+    "torch_version": "2.4.1+cu121",
+    "cuda_version": "12.1",
+    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "navigator_events": [
+    [
+      "terminal",
+      "op-1 reached "
+    ],
+    [
+      "plan",
+      "op-2 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-2 reached "
+    ],
+    [
+      "terminal",
+      "op-3 reached "
+    ],
+    [
+      "plan",
+      "op-4 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-4 reached "
+    ],
+    [
+      "terminal",
+      "op-5 reached "
+    ],
+    [
+      "plan",
+      "op-6 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-6 reached "
+    ],
+    [
+      "cancel",
+      "op-7 target_claim"
+    ],
+    [
+      "terminal",
+      "op-7 cancelled "
+    ]
+  ],
+  "scene_events": []
+}
