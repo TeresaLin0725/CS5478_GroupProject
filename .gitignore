@@ -16,3 +16,7 @@ data/
 weights/
 .env
 /Ultralytics/
+
+# Published validation evidence; runtime assets remain ignored.
+!validation-report-20261028/data/
+!validation-report-20261028/data/**

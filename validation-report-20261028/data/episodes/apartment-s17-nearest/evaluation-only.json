@@ -1,0 +1,122 @@
+{
+  "evidence": {
+    "episode_id": "apartment-s17-nearest",
+    "claim_id": "claim-000001",
+    "detections": [
+      {
+        "observation_id": "detection-001021",
+        "capture_sequence": 567,
+        "timestamp_s": 172.33333333333334,
+        "track_id": "track-000093",
+        "class_name": "cup",
+        "confidence": 0.7214358448982239,
+        "bbox_xyxy_px": [
+          336,
+          72,
+          378,
+          113
+        ],
+        "position_world": {
+          "x_m": -1.3718813131713434,
+          "y_m": 2.929057152070328,
+          "z_m": 0.9246101553443683
+        }
+      },
+      {
+        "observation_id": "detection-001025",
+        "capture_sequence": 573,
+        "timestamp_s": 174.33333333333334,
+        "track_id": "track-000093",
+        "class_name": "cup",
+        "confidence": 0.6881093382835388,
+        "bbox_xyxy_px": [
+          342,
+          71,
+          385,
+          113
+        ],
+        "position_world": {
+          "x_m": -1.3717969635804126,
+          "y_m": 2.9294879137557897,
+          "z_m": 0.9247088617706827
+        }
+      }
+    ]
+  },
+  "frames": [
+    {
+      "episode_id": "apartment-s17-nearest",
+      "capture_sequence": 567,
+      "timestamp_s": 172.33333333333334,
+      "width": 640,
+      "height": 480,
+      "instances": [
+        {
+          "instance_id": "Rs-inserted-mug",
+          "class_name": "cup",
+          "visibility": 0.9492798998121478,
+          "bbox_xyxy_px": [
+            336,
+            72,
+            378,
+            113
+          ],
+          "position_world": {
+            "x_m": -1.3706122402862837,
+            "y_m": 2.9267891653144495,
+            "z_m": 0.9263235543351275
+          }
+        }
+      ]
+    },
+    {
+      "episode_id": "apartment-s17-nearest",
+      "capture_sequence": 573,
+      "timestamp_s": 174.33333333333334,
+      "width": 640,
+      "height": 480,
+      "instances": [
+        {
+          "instance_id": "Rs-inserted-mug",
+          "class_name": "cup",
+          "visibility": 0.9598765432098766,
+          "bbox_xyxy_px": [
+            342,
+            71,
+            385,
+            113
+          ],
+          "position_world": {
+            "x_m": -1.3706353639596234,
+            "y_m": 2.926844005091308,
+            "z_m": 0.9260835579530717
+          }
+        }
+      ]
+    }
+  ],
+  "motion": {
+    "567": {
+      "pose": {
+        "x_m": -0.7413441880907428,
+        "y_m": 2.4550172854393444,
+        "z_m": 0.00045731015853730725,
+        "yaw_rad": 2.5981229476340606
+      },
+      "linear_mps": 0.001494360592383433,
+      "angular_radps": 0.010195147011724756,
+      "command_stopped": true
+    },
+    "573": {
+      "pose": {
+        "x_m": -0.7421395498342162,
+        "y_m": 2.4553494028958687,
+        "z_m": 0.0005459750652752711,
+        "yaw_rad": 2.615625913577
+      },
+      "linear_mps": 0.007599872419178947,
+      "angular_radps": 0.0200644665314378,
+      "command_stopped": true
+    }
+  }
+}

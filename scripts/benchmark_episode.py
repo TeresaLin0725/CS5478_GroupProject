@@ -6,6 +6,14 @@ from enum import Enum
 from pathlib import Path
 
 def read(p):return json.loads(Path(p).read_text(encoding='utf-8'))
+def navigation_options(protocol):
+    """Resolve the frozen B preset; legacy protocols keep their original behavior."""
+    preset=protocol.get('navigation_preset','legacy')
+    if preset=='legacy':return {}
+    if preset=='round_footprint_override':
+        from frontier_search.navigation.locobot_robot import ROUND_FOOTPRINT_OVERRIDE_NAV_OPTIONS
+        return dict(ROUND_FOOTPRINT_OVERRIDE_NAV_OPTIONS)
+    raise ValueError('Unknown navigation preset: '+str(preset))
 def replace_shared(source,target):
     # Windows readers briefly open files without FILE_SHARE_DELETE. A monitor
     # reading progress must not abort the episode's observation callback.
@@ -119,7 +127,7 @@ def episode(protocol,job,out):
     store=RetainedFrames()
     sim=RetainingAdapter(m.robot,m.mapping,AdapterConfig(scene_id='Rs',settle_steps=0,
         image_width=640,image_height=480,vertical_fov_deg=75.),store,job['profile'])
-    mapper=RGBDMapper(detector);nav=TeamNavigator(sim,linear_gain=2.)
+    mapper=RGBDMapper(detector);nav=TeamNavigator(sim,linear_gain=2.,**navigation_options(protocol))
     policy=LLMGuidedPolicy(GeminiCompatibleClient()) if job['policy']=='llm_guided' else BaselinePolicy(PolicyName(job['policy']))
     evaluator=CloseRetainedEvaluator(store,sim)
     from benchmark_watchdog import WatchdogChannel,AsyncEventWriter
@@ -186,6 +194,7 @@ def episode(protocol,job,out):
         llm_calls=len(calls),llm_fallbacks=sum(bool(c.get('fallback_reason')) for c in calls),
         detector_runtime=dict(device=device,torch_version=torch.__version__,cuda_version=torch.version.cuda,
             gpu_name=torch.cuda.get_device_name(0) if device=='0' else None),
+        navigation_preset=protocol.get('navigation_preset','legacy'),
         navigator_events=nav.events,scene_events=getattr(getattr(sim._backend,'world',None),'environment_events',[]))
     if runner.state:
         atomic(out/'final-state.json',asdict(runner.state))

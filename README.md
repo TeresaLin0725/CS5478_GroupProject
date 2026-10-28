@@ -1,5 +1,9 @@
 # Indoor frontier object search
 
+2026-10-28 原始公寓单案例验证：[四策略报告](validation-report-20261028/report/index.html)、
+[结果与限制](Documentation/chinese/simple_apartment_validation.md)。四策略均成功、零接触步；
+LLM 两次在线调用、零回退。本次为 apartment-s17 验证，不替代完整 36 回合配对实验。
+
 ## 最新结果（2026-10-18）
 
 打开 **[report/index.html](report/index.html)**（或根目录 [demo.html](demo.html)）。报告只收录最新一版结果：
