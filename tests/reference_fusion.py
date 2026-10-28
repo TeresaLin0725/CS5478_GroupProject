@@ -13,7 +13,7 @@ from typing import Iterator, List, Tuple
 
 from frontier_search.config import MappingConfig
 from frontier_search.contracts import RGBDObservation
-from frontier_search.perception.projection import iter_depth_world
+from reference_projection import iter_depth_world
 
 
 def _ray_voxels(start: Tuple[float, ...], end: Tuple[float, ...],
