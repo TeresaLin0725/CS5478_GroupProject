@@ -101,6 +101,7 @@ def _assess(sequence, policy_names, detector=None):
         control.observation = frame
         state = mapper.update(frame)
         assessment = navigator.evaluate_candidates(CandidateEvaluationRequest(m.episode_id, state))
+        state = mapper.resolve_approaches(state, assessment)
         context = build_context(state, assessment)
         decisions = {name: decide(policy, state, context, oracle_room_labels=m.oracle_room_labels)
                      for name, policy in policies.items()}

@@ -143,7 +143,21 @@ def footprint_collides(grid: OccupancyGrid, footprint_base: Sequence[Point2],
                        pose: Pose, margin_m: float = 0.0) -> bool:
     """True if the footprint at ``pose`` touches an occupied, unknown or
     out-of-bounds cell. Unknown is never treated as free."""
-    for row, column in cells_overlapping_footprint(grid, footprint_base, pose, margin_m):
-        if cell_value(grid, row, column) != FREE:
-            return True
+    # Free cells cannot cause a collision. Skip their polygon/SAT work, which
+    # dominates when A checks many alternative poses in observed free space.
+    polygon = footprint_in_world(footprint_base, pose.x_m, pose.y_m, pose.yaw_rad)
+    res = grid.resolution_m
+    xs, ys = [v[0] for v in polygon], [v[1] for v in polygon]
+    col_lo = int(floor((min(xs) - margin_m - grid.origin_x_m) / res))
+    col_hi = int(floor((max(xs) + margin_m - grid.origin_x_m) / res))
+    row_lo = int(floor((min(ys) - margin_m - grid.origin_y_m) / res))
+    row_hi = int(floor((max(ys) + margin_m - grid.origin_y_m) / res))
+    for row in range(row_lo, row_hi + 1):
+        for column in range(col_lo, col_hi + 1):
+            if cell_value(grid, row, column) == FREE:
+                continue
+            x0, y0 = grid.origin_x_m + column * res, grid.origin_y_m + row * res
+            if polygon_intersects_square(polygon, x0 - margin_m, y0 - margin_m,
+                                         x0 + res + margin_m, y0 + res + margin_m):
+                return True
     return False

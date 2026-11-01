@@ -81,6 +81,7 @@ SOFT_CONTACT_NAV_OPTIONS = dict(planning_radius_m=0.182, planning_margin_m=0.01,
 # circumscribing the measured base radius, so the polygon contains the base.
 LOCOBOT_ROUND_RADIUS_M = 0.19
 LOCOBOT_ROUND_SIDES = 16
+SHARED_ROUND_CLEARANCE_M = 0.01
 
 
 def round_footprint(radius_m: float = LOCOBOT_ROUND_RADIUS_M, sides: int = LOCOBOT_ROUND_SIDES):
@@ -88,6 +89,13 @@ def round_footprint(radius_m: float = LOCOBOT_ROUND_RADIUS_M, sides: int = LOCOB
     if radius_m <= 0 or sides < 8:
         raise ValueError("round footprint needs a positive radius and at least 8 sides")
     return tuple(Point2(radius_m * cos(2 * pi * i / sides), radius_m * sin(2 * pi * i / sides)) for i in range(sides))
+
+
+def shared_round_robot(robot: RobotConfig) -> RobotConfig:
+    """Use B's round geometry throughout a new episode; preserve other settings."""
+    from dataclasses import replace
+    return replace(robot, footprint_base=round_footprint(),
+                   clearance_margin_m=SHARED_ROUND_CLEARANCE_M)
 
 
 LOCOBOT_ROUND_ROBOT = RobotConfig(

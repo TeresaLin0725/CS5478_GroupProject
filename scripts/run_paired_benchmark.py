@@ -46,10 +46,17 @@ def python():
     p=ROOT/'data/venv-igibson/Scripts/python.exe'
     return str(p if p.exists() else Path(sys.executable))
 
+def benchmark_manifest():
+    """Shared A/B geometry for new suites, without rewriting historical manifests."""
+    from frontier_search.runner.integrated import manifest_for
+    from frontier_search.navigation.locobot_robot import shared_round_robot
+    base=manifest_for('template')
+    return replace(base,robot=shared_round_robot(base.robot),initialization_deadline_s=240.)
+
 def freeze(out,workers):
     if (out/'protocol.json').exists():raise FileExistsError('Choose a fresh suite directory; use run to resume the queue')
     sys.path.insert(0,str(ROOT/'src'))
-    from frontier_search.runner.integrated import manifest_for,source_fingerprint
+    from frontier_search.runner.integrated import source_fingerprint
     from frontier_search.policies.provider import load_local_env
     from frontier_search.contracts import Pose
     env_file=next(p for p in (ROOT/'.env',ROOT.parent/'.env') if p.is_file())
@@ -63,7 +70,7 @@ def freeze(out,workers):
     shutil.copy2(ROOT/'weights/yolo11/yolo11s.pt',snapshot/'weights/yolo11/yolo11s.pt')
     (snapshot/'harness').mkdir()
     for name in HARNESSES:shutil.copy2(ROOT/'scripts'/name,snapshot/'harness'/name)
-    jobs=task_specs();base=replace(manifest_for('template'),initialization_deadline_s=240.)
+    jobs=task_specs();base=benchmark_manifest()
     for job in jobs:
         manifest=replace(base,episode_id=job['job_id'],policy_name=job['policy'],
             start_pose=Pose(**job['start_pose']),environment_seed=job['environment_seed'],
@@ -80,6 +87,7 @@ def freeze(out,workers):
     protocol=dict(schema_version='1.1',status='frozen_before_first_episode',created_utc=utc(),
         run_root=str(out),snapshot_root=str(snapshot),env_file=str(env_file),engine_fingerprint=engine,
         watchdog_transport='shared_memory_v1',
+        navigation_preset='shared_round',navigation_options=dict(start_margin_m=0.0),
         scope='Current Rs benchmark: one physical house, three scene conditions, three seed/initial-heading blocks, four policies; 36 fresh native episodes. Not multi-house generalization.',
         jobs=jobs,seed_heading_blocks=[dict(seed=seed,yaw_rad=yaw) for seed,yaw in TRIALS],
         seed_semantics='Geometry and cup position are fixed. Initial heading is a predeclared task variation. Dedicated policy seed controls Random; deterministic baselines and YOLO need not vary with seed. Hosted LLM is not reproducible from a local seed.',

@@ -187,6 +187,7 @@ class Frontier:
     region_id: str | None
     information_gain_m2: float
     distance_from_robot_m: float      # Euclidean diagnostic only
+    alternative_approach_poses: Sequence[Pose] = ()  # ranked after approach_pose (1.2)
 ```
 
 A 对与未知单元相邻的已知空闲单元进行确定性聚类。接近位置处于已知空闲区；B 验证完整占地轮廓的有效性及可达性。信息增益是到达扫描期间预计可见的未知面积，为非负数，依据相机量程、视场、去重单元和已知遮挡计算。它不是根据隐藏地图得到的真值增益。
@@ -232,6 +233,7 @@ class CandidateAssessment:
     reachable: bool | None           # None: inconclusive
     path_cost_m: float | None
     failure_reason: FailureReason | None
+    approach_pose: Pose | None = None  # exact reachable pose selected by B (1.2)
 
 @dataclass(frozen=True)
 class CandidateEvaluationRequest:
@@ -288,6 +290,7 @@ class RGBDObservation:
 class PerceptionMapper:
     def reset(self, request: MapperInit) -> None: ...
     def update(self, observation: RGBDObservation) -> WorldState: ...
+    def resolve_approaches(self, state: WorldState, evaluation: CandidateEvaluation) -> WorldState: ...
     def get_claim_evidence(self, episode_id: str, claim_id: str) -> EvidenceBundle: ...
 ```
 

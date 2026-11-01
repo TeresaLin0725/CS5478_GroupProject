@@ -11,7 +11,7 @@ from typing import Dict, List, Optional, Tuple
 
 from ..config import MappingConfig, ObservationConfig
 from ..contracts import (
-    DetectionEvidence, EvidenceBundle, Frontier, GridCell, MapperInit, ObjectTrack,
+    CandidateEvaluation, DetectionEvidence, EvidenceBundle, Frontier, GridCell, MapperInit, ObjectTrack,
     RGBDObservation, RobotConfig, TargetClaim, WorldState, OccupancyGrid,
     ExploredGrid, RegionSummary, Pose,
 )
@@ -22,7 +22,7 @@ from .fusion import fuse_observation
 from .detection import RGBDetector, localize_detection, validate_detection
 from .claims import confirm_target
 from .tracking import associate_rooms, update_tracks
-from .frontiers import FrontierMemory, assign_identities, build_candidates, _clearance
+from .frontiers import FrontierMemory, assign_identities, build_candidates, _clearance, resolve_approaches
 from .observations import validate_rgbd_observation
 from .priors import rasterize_region, validate_region_priors
 from .gain import camera_yaw_offset
@@ -61,6 +61,7 @@ class _EpisodeState:
     last_processed_sequence: Optional[int] = None
     last_timestamp_s: Optional[float] = None
     latest_state: Optional[WorldState] = None
+    latest_observation: Optional[RGBDObservation] = None
     inspection_ids: frozenset = frozenset()
     clear_counts: List[List[int]] = field(default_factory=list)
 
@@ -276,7 +277,7 @@ class RGBDMapper:
             frontiers += _target_approaches(occupancy, observation, tracks, request.target_class, cfg,robot)
             if cfg.dynamic_clear_frames:
                 frontiers += _navigation_probes(occupancy,observation,robot)
-        state = WorldState("1.1" if cfg.inspection_distance_m is not None else "1.0", request.episode_id, revision, observation.timestamp_s,
+        state = WorldState("1.2", request.episode_id, revision, observation.timestamp_s,
                            observation.sequence, request.target_class, observation.robot_pose,
                            occupancy, explored, tuple(tracks.values()), regions, frontiers, claim)
         validate_state(state, oracle_room_labels=request.oracle_room_labels)
@@ -284,6 +285,7 @@ class RGBDMapper:
         working.last_processed_sequence = observation.sequence
         working.last_timestamp_s = observation.timestamp_s
         working.latest_state = state
+        working.latest_observation = observation
         working.intrinsics = observation.camera_intrinsics
         working.base_z_m = previous.base_z_m if previous.base_z_m is not None else observation.robot_pose.z_m
         working.collision_z = collision_z
@@ -301,6 +303,14 @@ class RGBDMapper:
                                       claim=claim_counter)
         self._state = working
         return state
+
+    def resolve_approaches(self, state: WorldState, evaluation: CandidateEvaluation) -> WorldState:
+        """Resolve B's chosen poses without changing the published mapper snapshot."""
+        private = self._state
+        require(private is not None and private.latest_state is state,
+                'approach resolution requires the latest mapper snapshot')
+        return resolve_approaches(state, evaluation, private.latest_observation,
+                                  private.request.mapping_config, private.request.observation_config)
 
     def get_claim_evidence(self, episode_id: str, claim_id: str) -> EvidenceBundle:
         """Return the immutable evidence frozen at the first claim, for scoring."""

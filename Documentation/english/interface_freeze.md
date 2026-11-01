@@ -200,6 +200,7 @@ class Frontier:
     region_id: str | None
     information_gain_m2: float
     distance_from_robot_m: float      # Euclidean diagnostic only
+    alternative_approach_poses: Sequence[Pose] = ()  # ranked after approach_pose (1.2)
 ```
 
 A deterministically clusters known-free cells adjacent to unknown cells. Approach positions are known-free; B verifies full-footprint validity/reachability. Gain is nonnegative predicted unknown area visible during the arrival sweep using camera range/FOV, deduplicated cells, and known occlusion. It is not hidden-map ground-truth gain.
@@ -245,6 +246,7 @@ class CandidateAssessment:
     reachable: bool | None           # None: inconclusive
     path_cost_m: float | None
     failure_reason: FailureReason | None
+    approach_pose: Pose | None = None  # exact reachable pose selected by B (1.2)
 
 @dataclass(frozen=True)
 class CandidateEvaluationRequest:
@@ -301,6 +303,7 @@ class RGBDObservation:
 class PerceptionMapper:
     def reset(self, request: MapperInit) -> None: ...
     def update(self, observation: RGBDObservation) -> WorldState: ...
+    def resolve_approaches(self, state: WorldState, evaluation: CandidateEvaluation) -> WorldState: ...
     def get_claim_evidence(self, episode_id: str, claim_id: str) -> EvidenceBundle: ...
 ```
 

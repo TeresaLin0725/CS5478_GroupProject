@@ -70,6 +70,11 @@ def validate_state(state: WorldState, *, oracle_room_labels: bool = False) -> No
         require(0 <= obj.confirmation_count <= len(set(obj.observation_ids)), "invalid confirmation count")
     _unique(tuple(f.frontier_id for f in state.frontiers), 'frontiers')
     for frontier in state.frontiers:
+        poses = (frontier.approach_pose,) + frontier.alternative_approach_poses
+        require(len(set(poses)) == len(poses), 'duplicate approach poses')
+        require(all(isinstance(pose, type(state.robot_pose)) and
+                    all(is_finite_number(v) for v in (pose.x_m, pose.y_m, pose.z_m, pose.yaw_rad))
+                    for pose in poses), 'invalid approach pose')
         require(frontier.kind in ('frontier', 'target_approach', 'navigation_probe'), "unknown candidate kind")
         require((frontier.kind == 'target_approach' and frontier.target_track_id in track_ids)
                 or (frontier.kind in ('frontier','navigation_probe') and frontier.target_track_id is None),
@@ -100,6 +105,11 @@ def validate_evaluation(state: WorldState, evaluation: CandidateEvaluation) -> N
     ids = _unique(tuple(a.frontier_id for a in evaluation.assessments), 'assessments')
     require(ids == {f.frontier_id for f in state.frontiers}, "assessment frontier set mismatch")
     for assessment in evaluation.assessments:
+        frontier = next(f for f in state.frontiers if f.frontier_id == assessment.frontier_id)
+        if assessment.approach_pose is not None:
+            require(assessment.reachable is True and assessment.approach_pose in
+                    (frontier.approach_pose,) + frontier.alternative_approach_poses,
+                    'assessment selected an unoffered approach pose')
         if assessment.reachable is True:
             require(assessment.path_cost_m is not None and assessment.path_cost_m >= 0
                     and assessment.failure_reason is None, "invalid reachable assessment")
@@ -133,6 +143,9 @@ def validate_selection(state: WorldState, context: SelectionContext, result: Sel
         require(goal.frontier_id in context.eligible_frontier_ids, "ineligible subgoal")
         frontier = next(f for f in state.frontiers if f.frontier_id == goal.frontier_id)
         require(goal.approach_pose == frontier.approach_pose, "invented approach pose")
+        assessment = next(a for a in context.evaluation.assessments if a.frontier_id == goal.frontier_id)
+        require(assessment.approach_pose is None or goal.approach_pose == assessment.approach_pose,
+                'selection differs from assessed approach pose')
         require(goal.kind == frontier.kind and goal.target_track_id == frontier.target_track_id,
                 "selection candidate kind/track mismatch")
         require(goal.selected_from_revision == state.revision, "stale selection")

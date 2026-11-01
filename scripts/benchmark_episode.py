@@ -10,10 +10,32 @@ def navigation_options(protocol):
     """Resolve the frozen B preset; legacy protocols keep their original behavior."""
     preset=protocol.get('navigation_preset','legacy')
     if preset=='legacy':return {}
+    if preset=='shared_round':return dict(start_margin_m=0.0)
     if preset=='round_footprint_override':
         from frontier_search.navigation.locobot_robot import ROUND_FOOTPRINT_OVERRIDE_NAV_OPTIONS
         return dict(ROUND_FOOTPRINT_OVERRIDE_NAV_OPTIONS)
     raise ValueError('Unknown navigation preset: '+str(preset))
+
+def validate_shared_geometry(protocol, manifest):
+    """Reject a mislabeled new preset instead of silently diverging from A."""
+    if protocol.get('navigation_preset')=='shared_round':
+        from frontier_search.navigation.locobot_robot import shared_round_robot
+        if manifest.robot != shared_round_robot(manifest.robot):
+            raise ValueError('shared_round requires the round footprint and 0.01 m manifest clearance')
+
+def preflight_manifest(protocol, profile):
+    from dataclasses import replace
+    from frontier_search.runner.integrated import manifest_for
+    from frontier_search.runner.manifest import load_manifest
+    if protocol.get('navigation_preset')=='shared_round':
+        job=next(j for j in protocol['jobs'] if j['profile']==profile)
+        path=Path(protocol['run_root'])/job['manifest_path']
+        if hashlib.sha256(path.read_bytes()).hexdigest()!=job['manifest_sha256']:
+            raise ValueError('preflight manifest changed')
+        manifest=load_manifest(path)
+        validate_shared_geometry(protocol,manifest)
+        return replace(manifest,episode_id='oracle-'+profile)
+    return manifest_for('oracle-'+profile)
 def replace_shared(source,target):
     # Windows readers briefly open files without FILE_SHARE_DELETE. A monitor
     # reading progress must not abort the episode's observation callback.
@@ -33,7 +55,6 @@ def preflight(protocol,profile,out):
     import numpy as np
     from math import atan2,hypot,pi
     from PIL import Image
-    from frontier_search.runner.integrated import manifest_for
     from frontier_search.simulation.integrated_rs import RetainingAdapter
     from frontier_search.simulation.igibson_adapter import AdapterConfig
     from frontier_search.evaluation.retained import RetainedFrames
@@ -41,7 +62,7 @@ def preflight(protocol,profile,out):
     from frontier_search.navigation.costmap import Costmap
     from frontier_search.navigation.lattice import LatticeSearch
     from frontier_search.fixtures.clearance import clearance_binding,footprint_cells
-    m=manifest_for('oracle-'+profile)
+    m=preflight_manifest(protocol,profile)
     sim=RetainingAdapter(m.robot,m.mapping,AdapterConfig(scene_id='Rs',image_width=640,image_height=480,vertical_fov_deg=75.),RetainedFrames(),profile)
     result=dict(profile=profile,passed=False,scope='Evaluator-only native geometry and visibility. Never supplied to the search mapper or policy.')
     try:
@@ -117,6 +138,7 @@ def episode(protocol,job,out):
     manifest_path=Path(protocol['run_root'])/job['manifest_path']
     assert hashlib.sha256(manifest_path.read_bytes()).hexdigest()==job['manifest_sha256'],'manifest changed'
     m=load_manifest(manifest_path)
+    validate_shared_geometry(protocol,m)
     random.seed(m.perception_seed);np.random.seed(m.perception_seed);torch.manual_seed(m.perception_seed)
     torch.set_num_threads(protocol['runtime']['torch_threads'])
     device='0' if torch.cuda.is_available() else 'cpu'

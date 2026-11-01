@@ -153,10 +153,12 @@ class Frontier(ImmutableRecord):
     kind: str = "frontier"            # frontier / target_approach / navigation_probe
     target_track_id: Optional[str] = None
 
+    alternative_approach_poses: Tuple[Pose, ...] = ()  # ranked after the preferred pose
+
 
 @dataclass(frozen=True)
 class WorldState(ImmutableRecord):
-    schema_version: str              # "1.0"
+    schema_version: str              # "1.2" with ranked alternative approaches
     episode_id: str
     revision: int
     timestamp_s: float
@@ -185,6 +187,7 @@ class CandidateAssessment(ImmutableRecord):
     reachable: Optional[bool]           # None: inconclusive
     path_cost_m: Optional[float]
     failure_reason: Optional[FailureReason]
+    approach_pose: Optional[Pose] = None  # exact assessed pose; omitted by legacy producers
 
 
 @dataclass(frozen=True)

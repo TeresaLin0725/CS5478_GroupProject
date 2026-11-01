@@ -6,7 +6,7 @@ from math import atan2, floor, hypot, pi
 from typing import Dict, List, Optional, Tuple
 
 from ..config import MappingConfig, ObservationConfig
-from ..contracts import Frontier, GridCell, OccupancyGrid, Pose, RGBDObservation, RobotConfig
+from ..contracts import CandidateEvaluation, Frontier, GridCell, OccupancyGrid, Pose, RGBDObservation, RobotConfig
 from .gain import camera_yaw_offset, estimate_gain
 from ..navigation.geometry import footprint_collides
 
@@ -22,6 +22,7 @@ class FrontierCandidate:
     region_id: Optional[str]
     information_gain_m2: float
     distance_from_robot_m: float
+    alternative_approach_poses: Tuple[Pose, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -87,6 +88,10 @@ def _clearance(grid: OccupancyGrid) -> List[List[int]]:
 
 
 def _approach(grid, support, clearance, robot, observation, config):
+    return next(_approaches(grid, support, clearance, robot, observation, config), None)
+
+
+def _approaches(grid, support, clearance, robot, observation, config):
     """Retreat into free cells; B still owns path reachability.
 
     Prefer the nearest interior cell with conservative disc clearance; otherwise
@@ -117,8 +122,7 @@ def _approach(grid, support, clearance, robot, observation, config):
     for r, c in sorted(distance, key=ranking):
         pose = _oriented_pose(grid, support, middle_r, middle_c, r, c, observation)
         if not footprint_collides(grid, robot.footprint_base, pose, robot.clearance_margin_m):
-            return pose
-    return None
+            yield pose
 
 
 def _oriented_pose(grid, support, middle_r, middle_c, r, c, observation):
@@ -162,16 +166,18 @@ def build_candidates(grid: OccupancyGrid, observation: RGBDObservation, robot: R
     regions = {name: set(cells) for name, cells in region_cells.items()}
     result = []
     for support in clusters:
-        pose = _approach(grid, support, clearance, robot, observation, mapping)
-        if pose is None:
+        poses = tuple(_approaches(grid, support, clearance, robot, observation, mapping))
+        if not poses:
             continue
+        pose = poses[0]
         counts = [(sum(cell in cells for cell in support), name) for name, cells in regions.items()]
         # Associate with the majority of boundary support; deterministic ID tie.
         positive = sorted((-count, name) for count, name in counts if count)
         region = positive[0][1] if positive else None
         result.append(FrontierCandidate(support, pose, region,
             estimate_gain(grid, pose, observation, mapping, routine),
-            hypot(pose.x_m - observation.robot_pose.x_m, pose.y_m - observation.robot_pose.y_m)))
+            hypot(pose.x_m - observation.robot_pose.x_m, pose.y_m - observation.robot_pose.y_m),
+            poses[1:]))
     return tuple(result)
 
 
@@ -227,8 +233,28 @@ def assign_identities(candidates: Tuple[FrontierCandidate, ...], memory: Dict[st
             counter += 1
             identity = 'F%06d' % counter
         frontier = Frontier(identity, parents, candidate.support_cells, candidate.approach_pose,
-                            candidate.region_id, candidate.information_gain_m2, candidate.distance_from_robot_m)
+                            candidate.region_id, candidate.information_gain_m2, candidate.distance_from_robot_m,
+                            alternative_approach_poses=candidate.alternative_approach_poses)
         result.append(frontier)
         new_memory[identity] = FrontierMemory(frontier, timestamp_s)
         new_lineage[identity] = parents
     return tuple(sorted(result, key=lambda f: f.frontier_id)), new_memory, new_lineage, counter
+
+
+def resolve_approaches(state, evaluation: CandidateEvaluation, observation, mapping, routine):
+    """A's immutable decision view: gain and distance at B's selected poses."""
+    from ..validation import validate_evaluation
+    validate_evaluation(state, evaluation)
+    assessments = {a.frontier_id: a for a in evaluation.assessments}
+    frontiers = []
+    for frontier in state.frontiers:
+        assessment = assessments[frontier.frontier_id]
+        pose = assessment.approach_pose
+        if assessment.reachable is True and pose is not None and pose != frontier.approach_pose:
+            alternatives = tuple(p for p in (frontier.approach_pose,) + frontier.alternative_approach_poses
+                                 if p != pose)
+            frontier = replace(frontier, approach_pose=pose, alternative_approach_poses=alternatives,
+                information_gain_m2=estimate_gain(state.occupancy_map, pose, observation, mapping, routine),
+                distance_from_robot_m=hypot(pose.x_m-state.robot_pose.x_m, pose.y_m-state.robot_pose.y_m))
+        frontiers.append(frontier)
+    return replace(state, frontiers=tuple(frontiers))

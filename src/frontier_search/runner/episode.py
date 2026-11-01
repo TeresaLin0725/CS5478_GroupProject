@@ -298,15 +298,22 @@ class EpisodeRunner:
             evaluation = self._call('navigator.evaluate', self.navigator.evaluate_candidates,
                 CandidateEvaluationRequest(self.manifest.episode_id, self.state))
             validate_evaluation(self.state, evaluation)
-            self.recovery.record_evaluation(self.state, evaluation)
-            exclusions = self.recovery.exclusions(self.state, evaluation)
-            context = build_context(self.state, evaluation, exclusions, self.previous)
+            decision_state = self.state
+            if any(a.approach_pose is not None and a.reachable is True and
+                   a.approach_pose != next(f.approach_pose for f in self.state.frontiers
+                                          if f.frontier_id == a.frontier_id)
+                   for a in evaluation.assessments):
+                decision_state = self._call('mapper.resolve_approaches', self.mapper.resolve_approaches,
+                                            self.state, evaluation)
+            self.recovery.record_evaluation(decision_state, evaluation)
+            exclusions = self.recovery.exclusions(decision_state, evaluation)
+            context = build_context(decision_state, evaluation, exclusions, self.previous)
             if self.decisions >= self.manifest.limits.max_decisions:
                 raise _End(TerminationReason.SEARCH_LIMIT)
             self.decisions += 1
-            selection = self._call('policy.select', decide, self.policy, self.state, context,
+            selection = self._call('policy.select', decide, self.policy, decision_state, context,
                                    oracle_room_labels=self.manifest.oracle_room_labels)
-            self._emit('decision', state=self.state, context=context, selection=selection)
+            self._emit('decision', state=decision_state, context=context, selection=selection)
             if self.previous is not None and self.previous.execution_status == 'failed' and selection.subgoal:
                 self._emit('strategy_replan', direction='C_to_B', previous_attempt=self.previous,
                            selected=selection.subgoal, simulated_time_s=self.sim_time)
@@ -339,7 +346,7 @@ class EpisodeRunner:
                            else TerminationReason.NO_FEASIBLE_FRONTIERS)
             if self.attempts >= self.manifest.limits.max_attempts:
                 raise _End(TerminationReason.SEARCH_LIMIT)
-            before = self.state
+            before = decision_state
             self.attempts += 1
             self.recovery.record_dispatch(before, selection.subgoal.frontier_id)
             feedback = self._operation('navigate', subgoal=selection.subgoal)

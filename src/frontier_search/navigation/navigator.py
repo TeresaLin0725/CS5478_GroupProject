@@ -258,28 +258,34 @@ class TeamNavigator:
                                          % (request.episode_id, state.episode_id))
         costmap = self._costmap_for(state.occupancy_map)
         start = state.robot_pose
-        result = planner.distance_field(costmap, start, self._nav_cfg.batch_deadline_s,
+        deadline = self._wall_clock() + self._nav_cfg.batch_deadline_s
+        result = planner.distance_field(costmap, start, max(0., deadline-self._wall_clock()),
                                         clock=self._wall_clock)
         assessments = []  # type: List[CandidateAssessment]
         for frontier in state.frontiers:
-            goal = frontier.approach_pose
-            if not planner.goal_is_valid(costmap, goal):
-                assessments.append(CandidateAssessment(frontier.frontier_id, False, None,
-                                                       FailureReason.INVALID_GOAL))
-            elif result is None:  # start unusable: robot cannot move at all
-                assessments.append(CandidateAssessment(frontier.frontier_id, False, None,
-                                                       FailureReason.NO_PATH))
-            else:
-                field, complete = result
-                cost = planner.cost_to_goal_m(costmap, start, goal, field)
-                if cost is not None:
-                    assessments.append(CandidateAssessment(frontier.frontier_id, True, cost, None))
-                elif complete:
-                    assessments.append(CandidateAssessment(frontier.frontier_id, False, None,
-                                                           FailureReason.NO_PATH))
+            valid_goal = False
+            assessment = None
+            for goal in (frontier.approach_pose,) + frontier.alternative_approach_poses:
+                if self._wall_clock() >= deadline:
+                    assessment = CandidateAssessment(frontier.frontier_id, None, None, FailureReason.TIMEOUT)
+                    break
+                if not planner.goal_is_valid(costmap, goal):
+                    continue
+                valid_goal = True
+                if result is not None:
+                    field, complete = result
+                    cost = planner.cost_to_goal_m(costmap, start, goal, field)
+                    if cost is not None:
+                        assessment = CandidateAssessment(frontier.frontier_id, True, cost, None, goal)
+                        break
+            if assessment is None:
+                if not valid_goal:
+                    assessment = CandidateAssessment(frontier.frontier_id, False, None, FailureReason.INVALID_GOAL)
+                elif result is None or result[1]:
+                    assessment = CandidateAssessment(frontier.frontier_id, False, None, FailureReason.NO_PATH)
                 else:
-                    assessments.append(CandidateAssessment(frontier.frontier_id, None, None,
-                                                           FailureReason.TIMEOUT))
+                    assessment = CandidateAssessment(frontier.frontier_id, None, None, FailureReason.TIMEOUT)
+            assessments.append(assessment)
         return CandidateEvaluation(state.episode_id, state.revision, start, tuple(assessments))
 
     # --- navigation --------------------------------------------------------
