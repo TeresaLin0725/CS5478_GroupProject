@@ -54,7 +54,14 @@ def _ray_voxels(start: Tuple[float, ...], end: Tuple[float, ...],
     nx, ny, nz = limits
     current = enter
     while current < leave:
-        following = min(leave, tx, ty, tz)
+        # Match min's comparison order without a function call per voxel.
+        following = leave
+        if tx < following:
+            following = tx
+        if ty < following:
+            following = ty
+        if tz < following:
+            following = tz
         if following - current > 1e-12:
             yield c, r, z
         if following >= leave:
