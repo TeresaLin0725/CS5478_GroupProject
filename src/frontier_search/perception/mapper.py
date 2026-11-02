@@ -26,7 +26,7 @@ from .frontiers import FrontierMemory, assign_identities, build_candidates, _cle
 from .observations import validate_rgbd_observation
 from .priors import rasterize_region, validate_region_priors
 from .gain import camera_yaw_offset
-from ..navigation.geometry import cells_overlapping_footprint
+from ..navigation.geometry import footprint_collides
 
 
 @dataclass
@@ -377,9 +377,9 @@ def _navigation_probes(grid,observation,robot):
             if not .75<=distance<=1.05:continue
             yaw=atan2(p.y_m-y,p.x_m-x)
             pose=Pose(x,y,p.z_m,yaw)
-            cells=tuple(cells_overlapping_footprint(grid,robot.footprint_base,pose,robot.clearance_margin_m))
-            if not cells or any(not(0<=rr<grid.height_cells and 0<=cc<grid.width_cells)
-                                or grid.data[rr][cc]!=0 for rr,cc in cells):continue
+            # Same occupied/unknown/out-of-map test, with geometry work skipped
+            # for known-free cells. Probe candidates and ranking are unchanged.
+            if footprint_collides(grid,robot.footprint_base,pose,robot.clearance_margin_m):continue
             sector=int((atan2(y-p.y_m,x-p.x_m)+pi)/(pi/4))%8
             score=(abs(distance-.85),r,c)
             if sector not in sectors or score<sectors[sector][0]:sectors[sector]=(score,pose,r,c)

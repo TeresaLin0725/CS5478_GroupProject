@@ -64,9 +64,11 @@ def preflight(protocol,profile,out):
     from frontier_search.fixtures.clearance import clearance_binding,footprint_cells
     m=preflight_manifest(protocol,profile)
     sim=RetainingAdapter(m.robot,m.mapping,AdapterConfig(scene_id='Rs',image_width=640,image_height=480,vertical_fov_deg=75.),RetainedFrames(),profile)
-    result=dict(profile=profile,passed=False,scope='Evaluator-only native geometry and visibility. Never supplied to the search mapper or policy.')
+    result=dict(profile=profile,passed=False,environment_seed=m.environment_seed,
+        start_pose=asdict(m.start_pose),
+        scope='Evaluator-only native geometry and visibility. Never supplied to the search mapper or policy.')
     try:
-        sim.reset(m.episode_id,'Rs',m.start_pose,17)
+        sim.reset(m.episode_id,'Rs',m.start_pose,m.environment_seed)
         result['spawn_clearance_cells']=len(sim.verify_spawn_clearance())
         result['start_area']=asdict(sim.verify_start_area(m,'paired-benchmark-preflight'))
         backend=sim._backend;w=backend.world
