@@ -1,0 +1,673 @@
+{
+  "description": "Original failed jobs for phase-one paired epsilon regression; retain job identity, seeds and initial pose.",
+  "original_total": 36,
+  "original_success": 21,
+  "original_failed": 15,
+  "variants": {
+    "U0": {
+      "shared_geometry": "unified existing 16-gon, vertex radius 0.19 m",
+      "epsilon_retry": 0.0,
+      "stuck_retry": true,
+      "relaxed_retry": true
+    },
+    "U05": {
+      "shared_geometry": "same as U0",
+      "epsilon_retry": 0.05,
+      "stuck_retry": true,
+      "relaxed_retry": true
+    }
+  },
+  "phase_one_jobs": [
+    {
+      "job_id": "apartment-s17-llm_guided",
+      "pair_id": "apartment-s17",
+      "profile": "apartment",
+      "policy": "llm_guided",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 109.56666666666666,
+      "initial_yaw_deg": 90
+    },
+    {
+      "job_id": "apartment-s29-nearest",
+      "pair_id": "apartment-s29",
+      "profile": "apartment",
+      "policy": "nearest",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 152.56666666666666,
+      "initial_yaw_deg": 0
+    },
+    {
+      "job_id": "apartment-s29-random",
+      "pair_id": "apartment-s29",
+      "profile": "apartment",
+      "policy": "random",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 96.33333333333333,
+      "initial_yaw_deg": 0
+    },
+    {
+      "job_id": "apartment-s43-information_gain",
+      "pair_id": "apartment-s43",
+      "profile": "apartment",
+      "policy": "information_gain",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 535.8333333333334,
+      "initial_yaw_deg": -90
+    },
+    {
+      "job_id": "apartment-s43-nearest",
+      "pair_id": "apartment-s43",
+      "profile": "apartment",
+      "policy": "nearest",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 158.66666666666666,
+      "initial_yaw_deg": -90
+    },
+    {
+      "job_id": "clutter-s29-llm_guided",
+      "pair_id": "clutter-s29",
+      "profile": "clutter",
+      "policy": "llm_guided",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 119.86666666666666,
+      "initial_yaw_deg": 0
+    },
+    {
+      "job_id": "clutter-s29-nearest",
+      "pair_id": "clutter-s29",
+      "profile": "clutter",
+      "policy": "nearest",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 142.9,
+      "initial_yaw_deg": 0
+    },
+    {
+      "job_id": "clutter-s43-information_gain",
+      "pair_id": "clutter-s43",
+      "profile": "clutter",
+      "policy": "information_gain",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "original_termination": "search_limit",
+      "original_simulated_time_s": 290.6666666666667,
+      "initial_yaw_deg": -90
+    },
+    {
+      "job_id": "clutter-s43-llm_guided",
+      "pair_id": "clutter-s43",
+      "profile": "clutter",
+      "policy": "llm_guided",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "original_termination": "search_limit",
+      "original_simulated_time_s": 290.6666666666667,
+      "initial_yaw_deg": -90
+    },
+    {
+      "job_id": "clutter-s43-random",
+      "pair_id": "clutter-s43",
+      "profile": "clutter",
+      "policy": "random",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 262.93333333333334,
+      "initial_yaw_deg": -90
+    },
+    {
+      "job_id": "dynamic-s17-random",
+      "pair_id": "dynamic-s17",
+      "profile": "dynamic",
+      "policy": "random",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 112.46666666666667,
+      "initial_yaw_deg": 90
+    },
+    {
+      "job_id": "dynamic-s29-llm_guided",
+      "pair_id": "dynamic-s29",
+      "profile": "dynamic",
+      "policy": "llm_guided",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 214.26666666666665,
+      "initial_yaw_deg": 0
+    },
+    {
+      "job_id": "dynamic-s29-random",
+      "pair_id": "dynamic-s29",
+      "profile": "dynamic",
+      "policy": "random",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 121.26666666666667,
+      "initial_yaw_deg": 0
+    },
+    {
+      "job_id": "dynamic-s43-llm_guided",
+      "pair_id": "dynamic-s43",
+      "profile": "dynamic",
+      "policy": "llm_guided",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 200.4,
+      "initial_yaw_deg": -90
+    },
+    {
+      "job_id": "dynamic-s43-random",
+      "pair_id": "dynamic-s43",
+      "profile": "dynamic",
+      "policy": "random",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "original_termination": "no_feasible_frontiers",
+      "original_simulated_time_s": 203.66666666666666,
+      "initial_yaw_deg": -90
+    }
+  ],
+  "phase_two_remaining_jobs": [
+    {
+      "job_id": "apartment-s17-information_gain",
+      "pair_id": "apartment-s17",
+      "profile": "apartment",
+      "policy": "information_gain",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 92.0,
+      "initial_yaw_deg": 90
+    },
+    {
+      "job_id": "apartment-s17-nearest",
+      "pair_id": "apartment-s17",
+      "profile": "apartment",
+      "policy": "nearest",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 146.0,
+      "initial_yaw_deg": 90
+    },
+    {
+      "job_id": "apartment-s17-random",
+      "pair_id": "apartment-s17",
+      "profile": "apartment",
+      "policy": "random",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 91.0,
+      "initial_yaw_deg": 90
+    },
+    {
+      "job_id": "apartment-s29-information_gain",
+      "pair_id": "apartment-s29",
+      "profile": "apartment",
+      "policy": "information_gain",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 103.0,
+      "initial_yaw_deg": 0
+    },
+    {
+      "job_id": "apartment-s29-llm_guided",
+      "pair_id": "apartment-s29",
+      "profile": "apartment",
+      "policy": "llm_guided",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 125.0,
+      "initial_yaw_deg": 0
+    },
+    {
+      "job_id": "apartment-s43-llm_guided",
+      "pair_id": "apartment-s43",
+      "profile": "apartment",
+      "policy": "llm_guided",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 96.66666666666667,
+      "initial_yaw_deg": -90
+    },
+    {
+      "job_id": "apartment-s43-random",
+      "pair_id": "apartment-s43",
+      "profile": "apartment",
+      "policy": "random",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 81.0,
+      "initial_yaw_deg": -90
+    },
+    {
+      "job_id": "clutter-s17-information_gain",
+      "pair_id": "clutter-s17",
+      "profile": "clutter",
+      "policy": "information_gain",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 145.66666666666666,
+      "initial_yaw_deg": 90
+    },
+    {
+      "job_id": "clutter-s17-llm_guided",
+      "pair_id": "clutter-s17",
+      "profile": "clutter",
+      "policy": "llm_guided",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 97.33333333333333,
+      "initial_yaw_deg": 90
+    },
+    {
+      "job_id": "clutter-s17-nearest",
+      "pair_id": "clutter-s17",
+      "profile": "clutter",
+      "policy": "nearest",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 105.0,
+      "initial_yaw_deg": 90
+    },
+    {
+      "job_id": "clutter-s17-random",
+      "pair_id": "clutter-s17",
+      "profile": "clutter",
+      "policy": "random",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 147.0,
+      "initial_yaw_deg": 90
+    },
+    {
+      "job_id": "clutter-s29-information_gain",
+      "pair_id": "clutter-s29",
+      "profile": "clutter",
+      "policy": "information_gain",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 243.0,
+      "initial_yaw_deg": 0
+    },
+    {
+      "job_id": "clutter-s29-random",
+      "pair_id": "clutter-s29",
+      "profile": "clutter",
+      "policy": "random",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 218.0,
+      "initial_yaw_deg": 0
+    },
+    {
+      "job_id": "clutter-s43-nearest",
+      "pair_id": "clutter-s43",
+      "profile": "clutter",
+      "policy": "nearest",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 217.33333333333334,
+      "initial_yaw_deg": -90
+    },
+    {
+      "job_id": "dynamic-s17-information_gain",
+      "pair_id": "dynamic-s17",
+      "profile": "dynamic",
+      "policy": "information_gain",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 242.0,
+      "initial_yaw_deg": 90
+    },
+    {
+      "job_id": "dynamic-s17-llm_guided",
+      "pair_id": "dynamic-s17",
+      "profile": "dynamic",
+      "policy": "llm_guided",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 199.66666666666666,
+      "initial_yaw_deg": 90
+    },
+    {
+      "job_id": "dynamic-s17-nearest",
+      "pair_id": "dynamic-s17",
+      "profile": "dynamic",
+      "policy": "nearest",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 155.0,
+      "initial_yaw_deg": 90
+    },
+    {
+      "job_id": "dynamic-s29-information_gain",
+      "pair_id": "dynamic-s29",
+      "profile": "dynamic",
+      "policy": "information_gain",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 274.0,
+      "initial_yaw_deg": 0
+    },
+    {
+      "job_id": "dynamic-s29-nearest",
+      "pair_id": "dynamic-s29",
+      "profile": "dynamic",
+      "policy": "nearest",
+      "environment_seed": 29,
+      "perception_seed": 10029,
+      "policy_seed": 20029,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 118.33333333333333,
+      "initial_yaw_deg": 0
+    },
+    {
+      "job_id": "dynamic-s43-information_gain",
+      "pair_id": "dynamic-s43",
+      "profile": "dynamic",
+      "policy": "information_gain",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 319.0,
+      "initial_yaw_deg": -90
+    },
+    {
+      "job_id": "dynamic-s43-nearest",
+      "pair_id": "dynamic-s43",
+      "profile": "dynamic",
+      "policy": "nearest",
+      "environment_seed": 43,
+      "perception_seed": 10043,
+      "policy_seed": 20043,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": -1.5707963267948966
+      },
+      "original_termination": "success",
+      "original_simulated_time_s": 226.0,
+      "initial_yaw_deg": -90
+    }
+  ],
+  "note": "Do not claim native acceptance from this selection file. Phase one is a selected failure subset, not an unbiased overall success-rate estimate."
+}

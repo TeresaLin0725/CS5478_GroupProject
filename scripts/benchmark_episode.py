@@ -51,6 +51,19 @@ def atomic(p,value):
         raise TypeError('Unsupported JSON value: '+type(v).__name__)
     temporary=p.with_suffix(p.suffix+'.tmp');temporary.write_text(json.dumps(value,ensure_ascii=False,indent=2,default=encode),encoding='utf-8');replace_shared(temporary,p)
 
+def nav_kwargs(job,protocol=None):
+    """Combine the sealed protocol preset with opt-in per-job recovery options.
+
+    An old job without options retains its protocol preset (legacy when absent).
+    """
+    from frontier_search.navigation.locobot_robot import ROUND_FOOTPRINT_OVERRIDE_NAV_OPTIONS
+    from frontier_search.navigation.navigator import RelaxedRetry
+    options=job.get('nav_options') or {}
+    kwargs=navigation_options(protocol or {})
+    if options.get('round_footprint'):kwargs.update(ROUND_FOOTPRINT_OVERRIDE_NAV_OPTIONS)
+    if options.get('relaxed_retry'):kwargs['relaxed_retry']=RelaxedRetry()
+    return kwargs
+
 def preflight(protocol,profile,out):
     import numpy as np
     from math import atan2,hypot,pi
@@ -151,7 +164,7 @@ def episode(protocol,job,out):
     store=RetainedFrames()
     sim=RetainingAdapter(m.robot,m.mapping,AdapterConfig(scene_id='Rs',settle_steps=0,
         image_width=640,image_height=480,vertical_fov_deg=75.),store,job['profile'])
-    mapper=RGBDMapper(detector);nav=TeamNavigator(sim,linear_gain=2.,**navigation_options(protocol))
+    mapper=RGBDMapper(detector);nav=TeamNavigator(sim,linear_gain=2.,**nav_kwargs(job,protocol))
     policy=LLMGuidedPolicy(GeminiCompatibleClient()) if job['policy']=='llm_guided' else BaselinePolicy(PolicyName(job['policy']))
     evaluator=CloseRetainedEvaluator(store,sim)
     from benchmark_watchdog import WatchdogChannel,AsyncEventWriter

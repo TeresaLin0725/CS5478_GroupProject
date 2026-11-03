@@ -29,6 +29,8 @@ class IntegratedRecorder:
         if event=='decision':
             goal=payload['selection'].subgoal
             self.caption=('C selects '+goal.frontier_id+' / '+goal.kind) if goal else 'C requests recovery scan'
+        elif event=='action_selected':
+            self.caption='Final goal '+payload['selection'].subgoal.frontier_id+' / '+payload['action_source']
         elif event=='dispatch':
             self.caption='B executes '+payload['request'].subgoal.frontier_id
         elif event=='operation_feedback':
@@ -51,7 +53,7 @@ class IntegratedRecorder:
             self.caption='A inspects observed target / brakes held / fresh RGB-D evidence'
         elif event=='inspection_end':
             self.caption='Target inspection complete / continue search if unconfirmed'
-        if event in ('decision','dispatch','operation_feedback','target_evaluation','observation_start','operation_terminal',
+        if event in ('decision','action_selected','dispatch','operation_feedback','target_evaluation','observation_start','operation_terminal',
                      'navigation_map_feedback','replan_request','strategy_replan','inspection_start','inspection_end'):
             self.events.append(dict(time_s=self.runner.sim_time,event=event,text=self.caption))
         if event=='motion_sample' and self.video and self.video.due(self.sim._backend.world.steps):
@@ -142,7 +144,13 @@ def export_viewer(output,summary):
         row=json.loads(line)
         if row['event']=='decision':
             selection=row['selection'];goal=selection['subgoal']
-            events.append(dict(t=row['state']['timestamp_s'],text='C: '+(goal['frontier_id'] if goal else selection['stop_reason'])+' / '+str(selection['rationale'])))
+            events.append(dict(t=row['state']['timestamp_s'],text='C 原始选择: '+(goal['frontier_id'] if goal else selection['stop_reason'])+' / '+str(selection['rationale'])))
+        if row['event']=='action_selected':
+            label={'policy':'搜索策略','epsilon_retry':'概率恢复重试','stuck_retry':'无可用目标后的恢复重试'}[row['action_source']]
+            events.append(dict(t=row['simulated_time_s'],text='最终目标: '+row['selection']['subgoal']['frontier_id']+' / '+label))
+        if row['event']=='dispatch':
+            events.append(dict(t=row.get('simulated_time_s',events[-1]['t'] if events else 0.),
+                               text='B 实际下发: '+row['request']['subgoal']['frontier_id']))
         if row['event']=='operation_terminal':
             fb=row['feedback'];events.append(dict(t=fb['timestamp_s'],text='B: '+fb['status']+' / '+str(fb['failure_reason'])))
         if row['event']=='target_evaluation':
@@ -152,7 +160,7 @@ def export_viewer(output,summary):
         if row['event']=='replan_request':
             events.append(dict(t=row['simulated_time_s'],text='B → C: 请求改选目标'))
         if row['event']=='strategy_replan':
-            events.append(dict(t=row['simulated_time_s'],text='C → B: '+row['selected']['frontier_id']))
+            events.append(dict(t=row['simulated_time_s'],text='C → B: '+row['selected']['frontier_id']+' / '+row.get('action_source','policy')))
     payload=json.dumps(dict(summary=summary,events=events),ensure_ascii=False).replace('</','<\\/')
     html='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>完整管线 · Gibson Rs</title>
 <style>body{margin:0;background:#101720;color:#e1edf7;font:16px system-ui}main{max-width:1400px;margin:32px auto;padding:0 24px}h1{font-size:25px}p{color:#9eb4c6}video{width:100%;border-radius:12px;background:#000}section{display:flex;gap:12px;flex-wrap:wrap}a,button{background:#233746;color:#bdeafa;padding:10px 14px;border:0;border-radius:6px;text-decoration:none;cursor:pointer}pre{white-space:pre-wrap;line-height:1.6;background:#17232e;padding:18px;border-radius:10px}.events button{display:block;text-align:left;width:100%;margin:6px 0}</style>

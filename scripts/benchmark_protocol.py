@@ -7,6 +7,25 @@ import random
 
 POLICIES=('random','nearest','information_gain','llm_guided')
 PROFILES=('apartment','clutter','dynamic')
+# Ablation arms for B/C failure recovery. A0 is the already-frozen batch (square footprint, no recovery options) and
+# is never rerun, so it has no entry here. Each arm adds one idea to the previous one; seeds and tasks stay identical so
+# every arm pairs with A0 job by job. A job without ``nav_options`` keeps the old behaviour exactly.
+ARMS={
+    'A1':dict(round_footprint=True,relaxed_retry=False,stuck_retry=False,epsilon_retry=0.),
+    'A2':dict(round_footprint=True,relaxed_retry=True,stuck_retry=True,epsilon_retry=0.),
+    'A3':dict(round_footprint=True,relaxed_retry=True,stuck_retry=True,epsilon_retry=.05),
+}
+NAV_KEYS=('round_footprint','relaxed_retry')       # B-side switches, read by benchmark_episode
+RECOVERY_KEYS=('stuck_retry','epsilon_retry')      # C-side switches, stored in each job's manifest (hashed)
+
+def apply_arm(job,arm):
+    """Record an arm on a job and return the RecoveryConfig fields for its manifest."""
+    if arm not in ARMS:raise ValueError('unknown arm %r; choose from %s'%(arm,sorted(ARMS)))
+    settings=ARMS[arm]
+    job['arm']=arm
+    job['nav_options']={k:settings[k] for k in NAV_KEYS}
+    return {k:settings[k] for k in RECOVERY_KEYS}
+
 TRIALS=((17,1.5707963267948966),(29,0.0),(43,-1.5707963267948966))
 
 def task_specs():

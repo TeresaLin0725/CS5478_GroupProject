@@ -3,7 +3,7 @@ import argparse,hashlib,json,os,shutil,subprocess,sys,time
 from dataclasses import asdict,replace
 from datetime import datetime,timezone
 from pathlib import Path
-from benchmark_protocol import POLICIES,TRIALS,task_specs,validate_pairing
+from benchmark_protocol import ARMS,POLICIES,TRIALS,apply_arm,task_specs,validate_pairing
 from benchmark_episode import atomic,read
 from benchmark_watchdog import WatchdogChannel
 
@@ -53,7 +53,7 @@ def benchmark_manifest():
     base=manifest_for('template')
     return replace(base,robot=shared_round_robot(base.robot),initialization_deadline_s=240.)
 
-def freeze(out,workers):
+def freeze(out,workers,arm=None):
     if (out/'protocol.json').exists():raise FileExistsError('Choose a fresh suite directory; use run to resume the queue')
     sys.path.insert(0,str(ROOT/'src'))
     from frontier_search.runner.integrated import source_fingerprint
@@ -72,7 +72,8 @@ def freeze(out,workers):
     for name in HARNESSES:shutil.copy2(ROOT/'scripts'/name,snapshot/'harness'/name)
     jobs=task_specs();base=benchmark_manifest()
     for job in jobs:
-        manifest=replace(base,episode_id=job['job_id'],policy_name=job['policy'],
+        recovery=replace(base.recovery,**apply_arm(job,arm)) if arm else base.recovery
+        manifest=replace(base,episode_id=job['job_id'],policy_name=job['policy'],recovery=recovery,
             start_pose=Pose(**job['start_pose']),environment_seed=job['environment_seed'],
             perception_seed=job['perception_seed'],policy_seed=job['policy_seed'])
         manifest.validate();path=Path('manifests')/(job['job_id']+'.json')
@@ -98,14 +99,15 @@ def freeze(out,workers):
             reachability='Native collision/floor oracle preflight, parked cart if dynamic; oracle files never read by episode worker.'),
         runtime=dict(workers=workers,torch_threads=4,device='0',python=sys.version,startup_deadline_s=300.,
             wall_time_interpretation='Concurrent shared-resource wall times; not isolated single-robot latency.'),
-        regression_certificate=tests,no_episode_retries=True,
+        regression_certificate=tests,no_episode_retries=True,arm=arm,arm_settings=ARMS.get(arm),
         reporting=dict(primary_unit='profile x seed/initial-heading paired block',penalized_failure_s=600.,
             confidence='Wilson descriptive success intervals; 10000 paired stratified bootstrap draws, RNG 20261018; exact McNemar with Holm correction for six comparisons.',
             include_all_terminations=True,success_conditioned_metrics_include_n=True))
     atomic(out/'protocol.json',protocol)
     (out/'protocol.sha256').write_text(sha(out/'protocol.json')+'\n',encoding='ascii')
     # Human/repository entry points hold the same fully populated manifest.
-    atomic(ROOT/'configs/experiment.rs-20261018.json',protocol)
+    # An arm never overwrites the original frozen batch's config.
+    atomic(ROOT/'configs'/('experiment.rs-20261018-%s.json'%arm if arm else 'experiment.rs-20261018.json'),protocol)
     atomic(out/'progress.json',dict(status='preflight_pending',active=[],completed=0,planned=len(jobs),updated_utc=utc()))
     from build_benchmark_report import build
     build(out)
@@ -259,8 +261,8 @@ def run(out,only_baselines=False):
     print('BENCHMARK_COMPLETE' if stats['complete'] else 'BENCHMARK_INCOMPLETE',json.dumps(stats['paired_policy_stats']),flush=True)
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('action',choices=('freeze','run','all'));p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=3);p.add_argument('--only-baselines',action='store_true')
+    p=argparse.ArgumentParser();p.add_argument('action',choices=('freeze','run','all'));p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=3);p.add_argument('--only-baselines',action='store_true');p.add_argument('--arm',choices=sorted(ARMS),default=None)
     a=p.parse_args();out=a.output.resolve()
-    if a.action in ('freeze','all'):freeze(out,a.workers)
+    if a.action in ('freeze','all'):freeze(out,a.workers,a.arm)
     if a.action in ('run','all'):run(out,a.only_baselines)
 if __name__=='__main__':main()

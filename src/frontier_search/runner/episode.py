@@ -5,8 +5,10 @@ returning; an asynchronous mapper needs an adapter implementing this barrier.
 """
 
 
+from dataclasses import replace
 from enum import Enum
 from math import hypot, pi
+from random import Random
 from time import monotonic
 from typing import Optional, Tuple
 
@@ -14,7 +16,7 @@ from ..contracts import (
     CandidateEvaluation, FrontierExclusion, PlannerAttempt, SelectionContext,
     SelectionResult, WorldState,
     CandidateEvaluationRequest, EvaluationRequest, MapperInit, NavigationRequest,
-    NavigationStatus, NavigatorInit, ObservationRequest,
+    NavigationStatus, NavigatorInit, ObservationRequest, PolicyName,
 )
 from ..evaluation.api import TargetEvaluator
 from ..navigation.api import SteppedNavigator
@@ -24,7 +26,7 @@ from ..simulation.api import ControlledSimulatorAdapter
 from ..validation import require, validate_context, validate_evaluation, validate_selection, validate_state
 from ..perception.observations import validate_rgbd_observation
 from .manifest import EpisodeManifest
-from .recovery import RecoveryManager, SpatialRecovery
+from .recovery import RecoveryManager, SpatialRecovery, probe_candidates, probe_subgoal
 
 
 class TerminationReason(str, Enum):
@@ -214,7 +216,7 @@ class EpisodeRunner:
         if kind == 'navigate':
             request = NavigationRequest(episode, self.active, self.state.occupancy_map, pose, subgoal)
             self._emit('dispatch', request=request, assessment_revision=subgoal.selected_from_revision,
-                       dispatch_revision=self.state.revision)
+                       dispatch_revision=self.state.revision, simulated_time_s=self.sim_time)
             feedback = self._call('navigator.start', self.navigator.start, request)
             limit = self.manifest.navigation.navigation_deadline_s
         else:
@@ -313,10 +315,9 @@ class EpisodeRunner:
             self.decisions += 1
             selection = self._call('policy.select', decide, self.policy, decision_state, context,
                                    oracle_room_labels=self.manifest.oracle_room_labels)
+            policy_selection = selection
+            action_source = 'policy'
             self._emit('decision', state=decision_state, context=context, selection=selection)
-            if self.previous is not None and self.previous.execution_status == 'failed' and selection.subgoal:
-                self._emit('strategy_replan', direction='C_to_B', previous_attempt=self.previous,
-                           selected=selection.subgoal, simulated_time_s=self.sim_time)
             records = getattr(self.policy, 'call_records', ())
             for record in records[self.llm_records:]:
                 self._emit('llm_call', record=record)
@@ -325,6 +326,17 @@ class EpisodeRunner:
             if not self._fresh_pose():
                 self._emit('stale_dispatch', revision=self.state.revision)
                 continue  # bounded by decision/step/wall budgets; recapture and reassess
+            epsilon = self.manifest.recovery.epsilon_retry
+            if epsilon > 0 and selection.stop_reason != 'target_claimed':
+                draw = self._probe_rng.random()  # one draw per decision, whether or not a probe is possible
+                pool = probe_candidates(decision_state, exclusions, self.recovery)
+                if draw < epsilon and pool:
+                    chosen = pool[int(self._probe_rng.random() * len(pool))]
+                    self._emit('epsilon_probe', mode='epsilon', frontier_id=chosen.frontier_id,
+                               replaced=selection.subgoal.frontier_id if selection.subgoal else None)
+                    selection = replace(selection, subgoal=probe_subgoal(
+                        decision_state, chosen, PolicyName(self.manifest.policy_name)), stop_reason=None)
+                    action_source = 'epsilon_retry'
             if selection.subgoal is None:
                 if not recovered:
                     recovered = True
@@ -342,18 +354,37 @@ class EpisodeRunner:
                         if self.steps % self.manifest.capture_every_steps == 0:
                             self._capture()
                     continue
-                raise _End(TerminationReason.NO_FRONTIERS if not self.state.frontiers
-                           else TerminationReason.NO_FEASIBLE_FRONTIERS)
+                diagnose = getattr(self.navigator, 'diagnose_candidates', None)
+                if diagnose is not None and self.state.frontiers:
+                    try:  # diagnostics are evidence for the report and must never end an episode
+                        self._emit('frontier_diagnostics', revision=self.state.revision,
+                                   frontiers=diagnose(CandidateEvaluationRequest(self.manifest.episode_id, self.state)))
+                    except Exception as exc:
+                        self._emit('frontier_diagnostics_error', error_type=type(exc).__name__)
+                pool = probe_candidates(decision_state, exclusions, self.recovery) if self.manifest.recovery.stuck_retry else []
+                if selection.stop_reason == 'target_claimed' or not pool:
+                    raise _End(TerminationReason.NO_FRONTIERS if not self.state.frontiers
+                               else TerminationReason.NO_FEASIBLE_FRONTIERS)
+                self._emit('epsilon_probe', mode='stuck', frontier_id=pool[0].frontier_id, replaced=None)
+                selection = replace(selection, subgoal=probe_subgoal(
+                    decision_state, pool[0], PolicyName(self.manifest.policy_name)), stop_reason=None)
+                action_source = 'stuck_retry'
             if self.attempts >= self.manifest.limits.max_attempts:
                 raise _End(TerminationReason.SEARCH_LIMIT)
             before = decision_state
             self.attempts += 1
             self.recovery.record_dispatch(before, selection.subgoal.frontier_id)
+            self._emit('action_selected', decision_number=self.decisions, state_revision=self.state.revision,
+                       simulated_time_s=self.sim_time, policy_selection=policy_selection,
+                       selection=selection, action_source=action_source)
+            if self.previous is not None and self.previous.execution_status == 'failed':
+                self._emit('strategy_replan', direction='C_to_B', previous_attempt=self.previous,
+                           selected=selection.subgoal, action_source=action_source,
+                           simulated_time_s=self.sim_time)
             feedback = self._operation('navigate', subgoal=selection.subgoal)
             self.previous = PlannerAttempt(selection.subgoal, feedback.planner_result,
                                            feedback.status.value, feedback.failure_reason)
             # Cooldowns start at terminal time, with dispatch geometry as evidence.
-            from dataclasses import replace
             self.recovery.record_attempt(replace(before, timestamp_s=self.sim_time), self.previous)
             recovered, idle_cycles = False, 0
             if feedback.status == NavigationStatus.CANCELLED:
@@ -439,6 +470,8 @@ class EpisodeRunner:
             elif isinstance(self.recovery, SpatialRecovery):
                 self.recovery.config = manifest.recovery
             self.recovery.reset(manifest.episode_id)
+            # Own stream, so drawing a probe never disturbs the Random policy's RNG; paired runs share the seed.
+            self._probe_rng = Random(manifest.policy_seed * 1000003 + 17)
             self._capture()
             phase = 'running'
             self._loop()

@@ -1,0 +1,81 @@
+A/C 联合测试计划：统一圆形后，epsilon 是否改善旧失败回合？
+日期：2026-11-03
+
+测试目标
+1. 新版本能否让旧失败回合变成功？
+2. 在相同统一圆形与共同恢复设置下，开启 epsilon 是否额外改善？
+3. 旧成功回合是否因更新而回退？
+
+先完成的代码检查
+- A 验证共享圆形已用于候选点和初始化，保留障碍/未知/高度/地面支持检查。
+- C 验证 epsilon 的资格、概率、冷却、共享预算、独立 RNG、取消/验收和实际派发日志。
+- 合并后的同一份源码通过回归，再冻结代码、模型、参数和本次任务列表。
+- 统一的是身体几何，保留当前 B 余量；两组的 A 输入和初始化必须一致。
+
+原始基线
+原 36 回合共 21 成功、15 失败：13 个 no_feasible_frontiers，2 个 search_limit。
+保存原结果，不覆盖旧协议/旧证据，不把新圆形结果回填进旧批次。
+
+配对实验设置
+U0：统一圆形，stuck retry=true，relaxed retry=true，epsilon=0。
+U05：与 U0 完全相同，epsilon=0.05。
+这对应当前 A2/A3 的开关组合，但要标明统一几何后的新批次和源码指纹。
+如果另选共同恢复设置，两组必须同步固定；不能开启 epsilon 时顺带改变其他开关。
+任务按原 job_id 配对。场景、策略、起点/朝向、环境/感知/策略种子、检测器、目标位置、
+预算、成功验收和并发设置保持一致。B 实际配置在两组核对并保存。
+在线 LLM 即使使用相同 seed 也不保证相同回答；记录实际模型、参数、调用、回退及证据。
+
+阶段一：优先回答旧失败是否改善
+执行下面 15 个 job，每个分别运行 U0 和 U05，共 30 回合。
+其中 13 个几何不可行结局优先排查，另外 2 个 search_limit 同样保留。
+这是预先选出的失败子集，不能把其成功率当作全部任务的新成功率，也不能直接比较四策略总体优劣。
+当前阶段做同 job_id 的两组对照；不要把不完整的四策略块当作原 9 组完整配对统计。
+
+旧失败 job_id | 原终止原因 | 起始朝向（度）
+apartment-s17-llm_guided | no_feasible_frontiers | +90
+apartment-s29-nearest | no_feasible_frontiers | +0
+apartment-s29-random | no_feasible_frontiers | +0
+apartment-s43-information_gain | no_feasible_frontiers | -90
+apartment-s43-nearest | no_feasible_frontiers | -90
+clutter-s29-llm_guided | no_feasible_frontiers | +0
+clutter-s29-nearest | no_feasible_frontiers | +0
+clutter-s43-information_gain | search_limit | -90
+clutter-s43-llm_guided | search_limit | -90
+clutter-s43-random | no_feasible_frontiers | -90
+dynamic-s17-random | no_feasible_frontiers | +90
+dynamic-s29-llm_guided | no_feasible_frontiers | +0
+dynamic-s29-random | no_feasible_frontiers | +0
+dynamic-s43-llm_guided | no_feasible_frontiers | -90
+dynamic-s43-random | no_feasible_frontiers | -90
+
+阶段二：检查整体表现和回退
+补原先成功的 21 个 job，两组共 42 回合。
+阶段一与阶段二合计覆盖全部原 36 个 job，每个两组，总计 72 回合；不用重跑阶段一。
+如果只完成阶段一，明确报告 15 个旧失败子集，不宣称已经完成新版本全部 36 案例验收。
+
+每回合保存与报告
+旧结局、U0 结局、U05 结局、独立验收是否成功、碰撞/接触、实际距离、仿真时间、墙钟时间、
+尝试/决策次数、精确终止原因、epsilon 探测次数、stuck 次数、放宽规划次数、模型调用与回退。
+保留配置、地图/最终状态、事件日志和原始模型回答，不只保存视频或成功标志。
+对每次 epsilon 探测关联：原策略目标 -> 可探测资格与限制 -> 最终目标 -> B 结果 -> 后续进展。
+零次探测可能是没有候选或随机未触发，要如实标注，不通过实机改成 epsilon=1 来追求成功。
+epsilon=1 仅用于受控自动测试，不替代正式 epsilon=0.05 的实验。
+
+逐案例结果如何解释
+旧失败、U0 成功、U05 成功：共同改动已改善；没有证明该案例需要 epsilon。
+旧失败、U0 失败、U05 成功：本次配对中 epsilon 组改善；保留探测证据，单次结果不等于确定因果。
+U0 成功、U05 失败：本次配对出现回退，需要分析是否额外尝试消耗预算或其他随机因素。
+U0 和 U05 均失败：问题未解决，分别报告地图/候选/规划/预算/验收原因。
+原先成功现在失败：明确计入回归，不得排除。
+
+运行规则
+使用冻结列表精确选择 job；默认单回合入口的 seed/朝向可能不同，不能替代对应原案例。
+若补任务筛选功能，协议保留完整任务集合和本次子集，部分完成不冒充全批完成。
+每个运行使用新目录。崩溃、超时、配置错误和失败均保留，不重跑直到成功。
+如需额外重复，先固定重复次数与种子，并报告全部重复，不挑选最好结果。
+无原生环境：交付代码、自动测试和实验调度配置，明确原生运行待队友完成；不编造 native 结果。
+
+最终交付
+A：统一几何后的候选/初始化验证结果和限制。
+C：代码与回归结果、实际调度方式、任务级对照表、失败转成功/回退统计与证据。
+两组必须使用同一合并提交；实际参数不一致的回合应标记无效并保留原因，不混入性能比较。

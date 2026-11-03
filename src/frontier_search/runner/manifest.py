@@ -76,6 +76,9 @@ class EpisodeManifest:
                     self.recovery.opportunity_attempt_cap, self.recovery.no_progress_cap,
                     self.recovery.max_cycles_without_navigation)
         require(all(type(x) is int and x > 0 for x in counters), 'budgets must be positive integers')
+        require(type(self.recovery.epsilon_retry) in (int, float) and 0 <= self.recovery.epsilon_retry <= 1,
+                'epsilon_retry must be a probability')
+        require(type(self.recovery.stuck_retry) is bool, 'stuck_retry must be a bool')
         require(type(self.navigation.max_replans) is int and self.navigation.max_replans >= 0,
                 'invalid replan budget')
         require(all(isfinite(x) and x >= 0 for x in (self.observation.dwell_s,
