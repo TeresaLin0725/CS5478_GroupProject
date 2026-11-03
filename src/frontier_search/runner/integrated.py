@@ -1,6 +1,6 @@
 """Full A/B/C/W3 native pipeline. Validation runs do not create a video recorder."""
 import argparse
-from dataclasses import asdict
+from dataclasses import asdict, replace
 import hashlib
 import json
 import os
@@ -13,7 +13,8 @@ from ..config import (MappingConfig,ObservationConfig,NavigationConfig,PolicyCon
 from ..contracts import Point2,Pose,RobotConfig,PolicyName,RegionPrior
 from ..evaluation.retained import RetainedFrames
 from ..experiments.logging import dumps
-from ..navigation.navigator import TeamNavigator
+from ..navigation.locobot_robot import ROUND_FOOTPRINT_OVERRIDE_NAV_OPTIONS
+from ..navigation.navigator import RelaxedRetry,TeamNavigator
 from ..perception.mapper import RGBDMapper
 from ..perception.detection import TiledYOLODetector
 from ..policies.baselines import BaselinePolicy
@@ -104,6 +105,10 @@ def main():
     parser.add_argument('--policy',choices=('nearest','information_gain','random','llm_guided'),default='information_gain')
     parser.add_argument('--env-file',type=Path,default=ROOT.parent/'.env')
     parser.add_argument('--record',action='store_true')
+    # Opt-in recovery from over-conservative exclusions; all default off, so a plain run is unchanged.
+    parser.add_argument('--relaxed-retry',action='store_true',help='B: one relaxed re-plan after a strict NO_PATH/INVALID_GOAL')
+    parser.add_argument('--epsilon-retry',type=float,default=0.,help='C: probability of probing an excluded frontier per decision')
+    parser.add_argument('--stuck-retry',action='store_true',help='C: probe an excluded frontier instead of ending when stuck')
     parser.add_argument('--validation',type=Path)
     args=parser.parse_args()
     load_local_env(args.env_file)
@@ -133,6 +138,8 @@ def main():
     from ..sensors import ImageBuffer
     detector.detect(ImageBuffer(640,480,'rgb8',bytes(640*480*3)))
     manifest=manifest_for(args.output.name,args.policy)
+    manifest=replace(manifest,recovery=replace(manifest.recovery,epsilon_retry=args.epsilon_retry,
+                                               stuck_retry=args.stuck_retry))
     manifest.validate()
     (args.output/'manifest.json').write_text(dumps(manifest),encoding='utf-8')
     (args.output/'controller.json').write_text(json.dumps(dict(linear_gain_per_s=2.0,
@@ -143,7 +150,9 @@ def main():
     mapper=RGBDMapper(detector)
     # Grid waypoints are only 0.1 m apart. The default 1/s gain made the
     # robot crawl below its speed limit even on a straight, validated path.
-    nav=TeamNavigator(sim,linear_gain=2.0)
+    # Round Locobot base inside B only; the manifest footprint A and C read stays the square.
+    nav=TeamNavigator(sim,linear_gain=2.0,**ROUND_FOOTPRINT_OVERRIDE_NAV_OPTIONS,
+                      relaxed_retry=RelaxedRetry() if args.relaxed_retry else None)
     policy=(LLMGuidedPolicy(GeminiCompatibleClient()) if args.policy=='llm_guided'
             else BaselinePolicy(PolicyName(args.policy)))
     evaluator=CloseRetainedEvaluator(store,sim)

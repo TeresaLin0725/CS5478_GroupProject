@@ -4,7 +4,7 @@ from math import floor, hypot
 from typing import Protocol, Tuple
 
 
-from ..contracts import CandidateEvaluation, FrontierExclusion, PlannerAttempt, WorldState
+from ..contracts import CandidateEvaluation, FrontierExclusion, PlannerAttempt, Subgoal, WorldState
 from ..config import RecoveryConfig
 from ..validation import require
 
@@ -17,6 +17,28 @@ class RecoveryManager(Protocol):
     def record_progress(self, before: WorldState, after: WorldState, frontier_id: str) -> float: ...
     def record_observation_failure(self, before: WorldState, after: WorldState, frontier_id: str) -> None: ...
     def exclusions(self, state: WorldState, evaluation: CandidateEvaluation) -> Tuple[FrontierExclusion, ...]: ...
+
+
+def probe_candidates(state: WorldState, exclusions: Tuple[FrontierExclusion, ...], recovery) -> list:
+    """Probe geometry exclusions only, after checking every active restriction and cap.
+
+    An exclusion summarizes several restrictions, so its reason alone is insufficient.
+    Recovery implementations without the optional can_probe check fail closed.
+    """
+    can_probe = getattr(recovery, 'can_probe', None)
+    if can_probe is None:
+        return []
+    blocked = {e.frontier_id for e in exclusions if e.retry_condition == 'evidence_change'
+               and e.reason in ('no_path', 'invalid_goal')}
+    pool = [f for f in state.frontiers if f.frontier_id in blocked and f.kind != 'navigation_probe'
+            and can_probe(state, f)]
+    return sorted(pool, key=lambda f: (f.distance_from_robot_m, f.frontier_id))
+
+
+def probe_subgoal(state: WorldState, frontier, policy) -> Subgoal:
+    """Subgoal for a probe dispatch; it uses the frontier's own approach pose, never an invented one."""
+    return Subgoal(frontier.frontier_id, frontier.approach_pose, state.revision, policy,
+                   frontier.kind, frontier.target_track_id)
 
 
 @dataclass
@@ -151,6 +173,32 @@ class SpatialRecovery:
                 # Assessment is not an execution attempt. Geometry must change.
                 self._restrict(group, state, frontier, assessment.failure_reason.value)
 
+    def _exhausted(self, group):
+        return (len(group.attempts) >= self.config.opportunity_attempt_cap or
+                len(group.failures) >= self.config.navigation_retry_cap or
+                len(group.no_progress) >= self.config.no_progress_cap or
+                len(group.timeouts) >= self.config.evaluation_retry_cap)
+
+    def _active_restrictions(self, state, frontier, group):
+        active = []
+        signature = self._signature(state, frontier) if group.restrictions else None
+        for reason, condition, until, old in group.restrictions:
+            changed = signature != old
+            unlocked = ((condition in ('cooldown', 'cooldown_or_change') and state.timestamp_s >= until)
+                        or (condition in ('evidence_change', 'cooldown_or_change') and changed))
+            if not unlocked:
+                active.append((reason, condition, until, old))
+        return active
+
+    def can_probe(self, state, frontier):
+        """Permit only geometry locks; never waive active cooldowns or hard caps."""
+        require(state.episode_id == self.episode_id, 'recovery episode mismatch')
+        group = self._group(frontier)
+        active = self._active_restrictions(state, frontier, group)
+        return (not self._exhausted(group) and bool(active)
+                and all(reason in ('no_path', 'invalid_goal') and condition == 'evidence_change'
+                        for reason, condition, _, _ in active))
+
     def exclusions(self, state: WorldState, evaluation: CandidateEvaluation) -> Tuple[FrontierExclusion, ...]:
         require(state.episode_id == self.episode_id, 'recovery episode mismatch')
         # Synchronize every merge before projecting shared counters onto children.
@@ -159,23 +207,19 @@ class SpatialRecovery:
         result = []
         for frontier in state.frontiers:
             group = self._group(frontier)
-            exhausted = (len(group.attempts) >= self.config.opportunity_attempt_cap or
-                         len(group.failures) >= self.config.navigation_retry_cap or
-                         len(group.no_progress) >= self.config.no_progress_cap or
-                         len(group.timeouts) >= self.config.evaluation_retry_cap)
-            active = []
-            signature = self._signature(state, frontier) if group.restrictions else None
-            for reason, condition, until, old in group.restrictions:
-                changed = signature != old
-                unlocked = ((condition in ('cooldown', 'cooldown_or_change') and state.timestamp_s >= until)
-                            or (condition in ('evidence_change', 'cooldown_or_change') and changed))
-                if not unlocked:
-                    active.append((reason, condition, until, old))
+            exhausted = self._exhausted(group)
+            active = self._active_restrictions(state, frontier, group)
             # Do not discard shared restrictions when only one split child unlocks.
             if exhausted or active:
                 reason, condition, until, _ = active[-1] if active else ('no_progress', 'exhausted', None, None)
                 if exhausted:
                     condition, until = 'exhausted', None
+                elif any(a[1] in ('cooldown', 'cooldown_or_change') for a in active):
+                    # Preserve pending wait times even when a geometry lock is also active.
+                    # After the cooldown expires, the remaining geometry lock is projected.
+                    cooldowns = [a for a in active if a[1] in ('cooldown', 'cooldown_or_change')]
+                    reason, condition, _, _ = cooldowns[-1]
+                    until = max(a[2] for a in cooldowns)
                 elif any(a[1] == 'evidence_change' for a in active):
                     condition, until = 'evidence_change', None
                 else:

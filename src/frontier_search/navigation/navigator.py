@@ -49,7 +49,8 @@ Only the standard library is used; annotations stay Python 3.8 compatible.
 """
 
 from math import atan2, cos, hypot, pi
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
+import json
 from time import monotonic
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
@@ -60,8 +61,9 @@ from ..contracts import (
     OccupancyGrid, PlannerResult, Point2, Pose, RobotConfig,
 )
 from ..validation import ContractError
-from . import planner
-from .costmap import START_ZONE_M, Costmap
+from . import diagnostics, planner
+from .costmap import START_ZONE_M, Costmap, circumradius
+from .geometry import circle_footprint
 
 try:  # typing.Protocol exists from Python 3.8
     from typing import Protocol
@@ -96,6 +98,32 @@ class NearObstacleLimit:
     def __post_init__(self) -> None:
         if self.distance_m < 0 or self.max_linear_mps <= 0 or self.max_angular_radps <= 0:
             raise ValueError("near-obstacle limit needs distance >= 0 and positive speed caps")
+
+
+@dataclass(frozen=True)
+class RelaxedRetry:
+    """Opt-in bounded fallback: re-plan ONE dispatched goal with a relaxed costmap after a strict failure (B-local).
+
+    Robotics rationale: the strict costmap (circumscribed disc plus a clearance margin) is a conservative
+    configuration-space inflation (Lozano-Perez 1983). It can declare a frontier unreachable although the robot
+    physically fits, and a "no path / invalid goal" verdict is only lifted when the map changes, which a trapped robot
+    can never produce (deadlock). Like epsilon-greedy exploration (Sutton and Barto), occasionally trying an action
+    the strict model rejects trades a little safety for escape from a local optimum. It stays bounded and safe:
+    * only a goal the runner actually dispatched is retried (candidate evaluation stays strict and read-only, so
+      reachability assessment and strict execution still agree for every policy);
+    * only after NO_PATH / INVALID_GOAL, never after TIMEOUT or BLOCKED, and at most once per plan or replan;
+    * the exact-footprint guards (first move, in-place turns, sweeps) and stall detection still apply.
+    ``planning_radius_m`` None = the inscribed radius, the smallest disc that is still necessary for the robot.
+    """
+    margin_m: float = 0.0
+    planning_radius_m: Optional[float] = None
+    start_margin_m: float = 0.0
+
+    def __post_init__(self) -> None:
+        if self.margin_m < 0 or self.start_margin_m < 0:
+            raise ValueError("relaxed retry margins must be nonnegative")
+        if self.planning_radius_m is not None and self.planning_radius_m <= 0:
+            raise ValueError("relaxed planning radius must be positive")
 
 
 class NavigatorBoundaryError(ContractError):
@@ -148,6 +176,7 @@ class _Operation:
         self.index = 1                        # next waypoint (0 is the start pose)
         self.turn_ok = None                   # type: Optional[object]  # turn already checked safe (waypoint index / "goal")
         self.replans = 0
+        self.relaxed = False                  # plan came from the opt-in relaxed retry (see RelaxedRetry)
         self.start_pose = None                # type: Optional[Pose]  # real pose when the goal was accepted
         # observation
         self.targets = []                     # type: List[float]
@@ -168,7 +197,11 @@ class TeamNavigator:
                  smooth_paths: bool = False, planning_radius_m: Optional[float] = None,
                  linear_gain: float = K_LINEAR, near_obstacle_limit: Optional[NearObstacleLimit] = None,
                  start_margin_m: Optional[float] = None, planning_margin_m: Optional[float] = None,
-                 footprint_override: Optional[Sequence[Point2]] = None) -> None:
+                 footprint_override: Optional[Sequence[Point2]] = None,
+                 relaxed_retry: Optional[RelaxedRetry] = None) -> None:
+        # ``relaxed_retry``: None = a strict failure is final (default). A RelaxedRetry makes ``start`` and replans try
+        # one relaxed plan for the dispatched goal after NO_PATH / INVALID_GOAL (see RelaxedRetry).
+        self._relaxed_retry = relaxed_retry
         # ``footprint_override``: None = the footprint of the NavigatorInit robot configuration (default). A polygon
         # replaces it for every B check (costmap, turns, sweeps) without touching the shared manifest that A and C read,
         # e.g. the measured round Locobot base instead of the +/-0.181 m square AABB (see locobot_robot.py).
@@ -201,11 +234,13 @@ class TeamNavigator:
         self._linear_gain = linear_gain
         self._episode_id = None               # type: Optional[str]
         self._robot = None                    # type: Optional[RobotConfig]
+        self._shared_robot = None             # type: Optional[RobotConfig]
         self._obs_cfg = None                  # type: Optional[ObservationConfig]
         self._nav_cfg = None                  # type: Optional[NavigationConfig]
         self._ops = {}                        # type: Dict[str, _Operation]
         self._active = None                   # type: Optional[_Operation]
         self._costmap_cache = None            # type: Optional[Tuple[int, Costmap]]
+        self._relaxed_cache = None            # type: Optional[Tuple[int, Costmap]]
         self._latest_revision = -1
         self.events = []                      # type: List[Tuple[str, str]]
 
@@ -229,11 +264,53 @@ class TeamNavigator:
                                              "%.4f m and the circumscribed radius %.4f m of this robot"
                                              % (self._planning_radius_m, low, high))
         self._episode_id = request.episode_id
+        self._shared_robot = request.robot_config
         self._robot = robot
         self._obs_cfg = request.observation_config
         self._nav_cfg = request.navigation_config
-        self._ops, self._costmap_cache, self._latest_revision = {}, None, -1
+        self._ops, self._costmap_cache, self._relaxed_cache, self._latest_revision = {}, None, None, -1
         self.events = []
+        # Existing native runners retain navigator_events in summary.json, so B
+        # can publish resolved settings without changing C's runner or manifest.
+        self._log('navigation_configuration', json.dumps(self.effective_configuration(),
+                                                        sort_keys=True, allow_nan=False))
+
+    def effective_configuration(self) -> dict:
+        """Detached JSON-compatible snapshot of B's resolved settings after reset.
+
+        RobotConfig.clearance_margin_m is the shared input. The strict_costmap
+        fields resolve overrides and describe what B actually uses. This method
+        neither builds a map nor changes navigation state.
+        """
+        self._require_ready(self._episode_id)
+        low, high = Costmap.planning_radius_bounds(self._robot.footprint_base)
+        radius = high if self._planning_radius_m is None else self._planning_radius_m
+        margin = self._robot.clearance_margin_m if self._planning_margin_m is None else self._planning_margin_m
+        start = margin if self._start_margin_m is None else self._start_margin_m
+        def robot_record(robot):
+            record = asdict(robot)
+            record['footprint_base'] = [asdict(p) for p in robot.footprint_base]
+            return record
+        def costmap_record(r, m, s):
+            disc = circle_footprint(r)
+            return dict(planning_radius_m=r, planning_margin_m=m, start_margin_m=s,
+                        planning_disc_polygon=[asdict(p) for p in disc],
+                        planning_disc_vertex_radius_m=circumradius(disc))
+        retry = self._relaxed_retry
+        relaxed = (costmap_record(low if retry.planning_radius_m is None else retry.planning_radius_m,
+                                  retry.margin_m, retry.start_margin_m) if retry is not None else None)
+        return dict(schema_version='1.0', navigator_class=type(self).__module__+'.'+type(self).__name__,
+            shared_robot_config=robot_record(self._shared_robot),
+            effective_robot_config=robot_record(self._robot), footprint_overridden=self._footprint_override is not None,
+            footprint_inscribed_radius_m=low, footprint_vertex_radius_m=high,
+            strict_costmap=costmap_record(radius, margin, start), relaxed_costmap=relaxed,
+            parameter_sources=dict(footprint='override' if self._footprint_override is not None else 'shared_robot',
+                planning_radius='footprint_circumradius' if self._planning_radius_m is None else 'override',
+                planning_margin='shared_robot' if self._planning_margin_m is None else 'override',
+                start_margin='planning_margin' if self._start_margin_m is None else 'override'),
+            controller=dict(linear_gain_per_s=self._linear_gain, path_smoothing=self._smooth,
+                near_obstacle_limit=asdict(self._near_limit) if self._near_limit is not None else None),
+            navigation_limits=asdict(self._nav_cfg), observation=asdict(self._obs_cfg))
 
     # --- candidate evaluation (read-only) ----------------------------------
 
@@ -282,6 +359,21 @@ class TeamNavigator:
                                                            FailureReason.TIMEOUT))
         return CandidateEvaluation(state.episode_id, state.revision, start, tuple(assessments))
 
+    def diagnose_candidates(self, request: CandidateEvaluationRequest) -> Dict[str, Dict[str, object]]:
+        """Read-only: why each frontier is or is not reachable, per frontier id (see ``diagnostics``).
+
+        Re-asks the reachability question with smaller inflation to separate a conservative planning model from a
+        genuinely blocked frontier. It never touches the active operation and is not part of the frozen Navigator
+        contract, so callers must treat it as optional (``getattr``).
+        """
+        self._require_ready(request.episode_id)
+        state = request.state
+        radius = self._planning_radius_m
+        margin = self._planning_margin_m
+        goals = {f.frontier_id: f.approach_pose for f in state.frontiers}
+        return diagnostics.diagnose_goals(state.occupancy_map, self._robot, state.robot_pose, goals,
+                                          radius, margin, self._start_margin_m)
+
     # --- navigation --------------------------------------------------------
 
     def start(self, request: NavigationRequest) -> NavigationFeedback:
@@ -294,8 +386,7 @@ class TeamNavigator:
             return self._finish(op, NavigationStatus.FAILED, FailureReason.INVALID_GOAL)
         op.costmap = self._costmap_for(request.occupancy_map)
         op.start_pose = live
-        result = planner.plan(op.costmap, live, goal, self._nav_cfg.batch_deadline_s,
-                              clock=self._wall_clock, smooth=self._smooth)
+        result = self._plan(op, live)
         op.planner_result = result
         self._log("plan", "%s success=%s reason=%s" % (op.goal_id, result.success, result.failure_reason))
         if not result.success:
@@ -319,7 +410,7 @@ class TeamNavigator:
             raise NavigatorBoundaryError("map grid geometry changed within an episode")
         if occupancy_map.revision <= current.revision:
             return  # only newer maps are accepted; equal/older is a no-op
-        op.costmap = self._costmap_for(occupancy_map)
+        op.costmap = self._costmap_for(occupancy_map, relaxed=op.relaxed)
         live = self._control.current_pose()
         if op.kind == "navigate":
             if self._remaining_path_valid(op, live):
@@ -541,8 +632,7 @@ class TeamNavigator:
         if op.replans > self._nav_cfg.max_replans:
             self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
             return
-        result = planner.plan(op.costmap, live, op.goal_pose, self._nav_cfg.batch_deadline_s,
-                              clock=self._wall_clock, smooth=self._smooth)
+        result = self._plan(op, live)
         op.planner_result = result  # newest result is carried in feedback
         op.turn_ok = None
         self._log("replan", "%s #%d success=%s reason=%s"
@@ -590,16 +680,43 @@ class TeamNavigator:
         stale_map = grid.revision < self._latest_revision
         return not (stale_pose or stale_map)
 
-    def _costmap_for(self, grid: OccupancyGrid) -> Costmap:
-        cached = self._costmap_cache
-        if cached is not None and cached[0] == grid.revision and cached[1].grid is grid:
-            return cached[1]
-        costmap = Costmap.from_robot(grid, self._robot, self._planning_radius_m, self._start_margin_m,
-                                    self._planning_margin_m)
+    def _costmap_for(self, grid: OccupancyGrid, relaxed: bool = False) -> Costmap:
+        cache = self._relaxed_cache if relaxed else self._costmap_cache
+        if cache is not None and cache[0] == grid.revision and cache[1].grid is grid:
+            return cache[1]
+        if relaxed:
+            retry = self._relaxed_retry
+            radius = retry.planning_radius_m
+            if radius is None:
+                radius = Costmap.planning_radius_bounds(self._robot.footprint_base)[0]
+            costmap = Costmap.from_robot(grid, self._robot, radius, retry.start_margin_m, retry.margin_m)
+        else:
+            costmap = Costmap.from_robot(grid, self._robot, self._planning_radius_m, self._start_margin_m,
+                                        self._planning_margin_m)
         costmap.prepare()  # pay the one-off clearance precompute here, not inside a deadline
-        self._costmap_cache = (grid.revision, costmap)
+        if relaxed:
+            self._relaxed_cache = (grid.revision, costmap)
+        else:
+            self._costmap_cache = (grid.revision, costmap)
         self._latest_revision = max(self._latest_revision, grid.revision)
         return costmap
+
+    def _plan(self, op: _Operation, live: Pose) -> PlannerResult:
+        """Plan to the operation's goal; one relaxed retry after a strict NO_PATH / INVALID_GOAL, if enabled."""
+        result = planner.plan(op.costmap, live, op.goal_pose, self._nav_cfg.batch_deadline_s,
+                              clock=self._wall_clock, smooth=self._smooth)
+        if (result.success or self._relaxed_retry is None or op.relaxed
+                or result.failure_reason not in (FailureReason.NO_PATH, FailureReason.INVALID_GOAL)):
+            return result
+        relaxed_map = self._costmap_for(op.costmap.grid, relaxed=True)
+        retry = planner.plan(relaxed_map, live, op.goal_pose, self._nav_cfg.batch_deadline_s,
+                             clock=self._wall_clock, smooth=self._smooth)
+        self._log("relaxed_retry", "%s strict=%s relaxed_success=%s"
+                  % (op.goal_id, result.failure_reason, retry.success))
+        if not retry.success:
+            return result  # keep the strict reason: the contract has no "relaxed" failure value
+        op.costmap, op.relaxed = relaxed_map, True
+        return retry
 
     def _remaining_distance(self, op: _Operation) -> Optional[float]:
         if op.kind != "navigate" or not op.path:

@@ -143,6 +143,15 @@ class RecoveryConfig:
     progress_radius_m: float = 1.0
     minimum_progress_m2: float = 0.1
     max_cycles_without_navigation: int = 2
+    # Opt-in recovery from over-conservative exclusions (all defaults keep behaviour unchanged).
+    # epsilon_retry: per decision, with this probability probe a geometry-excluded frontier instead of the policy's choice
+    #   (epsilon-greedy, Sutton and Barto: exploit the policy, rarely try what the model rejected).
+    # stuck_retry: when nothing is eligible and the usual recovery scan and cooldown wait are spent, dispatch one
+    #   geometry-excluded frontier deterministically instead of ending with no_feasible_frontiers (a trapped robot produces no
+    #   new evidence, so evidence_change exclusions would otherwise never lift).
+    # Both require every active restriction to be no_path/invalid_goal; cooldowns and hard caps are never waived.
+    epsilon_retry: float = 0.0
+    stuck_retry: bool = False
 
 
 @dataclass(frozen=True)

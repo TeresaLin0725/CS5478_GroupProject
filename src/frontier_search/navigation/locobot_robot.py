@@ -1,16 +1,17 @@
-"""Owner B: Locobot robot configuration matching A's development recording.
+"""Owner B: legacy shared square envelope and explicit round navigation preset.
 
 Source: A's ``simulation/record_sequence.py`` and ``Documentation/english/locobot_multiframe.md``.
 A measures the installed Locobot URDF at run time (collision AABB union over all links) and
 uses it as the base-frame footprint. The doc reports about +/-0.181 m horizontally and a
 collision top of about 0.907 m above the base, so this file uses those rounded values.
-The true measured polygon may be slightly asymmetric; it must be re-measured on the machine
-that has iGibson before this is treated as final. These are A's DEVELOPMENT settings, not a
+These AABBs are bounding boxes, not the exact circular collision boundary. The
+round preset below changes B's envelope only and keeps the shared robot record intact.
+These are A's DEVELOPMENT settings, not a
 frozen team agreement (see Documentation/english/locobot_abc_handoff.md).
 
 Robotics background
 -------------------
-* The footprint is a rectangle, not a disc. B's costmap plans on the circumscribed disc
+* The legacy development footprint is a rectangle. B's costmap plans on the circumscribed disc
   (radius = half-diagonal, about 0.256 m) and verifies poses, segments and rotations with the
   exact polygon. A disc this large inflates obstacles more than the rectangle needs, so narrow
   doorways that the real robot could pass may be rejected: a conservative configuration-space
@@ -56,13 +57,12 @@ LOCOBOT_PLANNING_RADIUS_M = 0.22
 # OPT-IN soft-contact preset for ``TeamNavigator(sim, **SOFT_CONTACT_NAV_OPTIONS)``; NOT applied by default.
 # Goal: like a robot vacuum, a light touch is acceptable but a hard collision (contact then stuck) is not.
 #   * planning_radius_m 0.182: planning on the circumscribed disc (0.257 m) treats the footprint (a +/-0.181 m AABB)
-#     as a circle and rejects gaps the robot fits through (configuration-space inflation, Lozano-Perez 1983). The
-#     measured Locobot collision geometry is round (base cylinder r 0.178 m, max radial extent about 0.19 m), so a disc
-#     of 0.182 m plus the 0.01 m margin below (0.192 m) still contains it.
+#     as a circle and rejects gaps the robot fits through (configuration-space inflation, Lozano-Perez 1983).
+#     this legacy preset retains the square execution footprint while changing the planning disc.
+#     It is distinct from the round-footprint preset below.
 #   * planning_margin_m 0.01: halves the 2 cm planning buffer. On the benchmark map the left-room entrance only
 #     opens for margin <= 1 cm with this radius; the buffer exists to absorb map (10 cm cell) and localization error,
-#     so this is a deliberate trade of safety buffer for reachability. Do not set it to 0: 0.182 m is then below the
-#     measured 0.188 m radial extent of the base.
+#     so this is a deliberate trade of safety buffer for reachability. This margin is separate from body geometry.
 #   * start_margin_m 0.0: the 2 cm clearance margin is a planning buffer, not physics, so a robot that touches
 #     nothing is not declared immobile just because its pose lies inside the buffer.
 # ``near_obstacle_limit`` (a speed cap near obstacles) is deliberately NOT part of the preset: in the no-render
@@ -72,19 +72,25 @@ LOCOBOT_PLANNING_RADIUS_M = 0.22
 SOFT_CONTACT_NAV_OPTIONS = dict(planning_radius_m=0.182, planning_margin_m=0.01, start_margin_m=0.0)
 
 
-# OPT-IN round footprint. The Locobot base is a cylinder (collision radius 0.178 m, max radial extent about 0.188 m
-# from the collision mesh); the +/-0.181 m square above is the AABB of all links, whose circumscribed circle (0.257 m)
-# is about a third larger than the real body. A square footprint also makes every in-place turn check sweep the corners
-# of that square, which refuses turns near walls that the round body performs freely. Use with
-# ``ROUND_FOOTPRINT_NAV_OPTIONS`` (no ``planning_radius_m``: a 16-gon's own bounds already sit within 0.1864 to 0.19 m).
-# Evidence: PyBullet replay with the real URDF and Rs mesh, NOT the native iGibson run. The vertices are the 16-gon
-# circumscribing the measured base radius, so the polygon contains the base.
-LOCOBOT_ROUND_RADIUS_M = 0.19
+# Round-footprint preset: 0.19 m is the VERTEX radius, not a physical body-radius measurement.
+# The 16-gon's inscribed radius is 0.19*cos(pi/16) = 0.186349 m. Raw collision geometry
+# from the assets matching the frozen Rs benchmark reaches 0.178 m; a zero-joint DIRECT
+# measurement in PyBullet 3.2.7 reached at most 0.179007 m including engine effects
+# (2026-11-03). This is not a native iGibson/pybullet-svl acceptance certificate.
+# Keep this polygon unchanged. Costmap derives a 0.19 m planning disc, then represents
+# it with a separate circumscribed polygon whose vertex radius is about 0.193722 m.
+# Planning/start margins below are additional buffers; none is folded into the vertices.
+LOCOBOT_ROUND_VERTEX_RADIUS_M = 0.19
+LOCOBOT_ROUND_RADIUS_M = LOCOBOT_ROUND_VERTEX_RADIUS_M  # backwards-compatible name
 LOCOBOT_ROUND_SIDES = 16
 
 
 def round_footprint(radius_m: float = LOCOBOT_ROUND_RADIUS_M, sides: int = LOCOBOT_ROUND_SIDES):
-    """Regular polygon whose vertices lie on the circle of ``radius_m`` (it contains the inscribed circle by construction)."""
+    """16-gon by default; radius_m measures centre-to-vertex distance, excluding margins.
+
+    This polygon contains a disc of radius radius_m*cos(pi/sides), not radius_m.
+    The existing radius_m argument is retained for compatibility.
+    """
     if radius_m <= 0 or sides < 8:
         raise ValueError("round footprint needs a positive radius and at least 8 sides")
     return tuple(Point2(radius_m * cos(2 * pi * i / sides), radius_m * sin(2 * pi * i / sides)) for i in range(sides))
@@ -102,7 +108,9 @@ LOCOBOT_ROUND_ROBOT = RobotConfig(
     position_tolerance_m=LOCOBOT_DEV_ROBOT.position_tolerance_m,
     yaw_tolerance_rad=LOCOBOT_DEV_ROBOT.yaw_tolerance_rad,
 )
-# With the round footprint the planning disc is the footprint's own circumscribed circle, so only the two margins change.
+# None/omitted planning_radius_m resolves to the footprint's 0.19 m circumradius.
+# planning_margin_m is used for route/pose/turn checks; start_margin_m only relaxes
+# the current pose and the first START_ZONE_M of departure, not the rest of the route.
 ROUND_FOOTPRINT_NAV_OPTIONS = dict(planning_margin_m=0.01, start_margin_m=0.0)
 # The same round footprint WITHOUT touching the shared manifest (A and C keep reading the square): B replaces the footprint
 # internally. Use ``TeamNavigator(sim, **ROUND_FOOTPRINT_OVERRIDE_NAV_OPTIONS)``. A's frontier approach poses and spawn

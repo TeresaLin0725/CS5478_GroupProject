@@ -3,10 +3,10 @@ from dataclasses import replace
 import unittest
 
 from frontier_search.config import RecoveryConfig
-from frontier_search.contracts import (CandidateEvaluation, FailureReason, Frontier, GridCell,
+from frontier_search.contracts import (CandidateAssessment, CandidateEvaluation, FailureReason, Frontier, GridCell,
     PlannerAttempt, PlannerResult, PolicyName, Pose, Subgoal)
 from frontier_search.fixtures.loader import load_policy_fixture
-from frontier_search.runner.recovery import SpatialRecovery
+from frontier_search.runner.recovery import SpatialRecovery, probe_candidates
 
 
 class RecoveryTests(unittest.TestCase):
@@ -56,6 +56,43 @@ class RecoveryTests(unittest.TestCase):
         self.failed(self.state, f, FailureReason.BLOCKED)
         self.assertIn(f.frontier_id, self.excluded(replace(self.state, timestamp_s=2.)))
         self.assertNotIn(f.frontier_id, self.excluded(replace(self.state, timestamp_s=3.)))
+
+    def test_all_active_locks_must_be_geometry_locks_before_probing(self):
+        for reason in ('blocked', 'timeout', 'no_progress'):
+            for geometry_first in (False, True):
+                with self.subTest(reason=reason, geometry_first=geometry_first):
+                    self.recovery.reset(self.state.episode_id)
+                    f = self.state.frontiers[0]
+                    state = replace(self.state, frontiers=(f,))
+                    geometry = CandidateEvaluation(state.episode_id, state.revision, state.robot_pose,
+                        (CandidateAssessment(f.frontier_id, False, None, FailureReason.NO_PATH),))
+                    if geometry_first:
+                        self.recovery.record_evaluation(state, geometry)
+                    if reason == 'no_progress':
+                        self.recovery.record_progress(state, state, f.frontier_id)
+                    else:
+                        self.failed(state, f, FailureReason(reason))
+                    if not geometry_first:
+                        self.recovery.record_evaluation(state, geometry)
+                    exclusions = self.recovery.exclusions(state, geometry)
+                    self.assertEqual(probe_candidates(state, exclusions, self.recovery), [])
+                    self.assertEqual(exclusions[0].retry_after_s,
+                                     state.timestamp_s+self.recovery.config.cooldown_s)
+                    later = replace(state, timestamp_s=state.timestamp_s+self.recovery.config.cooldown_s+.1)
+                    exclusions = self.recovery.exclusions(later, geometry)
+                    self.assertEqual([p.frontier_id for p in probe_candidates(later, exclusions, self.recovery)],
+                                     [f.frontier_id])
+
+    def test_probe_caps_survive_split_and_relabel(self):
+        f = self.state.frontiers[0]
+        self.failed(self.state, f)
+        self.failed(self.state, f)
+        children = (replace(f, frontier_id='child-a', parent_frontier_ids=(f.frontier_id,)),
+                    replace(f, frontier_id='child-b'))
+        state = replace(self.state, frontiers=children)
+        exclusions = tuple(self.excluded(state).values())
+        self.assertEqual(probe_candidates(state, exclusions, self.recovery), [])
+        self.assertTrue(all(not self.recovery.can_probe(state, child) for child in children))
 
     def test_split_disappearance_relabel_preserve_shared_cap(self):
         f = self.state.frontiers[0]

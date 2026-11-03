@@ -64,6 +64,21 @@ def decision_row(row, number, call=None):
                  model_reply=call['raw_response'] if call else None), goal_id=goal['frontier_id'] if goal else None)
 
 
+def record_dispatch(decision, request, action_source=None):
+    """Show the dispatched goal while preserving the original policy response."""
+    goal = request['subgoal']
+    policy_goal = decision['raw']['selection']['subgoal']
+    changed = policy_goal is None or policy_goal['frontier_id'] != goal['frontier_id']
+    source = action_source or ('recovery' if changed else 'policy')
+    decision['raw'].update(executed_subgoal=goal, action_source=source)
+    decision.update(goal=pose_text(goal['approach_pose']), goal_id=goal['frontier_id'])
+    if source != 'policy':
+        label = {'epsilon_retry': '概率恢复重试', 'stuck_retry': '无可用目标后的恢复重试'}.get(source, '恢复重试')
+        original = policy_goal['frontier_id'] if policy_goal else '未选择导航目标'
+        decision.update(kind='恢复重试', provider='共享恢复规则',
+            reason='原策略：%s；%s，实际下发目标：%s。' % (original, label, goal['frontier_id']))
+
+
 def integrated(folder, key, title, recording=None):
     directory = Path(recording).resolve() if recording else RUNS / folder / 'recording'
     summary, manifest = read(directory / 'summary.json'), read(directory / 'manifest.json')
@@ -80,16 +95,27 @@ def integrated(folder, key, title, recording=None):
     call_by_time = {round(c['simulated_time_s'], 6): (n, c) for n, c in enumerate(calls)}
     call_by_revision = {c['state_revision']: (n, c) for n, c in enumerate(calls) if 'state_revision' in c}
     decisions, operations, feedback = [], [], []
-    op_by_id, current_decision = {}, None
+    op_by_id, current_decision, action_source = {}, None, None
     target_evaluation = None
     for row in logs(directory / 'events.jsonl'):
         event = row['event']
         if event == 'decision':
+            action_source = None
             match = call_by_revision.get(row['state']['revision']) or call_by_time.get(round(row['state']['timestamp_s'], 6))
             current_decision = len(decisions) + 1
             decisions.append(decision_row(row, current_decision, match[1] if match else None))
+        elif event == 'epsilon_probe':
+            action_source = 'epsilon_retry' if row['mode'] == 'epsilon' else 'stuck_retry'
+        elif event == 'action_selected':
+            action_source = row['action_source']
         elif event in ('dispatch', 'observation_start'):
             request = row['request']
+            if event == 'dispatch' and current_decision is not None:
+                decision = decisions[current_decision-1]
+                record_dispatch(decision, request, action_source)
+                if decision['raw']['action_source'] != 'policy':
+                    feedback.append(dict(time=row.get('simulated_time_s', decision['time']),
+                        kind='恢复机制下发目标', detail=decision['reason'], raw=row))
             kind = '导航行驶' if event == 'dispatch' else {
                 'initial': '初始环境观察', 'arrival': '到达位置后观察', 'recovery': '受阻后的恢复观察',
                 'inspection': '停车多视角确认目标'
@@ -131,8 +157,10 @@ def integrated(folder, key, title, recording=None):
             feedback.append(dict(time=row['simulated_time_s'], kind='导航失败反馈至策略决策',
                 detail='导航规划与控制模块上报目标位置失效，策略决策模块收到失败原因与机器人位置。', raw=row))
         elif event == 'strategy_replan':
-            feedback.append(dict(time=row['simulated_time_s'], kind='策略重新选择并下发导航目标',
-                detail='策略决策模块使用失败上下文重新选择可达位置，并向导航规划与控制模块下发目标。', raw=row))
+            recovery = row.get('action_source', 'policy') != 'policy'
+            feedback.append(dict(time=row['simulated_time_s'], kind='恢复机制重新下发目标' if recovery else '策略重新选择并下发导航目标',
+                detail='最终目标：%s；来源：%s。' % (row['selected']['frontier_id'],
+                    '共享恢复规则' if recovery else '搜索策略'), raw=row))
         elif event == 'target_evaluation':
             target_evaluation = row
     for op in operations:
