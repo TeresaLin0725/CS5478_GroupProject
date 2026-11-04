@@ -6,6 +6,15 @@ from enum import Enum
 from pathlib import Path
 
 def read(p):return json.loads(Path(p).read_text(encoding='utf-8'))
+
+def local_collision_switches(protocol):
+    enabled=protocol.get('local_collision_refinement',False)
+    history=protocol.get('local_collision_retain_history',False)
+    if type(enabled) is not bool or type(history) is not bool:
+        raise ValueError('local collision refinement/history switches must be bool')
+    if history and not enabled:
+        raise ValueError('local collision history requires local collision refinement')
+    return enabled,history
 def navigation_options(protocol):
     """Resolve the frozen B preset; legacy protocols keep their original behavior."""
     preset=protocol.get('navigation_preset','legacy')
@@ -164,7 +173,15 @@ def episode(protocol,job,out):
     store=RetainedFrames()
     sim=RetainingAdapter(m.robot,m.mapping,AdapterConfig(scene_id='Rs',settle_steps=0,
         image_width=640,image_height=480,vertical_fov_deg=75.),store,job['profile'])
-    mapper=RGBDMapper(detector);nav=TeamNavigator(sim,linear_gain=2.,**nav_kwargs(job,protocol))
+    local_refinement,retain_history=local_collision_switches(protocol)
+    if local_refinement:
+        from frontier_search.experimental.collision_refinement import LocalCollisionMapper,LocalCollisionNavigator
+        release_scope=protocol.get('local_collision_scope','window')
+        mapper=LocalCollisionMapper(detector,release_scope=release_scope,retain_history=retain_history)
+        nav=LocalCollisionNavigator(sim,patch_provider=lambda:mapper.collision_patch,mapping_config=m.mapping,
+            release_scope=release_scope,linear_gain=2.,**nav_kwargs(job,protocol))
+    else:
+        mapper=RGBDMapper(detector);nav=TeamNavigator(sim,linear_gain=2.,**nav_kwargs(job,protocol))
     policy=LLMGuidedPolicy(GeminiCompatibleClient()) if job['policy']=='llm_guided' else BaselinePolicy(PolicyName(job['policy']))
     evaluator=CloseRetainedEvaluator(store,sim)
     from benchmark_watchdog import WatchdogChannel,AsyncEventWriter
@@ -232,7 +249,14 @@ def episode(protocol,job,out):
         detector_runtime=dict(device=device,torch_version=torch.__version__,cuda_version=torch.version.cuda,
             gpu_name=torch.cuda.get_device_name(0) if device=='0' else None),
         navigation_preset=protocol.get('navigation_preset','legacy'),
-        navigator_events=nav.events,scene_events=getattr(getattr(sim._backend,'world',None),'environment_events',[]))
+        navigator_events=nav.events,scene_events=getattr(getattr(sim._backend,'world',None),'environment_events',[]),
+        local_collision_refinement=local_refinement,
+        local_collision_scope=mapper.release_scope if local_refinement else None,
+        local_collision_stats=dict(frames=getattr(mapper,'local_frames',0),seconds=getattr(mapper,'local_seconds',0.)))
+    summary['local_collision_retain_history']=retain_history
+    if local_refinement:
+        summary['local_collision_stats'].update(history_cells=len(mapper._local._history),
+            history_restored_cells=mapper._local.history_restored_cells)
     if runner.state:
         atomic(out/'final-state.json',asdict(runner.state))
         if runner.state.target_claim:

@@ -98,7 +98,8 @@ def world_to_cell(x, y):
 
 
 def cell_center(row, col):
-    return ORIGIN_X + (col + 0.5) * RES, ORIGIN_Y + (row + 0.5) * RES
+    # A frontier centroid can contain NumPy scalars; published poses use built-in numbers.
+    return float(ORIGIN_X + (col + 0.5) * RES), float(ORIGIN_Y + (row + 0.5) * RES)
 
 
 def region_of(x, y):

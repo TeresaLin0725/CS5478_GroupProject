@@ -14,6 +14,7 @@ from frontier_search.contracts import GridCell, OccupancyGrid
 from frontier_search.experiments.logging import dumps
 from frontier_search.fixtures.sequence import load_sequence
 from frontier_search.runner.manifest import load_manifest
+from frontier_search.navigation.locobot_robot import shared_round_robot
 from frontier_search.runner.replay import generate_synthetic, pack_recordings, replay
 from frontier_search.simulation.start_area_verifier import MockSceneProbe, verify_start_area
 from frontier_search.validation import ContractError
@@ -40,6 +41,7 @@ class StartAreaRoundTripTests(unittest.TestCase):
                               m.width_cells, m.height_cells,
                               tuple(tuple(100 if c >= wall_col else 0 for c in range(m.width_cells))
                                     for _ in range(m.height_cells)))
+        self.truth = truth
         self.result = verify_start_area(self.manifest, MockSceneProbe(truth, snapshot_id='analytic-wall-x4'),
                                         'B mock verifier')
 
@@ -77,6 +79,23 @@ class StartAreaRoundTripTests(unittest.TestCase):
         other.write_text(json.dumps(raw))
         with self.assertRaises(ContractError):
             pack_recordings(self.root / 'bad-radius', other, self.frames, self.write_clearance())
+
+    def test_round_geometry_requires_fresh_attestation_and_preserves_old_package(self):
+        square_bytes = self.manifest_path.read_bytes()
+        rounded = replace(self.manifest, robot=shared_round_robot(self.manifest.robot))
+        round_path = self.root / 'round-manifest.json'
+        round_path.write_text(dumps(rounded), encoding='utf-8')
+        with self.assertRaisesRegex(ContractError, 'does not match'):
+            pack_recordings(self.root / 'bad-round', round_path, self.frames, self.write_clearance())
+        fresh = verify_start_area(rounded, MockSceneProbe(self.truth), 'round verifier')
+        fresh_path = self.root / 'round-clearance.json'
+        fresh_path.write_text(dumps(fresh.clearance_record()), encoding='utf-8')
+        package = self.root / 'round-package'
+        pack_recordings(package, round_path, self.frames, fresh_path)
+        data = load_sequence(package)
+        self.assertEqual(data.manifest.robot, rounded.robot)
+        self.assertEqual(data.clearance_verification, fresh.verification)
+        self.assertEqual(self.manifest_path.read_bytes(), square_bytes)
 
     def load_footprint(self):
         from frontier_search.fixtures.clearance import footprint_cells

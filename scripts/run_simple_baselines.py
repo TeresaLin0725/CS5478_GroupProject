@@ -14,7 +14,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT/'src'), str(ROOT/'scripts')]
-from benchmark_episode import atomic, navigation_options
+from benchmark_episode import atomic, navigation_options, validate_shared_geometry
 from benchmark_watchdog import WatchdogChannel
 
 
@@ -31,7 +31,7 @@ def utc():
 
 
 def freeze(out):
-    from frontier_search.runner.integrated import manifest_for, source_fingerprint
+    from frontier_search.runner.integrated import shared_round_manifest_for, source_fingerprint
     from frontier_search.policies.provider import load_local_env
     env_file = ROOT/'.env'
     load_local_env(env_file)
@@ -42,7 +42,7 @@ def freeze(out):
     (snapshot/'harness').mkdir()
     for name in ('benchmark_episode.py', 'benchmark_watchdog.py'):
         shutil.copy2(ROOT/'scripts'/name, snapshot/'harness'/name)
-    base = replace(manifest_for('template'), environment_seed=17, perception_seed=10017,
+    base = replace(shared_round_manifest_for('template'), environment_seed=17, perception_seed=10017,
                    policy_seed=20017, initialization_deadline_s=240.)
     base = replace(base, limits=replace(base.limits, max_wall_time_s=7200.))
     jobs = []
@@ -56,18 +56,19 @@ def freeze(out):
                          environment_seed=17, perception_seed=10017, policy_seed=20017,
                          start_pose=asdict(m.start_pose), manifest_path=path.as_posix(), manifest_sha256=sha(out/path)))
     assets = ROOT/'data/igibson-data'
-    protocol = dict(schema_version='simple-baselines-v1', created_utc=utc(), run_root=str(out),
+    protocol = dict(schema_version='simple-baselines-v2-shared-round', created_utc=utc(), run_root=str(out),
         snapshot_root=str(snapshot), env_file=str(env_file), engine_fingerprint=source_fingerprint(),
         source_commit=subprocess.check_output(['git','rev-parse','HEAD'], cwd=str(ROOT), text=True).strip(),
         scope='Three sequential native apartment-s17 baselines; no LLM or video; not a full benchmark.',
-        navigation_preset='round_footprint_override', jobs=jobs, base_manifest=asdict(base),
+        navigation_preset='shared_round', jobs=jobs, base_manifest=asdict(base),
         runtime=dict(workers=1, torch_threads=4, device='0', startup_deadline_s=300.),
         asset_paths=dict(robot_assets=str(assets/'robot_assets/assets'), scenes=str(assets/'g_dataset')),
         watchdog_transport='shared_memory_v1',
         previous_run=str(ROOT/'runs/b-recovered-benchmark-20261024'),
         snapshot_seals={p.relative_to(snapshot).as_posix():sha(p) for p in snapshot.rglob('*') if p.is_file()})
-    # Resolve the opt-in before any simulator is launched.
-    assert navigation_options(protocol)['planning_margin_m'] == .01
+    # Resolve and validate shared geometry before any simulator is launched.
+    validate_shared_geometry(protocol, base)
+    assert navigation_options(protocol) == dict(start_margin_m=0.)
     atomic(out/'protocol.json', protocol)
     shutil.copy2(__file__, out/'manager.py')
     return protocol
@@ -91,7 +92,8 @@ def report(out, protocol, status, active=None):
     labels = dict(random='随机策略', nearest='最近前沿', information_gain='信息增益')
     outcomes = dict(success='成功', search_limit='搜索或时间上限', no_feasible_frontiers='无可达前沿',
                     no_frontiers='无前沿', pipeline_error='流水线错误')
-    lines = ['# 原始公寓三策略验证', '', '单进程；B 圆形足迹预设；600 秒仿真、18000 步、7200 秒总现实上限；单次操作 400 秒。',
+    geometry = 'A/B 共享圆形足迹' if protocol.get('navigation_preset') == 'shared_round' else 'B 圆形足迹预设'
+    lines = ['# 原始公寓三策略验证', '', '单进程；'+geometry+'；600 秒仿真、18000 步、7200 秒总现实上限；单次操作 400 秒。',
              '', '状态：'+status, '', '| 策略 | 本次结果 | 本次仿真秒 | 本次现实秒 | 本次路程米 | 之前结果 | 之前仿真秒 | 之前现实秒 |',
              '|---|---|---:|---:|---:|---|---:|---:|']
     cells = []
@@ -111,7 +113,7 @@ def report(out, protocol, status, active=None):
     if status == 'running': page += '<meta http-equiv="refresh" content="30">'
     page += '<title>原始公寓三策略验证</title><style>body{font:17px "Microsoft YaHei",sans-serif;background:#101a25;color:#e1ebf5;padding:32px}td,th{padding:14px;border-bottom:1px solid #354759}table{border-collapse:collapse}a{color:#67d9ba}</style>'
     page += '<h1>原始公寓三策略验证</h1><p>状态：'+html.escape(status)+'；已完成 '+str(len(rows))+'/3</p>'
-    page += '<p>单进程 · B 圆形足迹预设 · 仿真预算 600 秒 · 总现实上限 7200 秒</p>'
+    page += '<p>单进程 · '+geometry+' · 仿真预算 600 秒 · 总现实上限 7200 秒</p>'
     if active: page += '<p>当前：'+html.escape(active['job_id'])+' · 仿真 '+str(active.get('simulated_time_s',0))+' 秒</p>'
     page += '<div style="overflow:auto"><table><tr>'+''.join('<th>'+v+'</th>' for v in ['策略','本次结果','本次仿真秒','本次现实秒','本次路程米','之前结果','之前仿真秒','之前现实秒'])+'</tr>'+''.join(cells)+'</table></div>'
     page += '<p>旧批次并发和 A 感知配置存在差异，不作为融合优化的严格性能对照。</p><a href="../SUMMARY.md">详细说明</a>'

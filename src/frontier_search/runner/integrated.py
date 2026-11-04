@@ -13,7 +13,7 @@ from ..config import (MappingConfig,ObservationConfig,NavigationConfig,PolicyCon
 from ..contracts import Point2,Pose,RobotConfig,PolicyName,RegionPrior
 from ..evaluation.retained import RetainedFrames
 from ..experiments.logging import dumps
-from ..navigation.locobot_robot import ROUND_FOOTPRINT_OVERRIDE_NAV_OPTIONS
+from ..navigation.locobot_robot import shared_round_robot
 from ..navigation.navigator import RelaxedRetry,TeamNavigator
 from ..perception.mapper import RGBDMapper
 from ..perception.detection import TiledYOLODetector
@@ -40,6 +40,7 @@ class DisplayDetector(TiledYOLODetector):
 
 
 def manifest_for(episode_id, policy='information_gain'):
+    """Legacy manifest factory retained for historical protocols and fixtures."""
     robot = RobotConfig(tuple(Point2(x,y) for x,y in ((-.182,-.182),(.182,-.182),(.182,.182),(-.182,.182))),
         .0,.908,.02,'differential_drive',True,.32,1.1,.03,.10)
     mapping = MappingConfig(resolution_m=.1,width_cells=70,height_cells=85,origin_x_m=-4.5,origin_y_m=-4.5,
@@ -63,6 +64,12 @@ def manifest_for(episode_id, policy='information_gain'):
                             for name,(x0,y0,x1,y1) in REGIONS),
         capture_every_steps=10,module_deadline_s=60.,enable_target_evaluation=True,
         initial_clearance_mode='verified_start_area',initial_clearance_radius_m=.65)
+
+
+def shared_round_manifest_for(episode_id, policy='information_gain'):
+    """New native runs share B's existing geometry across mapping and verification."""
+    manifest=manifest_for(episode_id,policy)
+    return replace(manifest,robot=shared_round_robot(manifest.robot))
 
 
 class PipelineLog:
@@ -137,7 +144,7 @@ def main():
     # Warm imports/model kernels outside the episode's module budgets.
     from ..sensors import ImageBuffer
     detector.detect(ImageBuffer(640,480,'rgb8',bytes(640*480*3)))
-    manifest=manifest_for(args.output.name,args.policy)
+    manifest=shared_round_manifest_for(args.output.name,args.policy)
     manifest=replace(manifest,recovery=replace(manifest.recovery,epsilon_retry=args.epsilon_retry,
                                                stuck_retry=args.stuck_retry))
     manifest.validate()
@@ -150,8 +157,8 @@ def main():
     mapper=RGBDMapper(detector)
     # Grid waypoints are only 0.1 m apart. The default 1/s gain made the
     # robot crawl below its speed limit even on a straight, validated path.
-    # Round Locobot base inside B only; the manifest footprint A and C read stays the square.
-    nav=TeamNavigator(sim,linear_gain=2.0,**ROUND_FOOTPRINT_OVERRIDE_NAV_OPTIONS,
+    # A, B and spawn verification read the manifest; only B's initial escape margin differs.
+    nav=TeamNavigator(sim,linear_gain=2.0,start_margin_m=0.0,
                       relaxed_retry=RelaxedRetry() if args.relaxed_retry else None)
     policy=(LLMGuidedPolicy(GeminiCompatibleClient()) if args.policy=='llm_guided'
             else BaselinePolicy(PolicyName(args.policy)))

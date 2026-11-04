@@ -48,10 +48,8 @@ def python():
 
 def benchmark_manifest():
     """Shared A/B geometry for new suites, without rewriting historical manifests."""
-    from frontier_search.runner.integrated import manifest_for
-    from frontier_search.navigation.locobot_robot import shared_round_robot
-    base=manifest_for('template')
-    return replace(base,robot=shared_round_robot(base.robot),initialization_deadline_s=240.)
+    from frontier_search.runner.integrated import shared_round_manifest_for
+    return replace(shared_round_manifest_for('template'),initialization_deadline_s=240.)
 
 def freeze(out,workers,arm=None):
     if (out/'protocol.json').exists():raise FileExistsError('Choose a fresh suite directory; use run to resume the queue')
