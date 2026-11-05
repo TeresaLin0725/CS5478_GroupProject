@@ -9,12 +9,13 @@ import unittest
 
 from frontier_search.config import PolicyConfig
 from frontier_search.contracts import (
-    CandidateAssessment, FailureReason, PolicyName, SelectionResult, Subgoal,
+    CandidateAssessment, FailureReason, NavigationStatus, PolicyName, SelectionResult, Subgoal,
 )
 from frontier_search.experiments.logging import JsonlLogger
 from frontier_search.fixtures.loader import load_navigation_fixture, load_policy_fixture
 from frontier_search.policies.baselines import BaselinePolicy
 from frontier_search.policies.llm import LLMGuidedPolicy
+from frontier_search.policies.api import PolicyFeedback
 from frontier_search.runner.episode import decide
 from frontier_search.validation import ContractError, validate_context, validate_selection, validate_state
 from typing import Union
@@ -131,8 +132,41 @@ class ScaffoldTests(unittest.TestCase):
                 self.assertEqual(policy.call_records[0]['fallback_reason'], fallback)
                 self.assertNotIn('occupancy_map', client.payload)
                 self.assertEqual({c['frontier_id'] for c in client.payload['candidates']}, {'F1', 'F2'})
-                decide(policy, self.fixture.state, self.fixture.context)
-                self.assertEqual(policy.call_records[-1]['fallback_reason'], 'call_cap')
+                repeated = decide(policy, self.fixture.state, self.fixture.context)
+                if fallback is None:
+                    self.assertEqual(len(policy.call_records), 1)
+                    self.assertEqual(repeated.subgoal.frontier_id, selected)
+                    self.assertIn('cached identical-context', repeated.rationale)
+                else:
+                    self.assertEqual(policy.call_records[-1]['fallback_reason'], 'call_cap')
+
+    def test_llm_receives_compact_low_level_and_progress_feedback(self) -> None:
+        client = StubClient('F2')
+        policy = LLMGuidedPolicy(client)
+        policy.reset(self.fixture.state.episode_id, 0, PolicyConfig(llm_model='stub-model'))
+        policy.observe_feedback(PolicyFeedback(
+            self.fixture.state.episode_id, 1, 'F1', 'frontier', 'R1', 'policy',
+            1, 2, 4.0, NavigationStatus.REACHED, None, 2.5, 0.4,
+            NavigationStatus.REACHED))
+        decide(policy, self.fixture.state, self.fixture.context)
+        payload = client.payload
+        self.assertEqual(payload['recent_execution_feedback'][0]['new_known_area_m2'], 0.4)
+        self.assertEqual(payload['recent_execution_feedback'][0]['navigation_status'], 'reached')
+        self.assertEqual({row['frontier_id'] for row in payload['low_level_feedback']},
+                         {frontier.frontier_id for frontier in self.fixture.state.frontiers})
+        self.assertNotIn('occupancy_map', json.dumps(payload))
+        self.assertIn('known_fraction', payload['decision'])
+
+    def test_single_eligible_frontier_bypasses_hosted_model(self) -> None:
+        fixture = load_policy_fixture('prior_failure')
+        client = StubClient('invented')
+        policy = LLMGuidedPolicy(client)
+        policy.reset(fixture.state.episode_id, 0, PolicyConfig(llm_model='stub-model'))
+        result = decide(policy, fixture.state, fixture.context)
+        self.assertEqual(result.subgoal.frontier_id, 'F2')
+        self.assertIsNone(client.payload)
+        self.assertEqual(policy.call_records, [])
+        self.assertIn('hosted model call bypassed', result.rationale)
 
     def test_navigation_grids_preserve_unknown_and_newer_blockage(self) -> None:
         fixture = load_navigation_fixture('blocked_update')

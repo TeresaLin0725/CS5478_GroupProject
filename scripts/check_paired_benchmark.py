@@ -96,7 +96,10 @@ def audit(root):
             assert row[k]==summary[k],(job['job_id'],k)
         calls=[e['record'] for e in events if e['event']=='llm_call']
         assert read(folder/'llm-calls.json')==calls
-        assert len(calls)==row['llm_calls']==summary['llm_calls']
+        model_calls=sum(bool(c.get('model_called',
+            c.get('fallback_reason') not in ('unconfigured_client','call_cap'))) for c in calls)
+        assert model_calls==row['llm_calls']==summary['llm_calls']
+        assert len(calls)==summary.get('llm_attempts',len(calls))
         assert row['llm_fallbacks']==sum(bool(c.get('fallback_reason')) for c in calls)
         assert job['policy']=='llm_guided' or not calls
         decisions={e['state']['revision']:e for e in events if e['event']=='decision'}
@@ -112,7 +115,8 @@ def audit(root):
                 assert decisions[c['state_revision']]['selection']['subgoal']['frontier_id']==c['response']
         captures=[e for e in events if e['event']=='capture_processed']
         assert all(b['sequence']>a['sequence'] for a,b in zip(captures,captures[1:]))
-        item=dict(job_id=job['job_id'],termination=row['termination'],captures=len(captures),calls=len(calls),passed=True)
+        item=dict(job_id=job['job_id'],termination=row['termination'],captures=len(captures),
+                  calls=model_calls,llm_attempts=len(calls),passed=True)
         if row['success']:item['independent_evidence_recomputation']=evidence_check(folder,m,events)
         rows.append(row);checks.append(item)
         for name in ('summary.json','result.json','events.jsonl','supervisor.json','evaluation-only.json','llm-calls.json'):

@@ -169,7 +169,11 @@ def result_row(out,job,protocol):
     checks['fresh_capture_sequences']=all(b['sequence']>a['sequence'] for a,b in zip(captures,captures[1:]))
     decisions=[e for e in events if e['event']=='decision']
     checks['decision_revision']=all(e['context']['evaluation']['state_revision']==e['state']['revision'] for e in decisions)
-    checks['llm_count']=summary.get('partial_metrics',False) or len(calls)==summary.get('llm_calls',0)
+    model_calls=sum(bool(c.get('model_called',
+        c.get('fallback_reason') not in ('unconfigured_client','call_cap'))) for c in calls)
+    checks['llm_count']=summary.get('partial_metrics',False) or (
+        model_calls==summary.get('llm_calls',0)
+        and len(calls)==summary.get('llm_attempts',len(calls)))
     if not all(checks.values()):success=False
     usage=[c.get('usage') or {} for c in calls]
     costs=[c['cost'] for c in calls if isinstance(c.get('cost'),(int,float))]
@@ -178,7 +182,8 @@ def result_row(out,job,protocol):
         simulated_time_s=summary.get('simulated_time_s'),actual_distance_m=summary.get('actual_distance_m'),
         wall_time_s=summary.get('wall_time_s',0),collisions=summary.get('collisions',0),
         decisions=summary.get('decisions',0),attempts=summary.get('attempts',0),
-        llm_calls=len(calls),llm_fallbacks=sum(bool(c.get('fallback_reason')) for c in calls),
+        llm_attempts=len(calls),llm_calls=model_calls,
+        llm_fallbacks=sum(bool(c.get('fallback_reason')) for c in calls),
         llm_fallback_reasons=[c['fallback_reason'] for c in calls if c.get('fallback_reason')],
         llm_latencies_s=[c['latency_s'] for c in calls],llm_tokens_total=sum(u.get('total_tokens',0) or 0 for u in usage),
         recorded_cost_total=sum(costs),calls_with_recorded_cost=len(costs),
@@ -189,16 +194,33 @@ def result_row(out,job,protocol):
         source_fingerprint=summary.get('source_fingerprint'),partial_metrics=summary.get('partial_metrics',False))
     atomic(folder/'result.json',row);return row
 
-def run(out,only_baselines=False):
+def select_jobs(jobs,only_baselines=False,only_llm=False,job_ids=None):
+    if sum(bool(value) for value in (only_baselines,only_llm,job_ids))>1:
+        raise ValueError('execution scopes are mutually exclusive')
+    if job_ids:
+        requested=list(job_ids)
+        if len(requested)!=len(set(requested)):raise ValueError('duplicate job ID in execution scope')
+        known={j['job_id'] for j in jobs};unknown=set(requested)-known
+        if unknown:raise ValueError('unknown job IDs: '+', '.join(sorted(unknown)))
+        selected=set(requested)
+        return [j for j in jobs if j['job_id'] in selected]
+    if only_baselines:return [j for j in jobs if j['policy']!='llm_guided']
+    if only_llm:return [j for j in jobs if j['policy']=='llm_guided']
+    return list(jobs)
+
+def run(out,only_baselines=False,only_llm=False,job_ids=None):
     protocol=read(out/'protocol.json');check_seals(out,protocol,True)
     preflights(out,protocol)
     from build_benchmark_report import build
-    jobs=protocol['jobs'];queue=[];active=[];finished=[]
-    for j in jobs:
+    jobs=protocol['jobs'];execution_jobs=select_jobs(jobs,only_baselines,only_llm,job_ids)
+    scope=('baselines' if only_baselines else 'llm_guided' if only_llm else
+           'jobs:'+','.join(j['job_id'] for j in execution_jobs) if job_ids else 'all')
+    queue=[];active=[];finished=[]
+    for j in execution_jobs:
         folder=out/'episodes'/j['job_id']
         if (folder/'summary.json').exists():finished.append(result_row(out,j,protocol))
         elif (folder/'console.log').exists():raise RuntimeError('Interrupted episode has no summary; retain and adjudicate before resuming: '+j['job_id'])
-        elif not only_baselines or j['policy']!='llm_guided':queue.append(j)
+        else:queue.append(j)
     start=time.time();last_report=0
     while queue or active:
         if (out/'cancel.request').exists():
@@ -238,29 +260,37 @@ def run(out,only_baselines=False):
                         wall_time_s=now-item['started'],simulated_time_s=w.get('simulated_time_s'),
                         actual_distance_m=w.get('actual_distance_m'),collisions=w.get('collisions',0),
                         decisions=w.get('decisions',0),attempts=w.get('attempts',0),steps=w.get('steps',0),
-                        partial_metrics=True,source_fingerprint=protocol['engine_fingerprint'],source_unchanged=True,llm_calls=len(calls),llm_fallbacks=sum(bool(c.get('fallback_reason')) for c in calls)))
+                        partial_metrics=True,source_fingerprint=protocol['engine_fingerprint'],source_unchanged=True,
+                        llm_attempts=len(calls),llm_calls=sum(bool(c.get('model_called',
+                            c.get('fallback_reason') not in ('unconfigured_client','call_cap'))) for c in calls),
+                        llm_fallbacks=sum(bool(c.get('fallback_reason')) for c in calls)))
                 atomic(folder/'supervisor.json',dict(returncode=p.returncode,detail=reason,
                     process_wall_s=now-item['started'],workers=protocol['runtime']['workers'],finished_utc=utc()))
                 r=result_row(out,j,protocol);finished.append(r)
                 print('episode_finished',j['job_id'],r['termination'],'sim',r['simulated_time_s'],
                     'completed',str(len(finished))+'/'+str(len(jobs)),flush=True)
         if time.time()-last_report>=25 or not (queue or active):
-            atomic(out/'progress.json',dict(status='running' if queue or active else ('complete' if len(finished)==len(jobs) else ('cancelled' if (out/'cancel.request').exists() else 'waiting_for_remaining_policies')),
-                completed=len(finished),planned=len(jobs),active=[dict(job_id=x['job']['job_id'],**x['watch']) if 'job_id' not in x['watch'] else x['watch'] for x in active],
+            atomic(out/'progress.json',dict(status='running' if queue or active else ('complete' if len(finished)==len(execution_jobs) else ('cancelled' if (out/'cancel.request').exists() else 'incomplete')),
+                execution_scope=scope,completed=len(finished),planned=len(execution_jobs),benchmark_planned=len(jobs),active=[dict(job_id=x['job']['job_id'],**x['watch']) if 'job_id' not in x['watch'] else x['watch'] for x in active],
                 queued=len(queue),updated_utc=utc(),elapsed_process_s=time.time()-start))
             build(out);last_report=time.time()
         time.sleep(1)
     check_seals(out,protocol,True)
     stats=build(out,plots=True)
-    atomic(out/'suite-verification.json',dict(complete=stats['complete'],planned=len(jobs),completed=len(finished),
+    scope_complete=len(finished)==len(execution_jobs)
+    atomic(out/'suite-verification.json',dict(complete=stats['complete'],execution_scope_complete=scope_complete,
+        execution_scope=scope,planned=len(execution_jobs),benchmark_planned=len(jobs),completed=len(finished),
         complete_pairs=stats['complete_pairs'],frozen_snapshot_unchanged=True,shared_assets_unchanged=True,
         no_retries=True,protocol_sha256=sha(out/'protocol.json'),engine_fingerprint=protocol['engine_fingerprint'],
         all_result_integrity_checks_passed=all(all(r['integrity_checks'].values()) for r in finished),finished_utc=utc()))
-    print('BENCHMARK_COMPLETE' if stats['complete'] else 'BENCHMARK_INCOMPLETE',json.dumps(stats['paired_policy_stats']),flush=True)
+    label=('BENCHMARK_COMPLETE' if stats['complete'] else 'RUN_SCOPE_COMPLETE' if scope_complete else 'BENCHMARK_INCOMPLETE')
+    print(label,json.dumps(stats['paired_policy_stats']),flush=True)
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('action',choices=('freeze','run','all'));p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=3);p.add_argument('--only-baselines',action='store_true');p.add_argument('--arm',choices=sorted(ARMS),default=None)
+    p=argparse.ArgumentParser();p.add_argument('action',choices=('freeze','run','all'));p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=3)
+    scope=p.add_mutually_exclusive_group();scope.add_argument('--only-baselines',action='store_true');scope.add_argument('--only-llm',action='store_true');scope.add_argument('--job-id',dest='job_ids',action='append')
+    p.add_argument('--arm',choices=sorted(ARMS),default=None)
     a=p.parse_args();out=a.output.resolve()
     if a.action in ('freeze','all'):freeze(out,a.workers,a.arm)
-    if a.action in ('run','all'):run(out,a.only_baselines)
+    if a.action in ('run','all'):run(out,a.only_baselines,a.only_llm,a.job_ids)
 if __name__=='__main__':main()

@@ -45,7 +45,10 @@ def recover(root):
             original_summary_sha256=sha(backup),native_events_sha256=sha(folder/'events.jsonl'),console_sha256=sha(folder/'console.log'),
             recovery_script_sha256=sha(__file__),recovered_utc=datetime.now(timezone.utc).isoformat())
         summary.update(job,recorded=False,source_fingerprint=protocol['engine_fingerprint'],source_unchanged=True,
-            evaluation=evaluation,llm_calls=len(calls),llm_fallbacks=sum(bool(c.get('fallback_reason')) for c in calls),
+            evaluation=evaluation,llm_attempts=len(calls),
+            llm_calls=sum(bool(c.get('model_called',
+                c.get('fallback_reason') not in ('unconfigured_client','call_cap'))) for c in calls),
+            llm_fallbacks=sum(bool(c.get('fallback_reason')) for c in calls),
             partial_metrics=False,post_terminal_export_recovery=provenance)
         atomic(folder/'llm-calls.json',calls);atomic(summaryfile,summary);atomic(folder/'postprocess-recovery.json',provenance)
         result_row(root,job,protocol);recovered.append(dict(job_id=job['job_id'],termination=terminal['termination']))

@@ -9,10 +9,17 @@ from threading import Event,Thread
 import unittest
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from benchmark_watchdog import WatchdogChannel,AsyncEventWriter,CAPACITY
+from benchmark_watchdog import WatchdogChannel,AsyncEventWriter,CAPACITY,channel_name
 from run_paired_benchmark import module_deadline_expired
 
 class RuntimeTelemetryTests(unittest.TestCase):
+    def test_shared_memory_name_is_portable_stable_and_path_specific(self):
+        with tempfile.TemporaryDirectory() as directory:
+            first=channel_name(directory)
+            self.assertLessEqual(len(first),31)
+            self.assertEqual(first,channel_name(directory))
+            self.assertNotEqual(first,channel_name(Path(directory)/'other'))
+
     def test_old_disk_completion_cannot_hide_a_current_shared_memory_timeout(self):
         with tempfile.TemporaryDirectory() as directory:
             Path(directory,'events.jsonl').write_text(json.dumps(

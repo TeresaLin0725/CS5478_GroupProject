@@ -1,5 +1,6 @@
 """New native entry points and every A candidate builder share the same geometry."""
 from dataclasses import replace
+import json
 from pathlib import Path
 import sys
 import tempfile
@@ -40,6 +41,7 @@ class SharedGeometryHandoffTests(unittest.TestCase):
                 patch.dict(sys.modules, {'torch': fake_torch}), \
                 patch.object(integrated, 'load_local_env'), \
                 patch.object(integrated, 'source_fingerprint', return_value='test'), \
+                patch.object(integrated, 'runtime_configuration', return_value={'fixture': True}), \
                 patch.object(integrated, 'DisplayDetector', return_value=detector), \
                 patch.object(integrated, 'RetainingAdapter') as adapter, \
                 patch.object(integrated, 'TeamNavigator', side_effect=AtNavigationConstruction) as nav, \
@@ -59,6 +61,36 @@ class SharedGeometryHandoffTests(unittest.TestCase):
             self.assertEqual(config['strict_costmap']['planning_margin_m'], .01)
             self.assertEqual(config['strict_costmap']['start_margin_m'], 0.)
             self.assertIsNone(config['relaxed_costmap'])
+
+    def test_runtime_configuration_uses_effective_navigation_and_recovery(self):
+        manifest = integrated.shared_round_manifest_for('runtime', 'llm_guided')
+        strict = integrated.runtime_configuration(manifest, 'dynamic', None)
+        relaxed = integrated.runtime_configuration(manifest, 'dynamic', integrated.RelaxedRetry())
+        self.assertEqual(strict['schema_version'], 'c-navigation-recovery-v1')
+        self.assertEqual(strict['recovery'], integrated.asdict(manifest.recovery))
+        self.assertIsNone(strict['navigation']['relaxed_costmap'])
+        self.assertIsNotNone(relaxed['navigation']['relaxed_costmap'])
+        self.assertEqual(strict['navigation']['strict_costmap'], relaxed['navigation']['strict_costmap'])
+
+    def test_recording_gate_rejects_each_runtime_switch_and_old_certificates(self):
+        manifest = integrated.shared_round_manifest_for('runtime', 'nearest')
+        base = integrated.runtime_configuration(manifest, 'dynamic', None)
+        report = dict(passed=True, source_fingerprint='source', profile='dynamic',
+                      policy='nearest', runtime_configuration=json.loads(json.dumps(base)))
+        self.assertTrue(integrated.recording_validation_matches(
+            report, 'source', 'dynamic', 'nearest', base))
+        self.assertFalse(integrated.recording_validation_matches(
+            {key: value for key, value in report.items() if key != 'runtime_configuration'},
+            'source', 'dynamic', 'nearest', base))
+        for recovery in (
+                replace(manifest.recovery, epsilon_retry=.05),
+                replace(manifest.recovery, stuck_retry=True)):
+            changed = integrated.runtime_configuration(replace(manifest, recovery=recovery), 'dynamic', None)
+            self.assertFalse(integrated.recording_validation_matches(
+                report, 'source', 'dynamic', 'nearest', changed))
+        relaxed = integrated.runtime_configuration(manifest, 'dynamic', integrated.RelaxedRetry())
+        self.assertFalse(integrated.recording_validation_matches(
+            report, 'source', 'dynamic', 'nearest', relaxed))
 
     def test_simple_suite_freezes_shared_geometry_for_all_three_policies(self):
         with tempfile.TemporaryDirectory() as td, \

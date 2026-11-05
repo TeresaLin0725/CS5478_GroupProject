@@ -7,6 +7,7 @@ from typing import Optional, Tuple
 from ..config import PolicyConfig
 from ..contracts import PolicyName, SelectionContext, SelectionResult, Subgoal, WorldState
 from ..validation import require, validate_context
+from .api import PolicyFeedback
 
 
 def nearest_id(context: SelectionContext) -> str:
@@ -25,6 +26,10 @@ class BaselinePolicy:
         self.episode_id = episode_id
         self.config = config
         self.rng = Random(seed)  # Dedicated policy stream; never global RNG.
+
+    def observe_feedback(self, feedback: PolicyFeedback) -> None:
+        """Baselines are memoryless; accept the same C feedback interface as LLM."""
+        require(feedback.episode_id == self.episode_id, "policy feedback episode mismatch")
 
     def select(self, state: WorldState, context: SelectionContext) -> SelectionResult:
         require(self.episode_id == state.episode_id, "policy must be reset for this episode")

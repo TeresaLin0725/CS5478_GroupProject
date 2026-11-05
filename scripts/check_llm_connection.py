@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+from socket import timeout as SocketTimeout
 import sys
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
@@ -10,7 +11,8 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
-from frontier_search.policies.provider import GeminiCompatibleClient, load_local_env
+from frontier_search.policies.provider import (CANONICAL_LLM_MODEL,
+                                               GeminiCompatibleClient, load_local_env)
 
 
 def main():
@@ -22,7 +24,7 @@ def main():
     inherited = {name: bool(os.environ.get(name)) for name in names}
     load_local_env(args.env_file)
     client = GeminiCompatibleClient()
-    model = os.environ.get('LLM_MODEL', 'gemini-2.5-flash')
+    model = os.environ.get('LLM_MODEL', CANONICAL_LLM_MODEL)
     report = dict(env_file=str(args.env_file.resolve()), env_file_exists=args.env_file.is_file(),
                   inherited_variables=inherited, endpoint_host=urlsplit(client.base_url).hostname,
                   model=model, live_model_available=False)
@@ -40,8 +42,11 @@ def main():
         # Keep the provider's reason, but never serialize request headers or keys.
         detail = exc.read().decode('utf-8', errors='replace').replace(client.key, '[REDACTED]')
         report.update(http_status=exc.code, provider_error=detail[:4096])
-    except (URLError, TimeoutError) as exc:
-        report.update(transport_error=type(exc).__name__,
+    except (URLError, TimeoutError, SocketTimeout) as exc:
+        error_name = ('TimeoutError'
+                      if isinstance(exc, (TimeoutError, SocketTimeout))
+                      else type(exc).__name__)
+        report.update(transport_error=error_name,
                       reason=str(exc).replace(client.key, '[REDACTED]')[:1000])
     encoded = json.dumps(report, ensure_ascii=False, indent=2)
     if args.output:

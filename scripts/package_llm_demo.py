@@ -18,7 +18,9 @@ def package(directory, baseline):
     decisions={row['state']['revision']:row for row in rows if row['event']=='decision'}
     dispatched=[row['request']['subgoal'] for row in rows if row['event']=='dispatch']
     records=[row['record'] for row in rows if row['event']=='llm_call']
-    assert records and len(records)==summary['llm_calls'] and summary['llm_fallbacks']==0
+    model_calls=sum(bool(record.get('model_called',True)) for record in records)
+    assert records and model_calls==summary['llm_calls'] and summary['llm_fallbacks']==0
+    assert len(records)==summary.get('llm_attempts',len(records))
     calls=[]
     for record in records:
         provider=record['provider'];decision=decisions[record['state_revision']]

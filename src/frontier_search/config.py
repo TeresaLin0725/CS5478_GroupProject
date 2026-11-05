@@ -169,15 +169,35 @@ class PolicyConfig:
     llm_reasoning: Optional[str] = None
     llm_deadline_s: float = 5.0
     llm_call_cap: int = 10
-    llm_prompt: str = "Return exactly one eligible frontier ID."
+    llm_prompt: str = (
+        "Choose the best eligible frontier for finding the target. Use semantic evidence, "
+        "information gain, assessed path cost, exclusions, and recent execution feedback."
+    )
+    # C keeps hosted-model calls for decisions where semantics can change the action.
+    # Target approaches and a single eligible frontier are deterministic and safe to bypass.
+    llm_bypass_single_candidate: bool = True
+    # Reuse only an exact material decision context; revisions/timestamps alone do not
+    # invalidate a choice, while candidates, costs, observations and feedback do.
+    llm_cache_identical_context: bool = True
+    # Bound prompt growth independently of episode length.
+    llm_feedback_window: int = 8
+    llm_max_observed_objects: int = 24
 
     def __post_init__(self) -> None:
         if not isfinite(self.epsilon_m) or self.epsilon_m <= 0:
             raise ValueError("epsilon_m must be finite and positive")
         if not isfinite(self.llm_deadline_s) or self.llm_deadline_s <= 0:
             raise ValueError("LLM deadline must be finite and positive")
-        if self.llm_call_cap < 0:
+        if type(self.llm_call_cap) is not int or self.llm_call_cap < 0:
             raise ValueError("LLM call cap must be nonnegative")
+        if type(self.llm_feedback_window) is not int or self.llm_feedback_window < 0:
+            raise ValueError("LLM feedback window must be a nonnegative integer")
+        if type(self.llm_max_observed_objects) is not int or self.llm_max_observed_objects < 1:
+            raise ValueError("LLM observed-object cap must be a positive integer")
+        if type(self.llm_bypass_single_candidate) is not bool:
+            raise ValueError("LLM single-candidate bypass must be a bool")
+        if type(self.llm_cache_identical_context) is not bool:
+            raise ValueError("LLM context caching must be a bool")
 
 
 @dataclass(frozen=True)

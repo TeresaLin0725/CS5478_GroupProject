@@ -12,7 +12,10 @@ CAPACITY = 16384
 HEADER = 16
 
 def channel_name(folder):
-    return 'frontier_watch_' + hashlib.sha256(str(Path(folder).resolve()).encode()).hexdigest()[:24]
+    # macOS POSIX shared-memory names are limited to 31 characters on the
+    # supported runtime. A 12-hex (48-bit) path digest keeps the complete name
+    # at 27 characters while still making accidental collisions negligible.
+    return 'frontier_watch_' + hashlib.sha256(str(Path(folder).resolve()).encode()).hexdigest()[:12]
 
 class WatchdogChannel:
     def __init__(self, folder, create=False):

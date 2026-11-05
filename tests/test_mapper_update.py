@@ -101,6 +101,24 @@ class MapperUpdateTests(unittest.TestCase):
         self.assertNotEqual(state.occupancy_map.data[10][8], 0)
         self.assertNotEqual(state.occupancy_map.data[7][7], 100)
 
+    def test_current_footprint_masks_quantized_hit_without_erasing_sensor_state(self):
+        def inject_hit(_observation, _cfg, _collision, occupancy, _coverage,
+                       _masks, _floors, **_kwargs):
+            occupancy[9][0] = 100   # overlaps the physical footprint at (0, 0)
+            occupancy[10][5] = 100  # unrelated obstacle must remain published
+
+        with patch('frontier_search.perception.mapper.fuse_observation', side_effect=inject_hit):
+            first = self.mapper.update(scene_frame())
+            self.assertEqual(first.occupancy_map.data[9][0], 0)
+            self.assertEqual(first.occupancy_map.data[10][5], 100)
+            self.assertFalse(first.explored_map.data[9][0])
+            self.assertEqual(self.mapper._state.occupancy[9][0], 100)
+
+            # The raw hit was never deleted.  Once the body moves away, the
+            # same cell is published as occupied again.
+            second = self.mapper.update(scene_frame(sequence=2, x=1.0))
+            self.assertEqual(second.occupancy_map.data[9][0], 100)
+
     def test_tabletop_is_not_floor_or_under_table_clearance(self):
         table = ((1.2, -0.4, 0.3), (2.0, 0.4, 0.35))
         state = self.mapper.update(scene_frame(boxes=(table,)))

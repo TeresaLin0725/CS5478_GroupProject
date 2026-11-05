@@ -1,36 +1,11 @@
 # Indoor frontier object search
 
-2026-10-28 原始公寓单案例验证：[四策略报告](validation-report-20261028/report/index.html)、
-[结果与限制](Documentation/chinese/simple_apartment_validation.md)。四策略均成功、零接触步；
-LLM 两次在线调用、零回退。本次为 apartment-s17 验证，不替代完整 36 回合配对实验。
+## 保留的实验基线
 
-## 最新结果（2026-10-18）
-
-打开 **[report/index.html](report/index.html)**（或根目录 [demo.html](demo.html)）。报告只收录最新一版结果：
-
-- **Demo**：四种前沿选择策略各一段 15 fps 原生仿真录像，Locobot 在 Gibson Rs 公寓中搜索杯子，全部通过独立目标验收；页面可切换策略，并按决策、操作和验收记录定位播放。Random 在推车干扰条件下的配对回合均未成功，因此它的 demo 录在公寓原始条件。单次录像只用于展示，策略比较以下方配对实验为准。
-
-| 策略 | 场景条件 | 仿真时间 | 行驶距离 | 接触 | 策略决策 | 在线调用 |
-|---|---|---:|---:|---:|---:|---:|
-| Random | 公寓原始 | 170.33 s | 11.08 m | 0 | 6 | 0 |
-| Nearest | 移动推车干扰 | 155.00 s | 11.09 m | 0 | 6 | 0 |
-| Information Gain | 移动推车干扰 | 242.00 s | 15.57 m | 0 | 9 | 0 |
-| LLM-guided | 移动推车干扰 | 199.67 s | 11.56 m | 0 | 7 | 6（`gemini-3.8-flash`，0 回退） |
-
-- **四策略配对实验**：[完整统计与 95% 区间](report/benchmark.html)，[逐任务结果、实际轨迹与失败分析](report/analysis.html)。同一 Rs 房屋的原始、拥挤、动态三种条件 × 3 组种子/初始朝向 × 4 策略，36 回合全部完成，9 组严格配对，全部失败计入统计。
-
-| 策略 | 成功 / 全部 | 成功率 | 失败计 600 s 的平均时间 |
-|---|---|---|---|
-| Random | 4 / 9 | 44.4% | 393.0 s |
-| Nearest | 6 / 9 | 66.7% | 307.5 s |
-| Information Gain | 7 / 9 | 77.8% | 291.0 s |
-| LLM-guided | 4 / 9 | 44.4% | 391.0 s |
-
-IG 在本批成功率最高，但小样本下校正后差异不显著；结果仅覆盖一套房屋，不能证明跨房屋泛化。统计口径见[配对实验说明](Documentation/chinese/paired_benchmark.md)，设计落实核对见[审查记录](Documentation/chinese/demo_design_review.md)。
-
-原始证据位于 `report/evidence/`（Git 忽略）：`demo/<策略>/` 是录像、事件日志、模型调用与验收记录及同源无录制试跑与录制许可；`benchmark/` 是 36 回合的事件、manifest、冻结的协议与源码快照、`results.json` 和独立复核 `audit.json`。`report/evidence/relocation.json` 记录了每个文件的来源与 SHA-256。
-
-Git 中只跟踪四段 demo 的 `recording/`。其余原始日志（benchmark 全部回合的事件日志、manifest、冻结快照，以及各 demo 的试跑与录制许可）打包为 [report/raw-logs-20261019.zip](report/raw-logs-20261019.zip)（54 MB，含逐文件 SHA-256 清单）；在 `report/` 目录内解压即可恢复 `report/evidence/`，使统计页的逐回合链接可用。打包命令见 `scripts/package_raw_logs.py`。
+仓库只保留 [2026-10-25 中期报告与 Demo](midterm-report-20261025/README.md)：
+36 个配对回合中 29 个成功、7 个 `no_feasible_frontiers`。该目录包含中英文 PDF、
+四策略录像、逐回合汇总、冻结协议和报告所需证据。其他历史运行目录与单案例验证报告不再保留；
+新实验必须写入新的 Git 忽略目录，不得覆盖这份基线。
 
 ## 运行
 
@@ -63,6 +38,7 @@ python scripts/run_integrated.py --profile dynamic --policy llm_guided --output 
 This command does not record video. Recording requires a passing validation report
 for the exact source/model fingerprint and inference runtime.
 The [connectivity check](scripts/check_llm_connection.py) reports status without printing credentials.
+The authoritative hosted model for new LLM-guided runs is `gemini-3.5-flash`.
 
 ## Design documents
 
@@ -78,6 +54,7 @@ Component notes: [A mapping](Documentation/english/w2_mapping.md),
 [W3 verifier](Documentation/english/w3_verifier.md),
 [Locobot A/B/C handoff](Documentation/english/locobot_abc_handoff.md),
 [C runner](Documentation/chinese/w2_runner.md),
+[C optimization handoff](Documentation/chinese/c_optimization_handoff.md),
 [A/B delivery checklist](Documentation/chinese/w2_ab_handoff.md).
 Perception capture uses **Locobot's native fixed camera**, configured by
 [`configs/perception.locobot.json`](configs/perception.locobot.json).

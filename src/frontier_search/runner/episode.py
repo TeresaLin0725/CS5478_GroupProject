@@ -21,7 +21,7 @@ from ..contracts import (
 from ..evaluation.api import TargetEvaluator
 from ..navigation.api import SteppedNavigator
 from ..perception.api import PerceptionMapper
-from ..policies.api import SearchPolicy
+from ..policies.api import PolicyFeedback, SearchPolicy
 from ..simulation.api import ControlledSimulatorAdapter
 from ..validation import require, validate_context, validate_evaluation, validate_selection, validate_state
 from ..perception.observations import validate_rgbd_observation
@@ -105,6 +105,30 @@ class EpisodeRunner:
         if elapsed > deadline:
             raise TimeoutError('module exceeded deadline: ' + name)
         return value
+
+    def _notify_policy(self, frontier, subgoal, action_source, navigation_feedback,
+                       new_known_area_m2=None, observation_status=None):
+        plan = navigation_feedback.planner_result
+        feedback = PolicyFeedback(
+            episode_id=self.manifest.episode_id,
+            decision_number=self.decisions,
+            frontier_id=subgoal.frontier_id,
+            frontier_kind=subgoal.kind,
+            region_id=frontier.region_id,
+            action_source=action_source,
+            selected_from_revision=subgoal.selected_from_revision,
+            completed_revision=self.state.revision,
+            timestamp_s=self.sim_time,
+            navigation_status=navigation_feedback.status,
+            failure_reason=navigation_feedback.failure_reason,
+            path_cost_m=plan.path_cost_m if plan is not None else None,
+            new_known_area_m2=new_known_area_m2,
+            observation_status=observation_status,
+        )
+        observer = getattr(self.policy, 'observe_feedback', None)
+        if observer is not None:
+            self._call('policy.observe_feedback', observer, feedback)
+        self._emit('policy_feedback', direction='A_B_to_C', feedback=feedback)
 
     def _budget(self):
         if self.cancelled():
@@ -377,10 +401,17 @@ class EpisodeRunner:
             self._emit('action_selected', decision_number=self.decisions, state_revision=self.state.revision,
                        simulated_time_s=self.sim_time, policy_selection=policy_selection,
                        selection=selection, action_source=action_source)
+            self._emit('strategy_directive', direction='C_to_B', decision_number=self.decisions,
+                       selected=selection.subgoal, policy_selection=policy_selection.subgoal,
+                       rationale=policy_selection.rationale, action_source=action_source,
+                       candidate_ranking=getattr(self.policy, 'last_candidate_ranking', ()),
+                       eligible_frontier_ids=context.eligible_frontier_ids)
             if self.previous is not None and self.previous.execution_status == 'failed':
                 self._emit('strategy_replan', direction='C_to_B', previous_attempt=self.previous,
                            selected=selection.subgoal, action_source=action_source,
                            simulated_time_s=self.sim_time)
+            frontier = next(item for item in before.frontiers
+                            if item.frontier_id == selection.subgoal.frontier_id)
             feedback = self._operation('navigate', subgoal=selection.subgoal)
             self.previous = PlannerAttempt(selection.subgoal, feedback.planner_result,
                                            feedback.status.value, feedback.failure_reason)
@@ -388,21 +419,32 @@ class EpisodeRunner:
             self.recovery.record_attempt(replace(before, timestamp_s=self.sim_time), self.previous)
             recovered, idle_cycles = False, 0
             if feedback.status == NavigationStatus.CANCELLED:
+                self._notify_policy(frontier, selection.subgoal, action_source, feedback)
                 raise _End(TerminationReason.EXTERNALLY_CANCELLED)
+            if feedback.status == NavigationStatus.FAILED:
+                self._notify_policy(frontier, selection.subgoal, action_source, feedback)
             if feedback.status == NavigationStatus.REACHED:
-                if (selection.subgoal.kind == 'target_approach' and
-                        self.manifest.observation.inspection_hold_s > 0):
-                    # Shared, fixed micro-sweep: RGB detection can vary with a
-                    # few degrees of view. Each safe heading is held for fresh,
-                    # stationary evidence; no hidden target state is consulted.
-                    self._operation('observe', routine='inspection', heading=selection.subgoal.approach_pose.yaw_rad)
-                arrival = self._operation('observe', routine='arrival', heading=selection.subgoal.approach_pose.yaw_rad)
+                try:
+                    if (selection.subgoal.kind == 'target_approach' and
+                            self.manifest.observation.inspection_hold_s > 0):
+                        # Shared, fixed micro-sweep: RGB detection can vary with a
+                        # few degrees of view. Each safe heading is held for fresh,
+                        # stationary evidence; no hidden target state is consulted.
+                        self._operation('observe', routine='inspection', heading=selection.subgoal.approach_pose.yaw_rad)
+                    arrival = self._operation('observe', routine='arrival', heading=selection.subgoal.approach_pose.yaw_rad)
+                except _Claim:
+                    # A terminal claim may pre-empt the arrival operation. Preserve
+                    # B's completed navigation feedback before scoring ends the loop.
+                    self._notify_policy(frontier, selection.subgoal, action_source, feedback)
+                    raise
                 if arrival.status != NavigationStatus.REACHED:
                     self._operation('observe', routine='recovery', heading=self.state.robot_pose.yaw_rad)
                     self.recovery.record_observation_failure(before, self.state, selection.subgoal.frontier_id)
                     recovered = True
                 area = self.recovery.record_progress(before, self.state, selection.subgoal.frontier_id)
                 self._emit('progress', frontier_id=selection.subgoal.frontier_id, new_known_area_m2=area)
+                self._notify_policy(frontier, selection.subgoal, action_source, feedback,
+                                    new_known_area_m2=area, observation_status=arrival.status)
 
     def _score(self):
         self._call('stop', self.simulator.stop)

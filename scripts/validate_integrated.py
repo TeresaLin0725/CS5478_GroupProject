@@ -31,6 +31,18 @@ def validate(run,tests):
     checks['test_process_exit_and_source']=(certificate['returncode']==0 and certificate['source_unchanged']
                                          and certificate['source_fingerprint']==source_fingerprint())
     rows=[json.loads(line) for line in (run/'events.jsonl').read_text(encoding='utf-8').splitlines()]
+    runtime=summary.get('runtime_configuration')
+    starts=[row for row in rows if row['event']=='episode_start']
+    navigation_records=[]
+    for kind,detail in summary.get('navigator_events',[]):
+        if kind=='navigation_configuration':
+            navigation_records.append(json.loads(detail))
+    checks['runtime_configuration_recorded']=(
+        isinstance(runtime,dict) and runtime.get('schema_version')=='c-navigation-recovery-v1'
+        and runtime.get('profile')==summary.get('profile')
+        and runtime.get('policy')==summary.get('policy')
+        and len(starts)==1 and runtime.get('recovery')==starts[0]['manifest'].get('recovery')
+        and len(navigation_records)==1 and runtime.get('navigation')==navigation_records[0])
     captures=[r for r in rows if r['event']=='capture_processed']
     checks['fresh_capture_barriers']=all(b['sequence']>a['sequence'] and b['simulated_time_s']>=a['simulated_time_s']
         for a,b in zip(captures,captures[1:])) and len(captures)>2
@@ -58,13 +70,19 @@ def validate(run,tests):
         checks['llm_responses_eligible']=bool(llm) and all(record.get('response') in
             {candidate['frontier_id'] for candidate in record['input']['candidates']}
             for record in llm)
-        checks['llm_count_matches_summary']=len(llm)==summary.get('llm_calls')
+        model_calls=sum(bool(record.get('model_called',
+            record.get('fallback_reason') not in ('unconfigured_client','call_cap'))) for record in llm)
+        checks['llm_count_matches_summary']=(model_calls==summary.get('llm_calls')
+            and len(llm)==summary.get('llm_attempts',len(llm)))
     match=re.search(r'Ran (\d+) tests',test_text)
     return dict(passed=all(checks.values()),checks=checks,source_fingerprint=source_fingerprint(),
         profile=summary['profile'],policy=summary['policy'],tests_count=int(match.group(1)) if match else None,
+        runtime_configuration=runtime,
         tests_file=str(tests.resolve()),tests_sha256=hashlib.sha256(raw).hexdigest(),
         run=str(run.resolve()),summary_sha256=hashlib.sha256((run/'summary.json').read_bytes()).hexdigest(),
-        dry_run_summary=summary,llm_calls=len(llm),
+        dry_run_summary=summary,llm_attempts=len(llm),
+        llm_calls=sum(bool(record.get('model_called',
+            record.get('fallback_reason') not in ('unconfigured_client','call_cap'))) for record in llm),
         llm_models=sorted({record['model'] for record in llm}),
         llm_response_models=sorted({record['provider']['response_model'] for record in llm
             if isinstance(record.get('provider'),dict) and record['provider'].get('response_model')}),

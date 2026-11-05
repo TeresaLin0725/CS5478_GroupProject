@@ -4,7 +4,7 @@ from copy import deepcopy
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from benchmark_protocol import POLICIES,task_specs,validate_pairing,wilson,aggregate,exact_mcnemar,paired_interval
-from run_paired_benchmark import result_row
+from run_paired_benchmark import result_row,select_jobs
 from benchmark_episode import replace_shared,atomic
 from unittest.mock import patch
 
@@ -13,6 +13,25 @@ def results():
         wall_time_s=200.,collisions=0,llm_calls=0,llm_fallbacks=0) for j in task_specs()]
 
 class BenchmarkTests(unittest.TestCase):
+    def test_execution_scope_can_select_exactly_the_nine_llm_jobs(self):
+        jobs=task_specs()
+        self.assertEqual(len(select_jobs(jobs,only_llm=True)),9)
+        self.assertEqual({j['policy'] for j in select_jobs(jobs,only_llm=True)},{'llm_guided'})
+        self.assertEqual(len(select_jobs(jobs,only_baselines=True)),27)
+        with self.assertRaises(ValueError):select_jobs(jobs,only_baselines=True,only_llm=True)
+
+    def test_execution_scope_can_select_explicit_jobs_in_protocol_order(self):
+        jobs=task_specs();requested=[jobs[9]['job_id'],jobs[2]['job_id'],jobs[17]['job_id']]
+        selected=select_jobs(jobs,job_ids=requested)
+        self.assertEqual([j['job_id'] for j in selected],
+                         [j['job_id'] for j in jobs if j['job_id'] in requested])
+        with self.assertRaisesRegex(ValueError,'duplicate'):
+            select_jobs(jobs,job_ids=[requested[0],requested[0]])
+        with self.assertRaisesRegex(ValueError,'unknown'):
+            select_jobs(jobs,job_ids=['missing'])
+        with self.assertRaises(ValueError):
+            select_jobs(jobs,only_baselines=True,job_ids=requested)
+
     def test_call_exports_preserve_nested_enum_values(self):
         from enum import Enum
         class PolicyName(Enum):NEAREST='nearest'

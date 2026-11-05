@@ -245,7 +245,10 @@ def episode(protocol,job,out):
     calls=getattr(policy,'call_records',[])
     summary=dict(runner.summary,**job,recorded=False,source_fingerprint=fingerprint,
         source_unchanged=fingerprint==source_fingerprint(),evaluation=evaluator.metrics,
-        llm_calls=len(calls),llm_fallbacks=sum(bool(c.get('fallback_reason')) for c in calls),
+        llm_attempts=len(calls),
+        llm_calls=sum(bool(c.get('model_called',
+            c.get('fallback_reason') not in ('unconfigured_client','call_cap'))) for c in calls),
+        llm_fallbacks=sum(bool(c.get('fallback_reason')) for c in calls),
         detector_runtime=dict(device=device,torch_version=torch.__version__,cuda_version=torch.version.cuda,
             gpu_name=torch.cuda.get_device_name(0) if device=='0' else None),
         navigation_preset=protocol.get('navigation_preset','legacy'),

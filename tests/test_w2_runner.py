@@ -266,8 +266,15 @@ class RunnerTests(unittest.TestCase):
         m, runner, log = make_runner(policy_name='llm_guided')
         self.assertEqual(runner.run(m), TerminationReason.NO_FRONTIERS)
         calls = [e['record'] for e in log.events if e['event'] == 'llm_call']
-        self.assertEqual(len(calls), 2)
-        self.assertTrue(all(c['fallback_reason'] == 'unconfigured_client' for c in calls))
+        self.assertEqual(calls, [])  # each decision had one eligible frontier
+        decisions = [e['selection'] for e in log.events if e['event'] == 'decision']
+        dispatched = [item for item in decisions if item.subgoal is not None]
+        self.assertTrue(dispatched)
+        self.assertTrue(all('hosted model call bypassed' in item.rationale for item in dispatched))
+        self.assertTrue(any(e['event'] == 'strategy_directive' for e in log.events))
+        feedback = [e['feedback'] for e in log.events if e['event'] == 'policy_feedback']
+        self.assertTrue(feedback)
+        self.assertTrue(all(item.episode_id == m.episode_id for item in feedback))
 
     def test_reusing_runner_resets_episode_history(self):
         m, runner, log = make_runner('no_frontiers')
@@ -310,6 +317,41 @@ class RunnerTests(unittest.TestCase):
                 self.assertEqual(runner.summary['decisions'], 0)
                 self.assertEqual((runner.simulator._v, runner.simulator._w), (0, 0))
                 self.assertFalse(any(e['event'] == 'decision' for e in log.events))
+
+    def test_claim_during_arrival_preserves_completed_navigation_feedback(self):
+        m, runner, log = make_runner(enable_target_evaluation=True)
+        navigation_completed = [False]
+        operation = runner._operation
+        def tracked_operation(kind, *args, **kwargs):
+            result = operation(kind, *args, **kwargs)
+            if kind == 'navigate' and result.status == NavigationStatus.REACHED:
+                navigation_completed[0] = True
+            return result
+        runner._operation = tracked_operation
+        update = runner.mapper.update
+        def claiming(obs):
+            state = update(obs)
+            if not navigation_completed[0]:
+                return state
+            ids = ('e1', 'e2')
+            obj = ObjectTrack('track', 'cup', .99, Point3(1, 1, .5), 0., obs.timestamp_s, ids, 2)
+            return replace(state, semantic_objects=(obj,),
+                target_claim=TargetClaim('claim', 'track', 'cup', obs.timestamp_s, ids))
+        runner.mapper.update = claiming
+        runner.mapper.get_claim_evidence = lambda episode, claim: EvidenceBundle(episode, claim,
+            tuple(DetectionEvidence('e%d' % seq, seq, 0., 'track', 'cup', .99,
+                  (0, 0, 1, 1), Point3(1, 1, .5)) for seq in (1, 2)))
+        class Evaluator:
+            def reset(self, episode_id, config):
+                pass
+            def evaluate(self, request):
+                return EvaluationResult(request.episode_id, request.claim.claim_id, True,
+                                        'hidden-instance', 'fixture')
+        runner._evaluator = Evaluator()
+        self.assertEqual(runner.run(m), TerminationReason.SUCCESS)
+        feedback = [e for e in log.events if e['event'] == 'policy_feedback']
+        self.assertTrue(feedback)
+        self.assertEqual(feedback[-1]['feedback'].navigation_status, NavigationStatus.REACHED)
 
     def test_simulator_clock_violation_and_wrong_feedback_are_errors(self):
         for mode in ('clock', 'feedback'):

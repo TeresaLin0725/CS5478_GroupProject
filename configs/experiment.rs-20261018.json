@@ -1,11 +1,16 @@
 {
   "schema_version": "1.1",
   "status": "frozen_before_first_episode",
-  "created_utc": "2026-10-18T14:41:49.017127+00:00",
-  "run_root": "D:\\CS5478_PROJECT\\integration\\runs\\paired-benchmark-20261018-v3",
-  "snapshot_root": "D:\\CS5478_PROJECT\\integration\\runs\\paired-benchmark-20261018-v3\\frozen",
+  "created_utc": "2026-11-05T15:05:40.882480+00:00",
+  "run_root": "D:\\CS5478_PROJECT\\w2-latest\\runs\\paired-w2-20261105-postfix-llm-rerun",
+  "snapshot_root": "D:\\CS5478_PROJECT\\w2-latest\\runs\\paired-w2-20261105-postfix-llm-rerun\\frozen",
   "env_file": "D:\\CS5478_PROJECT\\.env",
-  "engine_fingerprint": "bbd90a237a14b60bdddcd8e9f32524ea350ada88b94d34028f34caa2fd0140a1",
+  "engine_fingerprint": "72a51a52547257257ca4213ceabf3bc9c64f1a615cfc965c473ca28387071783",
+  "watchdog_transport": "shared_memory_v1",
+  "navigation_preset": "shared_round",
+  "navigation_options": {
+    "start_margin_m": 0.0
+  },
   "scope": "Current Rs benchmark: one physical house, three scene conditions, three seed/initial-heading blocks, four policies; 36 fresh native episodes. Not multi-house generalization.",
   "jobs": [
     {
@@ -23,7 +28,7 @@
         "yaw_rad": 1.5707963267948966
       },
       "manifest_path": "manifests/apartment-s17-random.json",
-      "manifest_sha256": "ac93f5ae44582807907c172333f0034e7b72154f155c3bc67ec9653b25e76c0d"
+      "manifest_sha256": "6d8342d72ea2135f82defedd0485f0d226d531fa1611ce5b8f6990e4feaea23c"
     },
     {
       "job_id": "apartment-s17-nearest",
@@ -40,7 +45,7 @@
         "yaw_rad": 1.5707963267948966
       },
       "manifest_path": "manifests/apartment-s17-nearest.json",
-      "manifest_sha256": "a94b65df97601ce1bc71ddba00205bbbe0e94b4fb9db2086d251f53e674523ad"
+      "manifest_sha256": "a1a06c85ab043e54c0c1b65111683437368f2b89b24765b3164dea847388dec4"
     },
     {
       "job_id": "apartment-s17-information_gain",
@@ -57,7 +62,7 @@
         "yaw_rad": 1.5707963267948966
       },
       "manifest_path": "manifests/apartment-s17-information_gain.json",
-      "manifest_sha256": "2416ff6817516280cb0d0b48d1c52c9618c87a1fa64567ed9333c5ccbed1e49a"
+      "manifest_sha256": "f1571f40f50ae56bf5a462c798bdcbea4767ed7d14909a85f28c6ec67b5332e7"
     },
     {
       "job_id": "apartment-s17-llm_guided",
@@ -74,7 +79,7 @@
         "yaw_rad": 1.5707963267948966
       },
       "manifest_path": "manifests/apartment-s17-llm_guided.json",
-      "manifest_sha256": "4ebe5ba0ad8a942098d189d08c13b79926b0fe32cb241e36524605bb662c9b3d"
+      "manifest_sha256": "3fc9e4e175d14c7db479156925e213a19f21a94c8dd7e457b10ae304bdc4d558"
     },
     {
       "job_id": "clutter-s17-random",
@@ -91,7 +96,7 @@
         "yaw_rad": 1.5707963267948966
       },
       "manifest_path": "manifests/clutter-s17-random.json",
-      "manifest_sha256": "84acc5573fe294343dd758c4ccd518c2c048c6ad83c97269235565b03208fda8"
+      "manifest_sha256": "fffc43ffcae25d564fde567df717b34f0f9811d629c405da021cfc8c71ecaf7f"
     },
     {
       "job_id": "clutter-s17-nearest",
@@ -108,7 +113,7 @@
         "yaw_rad": 1.5707963267948966
       },
       "manifest_path": "manifests/clutter-s17-nearest.json",
-      "manifest_sha256": "65654c03c5b22881823427658e8e40c41f9b2cd56de37a6a1fbd2f8c95c8326f"
+      "manifest_sha256": "6726bee33245d100d3b15f4fd1b19b903831d739afed54d0fd3c7d8949065fa3"
     },
     {
       "job_id": "clutter-s17-information_gain",
@@ -125,7 +130,7 @@
         "yaw_rad": 1.5707963267948966
       },
       "manifest_path": "manifests/clutter-s17-information_gain.json",
-      "manifest_sha256": "ee4e5739dbd530be99b8c33e1f8b0cecbdb5b30cbd9436d16c53c9dbb7db86b6"
+      "manifest_sha256": "4d52b5573bd42676678ded83050a21f653a9411336b028087cd491c85e05c3b3"
     },
     {
       "job_id": "clutter-s17-llm_guided",
@@ -142,7 +147,7 @@
         "yaw_rad": 1.5707963267948966
       },
       "manifest_path": "manifests/clutter-s17-llm_guided.json",
-      "manifest_sha256": "506d1038f102526c99484a15fad1da05d875450c8c76611c6161a6ecdc15562f"
+      "manifest_sha256": "9129ac65b6bb7cf0555d111c882c41d170fdf8408a28acb15355a8be15ac9c75"
     },
     {
       "job_id": "dynamic-s17-random",
@@ -159,7 +164,7 @@
         "yaw_rad": 1.5707963267948966
       },
       "manifest_path": "manifests/dynamic-s17-random.json",
-      "manifest_sha256": "f939eab336801490dc722a532d648469cb1fb80c8f288ef996e2218de6fa3fb9"
+      "manifest_sha256": "f58b0c874bfb0ef2382d570d9c0469220bc547652fac1dd6fa995524edeedaaa"
     },
     {
       "job_id": "dynamic-s17-nearest",
@@ -176,7 +181,7 @@
         "yaw_rad": 1.5707963267948966
       },
       "manifest_path": "manifests/dynamic-s17-nearest.json",
-      "manifest_sha256": "f189df50bd7b0d7996ca98a96a0fca63df730c94ad5b1d85fbb3495aabdb862e"
+      "manifest_sha256": "ce56a866158e93b000c63e402a39a9afa1adac3936a86b4569466fc304c9be71"
     },
     {
       "job_id": "dynamic-s17-information_gain",
@@ -193,7 +198,7 @@
         "yaw_rad": 1.5707963267948966
       },
       "manifest_path": "manifests/dynamic-s17-information_gain.json",
-      "manifest_sha256": "25746306ca992a821b1d4cb4845e9c6f499b0526f52fb37a43d46ad6d04e95fc"
+      "manifest_sha256": "7f6312c1b07894f44452c7ff8fdb0ff56a56707d4f14deeeaecd61082db922fc"
     },
     {
       "job_id": "dynamic-s17-llm_guided",
@@ -210,7 +215,7 @@
         "yaw_rad": 1.5707963267948966
       },
       "manifest_path": "manifests/dynamic-s17-llm_guided.json",
-      "manifest_sha256": "0566d4f33e626e8cf943276c2fc6fa9d022d43723c11cf8b1b2100b3020b7469"
+      "manifest_sha256": "5f7b5fc266494d862ed36efa958e90688dc0cc45e8bf1e1eabb47fb77dcc3bff"
     },
     {
       "job_id": "apartment-s29-random",
@@ -227,7 +232,7 @@
         "yaw_rad": 0.0
       },
       "manifest_path": "manifests/apartment-s29-random.json",
-      "manifest_sha256": "f6f9c142872eb81208a1d091a27f665cfc19af7ddc0a67f41cae187d7f989c10"
+      "manifest_sha256": "646542c6cea596aabdfa15484a139a5fdf73e631ca395592bcdc9b4add07835a"
     },
     {
       "job_id": "apartment-s29-nearest",
@@ -244,7 +249,7 @@
         "yaw_rad": 0.0
       },
       "manifest_path": "manifests/apartment-s29-nearest.json",
-      "manifest_sha256": "ff8b51da5c7aba57d89ce99555d0a6b89be0f4a9cbcc66aa1f4bc03d38744fe7"
+      "manifest_sha256": "947caaab1fd678876cc8ff747f86ce38d309d594672b55f6f60d63ea835f822d"
     },
     {
       "job_id": "apartment-s29-information_gain",
@@ -261,7 +266,7 @@
         "yaw_rad": 0.0
       },
       "manifest_path": "manifests/apartment-s29-information_gain.json",
-      "manifest_sha256": "613e6d960a057bea7e9a23b049a6dc701708877d6b3aa9c02738bae0f48a0fbb"
+      "manifest_sha256": "ef320307382ca2e82da30ecfa4fa4a6996361f7de8ff52fa7c6ea44d54b1686e"
     },
     {
       "job_id": "apartment-s29-llm_guided",
@@ -278,7 +283,7 @@
         "yaw_rad": 0.0
       },
       "manifest_path": "manifests/apartment-s29-llm_guided.json",
-      "manifest_sha256": "6d92d6fb03f27960ee7cbcb3fcecaef8cee089c9d4a93eb991a3a8bc431a32be"
+      "manifest_sha256": "11d88fb1ffedccfc16c072a0fb9d4e3234dbc188d191bd6f828d347eb78f4a77"
     },
     {
       "job_id": "clutter-s29-random",
@@ -295,7 +300,7 @@
         "yaw_rad": 0.0
       },
       "manifest_path": "manifests/clutter-s29-random.json",
-      "manifest_sha256": "8826a6fbd72582eefe505925d62ba15402c65dd972102c0e702d3d76c36bf7fb"
+      "manifest_sha256": "74be631dcbe50999eb411d47277db24e553f73dab7943a59f9b79efe27aaa69e"
     },
     {
       "job_id": "clutter-s29-nearest",
@@ -312,7 +317,7 @@
         "yaw_rad": 0.0
       },
       "manifest_path": "manifests/clutter-s29-nearest.json",
-      "manifest_sha256": "a7a55c97aa23dd3ffef61345178063090fe0ce941e497ec2a884b7629e0c6f37"
+      "manifest_sha256": "962f888c6541cdf96de8dc9c70fb162a62c9ee377e35d52bad8305eea40b1609"
     },
     {
       "job_id": "clutter-s29-information_gain",
@@ -329,7 +334,7 @@
         "yaw_rad": 0.0
       },
       "manifest_path": "manifests/clutter-s29-information_gain.json",
-      "manifest_sha256": "c23792abb7bbf292597003b83410adbf720d06c875f6f294e46ffb749bf365bb"
+      "manifest_sha256": "142d19231ac38b9c8b5e0f2db44fe849cc55fd0b90c776639b82f1a5accd311b"
     },
     {
       "job_id": "clutter-s29-llm_guided",
@@ -346,7 +351,7 @@
         "yaw_rad": 0.0
       },
       "manifest_path": "manifests/clutter-s29-llm_guided.json",
-      "manifest_sha256": "3c5ce0308b91f0f34c476e6271aea3662c566503aab17cb5a1b4e5111b0f70f5"
+      "manifest_sha256": "0de39c7309ffa046cd59239f8c70854f1e21f65efcfbfe07a4c75e19ac36bc85"
     },
     {
       "job_id": "dynamic-s29-random",
@@ -363,7 +368,7 @@
         "yaw_rad": 0.0
       },
       "manifest_path": "manifests/dynamic-s29-random.json",
-      "manifest_sha256": "1d4c90702b086f5fb47547af672077c48c9034e072e187ddda1b9e8be700a8c4"
+      "manifest_sha256": "a9e469b0b4423e3cd2eca01adc88dc0db5aa5a3477cb594de2bfaa33fe308eb7"
     },
     {
       "job_id": "dynamic-s29-nearest",
@@ -380,7 +385,7 @@
         "yaw_rad": 0.0
       },
       "manifest_path": "manifests/dynamic-s29-nearest.json",
-      "manifest_sha256": "5e40e9c155be66786434150214a177df74394bddab26da3e4e91b070051562ec"
+      "manifest_sha256": "243c3930a7da13e067ee604a9eb961c37ad697ec52effe14b90ee6d6cd3bf72b"
     },
     {
       "job_id": "dynamic-s29-information_gain",
@@ -397,7 +402,7 @@
         "yaw_rad": 0.0
       },
       "manifest_path": "manifests/dynamic-s29-information_gain.json",
-      "manifest_sha256": "2164bd870c1fe8090d7dc15620bbbf4ddcb1d6637aa91b847687b58a41985401"
+      "manifest_sha256": "523222ede3874794219d574624d9b2f1e01c2c94684f6bb41b9f3a229ce655a5"
     },
     {
       "job_id": "dynamic-s29-llm_guided",
@@ -414,7 +419,7 @@
         "yaw_rad": 0.0
       },
       "manifest_path": "manifests/dynamic-s29-llm_guided.json",
-      "manifest_sha256": "b5c78f3ea513848c3b59bd025f16b985d72f30affa583602dc56c07850e9534a"
+      "manifest_sha256": "54f7d65d48da37c604f6ed0421ce77166c38180780147a7343fa177077d60b11"
     },
     {
       "job_id": "apartment-s43-random",
@@ -431,7 +436,7 @@
         "yaw_rad": -1.5707963267948966
       },
       "manifest_path": "manifests/apartment-s43-random.json",
-      "manifest_sha256": "a8bf5b9410a2c9b26ecb37a9742195573be2e937f83c39a138af0c0c0c0c8081"
+      "manifest_sha256": "811c9805c80aca1375426d7c7faa78908acd2e2e4ed2ab9dccb4391efc06be55"
     },
     {
       "job_id": "apartment-s43-nearest",
@@ -448,7 +453,7 @@
         "yaw_rad": -1.5707963267948966
       },
       "manifest_path": "manifests/apartment-s43-nearest.json",
-      "manifest_sha256": "2a2d043aa5466a39485612c1c34b27273256f310b1f29fb913b78d69189f2e00"
+      "manifest_sha256": "b995a0ec912017b18dc32ca179aea3733c5f884a2e1d315438475a718b6284cc"
     },
     {
       "job_id": "apartment-s43-information_gain",
@@ -465,7 +470,7 @@
         "yaw_rad": -1.5707963267948966
       },
       "manifest_path": "manifests/apartment-s43-information_gain.json",
-      "manifest_sha256": "34d7430c4f6acf72bc943a6b29ec16f30c411fa1361937502fc78f391cf8d788"
+      "manifest_sha256": "d1d908f036f0b89495cb7f60ce9c94719c2ed8035a5cf00ec154d385b8041e8e"
     },
     {
       "job_id": "apartment-s43-llm_guided",
@@ -482,7 +487,7 @@
         "yaw_rad": -1.5707963267948966
       },
       "manifest_path": "manifests/apartment-s43-llm_guided.json",
-      "manifest_sha256": "bbb844c461114d20ebc9815e8a23580c17b14648f44fa8f780f81cc73877843b"
+      "manifest_sha256": "8dd3d857bc418a8463e81a8898f886aeab5e5853be08392135f0f8724695e3df"
     },
     {
       "job_id": "clutter-s43-random",
@@ -499,7 +504,7 @@
         "yaw_rad": -1.5707963267948966
       },
       "manifest_path": "manifests/clutter-s43-random.json",
-      "manifest_sha256": "4f46f6d0cf53fe8a24229e1e0ec1068ed4dbe0f80b476aec9a70b722742c51a6"
+      "manifest_sha256": "e509999b5fa79f0ac2d1fe7a57d46baf13245faa82982ecd6424fdab571ef2ec"
     },
     {
       "job_id": "clutter-s43-nearest",
@@ -516,7 +521,7 @@
         "yaw_rad": -1.5707963267948966
       },
       "manifest_path": "manifests/clutter-s43-nearest.json",
-      "manifest_sha256": "793ac499cae7d5ff388afa4e0e3c367664e288edcc3b1d746755a1ca6177c2fc"
+      "manifest_sha256": "bd3bc8f830550b4b181a5d937b4eb1d06601409aea4138e50d7c0aa87ef28ad5"
     },
     {
       "job_id": "clutter-s43-information_gain",
@@ -533,7 +538,7 @@
         "yaw_rad": -1.5707963267948966
       },
       "manifest_path": "manifests/clutter-s43-information_gain.json",
-      "manifest_sha256": "3989e9a2c09982d06fd0bfe789e05c9c603679bde1b5f53893354fa79df0002c"
+      "manifest_sha256": "249959d36b85ea90122eda9f80bee28ffbc46fd4f8f7f41ed5e1cb4dba6805d3"
     },
     {
       "job_id": "clutter-s43-llm_guided",
@@ -550,7 +555,7 @@
         "yaw_rad": -1.5707963267948966
       },
       "manifest_path": "manifests/clutter-s43-llm_guided.json",
-      "manifest_sha256": "f7fe40d620792ce993dbfd5b3fb5dfe30cd25db5c2a09fa891fe98f35eab2208"
+      "manifest_sha256": "519a0363bac77e1df8f414141ca21b25f9a5d06153153efb2dae91dcbac99fbd"
     },
     {
       "job_id": "dynamic-s43-random",
@@ -567,7 +572,7 @@
         "yaw_rad": -1.5707963267948966
       },
       "manifest_path": "manifests/dynamic-s43-random.json",
-      "manifest_sha256": "c47673aebc3d73572c9cd48a3d3effdeabb96a19f4579dddba861378905d25bc"
+      "manifest_sha256": "548d83d822dd926264fb4d0d4199b1fa4f0ec2338d963a9ae38401a3be7a4a5e"
     },
     {
       "job_id": "dynamic-s43-nearest",
@@ -584,7 +589,7 @@
         "yaw_rad": -1.5707963267948966
       },
       "manifest_path": "manifests/dynamic-s43-nearest.json",
-      "manifest_sha256": "5a7c084d025f20e457ecfb924b289f68438bb0a8bbead4b7281239a108c4edd8"
+      "manifest_sha256": "f50977906eb63fb02f31bda58b266209ee68820a21cf3f7eaf2d72a008ad753d"
     },
     {
       "job_id": "dynamic-s43-information_gain",
@@ -601,7 +606,7 @@
         "yaw_rad": -1.5707963267948966
       },
       "manifest_path": "manifests/dynamic-s43-information_gain.json",
-      "manifest_sha256": "8d580aa2cfc43b2a864886db721ecd0931055f6f4494b62fd7b794f2c1e82d68"
+      "manifest_sha256": "cc8297d42174e75d0cf089204ae2985f96e27df3570d10bf73e243689ec38c1c"
     },
     {
       "job_id": "dynamic-s43-llm_guided",
@@ -618,7 +623,7 @@
         "yaw_rad": -1.5707963267948966
       },
       "manifest_path": "manifests/dynamic-s43-llm_guided.json",
-      "manifest_sha256": "e925b6690e7777352ca9086a30e68fed87dd32f6a0ca8249a491a1f4d8b4d4b0"
+      "manifest_sha256": "0fc5e8dc5352f0398871cf1c3b4ee3c0ccedb1d17abe614dc8c62f1d4eddf69b"
     }
   ],
   "seed_heading_blocks": [
@@ -637,8 +642,8 @@
   ],
   "seed_semantics": "Geometry and cup position are fixed. Initial heading is a predeclared task variation. Dedicated policy seed controls Random; deterministic baselines and YOLO need not vary with seed. Hosted LLM is not reproducible from a local seed.",
   "asset_paths": {
-    "robot_assets": "D:\\CS5478_PROJECT\\integration\\data\\igibson-data\\robot_assets\\assets",
-    "scenes": "D:\\CS5478_PROJECT\\integration\\data\\igibson-data\\g_dataset"
+    "robot_assets": "D:\\CS5478_PROJECT\\w2-latest\\data\\igibson-data\\robot_assets\\assets",
+    "scenes": "D:\\CS5478_PROJECT\\w2-latest\\data\\igibson-data\\g_dataset"
   },
   "asset_hashes": {
     "g_dataset/Rs/.ipynb_checkpoints/combine_texture-checkpoint.ipynb": "a1c3887c1c0e3203bf1dd98b1c872d3d1bdeb3538df7da9addebef98d8c1408b",
@@ -659,6 +664,8 @@
     "g_dataset/Rs/mesh_z_up.obj.mtl": "6976830d0309a1c5a61028cbff72d1350944a89e379f8c90187ce1fb13a25457",
     "g_dataset/Rs/test.mtl": "ff33cc8e34818b7520288a5447021773be86b22b142bb995569af5ebf4f8c2f3",
     "robot_assets/assets/models/locobot/.ipynb_checkpoints/Untitled-checkpoint.ipynb": "7d7553ade79234c9ecd138650b4296925fbcb5cbb936f0daf3902b4a9a155f9d",
+    "robot_assets/assets/models/locobot/__pycache__/test_urdf.cpython-312-pytest-9.0.2.pyc": "4d634d4bd8241d639473d4f241a7007d55e8f12f29063f4c0b96ca556d8a9fa0",
+    "robot_assets/assets/models/locobot/__pycache__/test_urdf.cpython-38-pytest-8.3.5.pyc": "09f05ef6870e2f59e3e5224d6975588ae753dc0d4cf89c1bc27f42912d2b132a",
     "robot_assets/assets/models/locobot/locobot.urdf": "6264b0e5c24bb16790a9b86f974780d8795a8cd4f59974552488d6808350060a",
     "robot_assets/assets/models/locobot/locobot_original.urdf": "a3da5063adeb60364be2233620f30e1cb3fa8e0cb4cf06ed5e1291a11df5a5c3",
     "robot_assets/assets/models/locobot/meshes/ar_tag.obj": "4e1ad6f6613e350255564f213c561dc7bd0d3495f97e48c1e7c9c992297dc945",
@@ -716,23 +723,31 @@
     "robot_assets/assets/models/ycb/006_mustard_bottle/textured_simple_vhacd.obj": "30cfbee77d90a12c07afa52066995da8b1595e0bb79a25065e9a3c2a364ec604"
   },
   "snapshot_seals": {
-    "harness/benchmark_episode.py": "9decf73a68bdc63c324e7f6e78611d9687f22ed17acbf2e19e9fe3747e115905",
-    "harness/benchmark_protocol.py": "6752744d1e8e6308480efbd7b1a7104d4a55f9c2ae6358127d2f43af4f91026d",
-    "harness/build_benchmark_report.py": "34fb695ac0082e6ce0f71e2c0ad1689616662dcda13aeb64bcd0ecb3d16aec87",
-    "harness/run_paired_benchmark.py": "cf7753f8a4667fc28b679a42eb7bbc0cc0bd99fab8c7a8e597bf43a126ea70f5",
+    "harness/benchmark_episode.py": "aa3f393dd31343d52c596266ba259cf01f26125b80d7aead14bd04426d98305d",
+    "harness/benchmark_protocol.py": "1cece1dc6a2e0d46fa347e907817cb387f6047461ea0545eaaa01a0d48bf8233",
+    "harness/benchmark_watchdog.py": "8e0e7569c5c4a59f5f4fcbad4bb2f6359187792a8af7186d7d1265a7afc4efe0",
+    "harness/build_benchmark_report.py": "c76ac9823d1e610a0821896d0ac1ae7ac2daf0a4d418b51815fefad132a33c31",
+    "harness/run_paired_benchmark.py": "814a9766c08c74d7d8cdc8a33e8c604dc7f053e9d495428d32f1118da4743379",
     "src/frontier_search/cli.py": "80363b671f39def80f056134403506acfd1b9a4ad1fe5dc6847ad7997d94a137",
-    "src/frontier_search/config.py": "db336f6fef74b64b1bd1efa8c6c2562e8fadb0eec5b50153170f96311693f890",
-    "src/frontier_search/contracts.py": "7ea48d3d9151f6729a742cdfbd9c0a78f92590a48cf631431a1f7bcc363ac0aa",
+    "src/frontier_search/config.py": "cf0cd943b322b1174b0cb497d44827a6865467bbd4b2a3e6ffbfc0bba21069eb",
+    "src/frontier_search/contracts.py": "53d53f0a00289ed90b4305e3acc51568d43805c03325399e77512cd27ea52ec7",
     "src/frontier_search/immutable.py": "ec4e5ba47b9764c5f2ea74afa571e19159c2c7a2234baa6665d1295e49160aba",
     "src/frontier_search/sensors.py": "9590d2e42535eed7598555da3240e715a0fad6da51f0e87e6550cc4cb2c8e449",
-    "src/frontier_search/validation.py": "a25c7c19158ab92a28c953a2ee26a0739da8d3fa81cf6877faa4349e0080c744",
+    "src/frontier_search/validation.py": "6329783e3db6f926ec422877dfe9d5c2fa78e762837bc4600aaf7e4ae0e59cb5",
     "src/frontier_search/__init__.py": "9ccf508b6614bc9a919f7ffd2d36ac9603acbda31df95ebbde5ba6483eaed723",
     "src/frontier_search/__main__.py": "c13eb66970ae37b8b044f428b309e67868814b90a8bb408806f3316ce4dfbc5b",
     "src/frontier_search/evaluation/api.py": "481dc537e2b8a418391de2dc1ed30613bbe2cbf4600b6d3b995f87c78e39ec14",
-    "src/frontier_search/evaluation/proximity.py": "0393909997d9a03f16d0d316c2a0f5c1fdbc227f962d7f414963a0d0560f0a65",
+    "src/frontier_search/evaluation/proximity.py": "0bc6c9bf5e2f5cd18feed471d8571d727d46af23b782d2584a5442b6c33941b8",
     "src/frontier_search/evaluation/retained.py": "2291564dfc689202cc28d36e689ac4167990fd9e2364207228fe23d24477894f",
     "src/frontier_search/evaluation/verifier.py": "950113d1ad9a7ed341ea24419986ee375b54be6bd593abd8ccfdf3454a56c87d",
     "src/frontier_search/evaluation/__init__.py": "2e024d228f6b76955d1d5b3c3b0c2b8dd16b6c4524dfdc16ff67084d30bd0985",
+    "src/frontier_search/experimental/__init__.py": "d8b513dbef478b6244ded204741bc5a95d92bd368293f7d426434387cd4fb20e",
+    "src/frontier_search/experimental/collision_refinement/bridge.py": "ed6c1c09f67087346aff98526c7aab006435e541f97f6581638a5290f2338839",
+    "src/frontier_search/experimental/collision_refinement/costmap.py": "42d55ab4625ec4deaf2d3ef405894b383395a1b5dc0c078b6610c2f346540ae0",
+    "src/frontier_search/experimental/collision_refinement/patch.py": "89fbda3a214417a633ad695d2d12865c5d2f6ba780fac0ad8c0f750eeabf919f",
+    "src/frontier_search/experimental/collision_refinement/rolling_local_map.py": "8760adc42a0a648c707b6db914b8883df2ec0ef8aa08289490258cc7bd790c91",
+    "src/frontier_search/experimental/collision_refinement/vector_fusion.py": "2b2fe9653cb4c6ab1a710681c112e923bd1d6e2ba877f84e6de078761f6be191",
+    "src/frontier_search/experimental/collision_refinement/__init__.py": "fab45a3dfab60a8df55ec588922870fdc25528d1cf9da11d25c118e737f1e4fc",
     "src/frontier_search/experiments/logging.py": "fe845e21ad004fc533962132f44b259945b2cb7611bddc910688ca9d01e90013",
     "src/frontier_search/experiments/__init__.py": "3adc152fa3965fd2891d9059487850dc046340b57ce0bb3495db32cf46f44bb0",
     "src/frontier_search/fixtures/analytic_rgbd.py": "5e6bfee7da223a9ad8c86ba60a129f251fca0f63ea562a88dac3ce0458fbff98",
@@ -740,60 +755,62 @@
     "src/frontier_search/fixtures/loader.py": "5652b594c3f45cd7efe45844017454272eb3eec562d1dfc006a0e27ca19eb10d",
     "src/frontier_search/fixtures/recording.py": "5060164551157825b38e127c211244e74c8bfe61340df25e7ba3579970dd1245",
     "src/frontier_search/fixtures/sequence.py": "c98fc1959674ab07c70dc06d6985fb1a9efc472809440826b3026e97dcaa788c",
-    "src/frontier_search/fixtures/three_rooms.py": "2aa17c528f87c5dce4c1f723bee4c4b87453c075839c1bda20d8a5feef1ccacc",
-    "src/frontier_search/fixtures/w2_episode.py": "1226514b57aff2d650bd174bad22e99dcef88764dede5e0e51e5bff0e178623b",
+    "src/frontier_search/fixtures/three_rooms.py": "d074930510acaf6fbde39d1be63c1222669812177bcac7dde14f20bd4e6e64ed",
+    "src/frontier_search/fixtures/w2_episode.py": "8be1e27f511d6848fc7b4041e74448b184c4205c0c297a6f0c705e3dce08d638",
     "src/frontier_search/fixtures/__init__.py": "ee5347aa4a4f1285b0439a1675295bb8788ff275080020c14544ce01902fe8da",
     "src/frontier_search/navigation/api.py": "cd01e69b36044f9f07f689c3cb2fde5e2886299595d5973d275345c8cf2426a6",
-    "src/frontier_search/navigation/costmap.py": "de9fa710c7a6975f0460374e29142c2640416949ab4d675427ac3e7362e21370",
+    "src/frontier_search/navigation/costmap.py": "28e80883c2c4a0d5ebf970258964f3125bfc5ec887d8c384a201e6e87661b742",
     "src/frontier_search/navigation/demo.py": "e3ce363246aa7a66318a18cf630458becd45b588eda7dcc0090e03d063f04c12",
     "src/frontier_search/navigation/dev_robot.py": "e182bec2a941fcb7e915049f0ce66ff4a06274ce0568f2d3aeb01bfd06206e45",
-    "src/frontier_search/navigation/geometry.py": "fe3420454eafe4eaac4100f963181bca386166c3dd0f8de40288f216a9e59bc7",
-    "src/frontier_search/navigation/lattice.py": "ebd03723add0d1d664b64f4134514c05408d453075584adb15cf7e9bfb5e78a2",
-    "src/frontier_search/navigation/locobot_robot.py": "7df66518ff79726e2b93924e17e7cdc3b3514fc8de6f2544ad5e79528836feb9",
-    "src/frontier_search/navigation/navigator.py": "1c28fd82d26fc666ba4293fd0b6d2b580cb6cd4f5f3274ea13d0552f09bbcf7c",
-    "src/frontier_search/navigation/planner.py": "4ef0a73dc1763443f89176837294465afd89724628f1d837189f2feef97ac2f2",
+    "src/frontier_search/navigation/diagnostics.py": "f30357cc8cbe44c1a7000371ebcd8dc12e21bf4195a7e8c2a375e9acd25c7cc6",
+    "src/frontier_search/navigation/geometry.py": "8cbbdc664412be1387f264aefb7842149b0f62e6a9a698408bdc392f1d34bd69",
+    "src/frontier_search/navigation/lattice.py": "bfb0c73aacd5e13562de4535d43ccf91d264079633ddcd86a0964e1f1baaf15b",
+    "src/frontier_search/navigation/locobot_robot.py": "8b754a96b6a8475e64ac7f631a0988c2e5c3e6ada346395d9f4e6ae29c78ff2c",
+    "src/frontier_search/navigation/navigator.py": "ffb5363ec3c980fd4db514a39a6768c1bdebe39935430baf38d34f366c0e5dc3",
+    "src/frontier_search/navigation/planner.py": "b9f2d1d1ea36c39468833873b1ae27146d3ebd8fa70ab39607312f6ee5de2432",
     "src/frontier_search/navigation/__init__.py": "1f04cc1dc78876885c638ac6a5bf67a26e617551fc9ce72f2e65945c79c7fae8",
-    "src/frontier_search/perception/api.py": "af6475c325c2daf7ee5d5ec90fc9cd88e4851f77eb5322ca711a1ebb2bb1d713",
-    "src/frontier_search/perception/claims.py": "93feefc2bbe3fc05879053767a06020b4f597fe9ec2415216fa2f1168fe00b2e",
+    "src/frontier_search/perception/api.py": "454dc3ae1dfce6f1c37d099ebb80f67348d9beb6bec0ce5a26635c951edfe6ae",
+    "src/frontier_search/perception/claims.py": "cfd1e158c893865eb680ffdc1544cd749520bb796cad3405e92e0eaf26fe8f37",
     "src/frontier_search/perception/detection.py": "6d89f629f9bc892ed62e8f8d4ae36bb63d45467923188f908695962a3f3f4907",
-    "src/frontier_search/perception/frontiers.py": "241340556d93feda6c81993ea8bd39e8b755071d2d22f3f653b4ca15a4aebe0d",
-    "src/frontier_search/perception/fusion.py": "a612a405dce7405ee66bd19fc2c58c18974b41e83ecea31a2a55bd5fdd02ff9e",
+    "src/frontier_search/perception/frontiers.py": "f8fd43772bd8813bfa4dbd026989af40990e5f54885c5eae8802ad94913713b4",
+    "src/frontier_search/perception/fusion.py": "4ce2f14d5dabd818cf553a9255a3d5994bf122bddfda5ce1bf4a33cb43a2394c",
     "src/frontier_search/perception/gain.py": "df8ff54ae7443b56f39fed57aa19e6c6cee8f4a8800aa87d810bdaca6b521286",
-    "src/frontier_search/perception/mapper.py": "ced706568fc6df60550bd5a5bd8461ff9ae3fefb1d7c515c6b8ef5d481c38c51",
+    "src/frontier_search/perception/mapper.py": "87e39902d03f7feca6ba7b64447e7989829f780a5894a4a1985867abb2929369",
     "src/frontier_search/perception/observations.py": "ca7127be53542e9cab5f30e733a24a017f98c58b2922699a4254061c0e6ceb50",
     "src/frontier_search/perception/occupancy.py": "aa769611d96f6b6b71c81b27ad4a5bc499601e1eb53234f18a144593be4735b4",
     "src/frontier_search/perception/priors.py": "b6375c7750c9ee46ff63cc71182efb6324d2a960b0751f923db8519a94b47343",
-    "src/frontier_search/perception/projection.py": "d000f0601c7c5f2ebc75ca646bc0bd0c7efca8aae58f68c39b3f438da2bc8516",
+    "src/frontier_search/perception/profiling.py": "e7a06a969621560a490860de3892aa98f605306a695ad6c9ba36e7d8e8794810",
+    "src/frontier_search/perception/projection.py": "fb95a65287b096591aff60bc9ed47a902f0a8c392754ba7a7dab418898ecd31e",
     "src/frontier_search/perception/tracking.py": "ee6ad3dedb22b82f9edc29bb6abe9e21fd9074f0e26c57a9a26623cce2234a61",
     "src/frontier_search/perception/__init__.py": "fb4e91cc76c69dec8fd3628e13889aac369b3cfce83cd714da16e0f2bab637d2",
-    "src/frontier_search/policies/api.py": "f2cae4bacd7884eba6a50cbb8f18345dfbc6ebd9208856ca1f966c2462912825",
-    "src/frontier_search/policies/baselines.py": "1b30574ed52098c3d8ea8a3b107b5f48c9d25a415cccc2e55338a407ce4a66f3",
-    "src/frontier_search/policies/llm.py": "638b21bb29cd50b23cde8e7c020daa66e33775ec65e8861ba026b2836711f443",
-    "src/frontier_search/policies/provider.py": "e3ff43fd857fecf2996fa441be898696e5502ebfa3e0d5ab5a1cfe52bb2c5656",
-    "src/frontier_search/policies/transport.py": "c287a337e87da4511c2ec7557f2bcff19fbde0a0818d2b555696774f5359cd97",
+    "src/frontier_search/policies/api.py": "1b2e876673d0a63199a0ddd197dd348fff573ecdf75cfb17e56dfd58bec89597",
+    "src/frontier_search/policies/baselines.py": "50f323f1dc94ec9318ac93530f9f7748ca04541e9108ad72ef7c42b256289f40",
+    "src/frontier_search/policies/llm.py": "84905b7cac34d6fd97afb9f462e91faef5f18cd7d1d1997524caf3df97d10c39",
+    "src/frontier_search/policies/provider.py": "d7854a4f620760a8e1500bcf00954b67a36facb951431ccabba42cbb63d40796",
+    "src/frontier_search/policies/transport.py": "7c5e4c80cd699a80b7e8ef51326c12aa0a90be9e0ee2fd90497614f964c0559d",
     "src/frontier_search/policies/__init__.py": "9ae475c7ce6b8aa467dc24a68dafff15697f4da376032722afae70bbfabdff89",
-    "src/frontier_search/runner/demo_video.py": "a6ba473eac873c6e0104eaef8615369f02b552efe152b46ca143dac80635db12",
+    "src/frontier_search/runner/demo_video.py": "b7fc2bb21e9acbf87f63f0c7f1c7bbe14ca0428c3ea470e84790ddbe50e6a0bb",
     "src/frontier_search/runner/diagnose_clearance.py": "e5e45e7c8b57b3f206de881a1305d20d649b0424d02ec614b7093fd30911e95c",
-    "src/frontier_search/runner/episode.py": "867d1b8dcfaa92d45279ad152f61a84a22f235016a69e3b498b78cf93b476735",
+    "src/frontier_search/runner/episode.py": "f82e1672f19c97810bffa1cb8a33fff12fb0c2a163b57ab697a5b2d0e52e7069",
     "src/frontier_search/runner/igibson_demo.py": "e081d5f10e2221588833316a0b89603a1ce93fff6595db81cc6d2e993f492a6f",
     "src/frontier_search/runner/indoor_viewer.html": "d35d3ec5485bcebe9675a4c94de4d95056ac424f07bdd66096e4714d5687f375",
-    "src/frontier_search/runner/indoor_viewer.py": "0a5f1d8c743427b5f05ce4bf94f12ac1bb99df839c544c9acdc4afa62999c1e2",
-    "src/frontier_search/runner/integrated.py": "24fb147fc3cdb5da517e0f5b273e5d770567d6526aed52ebfa7f1d6ec6cbdf7f",
-    "src/frontier_search/runner/integrated_recording.py": "4a6c0beab3666264af03b546c969c4dd733bd5e2c49500ba87ff98e4104201df",
-    "src/frontier_search/runner/manifest.py": "572748715bef1054b1cbec24761cedc191d269066f2460be20ab4d9265e57912",
-    "src/frontier_search/runner/recovery.py": "1b2e38a7205c59ecf9231f85b5156b97e7a642f19db670415d9ab3b06ab4e11b",
-    "src/frontier_search/runner/replay.py": "e41785d710f7c3e0c964db4138a11a9397229422949adeccbc477a790885399f",
-    "src/frontier_search/runner/supervisor.py": "02cbfeeb9197c39f9426df8d217a9eae02f7a892b27f4b9dd985ec0587641ac6",
-    "src/frontier_search/runner/synthetic.py": "e8860f5a5ecbc62af3d5895b729d62f02daaa0deda00738f9f40eb19d2a32c1a",
-    "src/frontier_search/runner/w2.py": "13a2e7e0aa05d5424ba291a6ab674b092aab8bd2c30f8f8cca6a4a1bc05a5e96",
+    "src/frontier_search/runner/indoor_viewer.py": "4bdfb2c965f6a98865cd0bf06d54a8d1ac17f3400f4d10deb77f89a5459fbcca",
+    "src/frontier_search/runner/integrated.py": "09d19b95b3f0b9240ff2b6d960923f91fda13f6f636a56884d7042a2cf27f7a7",
+    "src/frontier_search/runner/integrated_recording.py": "ef35aa60117dce029447bb0bb854438b16a7feed61bd7cf1d2a1b78067f78a58",
+    "src/frontier_search/runner/manifest.py": "9ff60321f5e158c1ef325f9d77f3c298283bcd2cb7a1f32ff524627028e9a482",
+    "src/frontier_search/runner/recovery.py": "cd9b31e0c13e7f122c621d179d7630a8a7222e729e813cd72beddc251996e6a6",
+    "src/frontier_search/runner/replay.py": "efb6317629f3a88550e2848cc400311130aec6e4f98f3b3c88257c28133d0b7c",
+    "src/frontier_search/runner/supervisor.py": "04c169900a028b5e25034ad9338869b23b4ce874b6d798b68cdcd74685d41017",
+    "src/frontier_search/runner/synthetic.py": "d73b28a5dace0656ba1eed2ebd72df95fd9477a39577b2945180b9d1fe978651",
+    "src/frontier_search/runner/w2.py": "a04c39b1aae3f1894284e3fbc1a2a846c3e90ab590d55cce1d91fb8377e9dcea",
     "src/frontier_search/runner/__init__.py": "e12259290ca70fc848df09bf53c00ba3b264325dbf33d50a43d8f47edf2afb7f",
     "src/frontier_search/simulation/api.py": "2c8af8289432def135c4ef6b40fe04a8fde123429b8706962a62c4bf3241c980",
     "src/frontier_search/simulation/capture_igibson.py": "bbb83ed5f9a59b9b12123a2578859be91a404d0ad39a7fffc4a0af25053bf3c0",
     "src/frontier_search/simulation/cart_motion.py": "3aa03b5f0b300ece1c005728a93fd9a784d2e5ff125915324ecf7c90380ad41e",
-    "src/frontier_search/simulation/igibson_adapter.py": "80dd47546b13644759d38cf53b141055698f09638902b7a81d51ea65f97c8573",
-    "src/frontier_search/simulation/igibson_rs.py": "71ee7db67d6d341432386d0b5027f366e2e3f9b95049fa1e7a3dd0784a379c2f",
-    "src/frontier_search/simulation/indoor_challenges.py": "0b63c24c1ac762963f42cac7ad8ab827a8998304c90b7a7cc06695bb57a9792f",
-    "src/frontier_search/simulation/integrated_rs.py": "1e0bde8bbe1395fd5ed84c108d60ed067ac82cee32c18fdfcb30db2056a62bfc",
+    "src/frontier_search/simulation/igibson_adapter.py": "91063ac817976606b9ebe1b28664a6f05cac0d9bbed2495c24cd92c51e8fcfba",
+    "src/frontier_search/simulation/igibson_rs.py": "e32fb743c0139b81fafd354e2ba0bdc47fc43bdd10feaf618c0a654878cdc190",
+    "src/frontier_search/simulation/indoor_challenges.py": "d82385a1546cd5a20c1831ff49c0b26db729baad225993d08a31dfd43200725b",
+    "src/frontier_search/simulation/integrated_rs.py": "b0d6a0ef41226f5e2d8d0291bceebbcd41fc78496af54c662f53680b46696311",
     "src/frontier_search/simulation/mock_adapter.py": "6a0cb4611b94b325da38d120e7c05ec6354b7070298570b9683d3b14fa6609fb",
     "src/frontier_search/simulation/record_sequence.py": "be25d4015aa7ac52e32c8274dc95b3f73828f50383e69f4497f77ce7a95cd3d6",
     "src/frontier_search/simulation/rgbd.py": "bb7e00b6b675b8087e4ecf6937e8c1e85871b55b1d1dfe8aa540cfe94e5d5e4e",
@@ -815,25 +832,73 @@
     "robot": {
       "footprint_base": [
         {
-          "x_m": -0.182,
-          "y_m": -0.182
+          "x_m": 0.19,
+          "y_m": 0.0
         },
         {
-          "x_m": 0.182,
-          "y_m": -0.182
+          "x_m": 0.1755371111771445,
+          "y_m": 0.07270985214936707
         },
         {
-          "x_m": 0.182,
-          "y_m": 0.182
+          "x_m": 0.13435028842544405,
+          "y_m": 0.13435028842544405
         },
         {
-          "x_m": -0.182,
-          "y_m": 0.182
+          "x_m": 0.07270985214936707,
+          "y_m": 0.1755371111771445
+        },
+        {
+          "x_m": 1.1634144591899856e-17,
+          "y_m": 0.19
+        },
+        {
+          "x_m": -0.07270985214936705,
+          "y_m": 0.1755371111771445
+        },
+        {
+          "x_m": -0.13435028842544403,
+          "y_m": 0.13435028842544405
+        },
+        {
+          "x_m": -0.1755371111771445,
+          "y_m": 0.07270985214936708
+        },
+        {
+          "x_m": -0.19,
+          "y_m": 2.3268289183799712e-17
+        },
+        {
+          "x_m": -0.17553711117714452,
+          "y_m": -0.07270985214936704
+        },
+        {
+          "x_m": -0.13435028842544405,
+          "y_m": -0.13435028842544403
+        },
+        {
+          "x_m": -0.07270985214936716,
+          "y_m": -0.17553711117714443
+        },
+        {
+          "x_m": -3.490243377569956e-17,
+          "y_m": -0.19
+        },
+        {
+          "x_m": 0.07270985214936711,
+          "y_m": -0.17553711117714446
+        },
+        {
+          "x_m": 0.134350288425444,
+          "y_m": -0.13435028842544405
+        },
+        {
+          "x_m": 0.17553711117714443,
+          "y_m": -0.07270985214936718
         }
       ],
       "collision_z_min_m": 0.0,
       "collision_z_max_m": 0.908,
-      "clearance_margin_m": 0.02,
+      "clearance_margin_m": 0.01,
       "motion_model": "differential_drive",
       "can_turn_in_place": true,
       "max_linear_speed_mps": 0.32,
@@ -874,7 +939,8 @@
       "inspection_linear_speed_mps": 0.03,
       "inspection_angular_speed_radps": 0.02,
       "target_max_extent_m": 0.25,
-      "tentative_target_memory_s": 30.0
+      "tentative_target_memory_s": 30.0,
+      "claim_confidence_threshold": 0.65
     },
     "observation": {
       "initial_headings_rad": [
@@ -918,11 +984,15 @@
     },
     "policy": {
       "epsilon_m": 0.1,
-      "llm_model": "gemini-3.8-flash",
+      "llm_model": "gemini-3.5-flash",
       "llm_reasoning": null,
       "llm_deadline_s": 30.0,
       "llm_call_cap": 30,
-      "llm_prompt": "Return exactly one eligible frontier ID."
+      "llm_prompt": "Choose the best eligible frontier for finding the target. Use semantic evidence, information gain, assessed path cost, exclusions, and recent execution feedback.",
+      "llm_bypass_single_candidate": true,
+      "llm_cache_identical_context": true,
+      "llm_feedback_window": 8,
+      "llm_max_observed_objects": 24
     },
     "recovery": {
       "cooldown_s": 5.0,
@@ -932,7 +1002,9 @@
       "no_progress_cap": 2,
       "progress_radius_m": 1.0,
       "minimum_progress_m2": 0.1,
-      "max_cycles_without_navigation": 3
+      "max_cycles_without_navigation": 3,
+      "epsilon_retry": 0.0,
+      "stuck_retry": false
     },
     "limits": {
       "max_attempts": 45,
@@ -1046,7 +1118,8 @@
     "module_deadline_s": 60.0,
     "enable_target_evaluation": true,
     "initial_clearance_mode": "verified_start_area",
-    "initial_clearance_radius_m": 0.65
+    "initial_clearance_radius_m": 0.65,
+    "initialization_deadline_s": 240.0
   },
   "policies": [
     "random",
@@ -1074,15 +1147,18 @@
     "torch_threads": 4,
     "device": "0",
     "python": "3.8.20 (default, Oct  2 2024, 15:21:04) [MSC v.1929 64 bit (AMD64)]",
+    "startup_deadline_s": 300.0,
     "wall_time_interpretation": "Concurrent shared-resource wall times; not isolated single-robot latency."
   },
   "regression_certificate": {
     "returncode": 0,
-    "source_fingerprint": "bbd90a237a14b60bdddcd8e9f32524ea350ada88b94d34028f34caa2fd0140a1",
+    "source_fingerprint": "72a51a52547257257ca4213ceabf3bc9c64f1a615cfc965c473ca28387071783",
     "source_unchanged": true,
-    "tests_count": 384
+    "tests_count": 612
   },
   "no_episode_retries": true,
+  "arm": null,
+  "arm_settings": null,
   "reporting": {
     "primary_unit": "profile x seed/initial-heading paired block",
     "penalized_failure_s": 600.0,

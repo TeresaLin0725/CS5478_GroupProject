@@ -10,7 +10,7 @@ from time import monotonic
 
 from ..config import (MappingConfig,ObservationConfig,NavigationConfig,PolicyConfig,
                       EpisodeLimits,RecoveryConfig)
-from ..contracts import Point2,Pose,RobotConfig,PolicyName,RegionPrior
+from ..contracts import NavigatorInit,Point2,Pose,RobotConfig,PolicyName,RegionPrior
 from ..evaluation.retained import RetainedFrames
 from ..experiments.logging import dumps
 from ..navigation.locobot_robot import shared_round_robot
@@ -19,7 +19,7 @@ from ..perception.mapper import RGBDMapper
 from ..perception.detection import TiledYOLODetector
 from ..policies.baselines import BaselinePolicy
 from ..policies.llm import LLMGuidedPolicy
-from ..policies.provider import GeminiCompatibleClient,load_local_env
+from ..policies.provider import CANONICAL_LLM_MODEL,GeminiCompatibleClient,load_local_env
 from ..simulation.igibson_adapter import AdapterConfig
 from ..simulation.integrated_rs import RetainingAdapter,CloseRetainedEvaluator
 from ..simulation.igibson_rs import REGIONS
@@ -55,7 +55,7 @@ def manifest_for(episode_id, policy='information_gain'):
             operation_deadline_s=400.,drain_deadline_s=30.),
         navigation=NavigationConfig(batch_deadline_s=5.,navigation_deadline_s=400.,max_replans=4,
                                     map_freshness_s=.4),
-        policy=PolicyConfig(llm_model=os.environ.get('LLM_MODEL','gemini-2.5-flash'),
+        policy=PolicyConfig(llm_model=os.environ.get('LLM_MODEL',CANONICAL_LLM_MODEL),
                             llm_deadline_s=30.,llm_call_cap=30),
         recovery=RecoveryConfig(opportunity_attempt_cap=6,max_cycles_without_navigation=3),
         limits=EpisodeLimits(max_attempts=45,max_steps=18000,max_simulated_time_s=600.,
@@ -105,6 +105,25 @@ def source_fingerprint():
     return digest.hexdigest()
 
 
+def runtime_configuration(manifest, profile, relaxed_retry):
+    """Normalize the actual C recovery and B navigation settings before launch."""
+    navigator=TeamNavigator(None,linear_gain=2.0,start_margin_m=0.0,
+                            relaxed_retry=relaxed_retry)
+    navigator.reset(NavigatorInit(manifest.episode_id,manifest.robot,
+                                  manifest.observation,manifest.navigation))
+    return dict(schema_version='c-navigation-recovery-v1',profile=profile,
+        policy=manifest.policy_name,recovery=asdict(manifest.recovery),
+        policy_config=asdict(manifest.policy),navigation=navigator.effective_configuration())
+
+
+def recording_validation_matches(report,fingerprint,profile,policy,configuration):
+    """Fail closed for old certificates or any effective runtime mismatch."""
+    normalized=json.loads(json.dumps(configuration,sort_keys=True))
+    return (report.get('passed') is True and report.get('source_fingerprint')==fingerprint
+            and report.get('profile')==profile and report.get('policy')==policy
+            and report.get('runtime_configuration')==normalized)
+
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--output',type=Path,required=True)
@@ -120,13 +139,18 @@ def main():
     args=parser.parse_args()
     load_local_env(args.env_file)
     fingerprint=source_fingerprint()
+    manifest=shared_round_manifest_for(args.output.name,args.policy)
+    manifest=replace(manifest,recovery=replace(manifest.recovery,epsilon_retry=args.epsilon_retry,
+                                               stuck_retry=args.stuck_retry))
+    manifest.validate()
+    relaxed_retry=RelaxedRetry() if args.relaxed_retry else None
+    effective_runtime=runtime_configuration(manifest,args.profile,relaxed_retry)
     if args.record:
         if not args.validation:
             parser.error('--record requires a successful validation report')
         report=json.loads(args.validation.read_text(encoding='utf-8'))
-        if (not report.get('passed') or report.get('source_fingerprint')!=fingerprint
-                or report.get('profile')!=args.profile or report.get('policy')!=args.policy):
-            parser.error('validation missing, failed or stale; validate this exact pipeline before recording')
+        if not recording_validation_matches(report,fingerprint,args.profile,args.policy,effective_runtime):
+            parser.error('validation missing, failed, stale or has different recovery/navigation settings')
     args.output.mkdir(parents=True,exist_ok=True)
     if (args.output/'events.jsonl').exists():
         parser.error('choose a fresh output directory; prior runs are retained')
@@ -144,10 +168,6 @@ def main():
     # Warm imports/model kernels outside the episode's module budgets.
     from ..sensors import ImageBuffer
     detector.detect(ImageBuffer(640,480,'rgb8',bytes(640*480*3)))
-    manifest=shared_round_manifest_for(args.output.name,args.policy)
-    manifest=replace(manifest,recovery=replace(manifest.recovery,epsilon_retry=args.epsilon_retry,
-                                               stuck_retry=args.stuck_retry))
-    manifest.validate()
     (args.output/'manifest.json').write_text(dumps(manifest),encoding='utf-8')
     (args.output/'controller.json').write_text(json.dumps(dict(linear_gain_per_s=2.0,
         path_smoothing=False,control_hz=30,odometry_source='latest control-step known-pose difference'),indent=2),encoding='utf-8')
@@ -159,7 +179,7 @@ def main():
     # robot crawl below its speed limit even on a straight, validated path.
     # A, B and spawn verification read the manifest; only B's initial escape margin differs.
     nav=TeamNavigator(sim,linear_gain=2.0,start_margin_m=0.0,
-                      relaxed_retry=RelaxedRetry() if args.relaxed_retry else None)
+                      relaxed_retry=relaxed_retry)
     policy=(LLMGuidedPolicy(GeminiCompatibleClient()) if args.policy=='llm_guided'
             else BaselinePolicy(PolicyName(args.policy)))
     evaluator=CloseRetainedEvaluator(store,sim)
@@ -174,11 +194,15 @@ def main():
         sim.on_close=log.recorder.close
     result=runner.run(manifest)
     log.close()
+    llm_records=getattr(policy,'call_records',())
     summary=dict(runner.summary,profile=args.profile,policy=args.policy,
-        llm_calls=len(getattr(policy,'call_records',())),
-        llm_fallbacks=sum(bool(r.get('fallback_reason')) for r in getattr(policy,'call_records',())),
+        llm_attempts=len(llm_records),
+        llm_calls=sum(bool(r.get('model_called',
+            r.get('fallback_reason') not in ('unconfigured_client','call_cap'))) for r in llm_records),
+        llm_fallbacks=sum(bool(r.get('fallback_reason')) for r in llm_records),
         source_fingerprint=fingerprint,source_unchanged=fingerprint==source_fingerprint(),evaluation=evaluator.metrics,
         detector_runtime=detector_runtime,
+        runtime_configuration=effective_runtime,
         scene_events=getattr(getattr(getattr(sim,'_backend',None),'world',None),'environment_events',[]),
         navigator_events=nav.events,recorded=args.record,
         components=dict(scene='Gibson Rs',robot='native Locobot',sensor='native calibrated eyes RGB-D',

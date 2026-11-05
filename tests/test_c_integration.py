@@ -50,7 +50,8 @@ class IntegrationTests(unittest.TestCase):
         self_test = self
         summary, _ = run_case('llm_guided', client=Client())
         self.assertEqual(summary['termination'], 'success')
-        self.assertEqual(summary['fallbacks'], 3)
+        # The final decision has one eligible frontier and now bypasses the model.
+        self.assertEqual(summary['fallbacks'], 2)
 
     def test_evaluator_error_is_not_success(self):
         class BrokenEvaluator:
@@ -77,7 +78,14 @@ class IntegrationTests(unittest.TestCase):
 
     def test_fenced_json_and_reject_prose(self):
         self.assertEqual(parse_response('```json\n{"frontier_id":"F3","reason":"clues"}\n```')['frontier_id'], 'F3')
+        ranked = parse_response('{"frontier_id":"F3","reason":"clues",'
+                                '"ranked_frontier_ids":["F3","F2"],"confidence":0.8}')
+        self.assertEqual(ranked['ranked_frontier_ids'], ['F3', 'F2'])
         for raw in ('F3', 'text {"frontier_id":"F3","reason":"clues"}', '{"frontier_id": 3}'):
+            with self.assertRaises(ValueError):
+                parse_response(raw)
+        for raw in ('{"frontier_id":"F3","reason":"x","ranked_frontier_ids":["F2"]}',
+                    '{"frontier_id":"F3","reason":"x","confidence":2}'):
             with self.assertRaises(ValueError):
                 parse_response(raw)
 

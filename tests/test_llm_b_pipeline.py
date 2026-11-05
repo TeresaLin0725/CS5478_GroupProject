@@ -95,8 +95,8 @@ class LLMToBPipelineTests(unittest.TestCase):
         state = replace(self.state, revision=grid.revision, occupancy_map=grid,
                         explored_map=replace(self.state.explored_map, revision=grid.revision))
         selection, client, evaluation, state = self.choose('F1', state)   # LLM asks for the blocked one
-        self.assertEqual([c['frontier_id'] for c in client.payloads[0]['candidates']], ['F2'])
-        self.assertEqual(selection.subgoal.frontier_id, 'F2')              # fallback, never F1
+        self.assertEqual(client.payloads, [])  # one safe candidate: no hosted call is needed
+        self.assertEqual(selection.subgoal.frontier_id, 'F2')
         self.assertEqual(self.execute(selection, state).status, NavigationStatus.REACHED)
 
 

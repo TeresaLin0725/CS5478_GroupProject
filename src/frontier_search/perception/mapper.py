@@ -26,7 +26,7 @@ from .frontiers import FrontierMemory, assign_identities, build_candidates, _cle
 from .observations import validate_rgbd_observation
 from .priors import rasterize_region, validate_region_priors
 from .gain import camera_yaw_offset
-from ..navigation.geometry import footprint_collides
+from ..navigation.geometry import cells_overlapping_footprint, footprint_collides
 
 
 @dataclass
@@ -69,6 +69,30 @@ class _EpisodeState:
 
 def _nonempty_text(value: object) -> bool:
     return isinstance(value, str) and bool(value.strip())
+
+
+def _mask_current_footprint(grid: OccupancyGrid, robot: RobotConfig,
+                            pose: Pose) -> OccupancyGrid:
+    """Mask occupied cells intersecting the robot's current physical body.
+
+    A depth endpoint and the robot edge can occupy different parts of the same
+    coarse grid cell.  Treating that whole cell as blocked makes the live pose
+    an invalid planning start even though the simulator reports no contact.
+    The mask is deliberately publication-only: raw sensor occupancy remains in
+    the mapper's private buffers and reappears as soon as the robot leaves.
+    Unknown cells stay unknown and geometric coverage is not fabricated.
+    """
+    rows = None
+    for row, column in cells_overlapping_footprint(
+            grid, robot.footprint_base, pose, margin_m=0.0):
+        if (0 <= row < grid.height_cells and 0 <= column < grid.width_cells
+                and grid.data[row][column] == 100):
+            if rows is None:
+                rows = [list(values) for values in grid.data]
+            rows[row][column] = 0
+    if rows is None:
+        return grid
+    return replace(grid, data=tuple(tuple(values) for values in rows))
 
 
 # Check that configuration and priors are valid for a new mapping episode.
@@ -259,7 +283,8 @@ class RGBDMapper:
         geometry = dict(frame_id="world", revision=revision, resolution_m=cfg.resolution_m,
                         origin_x_m=cfg.origin_x_m, origin_y_m=cfg.origin_y_m,
                         width_cells=cfg.width_cells, height_cells=cfg.height_cells)
-        occupancy = OccupancyGrid(data=tuple(tuple(row) for row in working.occupancy), **geometry)
+        sensor_occupancy = OccupancyGrid(data=tuple(tuple(row) for row in working.occupancy), **geometry)
+        occupancy = _mask_current_footprint(sensor_occupancy, robot, observation.robot_pose)
         explored = ExploredGrid(data=tuple(tuple(row) for row in working.coverage), **geometry)
         regions = tuple(RegionSummary(
             region.region_id, region.boundary_world, "igibson_room_prior",
