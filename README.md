@@ -40,6 +40,17 @@ for the exact source/model fingerprint and inference runtime.
 The [connectivity check](scripts/check_llm_connection.py) reports status without printing credentials.
 The authoritative hosted model for new LLM-guided runs is `gemini-3.5-flash`.
 
+Depth noise and missing depth pixels are opt-in: add `--noise`, or use
+`--no-noise` for a clean control. See [sensor noise configuration and the pilot
+experiment](Documentation/english/sensor_noise.md) for CLI/JSON settings and frozen benchmarks.
+
+Mapping-side robustness options are independent of injected noise: see
+[depth filtering](Documentation/english/depth_filter.md) and
+[unvisited recovery viewpoints](Documentation/english/recovery_viewpoints.md), plus
+[inspection settling](Documentation/english/inspection_settling.md).
+The [same-version clean/noisy results](Documentation/english/noise_experiment_results.md)
+record 35/36 successes in each arm, using `gemini-3.5-flash-lite` for LLM-guided cases.
+
 ## Design documents
 
 The [English plan](Documentation/english/robotics_project_detailed_plan.md)

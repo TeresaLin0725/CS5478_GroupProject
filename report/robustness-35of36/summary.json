@@ -1,0 +1,376 @@
+{
+  "engine_fingerprint": "4a28a90761acdfe8e79a12a3c5dd9cb2dc9b1daefbaac0cbc00c77503dacd3e4",
+  "cases_per_arm": 36,
+  "failure_penalty_s": 600.0,
+  "suites": {
+    "clean": {
+      "local_evidence_directory": "runs/clean-full36-20261108-01",
+      "protocol_sha256": "7caadd02b3a5346e2bcceabf3f637ecf343c6bf2b3a0bf7da06703c0085af7d1",
+      "successes": 35,
+      "contacts": 0,
+      "llm_calls": 20,
+      "llm_fallbacks": 1,
+      "failures": [
+        {
+          "job_id": "dynamic-s17-random",
+          "termination": "no_feasible_frontiers",
+          "simulated_time_s": 111.0
+        }
+      ],
+      "policy_statistics": {
+        "random": {
+          "n": 9,
+          "successes": 8,
+          "success_rate": 0.8888888888888888,
+          "success_ci95_wilson": [
+            0.5650002944233439,
+            0.9801091123614551
+          ],
+          "terminations": {
+            "success": 8,
+            "no_feasible_frontiers": 1
+          },
+          "false_claims": 0,
+          "mean_simulated_time_s": 213.40740740740742,
+          "mean_penalized_time_s": 267.74074074074076,
+          "mean_actual_distance_m": 15.455996407732306,
+          "success_mean_time_s": 226.20833333333334,
+          "success_mean_distance_m": 15.757085274789066,
+          "mean_wall_time_s": 862.3542222222313,
+          "contact_ticks": 0,
+          "episodes_with_contact": 0,
+          "replans": 6,
+          "no_progress_attempts": 15,
+          "frontier_visits": 35,
+          "llm_calls": 0,
+          "llm_fallbacks": 0,
+          "fallback_rate": null,
+          "llm_latency_median_s": null,
+          "llm_latency_p95_s": null,
+          "llm_tokens_total": 0,
+          "recorded_cost_total": 0,
+          "calls_with_recorded_cost": 0
+        },
+        "nearest": {
+          "n": 9,
+          "successes": 9,
+          "success_rate": 1.0,
+          "success_ci95_wilson": [
+            0.7008549515804559,
+            1.0
+          ],
+          "terminations": {
+            "success": 9
+          },
+          "false_claims": 0,
+          "mean_simulated_time_s": 186.37037037037038,
+          "mean_penalized_time_s": 186.37037037037038,
+          "mean_actual_distance_m": 8.475782394979225,
+          "success_mean_time_s": 186.37037037037038,
+          "success_mean_distance_m": 8.475782394979225,
+          "mean_wall_time_s": 795.003333333414,
+          "contact_ticks": 0,
+          "episodes_with_contact": 0,
+          "replans": 3,
+          "no_progress_attempts": 18,
+          "frontier_visits": 31,
+          "llm_calls": 0,
+          "llm_fallbacks": 0,
+          "fallback_rate": null,
+          "llm_latency_median_s": null,
+          "llm_latency_p95_s": null,
+          "llm_tokens_total": 0,
+          "recorded_cost_total": 0,
+          "calls_with_recorded_cost": 0
+        },
+        "information_gain": {
+          "n": 9,
+          "successes": 9,
+          "success_rate": 1.0,
+          "success_ci95_wilson": [
+            0.7008549515804559,
+            1.0
+          ],
+          "terminations": {
+            "success": 9
+          },
+          "false_claims": 0,
+          "mean_simulated_time_s": 177.48518518518517,
+          "mean_penalized_time_s": 177.48518518518517,
+          "mean_actual_distance_m": 13.11798833270204,
+          "success_mean_time_s": 177.48518518518517,
+          "success_mean_distance_m": 13.11798833270204,
+          "mean_wall_time_s": 765.1511111111225,
+          "contact_ticks": 0,
+          "episodes_with_contact": 0,
+          "replans": 4,
+          "no_progress_attempts": 9,
+          "frontier_visits": 30,
+          "llm_calls": 0,
+          "llm_fallbacks": 0,
+          "fallback_rate": null,
+          "llm_latency_median_s": null,
+          "llm_latency_p95_s": null,
+          "llm_tokens_total": 0,
+          "recorded_cost_total": 0,
+          "calls_with_recorded_cost": 0
+        },
+        "llm_guided": {
+          "n": 9,
+          "successes": 9,
+          "success_rate": 1.0,
+          "success_ci95_wilson": [
+            0.7008549515804559,
+            1.0
+          ],
+          "terminations": {
+            "success": 9
+          },
+          "false_claims": 0,
+          "mean_simulated_time_s": 148.8111111111111,
+          "mean_penalized_time_s": 148.8111111111111,
+          "mean_actual_distance_m": 7.3010473113063314,
+          "success_mean_time_s": 148.8111111111111,
+          "success_mean_distance_m": 7.3010473113063314,
+          "mean_wall_time_s": 601.401000000019,
+          "contact_ticks": 0,
+          "episodes_with_contact": 0,
+          "replans": 0,
+          "no_progress_attempts": 12,
+          "frontier_visits": 20,
+          "llm_calls": 20,
+          "llm_fallbacks": 1,
+          "fallback_rate": 0.05,
+          "llm_latency_median_s": 1.7810000000754371,
+          "llm_latency_p95_s": 7.543549999874102,
+          "llm_tokens_total": 167256,
+          "recorded_cost_total": 0,
+          "calls_with_recorded_cost": 0
+        }
+      },
+      "verification": {
+        "complete": true,
+        "execution_scope_complete": true,
+        "execution_scope": "all",
+        "planned": 36,
+        "benchmark_planned": 36,
+        "completed": 36,
+        "complete_pairs": 9,
+        "frozen_snapshot_unchanged": true,
+        "shared_assets_unchanged": true,
+        "no_retries": true,
+        "protocol_sha256": "7caadd02b3a5346e2bcceabf3f637ecf343c6bf2b3a0bf7da06703c0085af7d1",
+        "engine_fingerprint": "4a28a90761acdfe8e79a12a3c5dd9cb2dc9b1daefbaac0cbc00c77503dacd3e4",
+        "all_result_integrity_checks_passed": true,
+        "finished_utc": "2026-11-08T06:43:19.269075+00:00"
+      }
+    },
+    "mixed_noise": {
+      "local_evidence_directory": "runs/noise-full36-20261107-01",
+      "protocol_sha256": "c797ae051323ab69653d5404865533fe00c8777fac4b1a316fb97cf4c7cb7848",
+      "successes": 35,
+      "contacts": 0,
+      "llm_calls": 22,
+      "llm_fallbacks": 0,
+      "failures": [
+        {
+          "job_id": "dynamic-s43-nearest",
+          "termination": "no_feasible_frontiers",
+          "simulated_time_s": 238.83333333333334
+        }
+      ],
+      "policy_statistics": {
+        "random": {
+          "n": 9,
+          "successes": 9,
+          "success_rate": 1.0,
+          "success_ci95_wilson": [
+            0.7008549515804559,
+            1.0
+          ],
+          "terminations": {
+            "success": 9
+          },
+          "false_claims": 0,
+          "mean_simulated_time_s": 204.14814814814815,
+          "mean_penalized_time_s": 204.14814814814815,
+          "mean_actual_distance_m": 13.066705502492303,
+          "success_mean_time_s": 204.14814814814815,
+          "success_mean_distance_m": 13.066705502492303,
+          "mean_wall_time_s": 882.3193333333669,
+          "contact_ticks": 0,
+          "episodes_with_contact": 0,
+          "replans": 6,
+          "no_progress_attempts": 17,
+          "frontier_visits": 32,
+          "llm_calls": 0,
+          "llm_fallbacks": 0,
+          "fallback_rate": null,
+          "llm_latency_median_s": null,
+          "llm_latency_p95_s": null,
+          "llm_tokens_total": 0,
+          "recorded_cost_total": 0,
+          "calls_with_recorded_cost": 0
+        },
+        "nearest": {
+          "n": 9,
+          "successes": 8,
+          "success_rate": 0.8888888888888888,
+          "success_ci95_wilson": [
+            0.5650002944233439,
+            0.9801091123614551
+          ],
+          "terminations": {
+            "success": 8,
+            "no_feasible_frontiers": 1
+          },
+          "false_claims": 0,
+          "mean_simulated_time_s": 205.42592592592592,
+          "mean_penalized_time_s": 245.55555555555554,
+          "mean_actual_distance_m": 10.045258929700278,
+          "success_mean_time_s": 201.25,
+          "success_mean_distance_m": 9.807456697871249,
+          "mean_wall_time_s": 827.0328888889247,
+          "contact_ticks": 0,
+          "episodes_with_contact": 0,
+          "replans": 6,
+          "no_progress_attempts": 25,
+          "frontier_visits": 42,
+          "llm_calls": 0,
+          "llm_fallbacks": 0,
+          "fallback_rate": null,
+          "llm_latency_median_s": null,
+          "llm_latency_p95_s": null,
+          "llm_tokens_total": 0,
+          "recorded_cost_total": 0,
+          "calls_with_recorded_cost": 0
+        },
+        "information_gain": {
+          "n": 9,
+          "successes": 9,
+          "success_rate": 1.0,
+          "success_ci95_wilson": [
+            0.7008549515804559,
+            1.0
+          ],
+          "terminations": {
+            "success": 9
+          },
+          "false_claims": 0,
+          "mean_simulated_time_s": 183.11111111111111,
+          "mean_penalized_time_s": 183.11111111111111,
+          "mean_actual_distance_m": 12.946679051529086,
+          "success_mean_time_s": 183.11111111111111,
+          "success_mean_distance_m": 12.946679051529086,
+          "mean_wall_time_s": 804.4061111111142,
+          "contact_ticks": 0,
+          "episodes_with_contact": 0,
+          "replans": 5,
+          "no_progress_attempts": 13,
+          "frontier_visits": 32,
+          "llm_calls": 0,
+          "llm_fallbacks": 0,
+          "fallback_rate": null,
+          "llm_latency_median_s": null,
+          "llm_latency_p95_s": null,
+          "llm_tokens_total": 0,
+          "recorded_cost_total": 0,
+          "calls_with_recorded_cost": 0
+        },
+        "llm_guided": {
+          "n": 9,
+          "successes": 9,
+          "success_rate": 1.0,
+          "success_ci95_wilson": [
+            0.7008549515804559,
+            1.0
+          ],
+          "terminations": {
+            "success": 9
+          },
+          "false_claims": 0,
+          "mean_simulated_time_s": 127.81481481481481,
+          "mean_penalized_time_s": 127.81481481481481,
+          "mean_actual_distance_m": 8.598713847298889,
+          "success_mean_time_s": 127.81481481481481,
+          "success_mean_distance_m": 8.598713847298889,
+          "mean_wall_time_s": 484.6702222222359,
+          "contact_ticks": 0,
+          "episodes_with_contact": 0,
+          "replans": 3,
+          "no_progress_attempts": 7,
+          "frontier_visits": 23,
+          "llm_calls": 22,
+          "llm_fallbacks": 0,
+          "fallback_rate": 0.0,
+          "llm_latency_median_s": 1.875,
+          "llm_latency_p95_s": 2.150549999962095,
+          "llm_tokens_total": 186812,
+          "recorded_cost_total": 0,
+          "calls_with_recorded_cost": 0
+        }
+      },
+      "verification": {
+        "complete": true,
+        "execution_scope_complete": true,
+        "execution_scope": "all",
+        "planned": 36,
+        "benchmark_planned": 36,
+        "completed": 36,
+        "complete_pairs": 9,
+        "frozen_snapshot_unchanged": true,
+        "shared_assets_unchanged": true,
+        "no_retries": true,
+        "protocol_sha256": "c797ae051323ab69653d5404865533fe00c8777fac4b1a316fb97cf4c7cb7848",
+        "engine_fingerprint": "4a28a90761acdfe8e79a12a3c5dd9cb2dc9b1daefbaac0cbc00c77503dacd3e4",
+        "all_result_integrity_checks_passed": true,
+        "finished_utc": "2026-11-08T02:35:19.747658+00:00"
+      }
+    }
+  },
+  "paired_outcomes": {
+    "success_both": [
+      "apartment-s17-random",
+      "apartment-s17-nearest",
+      "apartment-s17-information_gain",
+      "apartment-s17-llm_guided",
+      "clutter-s17-random",
+      "clutter-s17-nearest",
+      "clutter-s17-information_gain",
+      "clutter-s17-llm_guided",
+      "dynamic-s17-nearest",
+      "dynamic-s17-information_gain",
+      "dynamic-s17-llm_guided",
+      "apartment-s29-random",
+      "apartment-s29-nearest",
+      "apartment-s29-information_gain",
+      "apartment-s29-llm_guided",
+      "clutter-s29-random",
+      "clutter-s29-nearest",
+      "clutter-s29-information_gain",
+      "clutter-s29-llm_guided",
+      "dynamic-s29-random",
+      "dynamic-s29-nearest",
+      "dynamic-s29-information_gain",
+      "dynamic-s29-llm_guided",
+      "apartment-s43-random",
+      "apartment-s43-nearest",
+      "apartment-s43-information_gain",
+      "apartment-s43-llm_guided",
+      "clutter-s43-random",
+      "clutter-s43-nearest",
+      "clutter-s43-information_gain",
+      "clutter-s43-llm_guided",
+      "dynamic-s43-random",
+      "dynamic-s43-information_gain",
+      "dynamic-s43-llm_guided"
+    ],
+    "clean_only_failure": [
+      "dynamic-s17-random"
+    ],
+    "noise_only_failure": [
+      "dynamic-s43-nearest"
+    ],
+    "failure_both": []
+  }
+}

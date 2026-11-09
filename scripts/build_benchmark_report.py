@@ -19,11 +19,33 @@ def collect(root,protocol):
         if path.is_file():rows.append(read(path))
     return rows
 
+def live_status_panel(root,protocol,stats,rows):
+    """Show completed baselines before the four-policy paired table is populated."""
+    launch=read(root/'launch-status.json') if (root/'launch-status.json').exists() else {}
+    phase=html.escape(str(launch.get('phase','benchmark')))
+    detail=html.escape(str(launch.get('detail','Results refresh while the queue is running.')))
+    panel='<section><h2>Live execution status</h2><p><strong>'+phase+'</strong> · '+detail+'</p>'
+    panel+='<p>Completed episodes: '+str(stats['completed'])+' / '+str(stats['planned'])+'. Updates approximately every 25 seconds; this page refreshes every 30 seconds.</p>'
+    panel+='<table><thead><tr><th>Policy</th><th>Finished / planned</th><th>Verified successes / finished</th><th>LLM calls / fallbacks</th></tr></thead><tbody>'
+    for policy in POLICIES:
+        s=stats['completed_policy_stats'][policy]
+        planned=sum(j['policy']==policy for j in protocol['jobs'])
+        panel+='<tr><td>'+LABELS[policy]+'</td><td>'+str(s['n'])+' / '+str(planned)+'</td><td>'+str(s['successes'])+' / '+str(s['n'])+'</td><td>'+str(s['llm_calls'])+' / '+str(s['llm_fallbacks'])+'</td></tr>'
+    panel+='</tbody></table><p class="note">These are descriptive counts of completed episodes. The paired comparison below requires all four policies in a task block.</p>'
+    model=protocol.get('base_manifest',{}).get('policy',{}).get('llm_model','unspecified')
+    panel+='<p>Configured LLM: <code>'+html.escape(str(model))+'</code>. Task success can include fallback behavior; it does not establish that the model worked.</p>'
+    invalid=[r['job_id'] for r in rows if r['policy']=='llm_guided'
+             and r.get('llm_calls',0)>0 and r.get('llm_fallbacks',0)>=r['llm_calls']]
+    if invalid:
+        panel+='<p style="color:#f3b186"><strong>LLM validity warning:</strong> all hosted calls fell back in: '+html.escape(', '.join(invalid))+'. Do not treat those episodes as valid hosted-LLM comparisons.</p>'
+    return panel+'</section>'
+
 def build(root,plots=False):
     root=Path(root).resolve();protocol=read(root/'protocol.json');rows=collect(root,protocol)
     stats=aggregate(rows,protocol['jobs'],draws=10000 if plots else 1000)
     stats.update(protocol_hash=(root/'protocol.sha256').read_text().strip(),engine_fingerprint=protocol['engine_fingerprint'],
-        scope=protocol['scope'],generated_utc=datetime.now(timezone.utc).isoformat())
+        scope=protocol['scope'],generated_utc=datetime.now(timezone.utc).isoformat(),
+        sensor_noise=protocol.get('sensor_noise'))
     atomic(root/'results.json',stats)
     flat=[{k:v for k,v in r.items() if isinstance(v,(str,int,float,bool)) or v is None} for r in rows]
     if flat:
@@ -92,6 +114,11 @@ def build(root,plots=False):
         'PAIRS':str(stats['complete_pairs']),'CARDS':cards,'TABLE':table,'SCENES':scenes,
         'COMPARISONS':comparisons,'DETAILS':details,'ACTIVE':active or '<li>没有正在执行的回合。</li>',
         'IMAGE':image,'FINGERPRINT':protocol['engine_fingerprint'],'TIME':stats['generated_utc'],'WORKERS':str(protocol['runtime']['workers'])}
+    noise=protocol.get('sensor_noise')
+    label=('ON' if noise['enabled'] else 'OFF') if noise is not None else 'not recorded (legacy protocol)'
+    detail=html.escape(json.dumps(noise,sort_keys=True)) if noise is not None else ''
+    noise_note='<section><h2>Sensor noise: '+label+'</h2><p><code>'+detail+'</code></p><p>Base settings; per-job seeds are recorded in each manifest. Evaluator truth remains clean.</p></section>'
+    page=page.replace('<div class="cards">',live_status_panel(root,protocol,stats,rows)+noise_note+'<div class="cards">',1)
     for k,v in values.items():page=page.replace('__'+k+'__',v)
     temporary=report/'index.tmp.html';temporary.write_text(page,encoding='utf-8');replace_shared(temporary,report/'index.html')
     return stats

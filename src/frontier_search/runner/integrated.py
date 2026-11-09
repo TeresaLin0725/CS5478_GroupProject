@@ -22,6 +22,7 @@ from ..policies.llm import LLMGuidedPolicy
 from ..policies.provider import CANONICAL_LLM_MODEL,GeminiCompatibleClient,load_local_env
 from ..simulation.igibson_adapter import AdapterConfig
 from ..simulation.integrated_rs import RetainingAdapter,CloseRetainedEvaluator
+from ..simulation.sensor_noise import add_noise_arguments,noise_from_arguments
 from ..simulation.igibson_rs import REGIONS
 from .manifest import EpisodeManifest
 from .episode import EpisodeRunner
@@ -113,7 +114,8 @@ def runtime_configuration(manifest, profile, relaxed_retry):
                                   manifest.observation,manifest.navigation))
     return dict(schema_version='c-navigation-recovery-v1',profile=profile,
         policy=manifest.policy_name,recovery=asdict(manifest.recovery),
-        policy_config=asdict(manifest.policy),navigation=navigator.effective_configuration())
+        policy_config=asdict(manifest.policy),navigation=navigator.effective_configuration(),
+        sensor_noise=asdict(manifest.sensor_noise))
 
 
 def recording_validation_matches(report,fingerprint,profile,policy,configuration):
@@ -136,11 +138,16 @@ def main():
     parser.add_argument('--epsilon-retry',type=float,default=0.,help='C: probability of probing an excluded frontier per decision')
     parser.add_argument('--stuck-retry',action='store_true',help='C: probe an excluded frontier instead of ending when stuck')
     parser.add_argument('--validation',type=Path)
+    add_noise_arguments(parser)
     args=parser.parse_args()
+    try:
+        noise=noise_from_arguments(args)
+    except (ValueError, OSError, TypeError) as exc:
+        parser.error(str(exc))
     load_local_env(args.env_file)
     fingerprint=source_fingerprint()
     manifest=shared_round_manifest_for(args.output.name,args.policy)
-    manifest=replace(manifest,recovery=replace(manifest.recovery,epsilon_retry=args.epsilon_retry,
+    manifest=replace(manifest,sensor_noise=noise,recovery=replace(manifest.recovery,epsilon_retry=args.epsilon_retry,
                                                stuck_retry=args.stuck_retry))
     manifest.validate()
     relaxed_retry=RelaxedRetry() if args.relaxed_retry else None
@@ -150,7 +157,7 @@ def main():
             parser.error('--record requires a successful validation report')
         report=json.loads(args.validation.read_text(encoding='utf-8'))
         if not recording_validation_matches(report,fingerprint,args.profile,args.policy,effective_runtime):
-            parser.error('validation missing, failed, stale or has different recovery/navigation settings')
+            parser.error('validation missing, failed, stale or has different recovery/navigation/noise settings')
     args.output.mkdir(parents=True,exist_ok=True)
     if (args.output/'events.jsonl').exists():
         parser.error('choose a fresh output directory; prior runs are retained')
@@ -162,6 +169,7 @@ def main():
     if args.record and report['dry_run_summary'].get('detector_runtime')!=detector_runtime:
         parser.error('detector runtime changed; validate this inference backend before recording')
     print('detector_runtime',json.dumps(detector_runtime),flush=True)
+    print('sensor_noise',json.dumps(asdict(noise)),flush=True)
     os.environ.setdefault('YOLO_CONFIG_DIR',str(ROOT/'data/yolo-config'))
     detector=DisplayDetector(str(ROOT/'weights/yolo11/yolo11s.pt'),target_class='cup',tile_every_frames=3,
                              minimum_confidence=.50,device=device)

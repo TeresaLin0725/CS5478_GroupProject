@@ -183,6 +183,7 @@ class _Operation:
         self.leg = 0
         self.dwell_until = None               # type: Optional[float]
         self.dwell_s = 0.0
+        self.heading_settle_ratio = 1.0
         self.marks = []                       # type: List[float]
         self.pose = None                      # type: Optional[Pose]
         # stall detection
@@ -464,6 +465,8 @@ class TeamNavigator:
         op.pose = live
         cfg = self._obs_cfg
         op.dwell_s = cfg.inspection_hold_s if request.routine == 'inspection' else cfg.dwell_s
+        if request.routine == 'inspection':
+            op.heading_settle_ratio = cfg.inspection_heading_settle_ratio
         if request.routine == "initial" and cfg.allow_full_rotation:
             # Full turn in quarter steps, only if clearance permits it.
             op.targets = [_wrap(request.heading_rad + k * pi / 2) for k in range(1, 5)]
@@ -614,7 +617,10 @@ class TeamNavigator:
             # an out-of-tolerance frame as a completed scan.
             op.dwell_until = None
         if op.dwell_until is None:
-            if abs(err) > cfg.heading_tolerance_rad:
+            # Enter the dwell closer to the requested inspection heading. Keep
+            # the original outer tolerance while stopped so small inertial
+            # drift does not repeatedly restart a long inspection hold.
+            if abs(err) > cfg.heading_tolerance_rad * op.heading_settle_ratio:
                 self._control.set_velocity(0.0, _turn_rate(err, robot.max_angular_speed_radps))
                 return
             self._control.set_velocity(0.0, 0.0)

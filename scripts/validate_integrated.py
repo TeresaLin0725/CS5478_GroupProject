@@ -43,6 +43,11 @@ def validate(run,tests):
         and runtime.get('policy')==summary.get('policy')
         and len(starts)==1 and runtime.get('recovery')==starts[0]['manifest'].get('recovery')
         and len(navigation_records)==1 and runtime.get('navigation')==navigation_records[0])
+    checks['sensor_noise_configuration_recorded']=(
+        isinstance(runtime,dict) and isinstance(runtime.get('sensor_noise'),dict)
+        and len(starts)==1
+        and runtime['sensor_noise']==starts[0]['manifest'].get('sensor_noise')
+        and runtime['sensor_noise']==summary.get('sensor_noise'))
     captures=[r for r in rows if r['event']=='capture_processed']
     checks['fresh_capture_barriers']=all(b['sequence']>a['sequence'] and b['simulated_time_s']>=a['simulated_time_s']
         for a,b in zip(captures,captures[1:])) and len(captures)>2

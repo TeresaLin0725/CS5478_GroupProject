@@ -1,0 +1,6 @@
+{
+  "enabled": false,
+  "depth_std_m": 0.01,
+  "depth_dropout_prob": 0.01,
+  "seed": 0
+}

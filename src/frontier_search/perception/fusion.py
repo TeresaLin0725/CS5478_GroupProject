@@ -13,6 +13,7 @@ from typing import Iterator, List, Tuple
 from ..config import MappingConfig
 from ..contracts import RGBDObservation
 from .projection import iter_depth_world
+from .depth_filter import filter_mapping_depth
 
 
 def _ray_voxels(start: Tuple[float, ...], end: Tuple[float, ...],
@@ -92,6 +93,7 @@ def fuse_observation(observation: RGBDObservation, cfg: MappingConfig,
                      free_masks: List[List[int]], floor_seen: List[List[bool]],
                      clear_counts=None, increment_clear_count=True) -> None:
     """Fuse into caller-owned working copies; never touch a published snapshot."""
+    observation = filter_mapping_depth(observation, cfg)
     low, high = collision_z
     bin_height = cfg.clearance_bin_height_m
     # Avoid a spurious near-zero top bin after translating the world z origin.

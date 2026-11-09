@@ -6,7 +6,7 @@ be independently owned and immutable.
 
 from dataclasses import dataclass, field, replace
 from random import Random
-from math import atan2, hypot, pi
+from math import atan2, floor, hypot, pi
 from typing import Dict, List, Optional, Tuple
 
 from ..config import MappingConfig, ObservationConfig
@@ -64,6 +64,7 @@ class _EpisodeState:
     latest_observation: Optional[RGBDObservation] = None
     inspection_ids: frozenset = frozenset()
     clear_counts: List[List[int]] = field(default_factory=list)
+    viewpoint_positions: dict = field(default_factory=dict)
 
 
 
@@ -285,6 +286,14 @@ class RGBDMapper:
                         width_cells=cfg.width_cells, height_cells=cfg.height_cells)
         sensor_occupancy = OccupancyGrid(data=tuple(tuple(row) for row in working.occupancy), **geometry)
         occupancy = _mask_current_footprint(sensor_occupancy, robot, observation.robot_pose)
+        if cfg.unvisited_recovery_viewpoints:
+            # Episode-local capture-pose history. Replacing the dictionary keeps
+            # rejected updates atomic and leaves prior published maps untouched.
+            working.viewpoint_positions = dict(previous.viewpoint_positions)
+            p = observation.robot_pose
+            cell = (floor((p.y_m-cfg.origin_y_m)/cfg.resolution_m),
+                    floor((p.x_m-cfg.origin_x_m)/cfg.resolution_m))
+            working.viewpoint_positions[cell] = (p.x_m, p.y_m)
         explored = ExploredGrid(data=tuple(tuple(row) for row in working.coverage), **geometry)
         regions = tuple(RegionSummary(
             region.region_id, region.boundary_world, "igibson_room_prior",
@@ -301,7 +310,8 @@ class RGBDMapper:
         if cfg.inspection_distance_m is not None and claim is None:
             frontiers += _target_approaches(occupancy, observation, tracks, request.target_class, cfg,robot)
             if cfg.dynamic_clear_frames:
-                frontiers += _navigation_probes(occupancy,observation,robot)
+                frontiers += _navigation_probes(occupancy,observation,robot,cfg,
+                                                working.viewpoint_positions.values())
         state = WorldState("1.2", request.episode_id, revision, observation.timestamp_s,
                            observation.sequence, request.target_class, observation.robot_pose,
                            occupancy, explored, tuple(tracks.values()), regions, frontiers, claim)
@@ -385,13 +395,15 @@ def _target_approaches(grid, observation, tracks, target_class, cfg,robot):
     return tuple(result)
 
 
-def _navigation_probes(grid,observation,robot):
+def _navigation_probes(grid,observation,robot,mapping=None,visited=()):
     """Known-free alternate viewpoints for stale/occluded routes, assessed by B.
 
     A fixed RGB-D camera cannot see floor immediately beside the base. Backing
     away through previously sensed free space can reveal a departed obstacle's
     entire collision column. No physical scene query or map override is used.
     """
+    if mapping is not None and mapping.unvisited_recovery_viewpoints:
+        return _unvisited_navigation_probes(grid,observation,robot,mapping,visited)
     p=observation.robot_pose;sectors={}
     for r,row in enumerate(grid.data):
         for c,value in enumerate(row):
@@ -408,6 +420,45 @@ def _navigation_probes(grid,observation,robot):
             sector=int((atan2(y-p.y_m,x-p.x_m)+pi)/(pi/4))%8
             score=(abs(distance-.85),r,c)
             if sector not in sectors or score<sectors[sector][0]:sectors[sector]=(score,pose,r,c)
+    return tuple(Frontier('probe-%03d-%03d'%(r,c),(),(GridCell(r,c),),pose,None,0.,
+        hypot(pose.x_m-p.x_m,pose.y_m-p.y_m),'navigation_probe',None)
+        for _,pose,r,c in (value for _,value in sorted(sectors.items())))
+
+
+def _unvisited_navigation_probes(grid,observation,robot,mapping,visited):
+    """Bounded, map-only fallback views beyond the local probe ring.
+
+    Coarse samples limit candidate-generation cost. Capture-pose history avoids
+    nearby repeated viewpoints; it is a coverage heuristic, not proof that RGB
+    semantics were exhaustively observed. B still decides path reachability and
+    the runner defers all navigation probes while ordinary goals are eligible.
+    """
+    spacing=mapping.recovery_viewpoint_spacing_m
+    buckets={}
+    for x,y in visited:
+        buckets.setdefault((floor(x/spacing),floor(y/spacing)),[]).append((x,y))
+    p=observation.robot_pose
+    # Always exclude the current pose even when the caller's history is empty.
+    buckets.setdefault((floor(p.x_m/spacing),floor(p.y_m/spacing)),[]).append((p.x_m,p.y_m))
+    step=max(1,round(spacing/grid.resolution_m))
+    sectors={}
+    for r in range(step//2,grid.height_cells,step):
+        for c in range(step//2,grid.width_cells,step):
+            if grid.data[r][c]!=0:continue
+            x=grid.origin_x_m+(c+.5)*grid.resolution_m
+            y=grid.origin_y_m+(r+.5)*grid.resolution_m
+            distance=hypot(x-p.x_m,y-p.y_m)
+            if not spacing<=distance<=mapping.recovery_viewpoint_range_m:continue
+            bx,by=floor(x/spacing),floor(y/spacing)
+            if any(hypot(x-vx,y-vy)<spacing
+                   for dx in (-1,0,1) for dy in (-1,0,1)
+                   for vx,vy in buckets.get((bx+dx,by+dy),())):continue
+            pose=Pose(x,y,p.z_m,atan2(p.y_m-y,p.x_m-x))
+            if footprint_collides(grid,robot.footprint_base,pose,robot.clearance_margin_m):continue
+            sector=int((atan2(y-p.y_m,x-p.x_m)+pi)/(pi/4))%8
+            score=(distance,r,c)
+            if sector not in sectors or score<sectors[sector][0]:
+                sectors[sector]=(score,pose,r,c)
     return tuple(Frontier('probe-%03d-%03d'%(r,c),(),(GridCell(r,c),),pose,None,0.,
         hypot(pose.x_m-p.x_m,pose.y_m-p.y_m),'navigation_probe',None)
         for _,pose,r,c in (value for _,value in sorted(sectors.items())))

@@ -1,0 +1,12 @@
+{
+  "regression": {
+    "returncode": 0,
+    "source_fingerprint": "4a28a90761acdfe8e79a12a3c5dd9cb2dc9b1daefbaac0cbc00c77503dacd3e4",
+    "source_unchanged": true,
+    "tests_count": 650
+  },
+  "source_matches_frozen_snapshot": true,
+  "source_python_files": 89,
+  "reconstructed_manifests_match_originals": 72,
+  "original_suite_protocol_snapshot_and_shared_asset_seals_passed": true
+}

@@ -8,7 +8,7 @@ from benchmark_episode import atomic,read
 from benchmark_watchdog import WatchdogChannel
 
 ROOT=Path(__file__).resolve().parents[1]
-HARNESSES=('benchmark_protocol.py','benchmark_episode.py','benchmark_watchdog.py','run_paired_benchmark.py','build_benchmark_report.py')
+HARNESSES=('benchmark_protocol.py','benchmark_episode.py','benchmark_watchdog.py','run_paired_benchmark.py','build_benchmark_report.py','check_llm_connection.py')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def utc():return datetime.now(timezone.utc).isoformat()
 def module_deadline_expired(watch,folder,protocol,now):
@@ -51,7 +51,11 @@ def benchmark_manifest():
     from frontier_search.runner.integrated import shared_round_manifest_for
     return replace(shared_round_manifest_for('template'),initialization_deadline_s=240.)
 
-def freeze(out,workers,arm=None):
+def noise_for_job(config,job):
+    """Same stream across policies in a task; heading blocks have distinct seeds."""
+    return replace(config,seed=(config.seed+job['environment_seed']) % (2**32))
+
+def freeze(out,workers,arm=None,sensor_noise=None):
     if (out/'protocol.json').exists():raise FileExistsError('Choose a fresh suite directory; use run to resume the queue')
     sys.path.insert(0,str(ROOT/'src'))
     from frontier_search.runner.integrated import source_fingerprint
@@ -69,11 +73,15 @@ def freeze(out,workers,arm=None):
     (snapshot/'harness').mkdir()
     for name in HARNESSES:shutil.copy2(ROOT/'scripts'/name,snapshot/'harness'/name)
     jobs=task_specs();base=benchmark_manifest()
+    if sensor_noise is not None:
+        base=replace(base,sensor_noise=sensor_noise)
     for job in jobs:
         recovery=replace(base.recovery,**apply_arm(job,arm)) if arm else base.recovery
         manifest=replace(base,episode_id=job['job_id'],policy_name=job['policy'],recovery=recovery,
             start_pose=Pose(**job['start_pose']),environment_seed=job['environment_seed'],
-            perception_seed=job['perception_seed'],policy_seed=job['policy_seed'])
+            perception_seed=job['perception_seed'],policy_seed=job['policy_seed'],
+            sensor_noise=noise_for_job(base.sensor_noise,job))
+        job['sensor_noise']=asdict(manifest.sensor_noise)
         manifest.validate();path=Path('manifests')/(job['job_id']+'.json')
         atomic(out/path,asdict(manifest));job['manifest_path']=path.as_posix();job['manifest_sha256']=sha(out/path)
     validate_pairing(jobs)
@@ -87,6 +95,8 @@ def freeze(out,workers,arm=None):
         run_root=str(out),snapshot_root=str(snapshot),env_file=str(env_file),engine_fingerprint=engine,
         watchdog_transport='shared_memory_v1',
         navigation_preset='shared_round',navigation_options=dict(start_margin_m=0.0),
+        sensor_noise=asdict(base.sensor_noise),
+        noise_seed_semantics='Per-job noise seed = (base noise seed + environment seed) mod 2**32. Independent Gaussian/dropout streams keyed by capture sequence; same across policies, not necessarily the same physical observations.',
         scope='Current Rs benchmark: one physical house, three scene conditions, three seed/initial-heading blocks, four policies; 36 fresh native episodes. Not multi-house generalization.',
         jobs=jobs,seed_heading_blocks=[dict(seed=seed,yaw_rad=yaw) for seed,yaw in TRIALS],
         seed_semantics='Geometry and cup position are fixed. Initial heading is a predeclared task variation. Dedicated policy seed controls Random; deterministic baselines and YOLO need not vary with seed. Hosted LLM is not reproducible from a local seed.',
@@ -105,7 +115,8 @@ def freeze(out,workers,arm=None):
     (out/'protocol.sha256').write_text(sha(out/'protocol.json')+'\n',encoding='ascii')
     # Human/repository entry points hold the same fully populated manifest.
     # An arm never overwrites the original frozen batch's config.
-    atomic(ROOT/'configs'/('experiment.rs-20261018-%s.json'%arm if arm else 'experiment.rs-20261018.json'),protocol)
+    if sensor_noise is None:
+        atomic(ROOT/'configs'/('experiment.rs-20261018-%s.json'%arm if arm else 'experiment.rs-20261018.json'),protocol)
     atomic(out/'progress.json',dict(status='preflight_pending',active=[],completed=0,planned=len(jobs),updated_utc=utc()))
     from build_benchmark_report import build
     build(out)
@@ -174,6 +185,10 @@ def result_row(out,job,protocol):
     checks['llm_count']=summary.get('partial_metrics',False) or (
         model_calls==summary.get('llm_calls',0)
         and len(calls)==summary.get('llm_attempts',len(calls)))
+    if 'sensor_noise' in job:
+        started=next((e['manifest'] for e in events if e['event']=='episode_start'),{})
+        recorded=started.get('sensor_noise') if summary.get('partial_metrics',False) else summary.get('sensor_noise')
+        checks['sensor_noise_configuration']=recorded==job['sensor_noise']
     if not all(checks.values()):success=False
     usage=[c.get('usage') or {} for c in calls]
     costs=[c['cost'] for c in calls if isinstance(c.get('cost'),(int,float))]
@@ -192,6 +207,11 @@ def result_row(out,job,protocol):
         no_progress_attempts=sum(e['event']=='progress' and e['new_known_area_m2']<protocol['base_manifest']['recovery']['minimum_progress_m2'] for e in events),
         frontier_visits=sum(e['event']=='dispatch' and e['request']['subgoal']['kind']=='frontier' for e in events),
         source_fingerprint=summary.get('source_fingerprint'),partial_metrics=summary.get('partial_metrics',False))
+    if 'sensor_noise' in job:
+        noise=job['sensor_noise']
+        row.update(noise_enabled=noise['enabled'],noise_seed=noise['seed'],
+            depth_noise_std_m=noise['depth_std_m'],depth_dropout_prob=noise['depth_dropout_prob'],
+            sensor_noise_stats=summary.get('sensor_noise_stats'))
     atomic(folder/'result.json',row);return row
 
 def select_jobs(jobs,only_baselines=False,only_llm=False,job_ids=None):
@@ -287,10 +307,20 @@ def run(out,only_baselines=False,only_llm=False,job_ids=None):
     print(label,json.dumps(stats['paired_policy_stats']),flush=True)
 
 def main():
+    sys.path.insert(0,str(ROOT/'src'))
+    from frontier_search.simulation.sensor_noise import add_noise_arguments,noise_from_arguments,noise_arguments_supplied
     p=argparse.ArgumentParser();p.add_argument('action',choices=('freeze','run','all'));p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=3)
     scope=p.add_mutually_exclusive_group();scope.add_argument('--only-baselines',action='store_true');scope.add_argument('--only-llm',action='store_true');scope.add_argument('--job-id',dest='job_ids',action='append')
     p.add_argument('--arm',choices=sorted(ARMS),default=None)
+    add_noise_arguments(p)
     a=p.parse_args();out=a.output.resolve()
-    if a.action in ('freeze','all'):freeze(out,a.workers,a.arm)
+    supplied=noise_arguments_supplied(a)
+    if a.action=='run' and supplied:
+        p.error('noise settings are frozen; pass them to freeze/all in a fresh directory, not run')
+    try:
+        noise=noise_from_arguments(a) if supplied else None
+    except (ValueError, OSError, TypeError) as exc:
+        p.error(str(exc))
+    if a.action in ('freeze','all'):freeze(out,a.workers,a.arm,noise)
     if a.action in ('run','all'):run(out,a.only_baselines,a.only_llm,a.job_ids)
 if __name__=='__main__':main()

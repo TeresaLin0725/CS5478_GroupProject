@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Optional, Tuple
 
 from ..config import (EpisodeLimits, EvaluationConfig, MappingConfig, NavigationConfig,
-                      ObservationConfig, PolicyConfig, RecoveryConfig)
+                      ObservationConfig, PolicyConfig, RecoveryConfig, SensorNoiseConfig)
 from ..contracts import Point2, Pose, RegionPrior, RobotConfig
 from ..immutable import require_immutable
 from ..validation import require
@@ -40,9 +40,12 @@ class EpisodeManifest:
     initial_clearance_mode: str = 'footprint'
     initial_clearance_radius_m: float = 0.0
     initialization_deadline_s: Optional[float] = None
+    sensor_noise: SensorNoiseConfig = field(default_factory=SensorNoiseConfig)
 
     def validate(self) -> None:
         require_immutable(self)
+        require(isinstance(self.sensor_noise, SensorNoiseConfig), 'invalid sensor noise config')
+        self.sensor_noise.__post_init__()
         if self.initialization_deadline_s is not None:
             require(type(self.initialization_deadline_s) in (int,float)
                     and isfinite(self.initialization_deadline_s)
@@ -122,7 +125,7 @@ def load_manifest(path: Path) -> EpisodeManifest:
     for name, cls in (('mapping', MappingConfig), ('observation', ObservationConfig),
                       ('navigation', NavigationConfig), ('policy', PolicyConfig),
                       ('recovery', RecoveryConfig), ('limits', EpisodeLimits),
-                      ('evaluation', EvaluationConfig)):
+                      ('evaluation', EvaluationConfig), ('sensor_noise', SensorNoiseConfig)):
         if name in data:
             values = dict(data[name])
             if name == 'observation':

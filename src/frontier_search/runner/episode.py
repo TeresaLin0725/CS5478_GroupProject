@@ -5,7 +5,7 @@ returning; an asynchronous mapper needs an adapter implementing this barrier.
 """
 
 
-from dataclasses import replace
+from dataclasses import asdict, replace
 from enum import Enum
 from math import hypot, pi
 from random import Random
@@ -23,6 +23,7 @@ from ..navigation.api import SteppedNavigator
 from ..perception.api import PerceptionMapper
 from ..policies.api import PolicyFeedback, SearchPolicy
 from ..simulation.api import ControlledSimulatorAdapter
+from ..simulation.sensor_noise import DepthNoise
 from ..validation import require, validate_context, validate_evaluation, validate_selection, validate_state
 from ..perception.observations import validate_rgbd_observation
 from .manifest import EpisodeManifest
@@ -154,6 +155,10 @@ class EpisodeRunner:
         require(obs.timestamp_s >= self.last_capture_time and
                 abs(obs.timestamp_s-self.sim_time) < 1e-6, 'capture must describe current simulation time')
         self.last_capture, self.last_capture_time = obs.sequence, obs.timestamp_s
+        # Simulator-owned truth and physical motion have already been retained.
+        # Only the observation delivered to perception is perturbed.
+        if self.manifest.sensor_noise.enabled:
+            obs = self._call('sensor_noise', self._depth_noise.apply, obs)
         state = self._call('mapper.update', self.mapper.update, obs,
                            _deadline=min(self.manifest.module_deadline_s,
                                          self.manifest.observation.drain_deadline_s))
@@ -479,11 +484,13 @@ class EpisodeRunner:
         self.last_capture, self.last_capture_time = -1, -1.0
         self.state = self.active = self.previous = None
         self.intrinsics = None
+        self._depth_noise = None
         self.seen_ids = set()
         phase = 'initialization'
         reason = TerminationReason.INITIALIZATION_FAILED
         try:
             manifest.validate()
+            self._depth_noise = DepthNoise(manifest.sensor_noise, manifest.mapping)
             self._emit('episode_start', manifest=manifest)
             self._call('simulator.reset', self.simulator.reset, manifest.episode_id, manifest.scene_id,
                        manifest.start_pose, manifest.environment_seed,
@@ -546,7 +553,9 @@ class EpisodeRunner:
             self.summary = dict(termination=reason.value, decisions=self.decisions, attempts=self.attempts,
                 steps=self.steps, simulated_time_s=self.sim_time, wall_time_s=self.clock()-self.started,
                 actual_distance_m=self.distance, collisions=getattr(self.simulator, 'collisions', None),
-                final_revision=self.state.revision if self.state else None)
+                final_revision=self.state.revision if self.state else None,
+                sensor_noise=asdict(manifest.sensor_noise),
+                sensor_noise_stats=dict(self._depth_noise.stats) if self._depth_noise else {})
             self._emit('episode_terminal', **self.summary)
         return reason
 

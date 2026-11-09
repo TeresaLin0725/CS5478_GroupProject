@@ -11,6 +11,27 @@ from typing import Optional, Tuple
 
 
 @dataclass(frozen=True)
+class SensorNoiseConfig:
+    """Opt-in depth corruption; experimental levels, not a calibrated sensor model."""
+    enabled: bool = False
+    depth_std_m: float = 0.01
+    depth_dropout_prob: float = 0.01
+    seed: int = 0
+
+    def __post_init__(self) -> None:
+        if type(self.enabled) is not bool:
+            raise ValueError('sensor noise enabled must be a bool')
+        if (type(self.depth_std_m) not in (int, float)
+                or not isfinite(self.depth_std_m) or self.depth_std_m < 0):
+            raise ValueError('depth_std_m must be finite and nonnegative')
+        if (type(self.depth_dropout_prob) not in (int, float)
+                or not isfinite(self.depth_dropout_prob) or not 0 <= self.depth_dropout_prob <= 1):
+            raise ValueError('depth_dropout_prob must be between 0 and 1')
+        if type(self.seed) is not int or not 0 <= self.seed < 2**32:
+            raise ValueError('noise seed must be an integer in [0, 2**32)')
+
+
+@dataclass(frozen=True)
 class MappingConfig:
     resolution_m: float = 0.1
     width_cells: int = 40
@@ -37,6 +58,13 @@ class MappingConfig:
     gain_ray_step_rad: float = 0.05
     object_match_distance_m: float = 0.35
     depth_pixel_stride: int = 1
+    # Opt-in spatial denoising for map fusion, independent of simulated noise.
+    depth_filter_kernel_size: int = 0
+    depth_filter_max_delta_m: float = 0.08
+    # Optional fallback viewpoints outside the legacy local probe ring.
+    unvisited_recovery_viewpoints: bool = False
+    recovery_viewpoint_spacing_m: float = 0.6
+    recovery_viewpoint_range_m: float = 3.0
     frontier_cluster_span_m: float = 0.0
     dynamic_clear_frames: int = 0
     inspection_distance_m: Optional[float] = None
@@ -50,6 +78,18 @@ class MappingConfig:
     claim_confidence_threshold: float = 0.65
 
     def __post_init__(self) -> None:
+        if type(self.unvisited_recovery_viewpoints) is not bool:
+            raise ValueError('unvisited recovery viewpoints must be bool')
+        for value in (self.recovery_viewpoint_spacing_m, self.recovery_viewpoint_range_m):
+            if type(value) not in (int, float) or not isfinite(value) or value <= 0:
+                raise ValueError('recovery viewpoint distances must be finite and positive')
+        if self.recovery_viewpoint_range_m < self.recovery_viewpoint_spacing_m:
+            raise ValueError('recovery viewpoint range must cover the spacing')
+        if type(self.depth_filter_kernel_size) is not int or self.depth_filter_kernel_size not in (0, 3, 5):
+            raise ValueError('depth filter kernel must be 0 (off), 3 or 5')
+        if (type(self.depth_filter_max_delta_m) not in (int, float)
+                or not isfinite(self.depth_filter_max_delta_m) or self.depth_filter_max_delta_m <= 0):
+            raise ValueError('depth filter range threshold must be finite and positive')
         if (type(self.claim_confidence_threshold) not in (int, float)
                 or not isfinite(self.claim_confidence_threshold)
                 or not 0 <= self.claim_confidence_threshold <= 1):
@@ -139,6 +179,13 @@ class ObservationConfig:
     # Physics and regular RGB-D captures continue; this does not assert success.
     inspection_hold_s: float = 0.0
     inspection_headings_rad: Tuple[float, ...] = (-0.15, 0.0, 0.15)
+    # 1 preserves the original entry tolerance; smaller values leave drift room.
+    inspection_heading_settle_ratio: float = 1.0
+
+    def __post_init__(self) -> None:
+        value = self.inspection_heading_settle_ratio
+        if type(value) not in (int, float) or not isfinite(value) or not 0 < value <= 1:
+            raise ValueError('inspection_heading_settle_ratio must be finite and in (0, 1]')
 
 
 @dataclass(frozen=True)
