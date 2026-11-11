@@ -24,6 +24,7 @@ from ..simulation.igibson_adapter import AdapterConfig
 from ..simulation.integrated_rs import RetainingAdapter,CloseRetainedEvaluator
 from ..simulation.sensor_noise import add_noise_arguments,noise_from_arguments
 from ..simulation.igibson_rs import REGIONS
+from ..simulation.rs_tasks import LEGACY_CUP,RS_TARGETS,bowl_start_pose
 from .manifest import EpisodeManifest
 from .episode import EpisodeRunner
 from .recovery import SpatialRecovery
@@ -73,6 +74,19 @@ def shared_round_manifest_for(episode_id, policy='information_gain'):
     return replace(manifest,robot=shared_round_robot(manifest.robot))
 
 
+def task_manifest_for(episode_id, policy='information_gain', task='legacy_cup'):
+    manifest=shared_round_manifest_for(episode_id,policy)
+    if task not in RS_TARGETS:
+        raise ValueError('Unknown Rs task: '+str(task))
+    if task in ('kitchen_bowl','bathroom_bowl'):
+        # Retain the robustness configuration validated by the 35/36 noisy suite.
+        return replace(manifest,target_class='bowl',start_pose=bowl_start_pose(),
+            mapping=replace(manifest.mapping,depth_filter_kernel_size=5,
+                            unvisited_recovery_viewpoints=True),
+            observation=replace(manifest.observation,inspection_heading_settle_ratio=.5))
+    return manifest
+
+
 class PipelineLog:
     def __init__(self,path):
         self.file = path.open('w',encoding='utf-8')
@@ -106,7 +120,7 @@ def source_fingerprint():
     return digest.hexdigest()
 
 
-def runtime_configuration(manifest, profile, relaxed_retry):
+def runtime_configuration(manifest, profile, relaxed_retry, target=LEGACY_CUP):
     """Normalize the actual C recovery and B navigation settings before launch."""
     navigator=TeamNavigator(None,linear_gain=2.0,start_margin_m=0.0,
                             relaxed_retry=relaxed_retry)
@@ -115,7 +129,8 @@ def runtime_configuration(manifest, profile, relaxed_retry):
     return dict(schema_version='c-navigation-recovery-v1',profile=profile,
         policy=manifest.policy_name,recovery=asdict(manifest.recovery),
         policy_config=asdict(manifest.policy),navigation=navigator.effective_configuration(),
-        sensor_noise=asdict(manifest.sensor_noise))
+        sensor_noise=asdict(manifest.sensor_noise),target=asdict(target),
+        start_pose=asdict(manifest.start_pose),observation=asdict(manifest.observation))
 
 
 def recording_validation_matches(report,fingerprint,profile,policy,configuration):
@@ -129,7 +144,8 @@ def recording_validation_matches(report,fingerprint,profile,policy,configuration
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--output',type=Path,required=True)
-    parser.add_argument('--profile',choices=('apartment','clutter','dynamic'),default='dynamic')
+    parser.add_argument('--profile',choices=('apartment','clutter','dynamic'),default=None)
+    parser.add_argument('--task',choices=tuple(RS_TARGETS),default='legacy_cup')
     parser.add_argument('--policy',choices=('nearest','information_gain','random','llm_guided'),default='information_gain')
     parser.add_argument('--env-file',type=Path,default=ROOT.parent/'.env')
     parser.add_argument('--record',action='store_true')
@@ -140,18 +156,24 @@ def main():
     parser.add_argument('--validation',type=Path)
     add_noise_arguments(parser)
     args=parser.parse_args()
+    if args.profile is None:
+        args.profile='apartment' if args.task in ('kitchen_bowl','bathroom_bowl') else 'dynamic'
     try:
         noise=noise_from_arguments(args)
     except (ValueError, OSError, TypeError) as exc:
         parser.error(str(exc))
     load_local_env(args.env_file)
     fingerprint=source_fingerprint()
-    manifest=shared_round_manifest_for(args.output.name,args.policy)
+    try:
+        manifest=task_manifest_for(args.output.name,args.policy,args.task)
+    except ValueError as exc:
+        parser.error(str(exc))
+    target=RS_TARGETS[args.task]
     manifest=replace(manifest,sensor_noise=noise,recovery=replace(manifest.recovery,epsilon_retry=args.epsilon_retry,
                                                stuck_retry=args.stuck_retry))
     manifest.validate()
     relaxed_retry=RelaxedRetry() if args.relaxed_retry else None
-    effective_runtime=runtime_configuration(manifest,args.profile,relaxed_retry)
+    effective_runtime=runtime_configuration(manifest,args.profile,relaxed_retry,target)
     if args.record:
         if not args.validation:
             parser.error('--record requires a successful validation report')
@@ -171,7 +193,7 @@ def main():
     print('detector_runtime',json.dumps(detector_runtime),flush=True)
     print('sensor_noise',json.dumps(asdict(noise)),flush=True)
     os.environ.setdefault('YOLO_CONFIG_DIR',str(ROOT/'data/yolo-config'))
-    detector=DisplayDetector(str(ROOT/'weights/yolo11/yolo11s.pt'),target_class='cup',tile_every_frames=3,
+    detector=DisplayDetector(str(ROOT/'weights/yolo11/yolo11s.pt'),target_class=manifest.target_class,tile_every_frames=3,
                              minimum_confidence=.50,device=device)
     # Warm imports/model kernels outside the episode's module budgets.
     from ..sensors import ImageBuffer
@@ -181,7 +203,7 @@ def main():
         path_smoothing=False,control_hz=30,odometry_source='latest control-step known-pose difference'),indent=2),encoding='utf-8')
     store=RetainedFrames()
     sim=RetainingAdapter(manifest.robot,manifest.mapping,
-        AdapterConfig(scene_id='Rs',settle_steps=0,image_width=640,image_height=480,vertical_fov_deg=75.),store,args.profile)
+        AdapterConfig(scene_id='Rs',settle_steps=0,image_width=640,image_height=480,vertical_fov_deg=75.),store,args.profile,target)
     mapper=RGBDMapper(detector)
     # Grid waypoints are only 0.1 m apart. The default 1/s gain made the
     # robot crawl below its speed limit even on a straight, validated path.
@@ -190,7 +212,7 @@ def main():
                       relaxed_retry=relaxed_retry)
     policy=(LLMGuidedPolicy(GeminiCompatibleClient()) if args.policy=='llm_guided'
             else BaselinePolicy(PolicyName(args.policy)))
-    evaluator=CloseRetainedEvaluator(store,sim)
+    evaluator=CloseRetainedEvaluator(store,sim,target_class=manifest.target_class)
     log=PipelineLog(args.output/'events.jsonl')
     runner=EpisodeRunner(sim,mapper,nav,policy,evaluator,logger=log,
                          recovery=SpatialRecovery(manifest.recovery,locality_radius_m=.6),
@@ -203,7 +225,7 @@ def main():
     result=runner.run(manifest)
     log.close()
     llm_records=getattr(policy,'call_records',())
-    summary=dict(runner.summary,profile=args.profile,policy=args.policy,
+    summary=dict(runner.summary,profile=args.profile,policy=args.policy,task=args.task,
         llm_attempts=len(llm_records),
         llm_calls=sum(bool(r.get('model_called',
             r.get('fallback_reason') not in ('unconfigured_client','call_cap'))) for r in llm_records),

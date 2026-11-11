@@ -113,7 +113,8 @@ class IGibsonWorld:
     """Owns the iGibson simulator; ground truth here is for motion and scoring only."""
 
     def __init__(self, data_root=DATA_ROOT, start=START_POSE, target_position=TARGET_POSITION,
-                 profile='apartment', target_model=TARGET_MODEL, image_width=IMAGE_W, image_height=IMAGE_H):
+                 profile='apartment', target_model=TARGET_MODEL, image_width=IMAGE_W, image_height=IMAGE_H,
+                 scene_layout='legacy'):
         configure_paths(data_root)
         import pybullet as p
         from igibson.objects.ycb_object import YCBObject
@@ -146,7 +147,7 @@ class IGibsonWorld:
         self.floor_bodies = set(self.scene.floor_body_ids)
         from .indoor_challenges import import_furniture
         self.profile = profile
-        self.furniture = import_furniture(self, profile, Path(data_root).parent / 'demo-props')
+        self.furniture = import_furniture(self, profile, Path(data_root).parent / 'demo-props',scene_layout)
         self.environment_events = []
         self.cart_started_s = None
         # Measured: the spherical casters snag on millimetre lips in the scanned

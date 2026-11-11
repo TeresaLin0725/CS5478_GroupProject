@@ -104,13 +104,24 @@ def textured_cart_bottles(urdf, mesh):
     return ET.tostring(tree, encoding='unicode').replace('><', '>\n<')
 
 
-def import_furniture(world, profile, directory):
+def profile_props(profile,scene_layout='legacy'):
+    """The 48-case layout keeps the bathroom route open for every target task."""
+    if scene_layout not in ('legacy','bowl48_accessible'):
+        raise ValueError('Unknown scene layout: '+scene_layout)
+    props=PROFILES[profile]['props']
+    if scene_layout=='bowl48_accessible':
+        return tuple((kind,(-3.35,.85,0) if kind=='chair' and position==(-2.70,1.0,0) else position,yaw)
+                     for kind,position,yaw in props)
+    return props
+
+
+def import_furniture(world, profile, directory,scene_layout='legacy'):
     import igibson
     from igibson.objects.articulated_object import ArticulatedObject
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     records = []
-    for index, (kind, position, yaw) in enumerate(PROFILES[profile]['props']):
+    for index, (kind, position, yaw) in enumerate(profile_props(profile,scene_layout)):
         bottle_mesh = (Path(igibson.assets_path)/'models/ycb/006_mustard_bottle/textured_simple.obj'
                        if kind == 'cart' else None)
         urdf = furniture_urdf(kind, bottle_mesh)

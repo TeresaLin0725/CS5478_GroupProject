@@ -1,0 +1,51 @@
+{
+  "job_id": "kitchen-clutter-startA-llm_guided",
+  "policy": "llm_guided",
+  "profile": "clutter",
+  "environment_seed": 17,
+  "termination": "success",
+  "partial_metrics": false,
+  "start_pose": {
+    "x_m": 0.8,
+    "y_m": -2.4,
+    "z_m": 0.0,
+    "yaw_rad": 1.5707963267948966
+  },
+  "last_recorded_pose": {
+    "x_m": -0.64037437367032,
+    "y_m": 2.447615315424428,
+    "yaw_rad": 2.3817207113036645,
+    "z_m": 0.00041451818151120494
+  },
+  "target_position_world": [
+    -1.3502419985830785,
+    2.9511864975094797,
+    0.9097093077414806
+  ],
+  "motion_samples": 2060,
+  "simulated_time_s": 68.66666666666667,
+  "actual_distance_m": 6.227627182426868,
+  "input_signature": [
+    1794296719120723200,
+    7761,
+    5704718,
+    1794357372870472900,
+    654040
+  ],
+  "created_utc": "2026-11-11T00:39:53.095494+00:00",
+  "source": "Recorded motion_sample events; no planned path, interpolation, or hidden-map navigation.",
+  "background": "Original Rs scan plus actual iGibson overhead render of inserted objects at t=0; the dynamic cart can move later.",
+  "scene_overlay": "scene-floorplans\\kitchen-clutter-startA-objects.png",
+  "world_bounds": {
+    "x_min": -4.4,
+    "x_max": 2.2,
+    "y_min": -4.4,
+    "y_max": 3.8
+  },
+  "markers": {
+    "start": "green circle",
+    "target": "red star",
+    "end": "blue heading triangle",
+    "trajectory": "blue path with travel-direction arrows"
+  }
+}

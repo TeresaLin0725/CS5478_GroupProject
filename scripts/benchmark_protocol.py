@@ -28,7 +28,7 @@ def apply_arm(job,arm):
 
 TRIALS=((17,1.5707963267948966),(29,0.0),(43,-1.5707963267948966))
 
-def task_specs():
+def task_specs(start_pose=None):
     rows=[]
     for seed,yaw in TRIALS:
         for profile in PROFILES:
@@ -36,7 +36,29 @@ def task_specs():
             for policy in POLICIES:
                 rows.append(dict(job_id=pair+'-'+policy,pair_id=pair,profile=profile,policy=policy,
                     environment_seed=seed,perception_seed=10000+seed,policy_seed=20000+seed,
-                    start_pose=dict(x_m=.8,y_m=-2.4,z_m=0.,yaw_rad=yaw)))
+                    start_pose=dict(start_pose) if start_pose is not None else
+                               dict(x_m=.8,y_m=-2.4,z_m=0.,yaw_rad=yaw)))
+    return rows
+
+
+def bowl48_task_specs():
+    """Two locations x two fixed starts x three conditions x four policies.
+
+    Seed 17 is held fixed: the task variation is start position, not noise seed.
+    The whole kitchen block precedes the bathroom block.
+    """
+    starts=(('A',dict(x_m=.8,y_m=-2.4,z_m=0.,yaw_rad=1.5707963267948966)),
+            ('B',dict(x_m=-1.5,y_m=.6,z_m=0.,yaw_rad=3.141592653589793)))
+    rows=[]
+    for target in ('kitchen','bathroom'):
+        for start_id,pose in starts:
+            for profile in PROFILES:
+                pair='%s-%s-start%s'%(target,profile,start_id)
+                for policy in POLICIES:
+                    rows.append(dict(job_id=pair+'-'+policy,pair_id=pair,profile=profile,
+                        policy=policy,target_location=target,start_id=start_id,
+                        environment_seed=17,perception_seed=10017,policy_seed=20017,
+                        start_pose=dict(pose)))
     return rows
 
 def validate_pairing(jobs):

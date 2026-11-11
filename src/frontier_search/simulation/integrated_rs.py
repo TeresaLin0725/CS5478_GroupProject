@@ -6,20 +6,23 @@ from ..evaluation.retained import GroundTruthFrame, VisibleInstance
 from ..evaluation.verifier import RetainedTargetEvaluator
 from .igibson_adapter import IGibsonAdapter, IGibsonBackend
 from .igibson_rs import IGibsonWorld
+from .rs_tasks import LEGACY_CUP
 
 
 class RsBackend(IGibsonBackend):
-    def __init__(self, config, profile='dynamic'):
+    def __init__(self, config, profile='dynamic', target=LEGACY_CUP,scene_layout='legacy'):
         super().__init__(config)
         self.profile = profile
+        self.target_spec = target
+        self.scene_layout = scene_layout
 
     def open(self, scene_id, seed, start_pose):
         if scene_id != 'Rs':
             raise ValueError('RsBackend requires the installed Rs scan')
         np.random.seed(seed)
         self.world = IGibsonWorld(start=(start_pose.x_m,start_pose.y_m,start_pose.yaw_rad),
-            profile=self.profile, target_model='025_mug',target_position=(-1.4,2.95,.9213), image_width=self._config.image_width,
-            image_height=self._config.image_height)
+            profile=self.profile, target_model=self.target_spec.model,target_position=self.target_spec.position, image_width=self._config.image_width,
+            image_height=self._config.image_height,scene_layout=self.scene_layout)
         w = self.world
         self._p, self._np, self._sim, self._scene = w.p, np, w.sim, w.scene
         self._robot, self._bodies = w.robot, w.robot_bodies
@@ -63,7 +66,7 @@ class RsBackend(IGibsonBackend):
             homogeneous = np.concatenate((points,np.ones((len(points),1))),axis=1)
             world_points = homogeneous @ np.linalg.inv(view).T
             surface = np.median(world_points[:,:3],axis=0)
-            instances = (VisibleInstance('Rs-inserted-mug','cup',min(1.,len(rows)/max(1,total)),
+            instances = (VisibleInstance(self.target_spec.instance_id,self.target_spec.class_name,min(1.,len(rows)/max(1,total)),
                 (int(cols.min()),int(rows.min()),int(cols.max()+1),int(rows.max()+1)),
                 Point3(*(float(v) for v in surface))),)
         return GroundTruthFrame(observation.episode_id,observation.sequence,observation.timestamp_s,
@@ -75,8 +78,8 @@ class RsBackend(IGibsonBackend):
 
 class RetainingAdapter(IGibsonAdapter):
     """Only RGBDObservation leaves capture(); evaluator metadata stays in the capture owner."""
-    def __init__(self, robot, mapping, config, store, profile='dynamic'):
-        super().__init__(robot,mapping,config,lambda cfg: RsBackend(cfg,profile))
+    def __init__(self, robot, mapping, config, store, profile='dynamic', target=LEGACY_CUP,scene_layout='legacy'):
+        super().__init__(robot,mapping,config,lambda cfg: RsBackend(cfg,profile,target,scene_layout))
         self.truth_store, self.capture_motion = store, {}
         self.on_close = None
 
@@ -97,8 +100,8 @@ class RetainingAdapter(IGibsonAdapter):
 
 class CloseRetainedEvaluator(RetainedTargetEvaluator):
     """W3 identity/visibility/IoU/localization AND physical near/stopped evidence."""
-    def __init__(self, store, adapter, distance=.95):
-        super().__init__(store,'cup')
+    def __init__(self, store, adapter, distance=.95, target_class='cup'):
+        super().__init__(store,target_class)
         self.adapter, self.distance, self.metrics = adapter, distance, {}
         self._close_result=None
 

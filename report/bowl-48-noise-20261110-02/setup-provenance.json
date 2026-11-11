@@ -1,0 +1,8 @@
+{
+  "replaces_unexecuted_setup": "runs\\bowl-48-noise-20261110-01",
+  "failed_preflight": "runs\\bowl-48-noise-20261110-01\\preflight\\bathroom-clutter-startA\\preflight.json",
+  "diagnostic": "runs/bowl-48-setup-20261110/bathroom-route-diagnostic/preflight.json",
+  "scene_layout": "bowl48_accessible",
+  "reason": "A chair at (-2.70,1.0) blocked all full-footprint routes to bathroom close viewpoints in isolated preflight. Move the same chair to (-3.35,.85) in both clutter/dynamic conditions for both targets; all other props and legacy layouts unchanged.",
+  "formal_search_results_before_adjustment": 0
+}

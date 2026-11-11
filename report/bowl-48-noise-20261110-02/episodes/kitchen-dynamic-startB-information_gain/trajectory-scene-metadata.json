@@ -1,0 +1,51 @@
+{
+  "job_id": "kitchen-dynamic-startB-information_gain",
+  "policy": "information_gain",
+  "profile": "dynamic",
+  "environment_seed": 17,
+  "termination": "success",
+  "partial_metrics": false,
+  "start_pose": {
+    "x_m": -1.5,
+    "y_m": 0.6,
+    "z_m": 0.0,
+    "yaw_rad": 3.141592653589793
+  },
+  "last_recorded_pose": {
+    "x_m": -0.6462697904649166,
+    "y_m": 2.4495634051744752,
+    "yaw_rad": 2.3675092499844,
+    "z_m": 0.0004906195528422588
+  },
+  "target_position_world": [
+    -1.3502419985830785,
+    2.9511864975094797,
+    0.9097093077414806
+  ],
+  "motion_samples": 4330,
+  "simulated_time_s": 144.33333333333334,
+  "actual_distance_m": 14.028391431240875,
+  "input_signature": [
+    1794301656500406200,
+    9027,
+    11872818,
+    1794357468971764300,
+    654883
+  ],
+  "created_utc": "2026-11-11T00:40:02.872513+00:00",
+  "source": "Recorded motion_sample events; no planned path, interpolation, or hidden-map navigation.",
+  "background": "Original Rs scan plus actual iGibson overhead render of inserted objects at t=0; the dynamic cart can move later.",
+  "scene_overlay": "scene-floorplans\\kitchen-dynamic-startB-objects.png",
+  "world_bounds": {
+    "x_min": -4.4,
+    "x_max": 2.2,
+    "y_min": -4.4,
+    "y_max": 3.8
+  },
+  "markers": {
+    "start": "green circle",
+    "target": "red star",
+    "end": "blue heading triangle",
+    "trajectory": "blue path with travel-direction arrows"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "complete": true,
+  "execution_scope_complete": true,
+  "execution_scope": "all",
+  "planned": 48,
+  "benchmark_planned": 48,
+  "completed": 48,
+  "complete_pairs": 12,
+  "frozen_snapshot_unchanged": true,
+  "shared_assets_unchanged": true,
+  "no_retries": true,
+  "protocol_sha256": "a6619a6a1e59590560ffb00cd15288cc60f84a3789824faa0906a4b93a89190e",
+  "engine_fingerprint": "f1348ea707b471090d23924aa06c01bba23edd39de8fed76b9fc458d9adff4c1",
+  "all_result_integrity_checks_passed": true,
+  "finished_utc": "2026-11-10T11:25:12.466141+00:00"
+}

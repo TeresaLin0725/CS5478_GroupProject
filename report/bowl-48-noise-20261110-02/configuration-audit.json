@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "manifests": 48,
+  "paired_blocks": 12,
+  "kitchen_before_bathroom": true,
+  "noise_seed": 140,
+  "max_workers": 2,
+  "scene_layout": "bowl48_accessible",
+  "source_fingerprint": "f1348ea707b471090d23924aa06c01bba23edd39de8fed76b9fc458d9adff4c1",
+  "no_search_results_reused": true
+}

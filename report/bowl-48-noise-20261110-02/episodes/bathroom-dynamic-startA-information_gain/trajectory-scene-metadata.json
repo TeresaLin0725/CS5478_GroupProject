@@ -1,0 +1,51 @@
+{
+  "job_id": "bathroom-dynamic-startA-information_gain",
+  "policy": "information_gain",
+  "profile": "dynamic",
+  "environment_seed": 17,
+  "termination": "success",
+  "partial_metrics": false,
+  "start_pose": {
+    "x_m": 0.8,
+    "y_m": -2.4,
+    "z_m": 0.0,
+    "yaw_rad": 1.5707963267948966
+  },
+  "last_recorded_pose": {
+    "x_m": -2.6376711624088793,
+    "y_m": 2.6246145832494383,
+    "yaw_rad": 2.772013365876802,
+    "z_m": 0.0005561200167518384
+  },
+  "target_position_world": [
+    -3.400241998583078,
+    3.0011864975094804,
+    0.43358444657109885
+  ],
+  "motion_samples": 2480,
+  "simulated_time_s": 82.66666666666667,
+  "actual_distance_m": 7.762279389085157,
+  "input_signature": [
+    1794306484504313000,
+    8275,
+    6843310,
+    1794357535896008300,
+    654818
+  ],
+  "created_utc": "2026-11-11T00:40:11.504720+00:00",
+  "source": "Recorded motion_sample events; no planned path, interpolation, or hidden-map navigation.",
+  "background": "Original Rs scan plus actual iGibson overhead render of inserted objects at t=0; the dynamic cart can move later.",
+  "scene_overlay": "scene-floorplans\\bathroom-dynamic-startA-objects.png",
+  "world_bounds": {
+    "x_min": -4.4,
+    "x_max": 2.2,
+    "y_min": -4.4,
+    "y_max": 3.8
+  },
+  "markers": {
+    "start": "green circle",
+    "target": "red star",
+    "end": "blue heading triangle",
+    "trajectory": "blue path with travel-direction arrows"
+  }
+}

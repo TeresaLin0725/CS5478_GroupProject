@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kitchen bowl · Live experiment</title>
+<style>
+:root{color-scheme:light;--ink:#172d3b;--muted:#647784;--line:#dce5e9;--accent:#147b79;--paper:#f3f6f7}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,"Microsoft YaHei",sans-serif}
+main{max-width:1300px;margin:auto;padding:30px}header{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:25px}
+h1{font-size:30px;letter-spacing:-1px;margin:3px 0 5px}h2{font-size:18px;margin:0}p{margin:6px 0}.eyebrow{font-size:11px;font-weight:750;letter-spacing:2px;color:var(--accent)}.muted{color:var(--muted)}.small{font-size:12px}.live{color:var(--accent);font-weight:650}.live:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:7px}.refresh{text-align:right;font-variant-numeric:tabular-nums}
+.settings{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}.tag{border:1px solid var(--line);background:#fff;border-radius:5px;padding:5px 10px;font-size:12px;color:#47606e}.methods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}.method{border:1px solid var(--line);background:#fff;border-radius:9px;padding:16px;text-align:left;color:inherit;cursor:pointer;font:inherit;min-width:0}.method[aria-pressed=true]{border:2px solid var(--accent);padding:15px;background:#f5fcfa}.method:focus-visible{outline:3px solid #73c8ca;outline-offset:3px}.method-top{display:flex;justify-content:space-between;gap:5px;align-items:center}.method strong{font-size:15px}.badge{font-size:10px;text-transform:uppercase;letter-spacing:.4px;padding:3px 6px;border-radius:4px;background:#edf1f3;color:#5a6c77}.badge.running{background:#dff3ec;color:#146b52}.badge.success{background:#dff3ec;color:#146b52}.badge.failed{background:#fce9e4;color:#9a4737}.metric{font-size:26px;font-weight:650;letter-spacing:-.7px;margin:12px 0 0;font-variant-numeric:tabular-nums}.metric span{font-size:12px;font-weight:400;letter-spacing:0;color:var(--muted)}.progress{height:4px;background:#e9f0f1;border-radius:3px;overflow:hidden;margin:10px 0}.progress i{display:block;height:100%;background:var(--accent)}
+.columns{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:20px}.panel{background:#fff;border:1px solid var(--line);border-radius:9px;padding:20px;min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}select{font:inherit;font-size:12px;border:1px solid var(--line);border-radius:5px;background:white;padding:6px;color:var(--ink);max-width:180px}.map-wrap{background:#fff;display:flex;justify-content:center;position:relative}.map-wrap canvas{display:block;max-height:560px;max-width:100%;width:auto;height:auto;aspect-ratio:660/820}.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:8px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.side{display:flex;flex-direction:column;gap:16px}.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:20px 0}.fact b{display:block;font-size:23px;letter-spacing:-.5px;font-variant-numeric:tabular-nums}.fact span{font-size:11px;color:var(--muted)}.rule{border:0;border-top:1px solid var(--line);margin:18px 0}.goal{font-size:14px;overflow-wrap:anywhere}.classes{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}.classes span{background:#f1f5f6;padding:3px 7px;border-radius:4px;font-size:11px}.feed{list-style:none;margin:8px 0 0;padding:0;max-height:210px;overflow:auto}.feed li{display:grid;grid-template-columns:50px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid #edf1f3;font-size:12px}.feed time{color:var(--muted);font-variant-numeric:tabular-nums}.table-panel{margin-top:20px}.table-scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--muted);font-weight:500;font-size:11px}th,td{padding:12px 9px;border-bottom:1px solid #edf1f3;white-space:nowrap}td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}footer{margin:18px 0;color:var(--muted);font-size:11px}.error{color:#a23e32}details{margin-top:12px}code{font:11px ui-monospace,monospace;overflow-wrap:anywhere}
+@media(max-width:850px){main{padding:18px}.methods{grid-template-columns:repeat(2,1fr)}.columns{grid-template-columns:1fr}.map-wrap canvas{max-height:530px}.refresh{font-size:11px}h1{font-size:25px}}
+@media(max-width:430px){main{padding:12px}header{align-items:flex-start}.refresh{max-width:100px}.method{padding:12px}.method[aria-pressed=true]{padding:11px}.method-top{display:block}.badge{display:inline-block;margin-top:5px}.panel{padding:15px}.panel-head{align-items:flex-start}h1{font-size:23px}.facts{gap:8px}.fact b{font-size:20px}}
+</style>
+</head>
+<body><main>
+<header><div><div class="eyebrow">CS5478 · ROBOT SEARCH</div><h1 id="report-title">Kitchen bowl</h1><p class="muted" id="subtitle">Live pilot · one fixed start · four search policies</p></div><div class="refresh"><div class="live" id="connection" role="status">Connecting</div><div class="muted small" id="updated">Loading observations…</div></div></header>
+<div class="settings"><span class="tag">Depth noise σ 1 cm</span><span class="tag">Depth dropout 1%</span><span class="tag" id="noise-seed-tag">Noise seed 0</span><span class="tag">Initial scan 360°</span><span class="tag" id="llm-tag">LLM authorization loading</span></div>
+<div class="methods" id="methods" aria-label="Select a search policy"></div>
+<div class="columns"><section class="panel"><div class="panel-head"><div><h2 id="map-title">Live trajectory</h2><div class="small muted" id="map-subtitle">Original Rs apartment reference</div></div><label class="small muted">Map layer<br><select id="layer"><option value="reference">Reference floorplan</option><option value="perception">Latest perception map</option></select></label></div><div class="map-wrap"><canvas id="map" width="660" height="820" role="img" aria-label="Apartment map showing actual robot trajectory, start and bowl target"></canvas></div><div class="legend"><span><i class="dot" style="background:#2b9c6b"></i>Start</span><span><i class="dot" style="background:#c64c39"></i>Bowl</span><span><i class="dot" style="background:#1777a9"></i>Actual path</span><span id="map-age">Reference map is for this report only</span></div></section>
+<div class="side"><section class="panel"><div class="panel-head"><h2 id="current-policy">Current trial</h2><span class="badge" id="current-status">Queued</span></div><p id="operation" class="muted">Waiting for data</p><div class="facts"><div class="fact"><b id="distance">—</b><span>distance / m</span></div><div class="fact"><b id="collisions">—</b><span>collision steps</span></div><div class="fact"><b id="decisions">—</b><span>decisions</span></div></div><hr class="rule"><div class="small muted">LATEST SEARCH GOAL</div><p class="goal" id="goal">—</p><p class="small muted" id="rationale">—</p><hr class="rule"><div class="small muted">OBSERVED OBJECT CLASSES</div><div class="classes" id="classes"></div><p class="small muted" id="target">Target not yet observed</p></section><section class="panel"><h2>Recent activity</h2><ul class="feed" id="feed"></ul></section></div></div>
+<section class="panel table-panel"><div class="panel-head"><h2>Trial results</h2><span class="small muted">600 simulated seconds per trial</span></div><div class="table-scroll"><table><thead><tr><th>Policy</th><th>Status</th><th class="num">Sim / s</th><th class="num">Wall / s</th><th class="num">Distance / m</th><th class="num">Collisions</th><th class="num">LLM calls / fallbacks</th></tr></thead><tbody id="results"></tbody></table></div></section>
+<section class="panel table-panel" id="batch-panel" hidden><div class="panel-head"><h2 id="batch-title">All runs</h2><span class="small muted" id="batch-progress"></span></div><div class="table-scroll"><table><thead><tr><th>Scene / target</th><th id="block-label">Seed</th><th>Policy</th><th>Status</th><th class="num">Sim / s</th><th class="num">Distance / m</th><th class="num">Collisions</th><th>Trajectory</th></tr></thead><tbody id="batch-results"></tbody></table></div></section>
+<p class="small muted"><a id="trajectory-download" hidden>Download selected run’s trajectory PNG</a></p>
+<footer><span id="scope-note">Updates every 2 seconds. Runs execute sequentially. One episode per policy; results are descriptive, not a statistical comparison.</span> The reference floorplan is never supplied to the search policy.<details><summary>Experiment provenance</summary><p id="provenance"></p></details></footer>
+</main>
+<script>
+const names={nearest:'Nearest',information_gain:'Information Gain',random:'Random',llm_guided:'LLM-guided'};
+const statusNames={queued:'Queued',running:'Searching',success:'Success',search_limit:'Search limit',no_feasible_frontiers:'No feasible frontiers',no_frontiers:'No frontiers',false_target_claim:'Rejected target claim',pipeline_error:'Pipeline error',initialization_failed:'Initialization failed',externally_cancelled:'Cancelled',process_error:'Process error',cancelled_before_start:'Cancelled'};
+const $=id=>document.getElementById(id),fmt=(n,d=1)=>Number(n||0).toFixed(d);
+const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let selected=null,selectedJob=null,data=null,following=true;
+const image=new Image();image.src='/floorplan.png';image.onload=()=>{if(data)draw()};
+const sceneImages=new Map();
+function getSceneImage(url){
+  if(!url)return null;
+  if(!sceneImages.has(url)){
+    const layer=new Image();layer.onload=()=>{if(data)draw()};
+    layer.src=url;sceneImages.set(url,layer);
+  }
+  return sceneImages.get(url);
+}
+const badge=s=>s==='running'?'running':s==='success'?'success':['queued'].includes(s)?'':'failed';
+const status=s=>statusNames[s]||s;
+function choose(policy){selected=policy;selectedJob=null;following=false;render()}
+async function viewJob(job,policy){
+  selectedJob=job;selected=policy;following=false;
+  if(await refreshNow()){
+    $('map').scrollIntoView({behavior:'smooth',block:'center'});
+    $('map').setAttribute('tabindex','-1');
+    $('map').focus({preventScroll:true});
+  }
+}
+function render(){
+  if(!data)return;
+  if(following||!selected)selected=data.active||data.cases.find(c=>c.status!=='queued')?.policy||'nearest';
+  if(data.jobs){$('subtitle').textContent='36-run benchmark · original start · 3 scenes × 3 seeds × 4 policies';$('scope-note').textContent='Updates every 2 seconds. Up to '+(data.concurrent_workers||1)+' concurrent cases. Policies are paired within scene/seed blocks; the initial pose is fixed. Wall times reflect shared resources.';$('noise-seed-tag').textContent='Noise seeds '+[...new Set(data.jobs.map(j=>(data.noise.seed+j.seed)>>>0))].join(', ')+' · paired'}
+  if(data.design==='bowl48'){
+    $('report-title').textContent='Bowl search · two locations';
+    $('subtitle').textContent='48 runs · kitchen 24 first, bathroom 24 second · 2 starts × 3 scenes × 4 policies';
+    $('scope-note').textContent='Updates every 2 seconds. Up to 2 concurrent cases. Start A: original living room; B: bedroom doorway. One fixed noise seed, paired across methods. Wall times reflect shared resources.';
+    $('block-label').textContent='Start';
+  }
+  $('methods').innerHTML=data.cases.map(c=>`<button class="method" data-policy="${c.policy}" aria-pressed="${c.policy===selected}"><div class="method-top"><strong>${names[c.policy]}</strong><span class="badge ${badge(c.status)}">${status(c.status)}</span></div><div class="metric">${data.jobs?c.finished+' / '+c.planned:(c.status==='queued'?'—':fmt(c.sim_s))} <span>${data.jobs?'runs finished':'sim seconds'}</span></div><div class="progress"><i style="width:${data.jobs?c.finished/c.planned*100:Math.min(100,c.sim_s/6)}%"></i></div><span class="small muted">${data.jobs?c.successes+' successes · '+(c.status==='running'?'trial in progress':c.status==='queued'?'queued':'latest trial finished'):(c.status==='queued'?'Waiting in sequence':fmt(c.distance_m)+' m · '+c.collisions+' collision steps')}</span></button>`).join('');
+  document.querySelectorAll('[data-policy]').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.policy)));
+  const c=data.cases.find(c=>c.policy===selected);
+  $('current-policy').textContent=names[c.policy]+(c.job_id?' · '+c.profile+' / s'+c.seed:'');$('current-status').textContent=status(c.status);$('current-status').className='badge '+badge(c.status);
+  if(c.start_id)$('current-policy').textContent=names[c.policy]+' · '+c.target_location+' / '+c.profile+' / start '+c.start_id;
+  $('operation').textContent=c.status==='queued'?(c.policy==='llm_guided'?(data.llm_status==='blocked_by_approval'?'Automatic approval blocked · local baselines continue':'Authorized · waiting for local baselines'):'Waiting for previous trial'):c.operation;
+  $('distance').textContent=c.status==='queued'?'—':fmt(c.distance_m,2);$('collisions').textContent=c.status==='queued'?'—':c.collisions;$('decisions').textContent=c.status==='queued'?'—':c.decisions;
+  $('goal').textContent=c.goal?c.goal.frontier_id+' · '+c.goal.kind+' · ('+fmt(c.goal.approach_pose.x_m,2)+', '+fmt(c.goal.approach_pose.y_m,2)+') m':'No search goal yet';
+  $('rationale').textContent=c.rationale||'Waiting for a decision';
+  $('classes').innerHTML=c.classes.length?c.classes.map(n=>`<span>${escapeHtml(n)}</span>`).join(''):'<span>No observations yet</span>';
+  $('target').textContent=c.evaluation.w3_valid?'Independent target identity check passed':c.target_seen?'Bowl observed · independent acceptance still required':'Bowl not yet present in a decision snapshot';
+  $('feed').innerHTML=c.timeline.length?c.timeline.map(e=>`<li><time>${fmt(e.sim_s)} s</time><span>${escapeHtml(e.text)}</span></li>`).join(''):'<li><time>—</time><span>Waiting for the trial to start</span></li>';
+  $('results').innerHTML=data.cases.map(c=>`<tr><td>${names[c.policy]}</td><td>${status(c.status)}</td>${[c.sim_s,c.wall_s,c.distance_m].map(n=>`<td class="num">${c.status==='queued'?'—':fmt(n,n===c.distance_m?2:1)}</td>`).join('')}<td class="num">${c.status==='queued'?'—':c.collisions}</td><td class="num">${c.policy==='llm_guided'?c.llm_calls+' / '+c.llm_fallbacks:'—'}</td></tr>`).join('');
+  $('llm-tag').textContent='LLM '+(data.llm_status==='blocked_by_approval'?'execution blocked':data.llm_authorized?'approved':'not authorized')+' · '+(data.llm_model||'pending');
+  $('updated').textContent=new Date(data.updated_utc).toLocaleTimeString('en-GB',{timeZone:'Asia/Singapore'})+' SGT';
+  $('connection').textContent=data.cases.every(c=>!['queued','running'].includes(c.status))?'Trials complete':'Live · updating';
+  const provenanceStart=c.start||data.start;
+  $('provenance').textContent='Selected start: ('+provenanceStart.x_m+', '+provenanceStart.y_m+') m. Engine fingerprint: '+data.source_fingerprint;
+  const download=$('trajectory-download');download.hidden=!c.trajectory_available;if(c.trajectory_available){download.href='/trajectory/'+encodeURIComponent(c.job_id||c.policy)+'.png';download.download=(c.job_id||c.policy)+'-trajectory.png'}
+  if(data.jobs){
+    $('batch-panel').hidden=false;$('batch-title').textContent='All '+data.planned+' runs';$('batch-progress').textContent=data.completed+' / '+data.planned+' finished · '+data.phase;
+    $('batch-results').innerHTML=data.jobs.map(j=>`<tr><td>${escapeHtml(j.profile+(j.target_location?' / '+j.target_location:''))}</td><td>${escapeHtml(j.start_id||j.seed)}</td><td>${names[j.policy]}</td><td>${status(j.status)}</td><td class="num">${j.status==='queued'?'—':fmt(j.sim_s)}</td><td class="num">${j.status==='queued'?'—':fmt(j.distance_m,2)}</td><td class="num">${j.status==='queued'?'—':j.collisions}</td><td><button data-job="${j.job_id}" data-job-policy="${j.policy}" style="font:inherit;border:1px solid #dce5e9;background:white;border-radius:4px;padding:4px 8px;cursor:pointer">View</button>${j.trajectory_available?' · <a href="/trajectory/'+encodeURIComponent(j.job_id)+'.png" download="'+j.job_id+'-trajectory.png">PNG</a>':''}</td></tr>`).join('');
+    document.querySelectorAll('[data-job]').forEach(button=>{
+      const viewing=button.dataset.job===selectedJob;
+      button.textContent=viewing?'Viewing':'View';button.setAttribute('aria-pressed',String(viewing));
+      if(viewing)button.closest('tr').style.background='#e8f6f1';
+      button.addEventListener('click',()=>viewJob(button.dataset.job,button.dataset.jobPolicy));
+    });
+    $('connection').textContent=data.completed===data.planned?'Batch complete':data.active?'Live · '+data.completed+'/'+data.planned+' complete':'Live · '+data.phase;
+  }
+  draw();
+}
+function draw(){
+  const c=data.cases.find(c=>c.policy===selected),canvas=$('map'),ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  const point=(x,y)=>[(x+4.4)/6.6*W,(3.8-y)/8.2*H];
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#f5f7f7';ctx.fillRect(0,0,W,H);
+  if($('layer').value==='reference'){
+    if(image.complete&&image.naturalWidth){ctx.save();ctx.translate(0,H);ctx.scale(1,-1);ctx.drawImage(image,60,60,660,820,0,0,W,H);ctx.restore()}
+    const scene=getSceneImage(c.scene_overlay_url);
+    if(scene&&scene.complete&&scene.naturalWidth&&c.scene_overlay_extent){
+      const [xmin,xmax,ymin,ymax]=c.scene_overlay_extent;
+      const topLeft=point(xmin,ymax),bottomRight=point(xmax,ymin);
+      ctx.drawImage(scene,topLeft[0],topLeft[1],bottomRight[0]-topLeft[0],bottomRight[1]-topLeft[1]);
+    }
+    $('map-title').textContent=names[c.policy]+' · actual trajectory';$('map-subtitle').textContent=c.job_id||'Original Rs apartment reference';$('map-age').textContent='Reference map is for this report only';
+    if(scene&&scene.complete&&scene.naturalWidth)$('map-age').textContent='Native inserted objects at t=0; the cart can move later';
+  }else{
+    if(c.grid){const g=c.grid,s=g.resolution_m/6.6*W;g.data.forEach((row,r)=>row.forEach((value,col)=>{const p=point(g.origin_x_m+col*g.resolution_m,g.origin_y_m+(r+1)*g.resolution_m);ctx.fillStyle=value===-1?'#dce4e8':value>=100?'#293b48':'#fff';ctx.fillRect(p[0],p[1],s+.2,s+.2)}))}
+    $('map-title').textContent=names[c.policy]+' · perception map';$('map-subtitle').textContent='Map from the latest search-decision snapshot';$('map-age').textContent='Grey: unknown · dark: occupied';
+  }
+  ctx.lineWidth=2.5;ctx.strokeStyle='#1777a9';ctx.beginPath();c.route.forEach((p,i)=>{const q=point(...p);i?ctx.lineTo(...q):ctx.moveTo(...q)});ctx.stroke();
+  const startPose=c.start||data.start,targetSpec=c.target||data.target;
+  const start=point(startPose.x_m,startPose.y_m);ctx.fillStyle='#2b9c6b';ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(...start,7,0,Math.PI*2);ctx.fill();ctx.stroke();
+  const target=point(targetSpec.position[0],targetSpec.position[1]);ctx.fillStyle='#c64c39';ctx.strokeStyle='#fff';ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?5:12;const x=target[0]+Math.cos(a)*r,y=target[1]+Math.sin(a)*r;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.fill();ctx.stroke();
+  if(c.goal){const g=point(c.goal.approach_pose.x_m,c.goal.approach_pose.y_m);ctx.strokeStyle='#bb8a18';ctx.lineWidth=2;ctx.strokeRect(g[0]-6,g[1]-6,12,12)}
+  if(c.pose){const p=point(c.pose.x_m,c.pose.y_m);ctx.save();ctx.translate(...p);ctx.rotate(-c.pose.yaw_rad);ctx.fillStyle='#104b76';ctx.strokeStyle='#fff';ctx.beginPath();ctx.moveTo(13,0);ctx.lineTo(-8,-7);ctx.lineTo(-8,7);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore()}
+}
+let refreshController=null;
+async function refreshNow(){
+  if(refreshController)refreshController.abort();
+  const controller=new AbortController();refreshController=controller;
+  try{
+    const response=await fetch('/api/status'+(selectedJob?'?job='+encodeURIComponent(selectedJob):''),{cache:'no-store',signal:controller.signal});
+    if(!response.ok)throw Error(response.status);
+    const result=await response.json();
+    if(controller!==refreshController)return false;
+    data=result;render();$('connection').classList.remove('error');return true;
+  }catch(error){
+    if(error.name==='AbortError'||controller!==refreshController)return false;
+    $('connection').textContent='Connection lost · retrying';$('connection').classList.add('error');return false;
+  }
+}
+async function refresh(){await refreshNow();setTimeout(refresh,2000)}
+$('layer').addEventListener('change',draw);refresh();
+</script></body></html>
