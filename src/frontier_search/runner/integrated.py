@@ -21,7 +21,7 @@ from ..policies.baselines import BaselinePolicy
 from ..policies.llm import LLMGuidedPolicy
 from ..policies.provider import CANONICAL_LLM_MODEL,GeminiCompatibleClient,load_local_env
 from ..simulation.igibson_adapter import AdapterConfig
-from ..simulation.integrated_rs import RetainingAdapter,CloseRetainedEvaluator
+from ..simulation.integrated_rs import RetainingAdapter,CloseRetainedEvaluator,RsTargetSpec
 from ..simulation.sensor_noise import add_noise_arguments,noise_from_arguments
 from ..simulation.igibson_rs import REGIONS
 from .manifest import EpisodeManifest
@@ -106,7 +106,7 @@ def source_fingerprint():
     return digest.hexdigest()
 
 
-def runtime_configuration(manifest, profile, relaxed_retry):
+def runtime_configuration(manifest, profile, relaxed_retry, target=None):
     """Normalize the actual C recovery and B navigation settings before launch."""
     navigator=TeamNavigator(None,linear_gain=2.0,start_margin_m=0.0,
                             relaxed_retry=relaxed_retry)
@@ -115,7 +115,8 @@ def runtime_configuration(manifest, profile, relaxed_retry):
     return dict(schema_version='c-navigation-recovery-v1',profile=profile,
         policy=manifest.policy_name,recovery=asdict(manifest.recovery),
         policy_config=asdict(manifest.policy),navigation=navigator.effective_configuration(),
-        sensor_noise=asdict(manifest.sensor_noise))
+        sensor_noise=asdict(manifest.sensor_noise),
+        target=asdict(target) if target is not None else None)
 
 
 def recording_validation_matches(report,fingerprint,profile,policy,configuration):
@@ -138,6 +139,22 @@ def main():
     parser.add_argument('--epsilon-retry',type=float,default=0.,help='C: probability of probing an excluded frontier per decision')
     parser.add_argument('--stuck-retry',action='store_true',help='C: probe an excluded frontier instead of ending when stuck')
     parser.add_argument('--validation',type=Path)
+    parser.add_argument('--target-class',default='cup')
+    parser.add_argument('--target-model',default='025_mug')
+    parser.add_argument('--target-position',type=float,nargs=3,metavar=('X','Y','Z'),
+                        default=(-1.4,2.95,.9213))
+    parser.add_argument('--target-roll',type=float,default=0.)
+    parser.add_argument('--target-pitch',type=float,default=0.)
+    parser.add_argument('--target-yaw',type=float,default=0.)
+    parser.add_argument('--target-instance-id',default='Rs-inserted-target')
+    parser.add_argument('--start-pose',type=float,nargs=3,metavar=('X','Y','YAW'))
+    parser.add_argument('--environment-seed',type=int)
+    parser.add_argument('--perception-seed',type=int)
+    parser.add_argument('--policy-seed',type=int)
+    parser.add_argument('--llm-prompt-version',choices=('v1','v2'),default='v1',
+                        help='System prompt variant for llm_guided (v1 = original wording)')
+    parser.add_argument('--llm-deadline-s',type=float,
+                        help='Override the per-decision LLM deadline (wall clock; simulation is paused)')
     add_noise_arguments(parser)
     args=parser.parse_args()
     try:
@@ -147,11 +164,22 @@ def main():
     load_local_env(args.env_file)
     fingerprint=source_fingerprint()
     manifest=shared_round_manifest_for(args.output.name,args.policy)
-    manifest=replace(manifest,sensor_noise=noise,recovery=replace(manifest.recovery,epsilon_retry=args.epsilon_retry,
-                                               stuck_retry=args.stuck_retry))
+    target=RsTargetSpec(args.target_class,args.target_model,tuple(args.target_position),
+                        args.target_yaw,args.target_instance_id,
+                        args.target_roll,args.target_pitch).validate()
+    start=(Pose(args.start_pose[0],args.start_pose[1],0.,args.start_pose[2])
+           if args.start_pose is not None else manifest.start_pose)
+    seed_overrides={name:getattr(args,name) for name in
+                    ('environment_seed','perception_seed','policy_seed')
+                    if getattr(args,name) is not None}
+    manifest=replace(manifest,target_class=target.class_name,start_pose=start,sensor_noise=noise,
+        recovery=replace(manifest.recovery,epsilon_retry=args.epsilon_retry,
+                         stuck_retry=args.stuck_retry),
+        policy=replace(manifest.policy,llm_prompt_version=args.llm_prompt_version,
+                       **({'llm_deadline_s':args.llm_deadline_s} if args.llm_deadline_s else {})),**seed_overrides)
     manifest.validate()
     relaxed_retry=RelaxedRetry() if args.relaxed_retry else None
-    effective_runtime=runtime_configuration(manifest,args.profile,relaxed_retry)
+    effective_runtime=runtime_configuration(manifest,args.profile,relaxed_retry,target)
     if args.record:
         if not args.validation:
             parser.error('--record requires a successful validation report')
@@ -171,7 +199,7 @@ def main():
     print('detector_runtime',json.dumps(detector_runtime),flush=True)
     print('sensor_noise',json.dumps(asdict(noise)),flush=True)
     os.environ.setdefault('YOLO_CONFIG_DIR',str(ROOT/'data/yolo-config'))
-    detector=DisplayDetector(str(ROOT/'weights/yolo11/yolo11s.pt'),target_class='cup',tile_every_frames=3,
+    detector=DisplayDetector(str(ROOT/'weights/yolo11/yolo11s.pt'),target_class=target.class_name,tile_every_frames=3,
                              minimum_confidence=.50,device=device)
     # Warm imports/model kernels outside the episode's module budgets.
     from ..sensors import ImageBuffer
@@ -181,7 +209,8 @@ def main():
         path_smoothing=False,control_hz=30,odometry_source='latest control-step known-pose difference'),indent=2),encoding='utf-8')
     store=RetainedFrames()
     sim=RetainingAdapter(manifest.robot,manifest.mapping,
-        AdapterConfig(scene_id='Rs',settle_steps=0,image_width=640,image_height=480,vertical_fov_deg=75.),store,args.profile)
+        AdapterConfig(scene_id='Rs',settle_steps=0,image_width=640,image_height=480,vertical_fov_deg=75.),
+        store,args.profile,target)
     mapper=RGBDMapper(detector)
     # Grid waypoints are only 0.1 m apart. The default 1/s gain made the
     # robot crawl below its speed limit even on a straight, validated path.
@@ -190,7 +219,7 @@ def main():
                       relaxed_retry=relaxed_retry)
     policy=(LLMGuidedPolicy(GeminiCompatibleClient()) if args.policy=='llm_guided'
             else BaselinePolicy(PolicyName(args.policy)))
-    evaluator=CloseRetainedEvaluator(store,sim)
+    evaluator=CloseRetainedEvaluator(store,sim,target_class=target.class_name)
     log=PipelineLog(args.output/'events.jsonl')
     runner=EpisodeRunner(sim,mapper,nav,policy,evaluator,logger=log,
                          recovery=SpatialRecovery(manifest.recovery,locality_radius_m=.6),
@@ -203,14 +232,17 @@ def main():
     result=runner.run(manifest)
     log.close()
     llm_records=getattr(policy,'call_records',())
+    (args.output/'llm-calls.json').write_text(dumps(list(llm_records)),encoding='utf-8')
     summary=dict(runner.summary,profile=args.profile,policy=args.policy,
+        environment_seed=manifest.environment_seed,perception_seed=manifest.perception_seed,
+        policy_seed=manifest.policy_seed,start_pose=asdict(manifest.start_pose),
         llm_attempts=len(llm_records),
         llm_calls=sum(bool(r.get('model_called',
             r.get('fallback_reason') not in ('unconfigured_client','call_cap'))) for r in llm_records),
         llm_fallbacks=sum(bool(r.get('fallback_reason')) for r in llm_records),
         source_fingerprint=fingerprint,source_unchanged=fingerprint==source_fingerprint(),evaluation=evaluator.metrics,
         detector_runtime=detector_runtime,
-        runtime_configuration=effective_runtime,
+        runtime_configuration=effective_runtime,target=asdict(target),
         scene_events=getattr(getattr(getattr(sim,'_backend',None),'world',None),'environment_events',[]),
         navigator_events=nav.events,recorded=args.record,
         components=dict(scene='Gibson Rs',robot='native Locobot',sensor='native calibrated eyes RGB-D',

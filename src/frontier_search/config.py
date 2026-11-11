@@ -229,8 +229,12 @@ class PolicyConfig:
     # Bound prompt growth independently of episode length.
     llm_feedback_window: int = 8
     llm_max_observed_objects: int = 24
+    # System prompt variant; 'v1' is the original wording, kept byte-identical.
+    llm_prompt_version: str = 'v1'
 
     def __post_init__(self) -> None:
+        if self.llm_prompt_version not in ('v1', 'v2'):
+            raise ValueError("llm_prompt_version must be 'v1' or 'v2'")
         if not isfinite(self.epsilon_m) or self.epsilon_m <= 0:
             raise ValueError("epsilon_m must be finite and positive")
         if not isfinite(self.llm_deadline_s) or self.llm_deadline_s <= 0:
