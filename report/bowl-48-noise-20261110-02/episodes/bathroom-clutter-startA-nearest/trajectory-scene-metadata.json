@@ -1,0 +1,51 @@
+{
+  "job_id": "bathroom-clutter-startA-nearest",
+  "policy": "nearest",
+  "profile": "clutter",
+  "environment_seed": 17,
+  "termination": "success",
+  "partial_metrics": false,
+  "start_pose": {
+    "x_m": 0.8,
+    "y_m": -2.4,
+    "z_m": 0.0,
+    "yaw_rad": 1.5707963267948966
+  },
+  "last_recorded_pose": {
+    "x_m": -2.645719904533315,
+    "y_m": 2.642081773082888,
+    "yaw_rad": 2.855814915731721,
+    "z_m": 0.0003869641116576596
+  },
+  "target_position_world": [
+    -3.400241998583078,
+    3.0011864975094804,
+    0.43358444657109885
+  ],
+  "motion_samples": 7650,
+  "simulated_time_s": 255.0,
+  "actual_distance_m": 15.20455622434886,
+  "input_signature": [
+    1794305666226857200,
+    9043,
+    20364746,
+    1794357512501356500,
+    653987
+  ],
+  "created_utc": "2026-11-11T00:40:08.217741+00:00",
+  "source": "Recorded motion_sample events; no planned path, interpolation, or hidden-map navigation.",
+  "background": "Original Rs scan plus actual iGibson overhead render of inserted objects at t=0; the dynamic cart can move later.",
+  "scene_overlay": "scene-floorplans\\bathroom-clutter-startA-objects.png",
+  "world_bounds": {
+    "x_min": -4.4,
+    "x_max": 2.2,
+    "y_min": -4.4,
+    "y_max": 3.8
+  },
+  "markers": {
+    "start": "green circle",
+    "target": "red star",
+    "end": "blue heading triangle",
+    "trajectory": "blue path with travel-direction arrows"
+  }
+}

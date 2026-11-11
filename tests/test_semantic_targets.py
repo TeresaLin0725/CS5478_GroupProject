@@ -39,4 +39,5 @@ def test_runtime_configuration_records_target_setup():
     configuration = integrated.runtime_configuration(manifest, 'apartment', None, target)
     assert configuration['target']['class_name'] == 'scissors'
     assert configuration['target']['model'] == '037_scissors'
-    assert configuration['target']['position_world'] == (.15, -3.8, .745)
+    assert configuration['target']['position'] == (.15, -3.8, .745)
+    assert configuration['target']['yaw_rad'] == -.63

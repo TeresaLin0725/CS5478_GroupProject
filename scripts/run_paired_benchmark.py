@@ -3,7 +3,7 @@ import argparse,hashlib,json,os,shutil,subprocess,sys,time
 from dataclasses import asdict,replace
 from datetime import datetime,timezone
 from pathlib import Path
-from benchmark_protocol import ARMS,POLICIES,TRIALS,apply_arm,task_specs,validate_pairing
+from benchmark_protocol import ARMS,POLICIES,TRIALS,apply_arm,task_specs,bowl48_task_specs,validate_pairing
 from benchmark_episode import atomic,read
 from benchmark_watchdog import WatchdogChannel
 
@@ -46,25 +46,28 @@ def python():
     p=ROOT/'data/venv-igibson/Scripts/python.exe'
     return str(p if p.exists() else Path(sys.executable))
 
-def benchmark_manifest():
+def benchmark_manifest(task='legacy_cup'):
     """Shared A/B geometry for new suites, without rewriting historical manifests."""
-    from frontier_search.runner.integrated import shared_round_manifest_for
-    return replace(shared_round_manifest_for('template'),initialization_deadline_s=240.)
+    from frontier_search.runner.integrated import task_manifest_for
+    return replace(task_manifest_for('template',task=task),initialization_deadline_s=240.)
 
 def noise_for_job(config,job):
     """Same stream across policies in a task; heading blocks have distinct seeds."""
     return replace(config,seed=(config.seed+job['environment_seed']) % (2**32))
 
-def freeze(out,workers,arm=None,sensor_noise=None):
+def freeze(out,workers,arm=None,sensor_noise=None,task='legacy_cup',tests_certificate=None,design=None):
     if (out/'protocol.json').exists():raise FileExistsError('Choose a fresh suite directory; use run to resume the queue')
+    if design is not None and (design!='bowl48' or task!='kitchen_bowl'):
+        raise ValueError('bowl48 design requires kitchen_bowl as the base task')
     sys.path.insert(0,str(ROOT/'src'))
     from frontier_search.runner.integrated import source_fingerprint
     from frontier_search.policies.provider import load_local_env
     from frontier_search.contracts import Pose
+    from frontier_search.simulation.rs_tasks import RS_TARGETS
     env_file=next(p for p in (ROOT/'.env',ROOT.parent/'.env') if p.is_file())
     load_local_env(env_file)
     engine=source_fingerprint()
-    tests=read(ROOT/'report/evidence/demo/checks-multiview/tests.json')
+    tests=read(tests_certificate or ROOT/'report/evidence/demo/checks-multiview/tests.json')
     assert tests['returncode']==0 and tests['source_unchanged'] and tests['source_fingerprint']==engine,'regression certificate does not match'
     out.mkdir(parents=True,exist_ok=True);snapshot=out/'frozen'
     shutil.copytree(ROOT/'src',snapshot/'src',ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
@@ -72,7 +75,10 @@ def freeze(out,workers,arm=None,sensor_noise=None):
     shutil.copy2(ROOT/'weights/yolo11/yolo11s.pt',snapshot/'weights/yolo11/yolo11s.pt')
     (snapshot/'harness').mkdir()
     for name in HARNESSES:shutil.copy2(ROOT/'scripts'/name,snapshot/'harness'/name)
-    jobs=task_specs();base=benchmark_manifest()
+    base=benchmark_manifest(task)
+    target=RS_TARGETS[task]
+    fixed_start=asdict(base.start_pose) if task=='kitchen_bowl' else None
+    jobs=bowl48_task_specs() if design=='bowl48' else task_specs(fixed_start)
     if sensor_noise is not None:
         base=replace(base,sensor_noise=sensor_noise)
     for job in jobs:
@@ -87,7 +93,7 @@ def freeze(out,workers,arm=None,sensor_noise=None):
     validate_pairing(jobs)
     assets=ROOT/'data/igibson-data';asset_hashes={}
     for directory in (assets/'g_dataset/Rs',assets/'robot_assets/assets/models/locobot',
-                      assets/'robot_assets/assets/models/ycb/025_mug',assets/'robot_assets/assets/models/ycb/006_mustard_bottle'):
+                      assets/'robot_assets/assets/models/ycb'/target.model,assets/'robot_assets/assets/models/ycb/006_mustard_bottle'):
         for path in sorted(directory.rglob('*')):
             if path.is_file():asset_hashes[str(path.relative_to(assets)).replace('\\','/')]=sha(path)
     seals={str(p.relative_to(snapshot)).replace('\\','/'):sha(p) for p in snapshot.rglob('*') if p.is_file()}
@@ -95,27 +101,44 @@ def freeze(out,workers,arm=None,sensor_noise=None):
         run_root=str(out),snapshot_root=str(snapshot),env_file=str(env_file),engine_fingerprint=engine,
         watchdog_transport='shared_memory_v1',
         navigation_preset='shared_round',navigation_options=dict(start_margin_m=0.0),
-        sensor_noise=asdict(base.sensor_noise),
+        sensor_noise=asdict(base.sensor_noise),task=task,
         noise_seed_semantics='Per-job noise seed = (base noise seed + environment seed) mod 2**32. Independent Gaussian/dropout streams keyed by capture sequence; same across policies, not necessarily the same physical observations.',
-        scope='Current Rs benchmark: one physical house, three scene conditions, three seed/initial-heading blocks, four policies; 36 fresh native episodes. Not multi-house generalization.',
-        jobs=jobs,seed_heading_blocks=[dict(seed=seed,yaw_rad=yaw) for seed,yaw in TRIALS],
-        seed_semantics='Geometry and cup position are fixed. Initial heading is a predeclared task variation. Dedicated policy seed controls Random; deterministic baselines and YOLO need not vary with seed. Hosted LLM is not reproducible from a local seed.',
+        scope=('Rs bowl benchmark: one physical house, three scene conditions, three seed blocks, four policies; 36 fresh native episodes at the original fixed start pose. Not multi-house generalization.' if fixed_start else
+            'Current Rs benchmark: one physical house, three scene conditions, three seed/initial-heading blocks, four policies; 36 fresh native episodes. Not multi-house generalization.'),
+        jobs=jobs,seed_heading_blocks=[dict(seed=seed,yaw_rad=base.start_pose.yaw_rad if fixed_start else yaw) for seed,yaw in TRIALS],
+        fixed_start_heading=bool(fixed_start),
+        seed_semantics=('Geometry, bowl position and initial pose are fixed. Three seed blocks vary policy/perception/noise streams; all methods share each block. Hosted LLM is not reproducible from a local seed.' if fixed_start else
+            'Geometry and cup position are fixed. Initial heading is a predeclared task variation. Dedicated policy seed controls Random; deterministic baselines and YOLO need not vary with seed. Hosted LLM is not reproducible from a local seed.'),
         asset_paths=dict(robot_assets=str(assets/'robot_assets/assets'),scenes=str(assets/'g_dataset')),
         asset_hashes=asset_hashes,snapshot_seals=seals,base_manifest=asdict(base),
         policies=list(POLICIES),profiles=['apartment','clutter','dynamic'],
-        target_evaluator_only=dict(model='025_mug',class_name='cup',position_world=[-1.4,2.95,.9213],
+        target_evaluator_only=dict(model=target.model,class_name=target.class_name,position_world=list(target.position),instance_id=target.instance_id,
             reachability='Native collision/floor oracle preflight, parked cart if dynamic; oracle files never read by episode worker.'),
         runtime=dict(workers=workers,torch_threads=4,device='0',python=sys.version,startup_deadline_s=300.,
-            wall_time_interpretation='Concurrent shared-resource wall times; not isolated single-robot latency.'),
+            wall_time_interpretation='Sequential execution, one simulator at a time.' if workers==1 else 'Concurrent shared-resource wall times; not isolated single-robot latency.'),
         regression_certificate=tests,no_episode_retries=True,arm=arm,arm_settings=ARMS.get(arm),
-        reporting=dict(primary_unit='profile x seed/initial-heading paired block',penalized_failure_s=600.,
+        reporting=dict(primary_unit='profile x seed paired block' if fixed_start else 'profile x seed/initial-heading paired block',penalized_failure_s=600.,
             confidence='Wilson descriptive success intervals; 10000 paired stratified bootstrap draws, RNG 20261018; exact McNemar with Holm correction for six comparisons.',
             include_all_terminations=True,success_conditioned_metrics_include_n=True))
+    if design=='bowl48':
+        targets={name:RS_TARGETS[name+'_bowl'] for name in ('kitchen','bathroom')}
+        protocol.update(design='bowl48',scene_layout='bowl48_accessible',
+            scene_layout_reason='A chair at (-2.70,1.0) blocked all full-footprint routes to bathroom close viewpoints in isolated preflight. Move the same chair to (-3.35,.85) in both clutter/dynamic conditions for both targets; all other props and legacy layouts unchanged.',
+            scope='48 fresh Rs episodes: two bowl locations x two starts x three conditions x four policies. Kitchen 24 first, bathroom 24 second. One fixed noise realization per task; not multi-house generalization.',
+            targets_evaluator_only={name:dict(model=t.model,class_name=t.class_name,
+                position_world=list(t.position),instance_id=t.instance_id) for name,t in targets.items()},
+            starts={j['start_id']:j['start_pose'] for j in jobs},fixed_start_heading=False,
+            seed_heading_blocks=[dict(start_id=s,start_pose=pose,seed=17,yaw_rad=pose['yaw_rad'])
+                for s,pose in {j['start_id']:j['start_pose'] for j in jobs}.items()],
+            seed_semantics='Environment/perception/policy seeds held at 17/10017/20017 for both starts and both target locations. Actual noise seed is base+17. Four methods paired within target/profile/start.',
+            preflight_cases=[dict(case_id=j['pair_id'],job_id=j['job_id']) for j in jobs if j['policy']==POLICIES[0]],
+            reporting=dict(protocol['reporting'],primary_unit='target location x profile x start',
+                confidence='Descriptive fixed-task statistics; paired bootstrap within profile over target/start blocks. Two starts are task variation, not independent houses.'))
     atomic(out/'protocol.json',protocol)
     (out/'protocol.sha256').write_text(sha(out/'protocol.json')+'\n',encoding='ascii')
     # Human/repository entry points hold the same fully populated manifest.
     # An arm never overwrites the original frozen batch's config.
-    if sensor_noise is None:
+    if sensor_noise is None and task=='legacy_cup':
         atomic(ROOT/'configs'/('experiment.rs-20261018-%s.json'%arm if arm else 'experiment.rs-20261018.json'),protocol)
     atomic(out/'progress.json',dict(status='preflight_pending',active=[],completed=0,planned=len(jobs),updated_utc=utc()))
     from build_benchmark_report import build
@@ -139,17 +162,22 @@ def command(protocol,*args):
             '--protocol',str(Path(protocol['run_root'])/'protocol.json'),*args]
 
 def preflights(out,protocol):
+    cases=[c['case_id'] for c in protocol.get('preflight_cases',[])] or list(protocol['profiles'])
     processes=[]
-    for profile in protocol['profiles']:
+    pending=[]
+    for profile in cases:
         folder=out/'preflight'/profile;folder.mkdir(parents=True,exist_ok=True)
         if (folder/'preflight.json').exists():
             assert read(folder/'preflight.json')['passed'],('failed preflight',profile)
             continue
-        log=(folder/'console.log').open('w',encoding='utf-8')
-        process=subprocess.Popen(command(protocol,'--preflight',profile),cwd=str(ROOT),env=frozen_env(protocol),
-            stdout=log,stderr=subprocess.STDOUT,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
-        processes.append((profile,process,log,time.time()))
-    while processes:
+        pending.append(profile)
+    while processes or pending:
+        while pending and len(processes)<min(2,protocol['runtime']['workers']):
+            profile=pending.pop(0);folder=out/'preflight'/profile
+            log=(folder/'console.log').open('w',encoding='utf-8')
+            process=subprocess.Popen(command(protocol,'--preflight',profile),cwd=str(ROOT),env=frozen_env(protocol),
+                stdout=log,stderr=subprocess.STDOUT,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
+            processes.append((profile,process,log,time.time()))
         for item in list(processes):
             profile,p,log,started=item
             if time.time()-started>600:p.kill()
@@ -159,7 +187,7 @@ def preflights(out,protocol):
                 assert p.returncode==0 and path.exists() and read(path)['passed'],('native preflight failed',profile)
                 print('preflight_passed',profile,flush=True)
         time.sleep(1)
-    reports={p:read(out/'preflight'/p/'preflight.json') for p in protocol['profiles']}
+    reports={p:read(out/'preflight'/p/'preflight.json') for p in cases}
     atomic(out/'preflight/index.json',dict(passed=all(r['passed'] for r in reports.values()),profiles=reports,checked_utc=utc(),oracle_data_isolation=True))
 
 def result_row(out,job,protocol):
@@ -248,6 +276,9 @@ def run(out,only_baselines=False,only_llm=False,job_ids=None):
             # remain unstarted, never silently labeled as benchmark failures.
             queue=[]
         while queue and len(active)<protocol['runtime']['workers']:
+            # Finish the kitchen block before starting any bathroom episode.
+            if active and queue[0].get('target_location')!=active[0]['job'].get('target_location'):
+                break
             j=queue.pop(0);folder=out/'episodes'/j['job_id'];folder.mkdir(parents=True,exist_ok=True)
             log=(folder/'console.log').open('x',encoding='utf-8')
             proc=subprocess.Popen(command(protocol,'--job',j['job_id']),cwd=str(ROOT),env=frozen_env(protocol),
@@ -312,6 +343,9 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('action',choices=('freeze','run','all'));p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=3)
     scope=p.add_mutually_exclusive_group();scope.add_argument('--only-baselines',action='store_true');scope.add_argument('--only-llm',action='store_true');scope.add_argument('--job-id',dest='job_ids',action='append')
     p.add_argument('--arm',choices=sorted(ARMS),default=None)
+    p.add_argument('--task',choices=('legacy_cup','kitchen_bowl','bathroom_bowl'),default='legacy_cup')
+    p.add_argument('--design',choices=('bowl48',))
+    p.add_argument('--tests-certificate',type=Path)
     add_noise_arguments(p)
     a=p.parse_args();out=a.output.resolve()
     supplied=noise_arguments_supplied(a)
@@ -321,6 +355,7 @@ def main():
         noise=noise_from_arguments(a) if supplied else None
     except (ValueError, OSError, TypeError) as exc:
         p.error(str(exc))
-    if a.action in ('freeze','all'):freeze(out,a.workers,a.arm,noise)
+    if a.workers<1:p.error('--workers must be positive')
+    if a.action in ('freeze','all'):freeze(out,a.workers,a.arm,noise,a.task,a.tests_certificate,a.design)
     if a.action in ('run','all'):run(out,a.only_baselines,a.only_llm,a.job_ids)
 if __name__=='__main__':main()

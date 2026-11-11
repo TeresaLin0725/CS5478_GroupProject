@@ -1,0 +1,249 @@
+{
+  "status": "complete",
+  "saved": 48,
+  "planned": 48,
+  "images": [
+    {
+      "job_id": "kitchen-apartment-startA-random",
+      "image": "episodes\\kitchen-apartment-startA-random\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-apartment-startA-nearest",
+      "image": "episodes\\kitchen-apartment-startA-nearest\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-apartment-startA-information_gain",
+      "image": "episodes\\kitchen-apartment-startA-information_gain\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-apartment-startA-llm_guided",
+      "image": "episodes\\kitchen-apartment-startA-llm_guided\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-clutter-startA-random",
+      "image": "episodes\\kitchen-clutter-startA-random\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-clutter-startA-nearest",
+      "image": "episodes\\kitchen-clutter-startA-nearest\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-clutter-startA-information_gain",
+      "image": "episodes\\kitchen-clutter-startA-information_gain\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-clutter-startA-llm_guided",
+      "image": "episodes\\kitchen-clutter-startA-llm_guided\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-random",
+      "image": "episodes\\kitchen-dynamic-startA-random\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-nearest",
+      "image": "episodes\\kitchen-dynamic-startA-nearest\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-information_gain",
+      "image": "episodes\\kitchen-dynamic-startA-information_gain\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-llm_guided",
+      "image": "episodes\\kitchen-dynamic-startA-llm_guided\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-apartment-startB-random",
+      "image": "episodes\\kitchen-apartment-startB-random\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-apartment-startB-nearest",
+      "image": "episodes\\kitchen-apartment-startB-nearest\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-apartment-startB-information_gain",
+      "image": "episodes\\kitchen-apartment-startB-information_gain\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-apartment-startB-llm_guided",
+      "image": "episodes\\kitchen-apartment-startB-llm_guided\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-clutter-startB-random",
+      "image": "episodes\\kitchen-clutter-startB-random\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-clutter-startB-nearest",
+      "image": "episodes\\kitchen-clutter-startB-nearest\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-clutter-startB-information_gain",
+      "image": "episodes\\kitchen-clutter-startB-information_gain\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-clutter-startB-llm_guided",
+      "image": "episodes\\kitchen-clutter-startB-llm_guided\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-random",
+      "image": "episodes\\kitchen-dynamic-startB-random\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-nearest",
+      "image": "episodes\\kitchen-dynamic-startB-nearest\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-information_gain",
+      "image": "episodes\\kitchen-dynamic-startB-information_gain\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-llm_guided",
+      "image": "episodes\\kitchen-dynamic-startB-llm_guided\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-apartment-startA-random",
+      "image": "episodes\\bathroom-apartment-startA-random\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-apartment-startA-nearest",
+      "image": "episodes\\bathroom-apartment-startA-nearest\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-apartment-startA-information_gain",
+      "image": "episodes\\bathroom-apartment-startA-information_gain\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-apartment-startA-llm_guided",
+      "image": "episodes\\bathroom-apartment-startA-llm_guided\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-clutter-startA-random",
+      "image": "episodes\\bathroom-clutter-startA-random\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-clutter-startA-nearest",
+      "image": "episodes\\bathroom-clutter-startA-nearest\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-clutter-startA-information_gain",
+      "image": "episodes\\bathroom-clutter-startA-information_gain\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-clutter-startA-llm_guided",
+      "image": "episodes\\bathroom-clutter-startA-llm_guided\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-dynamic-startA-random",
+      "image": "episodes\\bathroom-dynamic-startA-random\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-dynamic-startA-nearest",
+      "image": "episodes\\bathroom-dynamic-startA-nearest\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-dynamic-startA-information_gain",
+      "image": "episodes\\bathroom-dynamic-startA-information_gain\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-dynamic-startA-llm_guided",
+      "image": "episodes\\bathroom-dynamic-startA-llm_guided\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-apartment-startB-random",
+      "image": "episodes\\bathroom-apartment-startB-random\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-apartment-startB-nearest",
+      "image": "episodes\\bathroom-apartment-startB-nearest\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-apartment-startB-information_gain",
+      "image": "episodes\\bathroom-apartment-startB-information_gain\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-apartment-startB-llm_guided",
+      "image": "episodes\\bathroom-apartment-startB-llm_guided\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-clutter-startB-random",
+      "image": "episodes\\bathroom-clutter-startB-random\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-clutter-startB-nearest",
+      "image": "episodes\\bathroom-clutter-startB-nearest\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-clutter-startB-information_gain",
+      "image": "episodes\\bathroom-clutter-startB-information_gain\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-clutter-startB-llm_guided",
+      "image": "episodes\\bathroom-clutter-startB-llm_guided\\trajectory-scene.png",
+      "already_saved": true
+    },
+    {
+      "job_id": "bathroom-dynamic-startB-random",
+      "image": "episodes\\bathroom-dynamic-startB-random\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-dynamic-startB-nearest",
+      "image": "episodes\\bathroom-dynamic-startB-nearest\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-dynamic-startB-information_gain",
+      "image": "episodes\\bathroom-dynamic-startB-information_gain\\trajectory-scene.png",
+      "already_saved": false
+    },
+    {
+      "job_id": "bathroom-dynamic-startB-llm_guided",
+      "image": "episodes\\bathroom-dynamic-startB-llm_guided\\trajectory-scene.png",
+      "already_saved": false
+    }
+  ],
+  "errors": [],
+  "updated_utc": "2026-11-11T00:40:18.965898+00:00"
+}

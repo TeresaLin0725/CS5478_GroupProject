@@ -44,6 +44,71 @@ Depth noise and missing depth pixels are opt-in: add `--noise`, or use
 `--no-noise` for a clean control. See [sensor noise configuration and the pilot
 experiment](Documentation/english/sensor_noise.md) for CLI/JSON settings and frozen benchmarks.
 
+The opt-in `--task kitchen_bowl` places a bowl on the kitchen counter and starts
+at the original living-room position `(0.8, -2.4)`, with the original full 360° initial scan.
+Run `python scripts/check_bowl_setup.py --output runs/bowl-setup-new` in the
+iGibson environment to check placement and the fixed start without searching.
+See the [placement and setup commands](Documentation/chinese/semantic_target_check.md#厨房碗与卧室旁起点完整一圈初始观察).
+
+For an active bowl pilot, `python scripts/serve_bowl_report.py --run-root <run-directory>`
+serves a read-only live report at `http://127.0.0.1:8910/`. It updates every two
+seconds from the episode logs, with policy status, actual trajectories, the latest
+perception map, decisions, collisions, and terminal results. Authorized LLM trials
+can be queued after the local baselines with `scripts/queue_bowl_llm.py` using
+the same frozen source snapshot and experiment settings.
+
+The completed bowl benchmark is `runs/bowl-48-noise-20261110-02`: two starts
+(A original living room, B bedroom doorway), three scene conditions, four policies,
+and two bowl locations. All 24 kitchen episodes run before the 24 bathroom episodes.
+Noise remains enabled (0.01 m depth standard deviation, 1% dropout, actual seed 140),
+with the validated 5x5 depth filter, recovery viewpoints and 0.5 inspection settling.
+The new layout moves the former doorway chair into the bedroom for both target
+locations, since isolated full-footprint checks found it otherwise blocked the
+bathroom. All other furnishings and legacy layouts remain unchanged. The initial
+unexecuted setup is preserved in `runs/bowl-48-noise-20261110-01`.
+There are at most two concurrent simulators. The frozen protocol contains 48
+paired manifests and 12 isolated target/start/condition feasibility prechecks;
+the source passed 663 regression tests before freezing. No completed outcome is
+retried. The live report is `http://127.0.0.1:8910/?batch=48`, with a correct start
+and target marker for each selected run and automatic per-episode trajectory PNGs.
+
+All 48 episodes completed: 45 successes and no collisions. Information Gain and
+LLM-guided both succeeded in 12/12 cases. LLM was more efficient for the kitchen
+bowl; IG was more efficient for the bathroom bowl. See the
+[Chinese report and portable evidence archive](report/bowl-48-noise-20261110-02/README.md)
+for time, path length, paired comparisons, all 48 results, and four trajectory
+comparison figures covering both targets and starts. The HTML report embeds its
+five figures; its 48 linked WebP previews are included in the archive.
+
+Scene-aware images are saved separately as `trajectory-scene.png`: run
+`scripts/render_all_scene_floorplans.py --run-root <run-directory>` with the
+iGibson Python, then `scripts/export_run_trajectories.py --run-root <run-directory>
+--scene-overlays`. They combine the original scan with native rendered inserted
+objects at their initial poses; the dynamic cart can move later. The live report
+shows these layers and prefers the scene-aware PNG when available.
+
+The preceding 36-run bowl benchmark used three scene conditions, three seed blocks,
+and four policies at one fixed start. Its completed batch is
+`runs/bowl-36-noise-20261110-02`. Depth noise was 0.01 m standard deviation with
+1% dropout; noise seeds 140, 152, and 166 are matched across policies in each block.
+It retains the earlier 35/36 suite's 5x5 range-gated depth filter, unvisited
+recovery viewpoints, and 0.5 inspection settling ratio. The previous bowl batch
+`runs/bowl-36-noise-20261109-01` was stopped and retained as diagnostic data after
+its manifest was found to omit these settings. Its outcomes are excluded from
+the corrected batch. Explicit simulation-payload authorization for Google Gemini
+was received on 10 November. At the user's request, the batch now runs up to
+two cases concurrently: one local baseline and one LLM case. The runtime change
+and initially sequential cases are recorded in `execution-amendment.json`;
+wall times after that change reflect shared CPU/GPU use.
+
+`python scripts/export_run_trajectories.py --run-root <run-directory> --watch`
+saves `episodes/<job_id>/trajectory.png` after each run, including failures and
+interrupted runs. Images show the reference floorplan, actual recorded path and
+direction arrows, green start, red target, and final heading marker. Metadata is
+saved beside each PNG; the live report offers per-run PNG downloads. This exporter
+runs separately from the frozen benchmark and should be restarted when resuming
+after its process has stopped.
+
 Mapping-side robustness options are independent of injected noise: see
 [depth filtering](Documentation/english/depth_filter.md) and
 [unvisited recovery viewpoints](Documentation/english/recovery_viewpoints.md), plus

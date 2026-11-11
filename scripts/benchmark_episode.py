@@ -7,6 +7,18 @@ from pathlib import Path
 
 def read(p):return json.loads(Path(p).read_text(encoding='utf-8'))
 
+
+def target_for_protocol(protocol,job=None):
+    from frontier_search.simulation.rs_tasks import LEGACY_CUP,RsTarget
+    spec=(protocol['targets_evaluator_only'][job['target_location']]
+          if job is not None and 'targets_evaluator_only' in protocol else
+          protocol.get('target_evaluator_only'))
+    if spec is None:
+        return LEGACY_CUP
+    default_id=LEGACY_CUP.instance_id if spec['model']==LEGACY_CUP.model else 'Rs-inserted-'+spec['model']
+    return RsTarget(spec['class_name'],spec['model'],tuple(spec['position_world']),
+                    spec.get('instance_id',default_id))
+
 def local_collision_switches(protocol):
     enabled=protocol.get('local_collision_refinement',False)
     history=protocol.get('local_collision_retain_history',False)
@@ -32,12 +44,19 @@ def validate_shared_geometry(protocol, manifest):
         if manifest.robot != shared_round_robot(manifest.robot):
             raise ValueError('shared_round requires the round footprint and 0.01 m manifest clearance')
 
+def preflight_job(protocol,case_id):
+    case=next((c for c in protocol.get('preflight_cases',[]) if c['case_id']==case_id),None)
+    if case is not None:
+        return next(j for j in protocol['jobs'] if j['job_id']==case['job_id'])
+    return next(j for j in protocol['jobs'] if j['profile']==case_id)
+
+
 def preflight_manifest(protocol, profile):
     from dataclasses import replace
     from frontier_search.runner.integrated import manifest_for
     from frontier_search.runner.manifest import load_manifest
     if protocol.get('navigation_preset')=='shared_round':
-        job=next(j for j in protocol['jobs'] if j['profile']==profile)
+        job=preflight_job(protocol,profile)
         path=Path(protocol['run_root'])/job['manifest_path']
         if hashlib.sha256(path.read_bytes()).hexdigest()!=job['manifest_sha256']:
             raise ValueError('preflight manifest changed')
@@ -84,9 +103,17 @@ def preflight(protocol,profile,out):
     from frontier_search.navigation.costmap import Costmap
     from frontier_search.navigation.lattice import LatticeSearch
     from frontier_search.fixtures.clearance import clearance_binding,footprint_cells
-    m=preflight_manifest(protocol,profile)
-    sim=RetainingAdapter(m.robot,m.mapping,AdapterConfig(scene_id='Rs',image_width=640,image_height=480,vertical_fov_deg=75.),RetainedFrames(),profile)
-    result=dict(profile=profile,passed=False,environment_seed=m.environment_seed,
+    case_id=profile
+    job=preflight_job(protocol,case_id) if protocol.get('jobs') else dict(profile=profile)
+    m=preflight_manifest(protocol,case_id)
+    profile=job['profile']
+    target=target_for_protocol(protocol,job)
+    if target.class_name!=m.target_class:
+        raise ValueError('Preflight target and manifest class differ')
+    sim=RetainingAdapter(m.robot,m.mapping,AdapterConfig(scene_id='Rs',image_width=640,image_height=480,vertical_fov_deg=75.),RetainedFrames(),profile,target,protocol.get('scene_layout','legacy'))
+    result=dict(profile=profile,case_id=case_id,passed=False,environment_seed=m.environment_seed,
+        target_location=job.get('target_location'),start_id=job.get('start_id'),
+        scene_layout=protocol.get('scene_layout','legacy'),
         start_pose=asdict(m.start_pose),
         scope='Evaluator-only native geometry and visibility. Never supplied to the search mapper or policy.')
     try:
@@ -113,10 +140,16 @@ def preflight(protocol,profile,out):
         cm=Costmap.from_robot(g,m.robot);cm.prepare();oracle=LatticeSearch(g,m.robot)
         result['oracle_planner']='Evaluator-only oriented full-footprint LatticeSearch; formal search retains the original TeamNavigator.'
         atomic(out/'oracle-grid.json',asdict(g))
-        candidates=[(-.75,2.45),(-.85,2.35),(-.65,2.45),(-.75,2.35)]
+        candidates=([(-2.65,2.8),(-2.75,2.8),(-2.75,2.6),(-2.65,2.6)]
+                    if job.get('target_location')=='bathroom' else
+                    [(-.75,2.45),(-.85,2.35),(-.65,2.45),(-.75,2.35)])
+        headings=([m.start_pose.yaw_rad] if protocol.get('preflight_cases') else
+                  [trial['yaw_rad'] for trial in protocol['seed_heading_blocks']])
         for x,y in candidates:
-            goal=Pose(x,y,0.,atan2(2.95-y,-1.4-x))
-            paths=[oracle.solve(Pose(.8,-2.4,0.,trial['yaw_rad']),{'view':goal},30.)['view'] for trial in protocol['seed_heading_blocks']]
+            goal=Pose(x,y,0.,atan2(target.position[1]-y,target.position[0]-x))
+            solutions={yaw:oracle.solve(Pose(m.start_pose.x_m,m.start_pose.y_m,0.,yaw),{'view':goal},30.)['view']
+                       for yaw in dict.fromkeys(headings)}
+            paths=[solutions[yaw] for yaw in headings]
             if not all(p.success for p in paths):continue
             body=next(iter(w.robot_bodies))
             w.p.resetBasePositionAndOrientation(body,[x,y,.01],w.p.getQuaternionFromEuler([0,0,goal.yaw_rad]))
@@ -163,16 +196,19 @@ def episode(protocol,job,out):
     assert hashlib.sha256(manifest_path.read_bytes()).hexdigest()==job['manifest_sha256'],'manifest changed'
     m=load_manifest(manifest_path)
     validate_shared_geometry(protocol,m)
+    target=target_for_protocol(protocol,job)
+    if target.class_name!=m.target_class:
+        raise ValueError('Episode target and manifest class differ')
     random.seed(m.perception_seed);np.random.seed(m.perception_seed);torch.manual_seed(m.perception_seed)
     torch.set_num_threads(protocol['runtime']['torch_threads'])
     device='0' if torch.cuda.is_available() else 'cpu'
     assert device==protocol['runtime']['device'],'inference device changed'
     detector=DisplayDetector(str(Path(protocol['snapshot_root'])/'weights/yolo11/yolo11s.pt'),
-        target_class='cup',tile_every_frames=3,minimum_confidence=.50,device=device)
+        target_class=m.target_class,tile_every_frames=3,minimum_confidence=.50,device=device)
     detector.detect(ImageBuffer(640,480,'rgb8',bytes(640*480*3)))
     store=RetainedFrames()
     sim=RetainingAdapter(m.robot,m.mapping,AdapterConfig(scene_id='Rs',settle_steps=0,
-        image_width=640,image_height=480,vertical_fov_deg=75.),store,job['profile'])
+        image_width=640,image_height=480,vertical_fov_deg=75.),store,job['profile'],target,protocol.get('scene_layout','legacy'))
     local_refinement,retain_history=local_collision_switches(protocol)
     if local_refinement:
         from frontier_search.experimental.collision_refinement import LocalCollisionMapper,LocalCollisionNavigator
@@ -183,7 +219,7 @@ def episode(protocol,job,out):
     else:
         mapper=RGBDMapper(detector);nav=TeamNavigator(sim,linear_gain=2.,**nav_kwargs(job,protocol))
     policy=LLMGuidedPolicy(GeminiCompatibleClient()) if job['policy']=='llm_guided' else BaselinePolicy(PolicyName(job['policy']))
-    evaluator=CloseRetainedEvaluator(store,sim)
+    evaluator=CloseRetainedEvaluator(store,sim,target_class=m.target_class)
     from benchmark_watchdog import WatchdogChannel,AsyncEventWriter
     channel=WatchdogChannel(out,create=True) if protocol.get('watchdog_transport')=='shared_memory_v1' else None
     last_progress={}
@@ -274,7 +310,7 @@ def episode(protocol,job,out):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--protocol',type=Path,required=True)
-    p.add_argument('--job');p.add_argument('--preflight',choices=('apartment','clutter','dynamic'))
+    p.add_argument('--job');p.add_argument('--preflight')
     args=p.parse_args();protocol=read(args.protocol)
     os.environ['GIBSON_ASSETS_PATH']=protocol['asset_paths']['robot_assets']
     os.environ['GIBSON_DATASET_PATH']=protocol['asset_paths']['scenes']
@@ -282,6 +318,8 @@ def main():
     from frontier_search.policies.provider import load_local_env
     load_local_env(Path(protocol['env_file']))
     if args.preflight:
+        allowed=[c['case_id'] for c in protocol.get('preflight_cases',[])] or protocol['profiles']
+        if args.preflight not in allowed:raise ValueError('Unknown preflight case: '+args.preflight)
         out=Path(protocol['run_root'])/'preflight'/args.preflight;out.mkdir(parents=True,exist_ok=True)
         return preflight(protocol,args.preflight,out)
     job=next(j for j in protocol['jobs'] if j['job_id']==args.job)

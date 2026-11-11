@@ -2,7 +2,7 @@
 import argparse,csv,html,json
 from pathlib import Path
 from datetime import datetime,timezone
-from benchmark_protocol import POLICIES,PROFILES,aggregate
+from benchmark_protocol import POLICIES,PROFILES,aggregate,policy_stats
 from benchmark_episode import atomic,replace_shared
 
 LABELS={'random':'Random','nearest':'Nearest','information_gain':'Information Gain','llm_guided':'LLM-guided'}
@@ -24,6 +24,9 @@ def live_status_panel(root,protocol,stats,rows):
     launch=read(root/'launch-status.json') if (root/'launch-status.json').exists() else {}
     phase=html.escape(str(launch.get('phase','benchmark')))
     detail=html.escape(str(launch.get('detail','Results refresh while the queue is running.')))
+    if stats['complete']:
+        phase='complete'
+        detail='All planned episodes and paired task blocks are complete.'
     panel='<section><h2>Live execution status</h2><p><strong>'+phase+'</strong> · '+detail+'</p>'
     panel+='<p>Completed episodes: '+str(stats['completed'])+' / '+str(stats['planned'])+'. Updates approximately every 25 seconds; this page refreshes every 30 seconds.</p>'
     panel+='<table><thead><tr><th>Policy</th><th>Finished / planned</th><th>Verified successes / finished</th><th>LLM calls / fallbacks</th></tr></thead><tbody>'
@@ -34,6 +37,12 @@ def live_status_panel(root,protocol,stats,rows):
     panel+='</tbody></table><p class="note">These are descriptive counts of completed episodes. The paired comparison below requires all four policies in a task block.</p>'
     model=protocol.get('base_manifest',{}).get('policy',{}).get('llm_model','unspecified')
     panel+='<p>Configured LLM: <code>'+html.escape(str(model))+'</code>. Task success can include fallback behavior; it does not establish that the model worked.</p>'
+    target=protocol.get('target_evaluator_only',{})
+    start=protocol.get('base_manifest',{}).get('start_pose',{})
+    if protocol.get('design')=='bowl48':
+        panel+='<p>Target: bowl, kitchen or bathroom (one per episode). Starts: A original living room, B bedroom doorway. Fixed noise seed 140; 12 paired task blocks.</p>'
+    else:
+        panel+='<p>Target: <strong>'+html.escape(target.get('class_name','cup'))+'</strong> · start: ('+str(start.get('x_m'))+', '+str(start.get('y_m'))+') m. '+('Fixed initial heading; three seed blocks.' if protocol.get('fixed_start_heading') else 'Three seed/heading blocks.')+'</p>'
     invalid=[r['job_id'] for r in rows if r['policy']=='llm_guided'
              and r.get('llm_calls',0)>0 and r.get('llm_fallbacks',0)>=r['llm_calls']]
     if invalid:
@@ -43,6 +52,10 @@ def live_status_panel(root,protocol,stats,rows):
 def build(root,plots=False):
     root=Path(root).resolve();protocol=read(root/'protocol.json');rows=collect(root,protocol)
     stats=aggregate(rows,protocol['jobs'],draws=10000 if plots else 1000)
+    if protocol.get('design')=='bowl48':
+        stats['per_target']={t:policy_stats([r for r in rows if r['target_location']==t]) for t in ('kitchen','bathroom')}
+        stats['per_start']={s:policy_stats([r for r in rows if r['start_id']==s]) for s in ('A','B')}
+        stats['uncertainty']='Descriptive fixed-house results; paired bootstrap within profile over target/start blocks. Not independent-house generalization.'
     stats.update(protocol_hash=(root/'protocol.sha256').read_text().strip(),engine_fingerprint=protocol['engine_fingerprint'],
         scope=protocol['scope'],generated_utc=datetime.now(timezone.utc).isoformat(),
         sensor_noise=protocol.get('sensor_noise'))
@@ -71,7 +84,11 @@ def build(root,plots=False):
         for ax in axes:
             ax.set_xticks(xs,[LABELS[p].replace('Information Gain','IG') for p in POLICIES]);ax.spines[['top','right']].set_visible(False)
             ax.grid(axis='y',alpha=.2);ax.set_axisbelow(True)
-        fig.suptitle('Rs: 3 conditions x 3 seed/heading blocks; same native pipeline',fontsize=11)
+        if protocol.get('design')=='bowl48':
+            subtitle='Rs: 2 bowl locations x 2 starts x 3 conditions; fixed noise seed 140'
+        else:
+            subtitle='Rs: 3 conditions x 3 '+('seed blocks; fixed initial heading' if protocol.get('fixed_start_heading') else 'seed/heading blocks; same native pipeline')
+        fig.suptitle(subtitle,fontsize=11)
         for ext in ('png','svg'):fig.savefig(report/('performance.'+ext),dpi=180)
         plt.close(fig)
     primary=stats['paired_policy_stats'];cards=''
@@ -110,7 +127,9 @@ def build(root,plots=False):
 <section><h2>策略间配对差异</h2><p class="note">A − B：成功率差为百分点；计罚时间差为秒，负值表示 A 更快。区间按条件分层、以种子/朝向配对组重采样；成功差异的精确 McNemar 检验对六个比较做 Holm 校正。小样本区间不能代表不同房屋的泛化不确定性。</p><div class="scroll"><table><thead><tr><th>A − B</th><th>配对数</th><th>成功率差 pp</th><th>重采样 95% 区间 pp</th><th>计罚时间差 s</th><th>重采样 95% 区间 s</th><th>校正 p</th></tr></thead><tbody>__COMPARISONS__</tbody></table></div></section>
 <section><h2>逐回合结果与证据</h2><label>筛选 <select id="filter"><option value="all">全部策略</option><option>random</option><option>nearest</option><option>information_gain</option><option>llm_guided</option></select></label><div class="scroll"><table><thead><tr><th>配对任务</th><th>策略</th><th>终止结果</th><th>实际仿真 s</th><th>实际路程 m</th><th>接触步数</th><th>调用 / 回退</th><th>证据</th></tr></thead><tbody id="episodes">__DETAILS__</tbody></table></div></section>
 <section><h2>运行进度与口径</h2><ul>__ACTIVE__</ul><p>每个组合只运行一次，没有成功筛选或失败重试。所有终止结果均保存。四策略共享起点、目标、感知、控制、观察、恢复和预算；目标真值与全图可达性只用于隔离的预检查和终止验收。</p><p class="note">Rs 几何与目标位置固定；种子本身不生成新房屋。三个预先固定的初始朝向使观测与任务有所变化。Nearest、IG 和检测器在相同输入下确定，LLM 服务端不能由本地种子保证重复。__WORKERS__ 个并发工作进程共享本机资源，计算墙钟单独保存在 CSV/JSON 中，不作为单机器人独占硬件的延迟比较。</p><p><a href="../protocol.json">冻结配置</a> · <a href="../results.json">完整统计 JSON</a> · <a href="../episodes.csv">逐回合 CSV</a> · <a href="../preflight/index.json">隔离可达性预检查</a></p><p class="note">引擎指纹：<code>__FINGERPRINT__</code>。更新时间：__TIME__。</p></section></main><script>document.getElementById('filter').onchange=e=>{for(const r of document.querySelectorAll('#episodes tr'))r.hidden=e.target.value!=='all'&&r.dataset.policy!==e.target.value;};</script></html>'''
+    page=page.replace('__PAIRS__ / 9','__PAIRS__ / __PLANNED_PAIRS__')
     values={'REFRESH':refresh,'STATE':state,'COMPLETED':str(stats['completed']),'PLANNED':str(stats['planned']),
+        'PLANNED_PAIRS':str(stats['planned_pairs']),
         'PAIRS':str(stats['complete_pairs']),'CARDS':cards,'TABLE':table,'SCENES':scenes,
         'COMPARISONS':comparisons,'DETAILS':details,'ACTIVE':active or '<li>没有正在执行的回合。</li>',
         'IMAGE':image,'FINGERPRINT':protocol['engine_fingerprint'],'TIME':stats['generated_utc'],'WORKERS':str(protocol['runtime']['workers'])}
@@ -119,7 +138,17 @@ def build(root,plots=False):
     detail=html.escape(json.dumps(noise,sort_keys=True)) if noise is not None else ''
     noise_note='<section><h2>Sensor noise: '+label+'</h2><p><code>'+detail+'</code></p><p>Base settings; per-job seeds are recorded in each manifest. Evaluator truth remains clean.</p></section>'
     page=page.replace('<div class="cards">',live_status_panel(root,protocol,stats,rows)+noise_note+'<div class="cards">',1)
+    if protocol.get('design')=='bowl48':
+        design_note='<section><h2>48-run design</h2><p>Two starts (A original, B bedroom doorway) x three conditions x four policies x two bowl locations. Kitchen 24 first, bathroom 24 second. Seed streams fixed; actual depth noise seed 140. Full initial scan at each start. All outcomes retained.</p></section>'
+        page=page.replace('<main>','<main>'+design_note,1)
+        page=page.replace('3 组种子与起始朝向','2 个起点与 2 个目标位置')
+        page=page.replace('种子/朝向配对组','目标/起点配对组')
+        page=page.replace('三个预先固定的初始朝向使观测与任务有所变化。','噪声种子固定；任务变化来自两个起点与两处目标位置。')
     for k,v in values.items():page=page.replace('__'+k+'__',v)
+    if protocol.get('fixed_start_heading'):
+        page=page.replace('3 组种子与起始朝向','3 组种子（固定初始朝向）')
+        page=page.replace('种子/朝向配对组','种子配对组')
+        page=page.replace('三个预先固定的初始朝向使观测与任务有所变化。','初始位置和朝向固定，三个种子块使用各自的策略、感知和噪声流。')
     temporary=report/'index.tmp.html';temporary.write_text(page,encoding='utf-8');replace_shared(temporary,report/'index.html')
     return stats
 

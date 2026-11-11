@@ -1,0 +1,51 @@
+{
+  "job_id": "bathroom-apartment-startB-random",
+  "policy": "random",
+  "profile": "apartment",
+  "environment_seed": 17,
+  "termination": "success",
+  "partial_metrics": false,
+  "start_pose": {
+    "x_m": -1.5,
+    "y_m": 0.6,
+    "z_m": 0.0,
+    "yaw_rad": 3.141592653589793
+  },
+  "last_recorded_pose": {
+    "x_m": -2.6447862219827205,
+    "y_m": 2.635276384852179,
+    "yaw_rad": 2.57675930857725,
+    "z_m": 0.0005586982540635262
+  },
+  "target_position_world": [
+    -3.400241998583078,
+    3.0011864975094804,
+    0.43358444657109885
+  ],
+  "motion_samples": 5830,
+  "simulated_time_s": 194.33333333333334,
+  "actual_distance_m": 22.809039258245136,
+  "input_signature": [
+    1794307681440728800,
+    8467,
+    15003542,
+    1794357556863731300,
+    657263
+  ],
+  "created_utc": "2026-11-11T00:40:12.905754+00:00",
+  "source": "Recorded motion_sample events; no planned path, interpolation, or hidden-map navigation.",
+  "background": "Original Rs scan plus actual iGibson overhead render of inserted objects at t=0; the dynamic cart can move later.",
+  "scene_overlay": "scene-floorplans\\bathroom-apartment-startB-objects.png",
+  "world_bounds": {
+    "x_min": -4.4,
+    "x_max": 2.2,
+    "y_min": -4.4,
+    "y_max": 3.8
+  },
+  "markers": {
+    "start": "green circle",
+    "target": "red star",
+    "end": "blue heading triangle",
+    "trajectory": "blue path with travel-direction arrows"
+  }
+}

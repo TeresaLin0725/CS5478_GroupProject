@@ -1,0 +1,74 @@
+{
+  "job_id": "kitchen-apartment-startB-llm_guided",
+  "pair_id": "kitchen-apartment-startB",
+  "profile": "apartment",
+  "policy": "llm_guided",
+  "target_location": "kitchen",
+  "start_id": "B",
+  "environment_seed": 17,
+  "perception_seed": 10017,
+  "policy_seed": 20017,
+  "start_pose": {
+    "x_m": -1.5,
+    "y_m": 0.6,
+    "z_m": 0.0,
+    "yaw_rad": 3.141592653589793
+  },
+  "sensor_noise": {
+    "enabled": true,
+    "depth_std_m": 0.01,
+    "depth_dropout_prob": 0.01,
+    "seed": 140
+  },
+  "manifest_path": "manifests/kitchen-apartment-startB-llm_guided.json",
+  "manifest_sha256": "f4abba01f9cd2f9a815f4a5051fab7ba5e07336b6e43a05e481390f9c98b6a48",
+  "termination": "success",
+  "original_termination": "success",
+  "success": true,
+  "integrity_checks": {
+    "frozen_source": true,
+    "manifest_matches": true,
+    "independent_success_evidence": true,
+    "success_evidence_file": true,
+    "fresh_capture_sequences": true,
+    "decision_revision": true,
+    "llm_count": true,
+    "sensor_noise_configuration": true
+  },
+  "simulated_time_s": 87.0,
+  "actual_distance_m": 5.331442729851809,
+  "wall_time_s": 472.32800000021234,
+  "collisions": 0,
+  "decisions": 3,
+  "attempts": 3,
+  "llm_attempts": 2,
+  "llm_calls": 2,
+  "llm_fallbacks": 0,
+  "llm_fallback_reasons": [],
+  "llm_latencies_s": [
+    3.719000000040978,
+    6.765999999828637
+  ],
+  "llm_tokens_total": 20535,
+  "recorded_cost_total": 0,
+  "calls_with_recorded_cost": 0,
+  "response_models": [
+    "gemini-3.5-flash-lite"
+  ],
+  "local_replans": 0,
+  "no_progress_attempts": 0,
+  "frontier_visits": 2,
+  "source_fingerprint": "f1348ea707b471090d23924aa06c01bba23edd39de8fed76b9fc458d9adff4c1",
+  "partial_metrics": false,
+  "noise_enabled": true,
+  "noise_seed": 140,
+  "depth_noise_std_m": 0.01,
+  "depth_dropout_prob": 0.01,
+  "sensor_noise_stats": {
+    "captures": 282,
+    "valid_pixels": 86575457,
+    "dropout_pixels": 864053,
+    "out_of_range_pixels": 401,
+    "modified_pixels": 86575171
+  }
+}

@@ -1,37 +1,24 @@
 """Native Rs bridge for B's adapter. Rendered truth is retained privately for W3 scoring."""
-from dataclasses import dataclass
 from math import cos, hypot, pi, sin
-from typing import Tuple
 import numpy as np
 from ..contracts import Point3, Pose, EvaluationResult
 from ..evaluation.retained import GroundTruthFrame, VisibleInstance
 from ..evaluation.verifier import RetainedTargetEvaluator
 from .igibson_adapter import IGibsonAdapter, IGibsonBackend
 from .igibson_rs import IGibsonWorld
+from .rs_tasks import LEGACY_CUP, RsTarget
 
 
-@dataclass(frozen=True)
-class RsTargetSpec:
-    """Public experiment setup; target truth remains private to W3 at runtime."""
-    class_name: str = 'cup'
-    model: str = '025_mug'
-    position_world: Tuple[float, float, float] = (-1.4, 2.95, .9213)
-    yaw_rad: float = 0.0
-    instance_id: str = 'Rs-inserted-mug'
-    roll_rad: float = 0.0
-    pitch_rad: float = 0.0
+def RsTargetSpec(class_name='cup', model='025_mug', position_world=(-1.4, 2.95, .9213), yaw_rad=0.0,
+                 instance_id='Rs-inserted-mug', roll_rad=0.0, pitch_rad=0.0):
+    """Keyword-compatible builder for an arbitrary experiment target (see rs_tasks.RsTarget).
 
-    def validate(self):
-        if not self.class_name.strip() or not self.model.strip() or not self.instance_id.strip():
-            raise ValueError('target class, model and instance ID are required')
-        if len(self.position_world) != 3 or not all(np.isfinite(value) for value in self.position_world):
-            raise ValueError('target position must contain three finite coordinates')
-        if not all(np.isfinite(value) for value in (self.roll_rad, self.pitch_rad, self.yaw_rad)):
-            raise ValueError('target orientation must be finite')
-        return self
+    Public experiment setup; target truth remains private to W3 at runtime."""
+    return RsTarget(class_name, model, tuple(position_world), instance_id,
+                    yaw_rad=yaw_rad, roll_rad=roll_rad, pitch_rad=pitch_rad)
 
 
-DEFAULT_RS_TARGET = RsTargetSpec()
+DEFAULT_RS_TARGET = LEGACY_CUP
 
 
 def _quaternion_from_rpy(roll, pitch, yaw):
@@ -45,10 +32,11 @@ def _quaternion_from_rpy(roll, pitch, yaw):
 
 
 class RsBackend(IGibsonBackend):
-    def __init__(self, config, profile='dynamic', target=DEFAULT_RS_TARGET):
+    def __init__(self, config, profile='dynamic', target=LEGACY_CUP,scene_layout='legacy'):
         super().__init__(config)
         self.profile = profile
-        self.target = target.validate()
+        self.target_spec = self.target = target.validate()
+        self.scene_layout = scene_layout
 
     def open(self, scene_id, seed, start_pose):
         if scene_id != 'Rs':
@@ -57,13 +45,12 @@ class RsBackend(IGibsonBackend):
         quaternion = _quaternion_from_rpy(self.target.roll_rad, self.target.pitch_rad,
                                           self.target.yaw_rad)
         self.world = IGibsonWorld(start=(start_pose.x_m,start_pose.y_m,start_pose.yaw_rad),
-            profile=self.profile, target_model=self.target.model,
-            target_position=self.target.position_world, target_orientation=quaternion,
-            image_width=self._config.image_width, image_height=self._config.image_height)
+            profile=self.profile, target_model=self.target_spec.model,target_position=self.target_spec.position, image_width=self._config.image_width,
+            image_height=self._config.image_height,scene_layout=self.scene_layout,target_orientation=quaternion)
         w = self.world
         self._p, self._np, self._sim, self._scene = w.p, np, w.sim, w.scene
         self._robot, self._bodies = w.robot, w.robot_bodies
-        self.snapshot_id = 'Rs:%s:%s:seed%d:native-locobot' % (self.profile,self.target.model,seed)
+        self.snapshot_id = 'Rs:%s:seed%d:native-locobot' % (self.profile,seed)
         self.command = (0.,0.)
 
     def apply_action(self, linear, angular_command):
@@ -103,8 +90,7 @@ class RsBackend(IGibsonBackend):
             homogeneous = np.concatenate((points,np.ones((len(points),1))),axis=1)
             world_points = homogeneous @ np.linalg.inv(view).T
             surface = np.median(world_points[:,:3],axis=0)
-            instances = (VisibleInstance(self.target.instance_id,self.target.class_name,
-                min(1.,len(rows)/max(1,total)),
+            instances = (VisibleInstance(self.target_spec.instance_id,self.target_spec.class_name,min(1.,len(rows)/max(1,total)),
                 (int(cols.min()),int(rows.min()),int(cols.max()+1),int(rows.max()+1)),
                 Point3(*(float(v) for v in surface))),)
         return GroundTruthFrame(observation.episode_id,observation.sequence,observation.timestamp_s,
@@ -116,8 +102,8 @@ class RsBackend(IGibsonBackend):
 
 class RetainingAdapter(IGibsonAdapter):
     """Only RGBDObservation leaves capture(); evaluator metadata stays in the capture owner."""
-    def __init__(self, robot, mapping, config, store, profile='dynamic', target=DEFAULT_RS_TARGET):
-        super().__init__(robot,mapping,config,lambda cfg: RsBackend(cfg,profile,target))
+    def __init__(self, robot, mapping, config, store, profile='dynamic', target=LEGACY_CUP,scene_layout='legacy'):
+        super().__init__(robot,mapping,config,lambda cfg: RsBackend(cfg,profile,target,scene_layout))
         self.truth_store, self.capture_motion = store, {}
         self.on_close = None
 

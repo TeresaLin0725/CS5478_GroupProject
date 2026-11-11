@@ -1,2 +1,3 @@
 # Preserve published evidence bytes across checkouts for SHA-256 verification.
 validation-report-20261028/** -text whitespace=cr-at-eol
+report/bowl-48-noise-20261110-02/** -text whitespace=cr-at-eol

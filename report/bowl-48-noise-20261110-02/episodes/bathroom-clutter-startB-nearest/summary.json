@@ -1,0 +1,117 @@
+{
+  "termination": "no_feasible_frontiers",
+  "decisions": 5,
+  "attempts": 3,
+  "steps": 2300,
+  "simulated_time_s": 76.66666666666667,
+  "wall_time_s": 391.10900000017136,
+  "actual_distance_m": 2.419642036898264,
+  "collisions": 0,
+  "final_revision": 259,
+  "sensor_noise": {
+    "enabled": true,
+    "depth_std_m": 0.01,
+    "depth_dropout_prob": 0.01,
+    "seed": 140
+  },
+  "sensor_noise_stats": {
+    "captures": 259,
+    "valid_pixels": 79559476,
+    "dropout_pixels": 793645,
+    "out_of_range_pixels": 136,
+    "modified_pixels": 79559135
+  },
+  "job_id": "bathroom-clutter-startB-nearest",
+  "pair_id": "bathroom-clutter-startB",
+  "profile": "clutter",
+  "policy": "nearest",
+  "target_location": "bathroom",
+  "start_id": "B",
+  "environment_seed": 17,
+  "perception_seed": 10017,
+  "policy_seed": 20017,
+  "start_pose": {
+    "x_m": -1.5,
+    "y_m": 0.6,
+    "z_m": 0.0,
+    "yaw_rad": 3.141592653589793
+  },
+  "manifest_path": "manifests/bathroom-clutter-startB-nearest.json",
+  "manifest_sha256": "f843f56b9e98200f20b204359027ea1676ae51a6a0ef117ed703a05cfac39559",
+  "recorded": false,
+  "source_fingerprint": "f1348ea707b471090d23924aa06c01bba23edd39de8fed76b9fc458d9adff4c1",
+  "source_unchanged": true,
+  "evaluation": {},
+  "llm_attempts": 0,
+  "llm_calls": 0,
+  "llm_fallbacks": 0,
+  "detector_runtime": {
+    "device": "0",
+    "torch_version": "2.4.1+cu121",
+    "cuda_version": "12.1",
+    "gpu_name": "NVIDIA GeForce RTX 4060 Ti"
+  },
+  "navigation_preset": "shared_round",
+  "navigator_events": [
+    [
+      "navigation_configuration",
+      "{\"controller\": {\"linear_gain_per_s\": 2.0, \"near_obstacle_limit\": null, \"path_smoothing\": false}, \"effective_robot_config\": {\"can_turn_in_place\": true, \"clearance_margin_m\": 0.01, \"collision_z_max_m\": 0.908, \"collision_z_min_m\": 0.0, \"footprint_base\": [{\"x_m\": 0.19, \"y_m\": 0.0}, {\"x_m\": 0.1755371111771445, \"y_m\": 0.07270985214936707}, {\"x_m\": 0.13435028842544405, \"y_m\": 0.13435028842544405}, {\"x_m\": 0.07270985214936707, \"y_m\": 0.1755371111771445}, {\"x_m\": 1.1634144591899856e-17, \"y_m\": 0.19}, {\"x_m\": -0.07270985214936705, \"y_m\": 0.1755371111771445}, {\"x_m\": -0.13435028842544403, \"y_m\": 0.13435028842544405}, {\"x_m\": -0.1755371111771445, \"y_m\": 0.07270985214936708}, {\"x_m\": -0.19, \"y_m\": 2.3268289183799712e-17}, {\"x_m\": -0.17553711117714452, \"y_m\": -0.07270985214936704}, {\"x_m\": -0.13435028842544405, \"y_m\": -0.13435028842544403}, {\"x_m\": -0.07270985214936716, \"y_m\": -0.17553711117714443}, {\"x_m\": -3.490243377569956e-17, \"y_m\": -0.19}, {\"x_m\": 0.07270985214936711, \"y_m\": -0.17553711117714446}, {\"x_m\": 0.134350288425444, \"y_m\": -0.13435028842544405}, {\"x_m\": 0.17553711117714443, \"y_m\": -0.07270985214936718}], \"max_angular_speed_radps\": 1.1, \"max_linear_speed_mps\": 0.32, \"motion_model\": \"differential_drive\", \"position_tolerance_m\": 0.03, \"yaw_tolerance_rad\": 0.1}, \"footprint_inscribed_radius_m\": 0.18634920327661378, \"footprint_overridden\": false, \"footprint_vertex_radius_m\": 0.19000000000000006, \"navigation_limits\": {\"batch_deadline_s\": 5.0, \"map_freshness_s\": 0.4, \"max_replans\": 4, \"navigation_deadline_s\": 400.0, \"pose_freshness_m\": 0.05}, \"navigator_class\": \"frontier_search.navigation.navigator.TeamNavigator\", \"observation\": {\"allow_full_rotation\": true, \"arrival_headings_rad\": [0.0, 1.5707963267948966, 3.141592653589793, -1.5707963267948966, 0.0], \"drain_deadline_s\": 30.0, \"dwell_s\": 0.6, \"heading_tolerance_rad\": 0.05, \"initial_headings_rad\": [0.0, 1.57, -1.57, 0.0], \"inspection_heading_settle_ratio\": 0.5, \"inspection_headings_rad\": [-0.15, 0.0, 0.15], \"inspection_hold_s\": 4.0, \"operation_deadline_s\": 400.0, \"processed_samples_per_heading\": 1, \"recovery_headings_rad\": [1.5707963267948966, 3.141592653589793, -1.5707963267948966, 0.0]}, \"parameter_sources\": {\"footprint\": \"shared_robot\", \"planning_margin\": \"shared_robot\", \"planning_radius\": \"footprint_circumradius\", \"start_margin\": \"override\"}, \"relaxed_costmap\": null, \"schema_version\": \"1.0\", \"shared_robot_config\": {\"can_turn_in_place\": true, \"clearance_margin_m\": 0.01, \"collision_z_max_m\": 0.908, \"collision_z_min_m\": 0.0, \"footprint_base\": [{\"x_m\": 0.19, \"y_m\": 0.0}, {\"x_m\": 0.1755371111771445, \"y_m\": 0.07270985214936707}, {\"x_m\": 0.13435028842544405, \"y_m\": 0.13435028842544405}, {\"x_m\": 0.07270985214936707, \"y_m\": 0.1755371111771445}, {\"x_m\": 1.1634144591899856e-17, \"y_m\": 0.19}, {\"x_m\": -0.07270985214936705, \"y_m\": 0.1755371111771445}, {\"x_m\": -0.13435028842544403, \"y_m\": 0.13435028842544405}, {\"x_m\": -0.1755371111771445, \"y_m\": 0.07270985214936708}, {\"x_m\": -0.19, \"y_m\": 2.3268289183799712e-17}, {\"x_m\": -0.17553711117714452, \"y_m\": -0.07270985214936704}, {\"x_m\": -0.13435028842544405, \"y_m\": -0.13435028842544403}, {\"x_m\": -0.07270985214936716, \"y_m\": -0.17553711117714443}, {\"x_m\": -3.490243377569956e-17, \"y_m\": -0.19}, {\"x_m\": 0.07270985214936711, \"y_m\": -0.17553711117714446}, {\"x_m\": 0.134350288425444, \"y_m\": -0.13435028842544405}, {\"x_m\": 0.17553711117714443, \"y_m\": -0.07270985214936718}], \"max_angular_speed_radps\": 1.1, \"max_linear_speed_mps\": 0.32, \"motion_model\": \"differential_drive\", \"position_tolerance_m\": 0.03, \"yaw_tolerance_rad\": 0.1}, \"strict_costmap\": {\"planning_disc_polygon\": [{\"x_m\": 0.19372232005958054, \"y_m\": 0.0}, {\"x_m\": 0.17897608649364713, \"y_m\": 0.07413432236612877}, {\"x_m\": 0.13698236618132015, \"y_m\": 0.13698236618132015}, {\"x_m\": 0.07413432236612877, \"y_m\": 0.17897608649364713}, {\"x_m\": 1.186207095921822e-17, \"y_m\": 0.19372232005958054}, {\"x_m\": -0.07413432236612875, \"y_m\": 0.17897608649364713}, {\"x_m\": -0.13698236618132012, \"y_m\": 0.13698236618132015}, {\"x_m\": -0.17897608649364713, \"y_m\": 0.07413432236612878}, {\"x_m\": -0.19372232005958054, \"y_m\": 2.372414191843644e-17}, {\"x_m\": -0.17897608649364716, \"y_m\": -0.07413432236612874}, {\"x_m\": -0.13698236618132018, \"y_m\": -0.13698236618132012}, {\"x_m\": -0.07413432236612887, \"y_m\": -0.1789760864936471}, {\"x_m\": -3.558621287765466e-17, \"y_m\": -0.19372232005958054}, {\"x_m\": 0.07413432236612881, \"y_m\": -0.1789760864936471}, {\"x_m\": 0.13698236618132012, \"y_m\": -0.13698236618132018}, {\"x_m\": 0.1789760864936471, \"y_m\": -0.07413432236612888}], \"planning_disc_vertex_radius_m\": 0.19372232005958057, \"planning_margin_m\": 0.01, \"planning_radius_m\": 0.19000000000000006, \"start_margin_m\": 0.0}}"
+    ],
+    [
+      "terminal",
+      "op-1 reached "
+    ],
+    [
+      "plan",
+      "op-2 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-2 reached "
+    ],
+    [
+      "terminal",
+      "op-3 reached "
+    ],
+    [
+      "plan",
+      "op-4 success=True reason=None"
+    ],
+    [
+      "terminal",
+      "op-4 reached "
+    ],
+    [
+      "terminal",
+      "op-5 failed blocked"
+    ],
+    [
+      "terminal",
+      "op-6 reached "
+    ],
+    [
+      "plan",
+      "op-7 success=True reason=None"
+    ],
+    [
+      "replan",
+      "op-7 #1 success=False reason=FailureReason.NO_PATH"
+    ],
+    [
+      "terminal",
+      "op-7 failed no_path"
+    ],
+    [
+      "terminal",
+      "op-8 failed blocked"
+    ]
+  ],
+  "scene_events": [],
+  "local_collision_refinement": false,
+  "local_collision_scope": null,
+  "local_collision_stats": {
+    "frames": 0,
+    "seconds": 0.0
+  },
+  "local_collision_retain_history": false
+}

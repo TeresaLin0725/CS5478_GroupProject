@@ -1,0 +1,19 @@
+{
+  "source_run": "bowl-48-noise-20261110-02",
+  "planned": 48,
+  "completed": 48,
+  "successes": 45,
+  "source_results_sha256": "b19487014b8044ca7752c4055a252b0232258c9e80c5dd5599d26924aab985c5",
+  "protocol_sha256": "a6619a6a1e59590560ffb00cd15288cc60f84a3789824faa0906a4b93a89190e",
+  "outputs": [
+    "bowl48-report-zh.html",
+    "bowl48-report-zh.md"
+  ],
+  "figures": [
+    "target-performance.png",
+    "trajectory-kitchen-apartment-startA.png",
+    "trajectory-kitchen-apartment-startB.png",
+    "trajectory-bathroom-apartment-startA.png",
+    "trajectory-bathroom-apartment-startB.png"
+  ]
+}
