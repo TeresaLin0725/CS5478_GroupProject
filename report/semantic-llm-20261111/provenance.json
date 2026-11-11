@@ -1,0 +1,36 @@
+{
+  "generated_by": "scripts/archive_semantic_report.py",
+  "git_commit": "cd334dd91ac3018d4a743768ba3482e7f90a4c0e",
+  "episodes": 124,
+  "llm_provider": "DeepSeek (api.deepseek.com)",
+  "llm_model": "deepseek-flash (DeepSeek-V4.1-Flash), provider-default reasoning effort",
+  "llm_deadline_s": {
+    "S0 llm_guided": 30,
+    "all other LLM runs": 60
+  },
+  "run_roots": [
+    "runs/semantic-llm-deepseek-20261111",
+    "runs/semantic-navigation-smoke-20261110-r2",
+    "runs/semantic-replicates-20261111/S0",
+    "runs/semantic-replicates-20261111/S1",
+    "runs/semantic-replicates-20261111/S2",
+    "runs/semantic-replicates-20261111/S3"
+  ],
+  "configs": [
+    "configs/semantic-navigation-start-S0.json",
+    "configs/semantic-navigation-start-S1.json",
+    "configs/semantic-navigation-start-S2.json",
+    "configs/semantic-navigation-start-S3.json"
+  ],
+  "preflight": {
+    "S0": "runs/semantic-navigation-smoke-20261110/preflight/preflight.json",
+    "S1": "runs/preflight-start-S1/preflight.json",
+    "S2": "runs/preflight-start-S2/preflight.json",
+    "S3": "runs/preflight-start-S3/preflight-merged-7task.json"
+  },
+  "excluded": [
+    "bottle-bathroom-ambiguous at S3 (target visible from start)",
+    "Gemini-era llm_guided rows in runs/semantic-navigation-smoke-20261110-r2 (free-tier HTTP 429 fallbacks)"
+  ],
+  "note": "Run roots are git-ignored local directories; this archive copies only derived results."
+}

@@ -1,5 +1,7 @@
 # Indoor frontier object search
 
+**最终实验报告汇总：[report/README.md](report/README.md)**。汇总了中期基线、35/36 鲁棒性基线、48 轮有噪声碗实验和 124 回合 LLM 语义引导实验，包含跨实验结论。
+
 ## 保留的实验基线
 
 仓库只保留 [2026-10-25 中期报告与 Demo](midterm-report-20261025/README.md)：
