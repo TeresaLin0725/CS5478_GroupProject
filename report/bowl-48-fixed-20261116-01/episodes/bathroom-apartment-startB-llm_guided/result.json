@@ -1,0 +1,76 @@
+{
+  "job_id": "bathroom-apartment-startB-llm_guided",
+  "pair_id": "bathroom-apartment-startB",
+  "profile": "apartment",
+  "policy": "llm_guided",
+  "target_location": "bathroom",
+  "start_id": "B",
+  "environment_seed": 17,
+  "perception_seed": 10017,
+  "policy_seed": 20017,
+  "start_pose": {
+    "x_m": -1.5,
+    "y_m": 0.6,
+    "z_m": 0.0,
+    "yaw_rad": 3.141592653589793
+  },
+  "sensor_noise": {
+    "enabled": true,
+    "depth_std_m": 0.01,
+    "depth_dropout_prob": 0.01,
+    "seed": 140
+  },
+  "manifest_path": "manifests/bathroom-apartment-startB-llm_guided.json",
+  "manifest_sha256": "eb07155d7572c1f0a550467dfae1f3476a6724c76f31314d44f69b0a75ee0b99",
+  "termination": "success",
+  "original_termination": "success",
+  "success": true,
+  "integrity_checks": {
+    "frozen_source": true,
+    "manifest_matches": true,
+    "independent_success_evidence": true,
+    "success_evidence_file": true,
+    "fresh_capture_sequences": true,
+    "decision_revision": true,
+    "llm_count": true,
+    "sensor_noise_configuration": true
+  },
+  "simulated_time_s": 136.0,
+  "actual_distance_m": 11.329179643075614,
+  "wall_time_s": 530.4219999997877,
+  "collisions": 0,
+  "decisions": 5,
+  "attempts": 5,
+  "llm_attempts": 4,
+  "llm_calls": 4,
+  "llm_fallbacks": 0,
+  "llm_fallback_reasons": [],
+  "llm_latencies_s": [
+    6.092999999877065,
+    1.8280000002123415,
+    1.6409999998286366,
+    1.9220000002533197
+  ],
+  "llm_tokens_total": 38655,
+  "recorded_cost_total": 0,
+  "calls_with_recorded_cost": 0,
+  "response_models": [
+    "gemini-3.5-flash-lite"
+  ],
+  "local_replans": 0,
+  "no_progress_attempts": 0,
+  "frontier_visits": 4,
+  "source_fingerprint": "8a943c855186426351deee5b4930be148e140166d1abcd91d31e6dd64dd105c4",
+  "partial_metrics": false,
+  "noise_enabled": true,
+  "noise_seed": 140,
+  "depth_noise_std_m": 0.01,
+  "depth_dropout_prob": 0.01,
+  "sensor_noise_stats": {
+    "captures": 444,
+    "valid_pixels": 136278383,
+    "dropout_pixels": 1360738,
+    "out_of_range_pixels": 1591,
+    "modified_pixels": 136277886
+  }
+}

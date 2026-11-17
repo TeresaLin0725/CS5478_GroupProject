@@ -1,0 +1,1888 @@
+{
+  "schema_version": "1.1",
+  "status": "frozen_before_first_episode",
+  "created_utc": "2026-11-16T11:34:44.590559+00:00",
+  "run_root": "D:\\Projects\\CS5478_GroupProject\\runs\\bowl-48-fixed-20261116-01",
+  "snapshot_root": "D:\\Projects\\CS5478_GroupProject\\runs\\bowl-48-fixed-20261116-01\\frozen",
+  "env_file": "D:\\Projects\\CS5478_GroupProject\\.env",
+  "engine_fingerprint": "8a943c855186426351deee5b4930be148e140166d1abcd91d31e6dd64dd105c4",
+  "watchdog_transport": "shared_memory_v1",
+  "navigation_preset": "shared_round",
+  "navigation_options": {
+    "start_margin_m": 0.0
+  },
+  "sensor_noise": {
+    "enabled": true,
+    "depth_std_m": 0.01,
+    "depth_dropout_prob": 0.01,
+    "seed": 123
+  },
+  "task": "kitchen_bowl",
+  "noise_seed_semantics": "Per-job noise seed = (base noise seed + environment seed) mod 2**32. Independent Gaussian/dropout streams keyed by capture sequence; same across policies, not necessarily the same physical observations.",
+  "scope": "Fresh 48-episode rerun with all fixes; complete each matched four-policy setup before advancing; three previously failed setups first.",
+  "jobs": [
+    {
+      "job_id": "kitchen-clutter-startB-random",
+      "pair_id": "kitchen-clutter-startB",
+      "profile": "clutter",
+      "policy": "random",
+      "target_location": "kitchen",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-clutter-startB-random.json",
+      "manifest_sha256": "d71c299a8a884f329a211fec8b0e6caab338d7733fe45dc1f2b154a9a480f1b3"
+    },
+    {
+      "job_id": "kitchen-clutter-startB-nearest",
+      "pair_id": "kitchen-clutter-startB",
+      "profile": "clutter",
+      "policy": "nearest",
+      "target_location": "kitchen",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-clutter-startB-nearest.json",
+      "manifest_sha256": "e411ce913cd82c9a3c42bfd3c08526b18c2e896ac94cf817adb976fa0d471249"
+    },
+    {
+      "job_id": "kitchen-clutter-startB-information_gain",
+      "pair_id": "kitchen-clutter-startB",
+      "profile": "clutter",
+      "policy": "information_gain",
+      "target_location": "kitchen",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-clutter-startB-information_gain.json",
+      "manifest_sha256": "2984d229a9ab4663d8907ecff3cf6aae593f3edac17f31471028f253c18e8e20"
+    },
+    {
+      "job_id": "kitchen-clutter-startB-llm_guided",
+      "pair_id": "kitchen-clutter-startB",
+      "profile": "clutter",
+      "policy": "llm_guided",
+      "target_location": "kitchen",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-clutter-startB-llm_guided.json",
+      "manifest_sha256": "40bdae24b427f113d3bcb08a60487c940cbd799a60b7719f869757d0a340c9b4"
+    },
+    {
+      "job_id": "bathroom-clutter-startB-random",
+      "pair_id": "bathroom-clutter-startB",
+      "profile": "clutter",
+      "policy": "random",
+      "target_location": "bathroom",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-clutter-startB-random.json",
+      "manifest_sha256": "5005b2ec69d4069a503957e2093d5115445f8710a7b507d44ea277a99e11018d"
+    },
+    {
+      "job_id": "bathroom-clutter-startB-nearest",
+      "pair_id": "bathroom-clutter-startB",
+      "profile": "clutter",
+      "policy": "nearest",
+      "target_location": "bathroom",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-clutter-startB-nearest.json",
+      "manifest_sha256": "f843f56b9e98200f20b204359027ea1676ae51a6a0ef117ed703a05cfac39559"
+    },
+    {
+      "job_id": "bathroom-clutter-startB-information_gain",
+      "pair_id": "bathroom-clutter-startB",
+      "profile": "clutter",
+      "policy": "information_gain",
+      "target_location": "bathroom",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-clutter-startB-information_gain.json",
+      "manifest_sha256": "1be1322c7c6f604239bf245511a399c2ed9f50e56600ac3fb1d7d43543573616"
+    },
+    {
+      "job_id": "bathroom-clutter-startB-llm_guided",
+      "pair_id": "bathroom-clutter-startB",
+      "profile": "clutter",
+      "policy": "llm_guided",
+      "target_location": "bathroom",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-clutter-startB-llm_guided.json",
+      "manifest_sha256": "33b9ee9e31aa2525813d5677e06c58a04f276ee3e23be99269b236333c7a32d5"
+    },
+    {
+      "job_id": "bathroom-apartment-startA-random",
+      "pair_id": "bathroom-apartment-startA",
+      "profile": "apartment",
+      "policy": "random",
+      "target_location": "bathroom",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-apartment-startA-random.json",
+      "manifest_sha256": "a5d0758647654fc7d2fce677eb5146e68c78d4ef2026574a52cf4d469218d65a"
+    },
+    {
+      "job_id": "bathroom-apartment-startA-nearest",
+      "pair_id": "bathroom-apartment-startA",
+      "profile": "apartment",
+      "policy": "nearest",
+      "target_location": "bathroom",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-apartment-startA-nearest.json",
+      "manifest_sha256": "472211d4059964d88ad6ba13be60ee598aa49699246a9d91df1e4af130ad7d52"
+    },
+    {
+      "job_id": "bathroom-apartment-startA-information_gain",
+      "pair_id": "bathroom-apartment-startA",
+      "profile": "apartment",
+      "policy": "information_gain",
+      "target_location": "bathroom",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-apartment-startA-information_gain.json",
+      "manifest_sha256": "4fec3d4a7898aa1f17e78255f900542b1c9c901d7ca5e45e3aa3b5071865869c"
+    },
+    {
+      "job_id": "bathroom-apartment-startA-llm_guided",
+      "pair_id": "bathroom-apartment-startA",
+      "profile": "apartment",
+      "policy": "llm_guided",
+      "target_location": "bathroom",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-apartment-startA-llm_guided.json",
+      "manifest_sha256": "ae7332eb859bb9c72792baadaefdd753c1999d605e4babe603429465efcd77c2"
+    },
+    {
+      "job_id": "kitchen-apartment-startA-random",
+      "pair_id": "kitchen-apartment-startA",
+      "profile": "apartment",
+      "policy": "random",
+      "target_location": "kitchen",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-apartment-startA-random.json",
+      "manifest_sha256": "3d786a401afafaf7388c7073b9dc2ec9cf811210be61eadb7c8096e582ef11da"
+    },
+    {
+      "job_id": "kitchen-apartment-startA-nearest",
+      "pair_id": "kitchen-apartment-startA",
+      "profile": "apartment",
+      "policy": "nearest",
+      "target_location": "kitchen",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-apartment-startA-nearest.json",
+      "manifest_sha256": "a23d50e30361107ffd779202c0eaa0acc6c420731fac55b835a85005ce6466a3"
+    },
+    {
+      "job_id": "kitchen-apartment-startA-information_gain",
+      "pair_id": "kitchen-apartment-startA",
+      "profile": "apartment",
+      "policy": "information_gain",
+      "target_location": "kitchen",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-apartment-startA-information_gain.json",
+      "manifest_sha256": "4a388746adf2bd83975bcb701531f52854f122572f853d42bc57e4b204b3d604"
+    },
+    {
+      "job_id": "kitchen-apartment-startA-llm_guided",
+      "pair_id": "kitchen-apartment-startA",
+      "profile": "apartment",
+      "policy": "llm_guided",
+      "target_location": "kitchen",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-apartment-startA-llm_guided.json",
+      "manifest_sha256": "1b9ebaa47a4e447213b00bdd76cb24e24327e269c1949091198fa9da37c725b3"
+    },
+    {
+      "job_id": "kitchen-clutter-startA-random",
+      "pair_id": "kitchen-clutter-startA",
+      "profile": "clutter",
+      "policy": "random",
+      "target_location": "kitchen",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-clutter-startA-random.json",
+      "manifest_sha256": "415bab3551157c8881d48fa16a071bd55ae9490b49c80c3c3a796e47c445624f"
+    },
+    {
+      "job_id": "kitchen-clutter-startA-nearest",
+      "pair_id": "kitchen-clutter-startA",
+      "profile": "clutter",
+      "policy": "nearest",
+      "target_location": "kitchen",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-clutter-startA-nearest.json",
+      "manifest_sha256": "c03df27c15e569fd19fe7a4171436e6bce4d2e33233f5f7d2592f6008b636aa6"
+    },
+    {
+      "job_id": "kitchen-clutter-startA-information_gain",
+      "pair_id": "kitchen-clutter-startA",
+      "profile": "clutter",
+      "policy": "information_gain",
+      "target_location": "kitchen",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-clutter-startA-information_gain.json",
+      "manifest_sha256": "315d018c3fca4e097ad11ef865aab8b267ef76cca0d5f2f7b1639cf77debfa78"
+    },
+    {
+      "job_id": "kitchen-clutter-startA-llm_guided",
+      "pair_id": "kitchen-clutter-startA",
+      "profile": "clutter",
+      "policy": "llm_guided",
+      "target_location": "kitchen",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-clutter-startA-llm_guided.json",
+      "manifest_sha256": "b567a2afb12c700618e09cd4687c882db3174b7ba87662e21d66d13bcbb44ba8"
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-random",
+      "pair_id": "kitchen-dynamic-startA",
+      "profile": "dynamic",
+      "policy": "random",
+      "target_location": "kitchen",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-dynamic-startA-random.json",
+      "manifest_sha256": "65652c0e1429e3dc1ee476e2afcc34d8d903a221693980cb86edb368d50b897c"
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-nearest",
+      "pair_id": "kitchen-dynamic-startA",
+      "profile": "dynamic",
+      "policy": "nearest",
+      "target_location": "kitchen",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-dynamic-startA-nearest.json",
+      "manifest_sha256": "86bb5a6f72572686552f856913e7a8306768a44f9d62a3fafc5bc4429d9bd1d1"
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-information_gain",
+      "pair_id": "kitchen-dynamic-startA",
+      "profile": "dynamic",
+      "policy": "information_gain",
+      "target_location": "kitchen",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-dynamic-startA-information_gain.json",
+      "manifest_sha256": "bc68737a52a4409fc9e889c1136450ba556b28f71828f869aab7ac02275a76fe"
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-llm_guided",
+      "pair_id": "kitchen-dynamic-startA",
+      "profile": "dynamic",
+      "policy": "llm_guided",
+      "target_location": "kitchen",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-dynamic-startA-llm_guided.json",
+      "manifest_sha256": "a4db93768de933b3f28c3211848059c6e9b27757fc780cbdd4892b4d41dbe8f2"
+    },
+    {
+      "job_id": "kitchen-apartment-startB-random",
+      "pair_id": "kitchen-apartment-startB",
+      "profile": "apartment",
+      "policy": "random",
+      "target_location": "kitchen",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-apartment-startB-random.json",
+      "manifest_sha256": "d04163136d80f15a139e38c3c9494bc1fa7deef6470539f5832f02f1767a1aaf"
+    },
+    {
+      "job_id": "kitchen-apartment-startB-nearest",
+      "pair_id": "kitchen-apartment-startB",
+      "profile": "apartment",
+      "policy": "nearest",
+      "target_location": "kitchen",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-apartment-startB-nearest.json",
+      "manifest_sha256": "c39ca4e528c31acab8e9662ba275bc10d3b139f7d230771e36311588d6e4a310"
+    },
+    {
+      "job_id": "kitchen-apartment-startB-information_gain",
+      "pair_id": "kitchen-apartment-startB",
+      "profile": "apartment",
+      "policy": "information_gain",
+      "target_location": "kitchen",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-apartment-startB-information_gain.json",
+      "manifest_sha256": "53e1afb389ae288e960cdb44603e1c45fa9aa38d0c5ee0e4a74e33a2736eabe8"
+    },
+    {
+      "job_id": "kitchen-apartment-startB-llm_guided",
+      "pair_id": "kitchen-apartment-startB",
+      "profile": "apartment",
+      "policy": "llm_guided",
+      "target_location": "kitchen",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-apartment-startB-llm_guided.json",
+      "manifest_sha256": "f4abba01f9cd2f9a815f4a5051fab7ba5e07336b6e43a05e481390f9c98b6a48"
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-random",
+      "pair_id": "kitchen-dynamic-startB",
+      "profile": "dynamic",
+      "policy": "random",
+      "target_location": "kitchen",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-dynamic-startB-random.json",
+      "manifest_sha256": "449fb97cf6cd49928038bcb8eddb254e0d372448511dac3bb76d94ab3e2e090a"
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-nearest",
+      "pair_id": "kitchen-dynamic-startB",
+      "profile": "dynamic",
+      "policy": "nearest",
+      "target_location": "kitchen",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-dynamic-startB-nearest.json",
+      "manifest_sha256": "f2444d3683df08da3caba026e72c7e84e23794ffa2ca28f22c8b88c071c72089"
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-information_gain",
+      "pair_id": "kitchen-dynamic-startB",
+      "profile": "dynamic",
+      "policy": "information_gain",
+      "target_location": "kitchen",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-dynamic-startB-information_gain.json",
+      "manifest_sha256": "84b8749db95a3dcdb3a9c90ba3ef9d7f00001a3f96069de4731aea9bdb099e62"
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-llm_guided",
+      "pair_id": "kitchen-dynamic-startB",
+      "profile": "dynamic",
+      "policy": "llm_guided",
+      "target_location": "kitchen",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/kitchen-dynamic-startB-llm_guided.json",
+      "manifest_sha256": "b9ff73112080134716799af9c3386e999f50381505956d48d908eae6a114cd52"
+    },
+    {
+      "job_id": "bathroom-clutter-startA-random",
+      "pair_id": "bathroom-clutter-startA",
+      "profile": "clutter",
+      "policy": "random",
+      "target_location": "bathroom",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-clutter-startA-random.json",
+      "manifest_sha256": "40f1c35030b5023ae98edd7ab43630b5e43a7d8d9f9924bdc3f65bbbdbda3c09"
+    },
+    {
+      "job_id": "bathroom-clutter-startA-nearest",
+      "pair_id": "bathroom-clutter-startA",
+      "profile": "clutter",
+      "policy": "nearest",
+      "target_location": "bathroom",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-clutter-startA-nearest.json",
+      "manifest_sha256": "1aae25608c2b5c5a8b1e28ac3302c75305ea25366cd47dbe2c281fbc83799757"
+    },
+    {
+      "job_id": "bathroom-clutter-startA-information_gain",
+      "pair_id": "bathroom-clutter-startA",
+      "profile": "clutter",
+      "policy": "information_gain",
+      "target_location": "bathroom",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-clutter-startA-information_gain.json",
+      "manifest_sha256": "783e5912acbd5360ced84c99180974423b63fa0bdc266bcecd67aa049fe42a49"
+    },
+    {
+      "job_id": "bathroom-clutter-startA-llm_guided",
+      "pair_id": "bathroom-clutter-startA",
+      "profile": "clutter",
+      "policy": "llm_guided",
+      "target_location": "bathroom",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-clutter-startA-llm_guided.json",
+      "manifest_sha256": "68df2dd45cc64a0d7fd2dad2c47c99ca2ab2ea63c56d2d355536271e3aa1ba08"
+    },
+    {
+      "job_id": "bathroom-dynamic-startA-random",
+      "pair_id": "bathroom-dynamic-startA",
+      "profile": "dynamic",
+      "policy": "random",
+      "target_location": "bathroom",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-dynamic-startA-random.json",
+      "manifest_sha256": "0c1c52613ef57cd53e2b96d456d237a0d31fcad860ec29c3ddb9f1be2620a16f"
+    },
+    {
+      "job_id": "bathroom-dynamic-startA-nearest",
+      "pair_id": "bathroom-dynamic-startA",
+      "profile": "dynamic",
+      "policy": "nearest",
+      "target_location": "bathroom",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-dynamic-startA-nearest.json",
+      "manifest_sha256": "d9c28e7f24aa9176fe03bc1f0cf708faa544e6d0c01b7e8520e127bdb7691bcf"
+    },
+    {
+      "job_id": "bathroom-dynamic-startA-information_gain",
+      "pair_id": "bathroom-dynamic-startA",
+      "profile": "dynamic",
+      "policy": "information_gain",
+      "target_location": "bathroom",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-dynamic-startA-information_gain.json",
+      "manifest_sha256": "06f706bc3f8300c9b61e2f31c2d3fdcfc3939070ae879790e65842d18ce8801b"
+    },
+    {
+      "job_id": "bathroom-dynamic-startA-llm_guided",
+      "pair_id": "bathroom-dynamic-startA",
+      "profile": "dynamic",
+      "policy": "llm_guided",
+      "target_location": "bathroom",
+      "start_id": "A",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-dynamic-startA-llm_guided.json",
+      "manifest_sha256": "8f667900f7156ebb115131011a8d2864a1b780191141d86994b866fb5573cd00"
+    },
+    {
+      "job_id": "bathroom-apartment-startB-random",
+      "pair_id": "bathroom-apartment-startB",
+      "profile": "apartment",
+      "policy": "random",
+      "target_location": "bathroom",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-apartment-startB-random.json",
+      "manifest_sha256": "5c7ef933251453babc39b0d645b09e99ee124de8338c5f63bdca1f724ba96702"
+    },
+    {
+      "job_id": "bathroom-apartment-startB-nearest",
+      "pair_id": "bathroom-apartment-startB",
+      "profile": "apartment",
+      "policy": "nearest",
+      "target_location": "bathroom",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-apartment-startB-nearest.json",
+      "manifest_sha256": "b6722e473f0e4ef977578923c08f449bb2b1c17eb355e1defd0f3de0a8462382"
+    },
+    {
+      "job_id": "bathroom-apartment-startB-information_gain",
+      "pair_id": "bathroom-apartment-startB",
+      "profile": "apartment",
+      "policy": "information_gain",
+      "target_location": "bathroom",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-apartment-startB-information_gain.json",
+      "manifest_sha256": "f7b468615e0cfe17b6aa5af314b02f8bd54a02ff9874a034b868b24f12b60f9b"
+    },
+    {
+      "job_id": "bathroom-apartment-startB-llm_guided",
+      "pair_id": "bathroom-apartment-startB",
+      "profile": "apartment",
+      "policy": "llm_guided",
+      "target_location": "bathroom",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-apartment-startB-llm_guided.json",
+      "manifest_sha256": "eb07155d7572c1f0a550467dfae1f3476a6724c76f31314d44f69b0a75ee0b99"
+    },
+    {
+      "job_id": "bathroom-dynamic-startB-random",
+      "pair_id": "bathroom-dynamic-startB",
+      "profile": "dynamic",
+      "policy": "random",
+      "target_location": "bathroom",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-dynamic-startB-random.json",
+      "manifest_sha256": "ff7dfbc1835e4482516a9d329ed1198c1d6cfac45d1dfe6a492800f37daf668a"
+    },
+    {
+      "job_id": "bathroom-dynamic-startB-nearest",
+      "pair_id": "bathroom-dynamic-startB",
+      "profile": "dynamic",
+      "policy": "nearest",
+      "target_location": "bathroom",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-dynamic-startB-nearest.json",
+      "manifest_sha256": "5056a24790197c61bd4a1441fc83ab51be3b4953337af98e8f44f05f8cf8794a"
+    },
+    {
+      "job_id": "bathroom-dynamic-startB-information_gain",
+      "pair_id": "bathroom-dynamic-startB",
+      "profile": "dynamic",
+      "policy": "information_gain",
+      "target_location": "bathroom",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-dynamic-startB-information_gain.json",
+      "manifest_sha256": "9af0337b44eeb54b00c2bef5b872a07cd54808609a64a7031383309874c72461"
+    },
+    {
+      "job_id": "bathroom-dynamic-startB-llm_guided",
+      "pair_id": "bathroom-dynamic-startB",
+      "profile": "dynamic",
+      "policy": "llm_guided",
+      "target_location": "bathroom",
+      "start_id": "B",
+      "environment_seed": 17,
+      "perception_seed": 10017,
+      "policy_seed": 20017,
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "sensor_noise": {
+        "enabled": true,
+        "depth_std_m": 0.01,
+        "depth_dropout_prob": 0.01,
+        "seed": 140
+      },
+      "manifest_path": "manifests/bathroom-dynamic-startB-llm_guided.json",
+      "manifest_sha256": "49d932929b99cdedf5f6bb2afd6213e792e831ca0875d36de45d765c86ec9a0b"
+    }
+  ],
+  "seed_heading_blocks": [
+    {
+      "start_id": "A",
+      "start_pose": {
+        "x_m": 0.8,
+        "y_m": -2.4,
+        "z_m": 0.0,
+        "yaw_rad": 1.5707963267948966
+      },
+      "seed": 17,
+      "yaw_rad": 1.5707963267948966
+    },
+    {
+      "start_id": "B",
+      "start_pose": {
+        "x_m": -1.5,
+        "y_m": 0.6,
+        "z_m": 0.0,
+        "yaw_rad": 3.141592653589793
+      },
+      "seed": 17,
+      "yaw_rad": 3.141592653589793
+    }
+  ],
+  "fixed_start_heading": false,
+  "seed_semantics": "Environment/perception/policy seeds held at 17/10017/20017 for both starts and both target locations. Actual noise seed is base+17. Four methods paired within target/profile/start.",
+  "asset_paths": {
+    "robot_assets": "D:\\Projects\\CS5478_GroupProject\\data\\igibson-data\\robot_assets\\assets",
+    "scenes": "D:\\Projects\\CS5478_GroupProject\\data\\igibson-data\\g_dataset"
+  },
+  "asset_hashes": {
+    "g_dataset/Rs/.ipynb_checkpoints/combine_texture-checkpoint.ipynb": "a1c3887c1c0e3203bf1dd98b1c872d3d1bdeb3538df7da9addebef98d8c1408b",
+    "g_dataset/Rs/27bd2a4f3cae42c686254fe08a9b848e.mtl": "18c19e64dc39a3fb2b0614816996794626955588d6ac28c6e53713049f56f9e6",
+    "g_dataset/Rs/27bd2a4f3cae42c686254fe08a9b848e.obj": "0ab7d6025b69a98cb9e056d27c9aac916687cf9f7ad6e3da5594edd638aeff11",
+    "g_dataset/Rs/ceilingcolorplan.pdf": "b25f8db50f5eb5ef2a9d048492578e3beb411dc8d7a037cb0fcc0f1d4f050a25",
+    "g_dataset/Rs/ceilingcolorplan_000.jpg": "1e9a7ee746d0e2789452e739c554fdc17a1fc1e531ed56f50e686d589b85513e",
+    "g_dataset/Rs/colorplan.pdf": "c7108928fbf30b0ceeaa1935c3e982ff04b6dc7c63138cb8f3e298b0f294c365",
+    "g_dataset/Rs/colorplan_000.jpg": "e0159182ea3e8b26b4a8db9a74fa8dc4dba9e7a00df3b7ba17bef63ac6d1f380",
+    "g_dataset/Rs/combine_texture.ipynb": "7b0af11443647bb2f5c8ca7b504558698c3c0757fb47a8d59dd466767a86d01f",
+    "g_dataset/Rs/combined.jpg": "7166253fffd2bf0ac718ec968f9a8c30eb5e354684892fe9f86992e4724f7e6d",
+    "g_dataset/Rs/floor_0.png": "d76fc6cb73c7e2f76d0a1432ef8b99d8f821c6fc33c97c105c5473869489755d",
+    "g_dataset/Rs/floor_0.yaml": "7d6e2f8730d395964756c4aead260506e5c625562e6bca7d26c2e05c9809475a",
+    "g_dataset/Rs/floor_trav_0.png": "52d9ad5b1bd747ad03a7260735067e41f7bf356f563b941e7e4362dd0bdc5668",
+    "g_dataset/Rs/floorplan.png": "bc43c441381328eb155efd0631e453c25f64f97ee04fbe159a03dc198c71b6f0",
+    "g_dataset/Rs/floors.txt": "024501d69082a58642e2f94bf460c11ccef8924922b4eaaa28cc3a681ddd8aa7",
+    "g_dataset/Rs/mesh_z_up.obj": "d9cae3429f403456b31c1ad0214f85b8912d80921558940b59b983d30b581367",
+    "g_dataset/Rs/mesh_z_up.obj.mtl": "6976830d0309a1c5a61028cbff72d1350944a89e379f8c90187ce1fb13a25457",
+    "g_dataset/Rs/test.mtl": "ff33cc8e34818b7520288a5447021773be86b22b142bb995569af5ebf4f8c2f3",
+    "robot_assets/assets/models/locobot/.ipynb_checkpoints/Untitled-checkpoint.ipynb": "7d7553ade79234c9ecd138650b4296925fbcb5cbb936f0daf3902b4a9a155f9d",
+    "robot_assets/assets/models/locobot/locobot.urdf": "6264b0e5c24bb16790a9b86f974780d8795a8cd4f59974552488d6808350060a",
+    "robot_assets/assets/models/locobot/locobot_original.urdf": "a3da5063adeb60364be2233620f30e1cb3fa8e0cb4cf06ed5e1291a11df5a5c3",
+    "robot_assets/assets/models/locobot/meshes/ar_tag.obj": "4e1ad6f6613e350255564f213c561dc7bd0d3495f97e48c1e7c9c992297dc945",
+    "robot_assets/assets/models/locobot/meshes/ar_tag.STL": "91bb77fb91f93bd14a000a51c99cac533b05aaf64b285e3662d8f37da829b21e",
+    "robot_assets/assets/models/locobot/meshes/arm_base_link.obj": "3e502c1fad5fed14fceca8baf116fcca5f6e2ff777207e92cf682a9127f18761",
+    "robot_assets/assets/models/locobot/meshes/arm_base_link.STL": "ab1be66b921cea9d149cc2436c13bb0e69657f154b7d84a10d5afe7f4636a506",
+    "robot_assets/assets/models/locobot/meshes/base_link.obj": "0d744cdfd6d8a865ccf806e3dfe4bd2fe2c9ffb5295f082a2e6436bb12387985",
+    "robot_assets/assets/models/locobot/meshes/base_link.STL": "e03b3d86cad9540a32cdad262a2e2b19c31adb9760c7c9cd41e5243240e5d589",
+    "robot_assets/assets/models/locobot/meshes/cam_mount.obj": "861aec788fd2fbc9366a9e0f753e7bbbd55d3b4e286233b26b608ecf4a0c8d7a",
+    "robot_assets/assets/models/locobot/meshes/cam_mount.STL": "b9aca16d1dc16e7175272fa5e056002c554676c6d0577c99d100c9749ff76f1e",
+    "robot_assets/assets/models/locobot/meshes/camera_link.obj": "4712a1e3f654d371efa6ef9614fef0072ab6fa513519adc2555fdbe1f3cb29f3",
+    "robot_assets/assets/models/locobot/meshes/camera_link.STL": "9e650e2fbdeac65499e04d0f44a84d9a49ff499b5414a053ba8104c7805a18af",
+    "robot_assets/assets/models/locobot/meshes/elbow_link.obj": "0e7b99e6fe9ad039a198e8676ff95d708ab1423a535fae8e898bd4daba110b1c",
+    "robot_assets/assets/models/locobot/meshes/elbow_link.STL": "f21685a3b3ca64387c5c0730a00c0175548dfcc24e7541edfdcbc8bb818b1a19",
+    "robot_assets/assets/models/locobot/meshes/finger_l.obj": "c6f180645c57b32bb0da14633020bcf048f31592322033d3ae30b13fc45c7ad2",
+    "robot_assets/assets/models/locobot/meshes/finger_l.STL": "dd0ab4606af47fefdeccd97718bc229e80c7120e38eede59fc5cca411306a68b",
+    "robot_assets/assets/models/locobot/meshes/finger_r.obj": "7b9379004a95df9ada1eb7b1c4547b7a86642a7b4d7a5cbf5a647b4d455ee843",
+    "robot_assets/assets/models/locobot/meshes/finger_r.STL": "0b5ee7c113210f4dc331ee887f5d23bca90eb9acf03df2c8ec9d0c396ea2c1fd",
+    "robot_assets/assets/models/locobot/meshes/forearm_link.obj": "920f64b6a230a2fd2d8ca3f6e3f24ac346e6a5fe38046a675e45ca6df06875e5",
+    "robot_assets/assets/models/locobot/meshes/forearm_link.STL": "7bbcdb40d5094a5f1f350aed02a7c8aeea0c8c209e44350bec8c662a79d96e73",
+    "robot_assets/assets/models/locobot/meshes/gripper_link.obj": "ba847c7931a7ac68c748e0402d44638a9d67b07edc09722d637489eea57643c2",
+    "robot_assets/assets/models/locobot/meshes/gripper_link.STL": "d07a249becc7ddbaf1ed643b31505c48520dc8e852c96f371b83f39965388602",
+    "robot_assets/assets/models/locobot/meshes/images/main_body.jpg": "4a922225298c5708e9d5f779698256ed5e9ef2a4744cc943bb13d27bdbc00314",
+    "robot_assets/assets/models/locobot/meshes/images/main_body.png": "c56067cf6f70443de2a11f76a63fd02de5585b8770ff66587b1fc5afe7b1c7f2",
+    "robot_assets/assets/models/locobot/meshes/images/wheel.jpg": "a17c56ca928ee7b2d18d15b1bb57c5bc6a8d49cf8ece679c93c380e061aa5738",
+    "robot_assets/assets/models/locobot/meshes/images/wheel.png": "a18ff833d99333cdb5f0d8f2d4485528608d576ca25a4799e1d19f84af3196bc",
+    "robot_assets/assets/models/locobot/meshes/main_body.dae": "b7f51d593290f175fb1156a02b2d63324201f4f7a0412c9179ca9109b9cfc6b1",
+    "robot_assets/assets/models/locobot/meshes/main_body.obj": "3cc219ea4c69eb22486bfcf04f6007c2c833f1c6bf9f3be0967b6d6ed12c9ed1",
+    "robot_assets/assets/models/locobot/meshes/main_body.obj.mtl": "9cbe3f1227125d618aacf9b085d528eab52acfb7abc2dcc2fc602af8f7784c8f",
+    "robot_assets/assets/models/locobot/meshes/plate.obj": "6ca3a509deb96791e25633815405899e23d81d0ed3c423089369b1ceb874d404",
+    "robot_assets/assets/models/locobot/meshes/plate.STL": "a8982edd3ed70be057d50b043ef7d87243a31d65678a6c3826530a907d4e957d",
+    "robot_assets/assets/models/locobot/meshes/roll_link.obj": "70e337758bfb4d78c440e9925366d18535117ef3656397439bd2212978506ab6",
+    "robot_assets/assets/models/locobot/meshes/roll_link.STL": "1172795f735170d8100bdcf6de9937b1493af40d1c997d3c642aa9aa7e5f56e9",
+    "robot_assets/assets/models/locobot/meshes/shoulder_link.obj": "b1c7f7e64a9d1bac305585537912aa950b5e10479bb1bd9d99133525f19ac8e5",
+    "robot_assets/assets/models/locobot/meshes/shoulder_link.STL": "388cdcac6aaef3f1fbfcc36c3109a241f31617c20da83ce9f9a7897d6a0832c8",
+    "robot_assets/assets/models/locobot/meshes/tilt_link.obj": "1092282b4aff53f7ebbb55b2997e21e063e3c81789e4cccde6ab1d9e7f9c113b",
+    "robot_assets/assets/models/locobot/meshes/tilt_link.STL": "f63932a62587755cb1ec468fcc752b450c496e99df286675e20c4401928744ec",
+    "robot_assets/assets/models/locobot/meshes/wheel.dae": "f2d76c17f32af7ce3e20dfc83d83c572de918b5596ba97b1600dd762bab9d37a",
+    "robot_assets/assets/models/locobot/meshes/wheel.obj": "b06cd1419dea4a51897d8d4ea65e8a7b8b48a395994caed98f9e5010b23f8ca9",
+    "robot_assets/assets/models/locobot/meshes/wheel.obj.mtl": "6e2315714b7bd745b67c93684d0f273bba6d178be8e57325291efac7fa8bc9f1",
+    "robot_assets/assets/models/locobot/meshes/wrist_link.obj": "8b8f976bbd81468761de6edd4841b2ce28d548a7f35a4e3ae3a6913e390866af",
+    "robot_assets/assets/models/locobot/meshes/wrist_link.STL": "190f87921a86cd7c13f0d6023ebeb4441dafc03a1b4252926d9068c72b4520d9",
+    "robot_assets/assets/models/locobot/meshes/yaw_link.obj": "232efb2c810c67d378d01bf01e0bd0cf1cab17163fe953c3aa7fa4bc01bf0077",
+    "robot_assets/assets/models/locobot/meshes/yaw_link.STL": "336465452485090e2511b67f1cc20e4c895c2246fa2f0d8d91cf79c0a4672e1c",
+    "robot_assets/assets/models/locobot/test_urdf.py": "b3b441c87f73797fe7c9d2b79d4d23b54b8eaf5608100502f9ff98e37d68a3df",
+    "robot_assets/assets/models/ycb/024_bowl/024_bowl.xml": "7159b101cd6048cc81fd01160fdd54076ac3cc8ba2c79786090904f0d245a1d9",
+    "robot_assets/assets/models/ycb/024_bowl/texture_map.png": "20029d22859dd94150b3d969c0b351663b6d7be31d28b90ba15987ee3ba57fdc",
+    "robot_assets/assets/models/ycb/024_bowl/textured_simple.obj": "987a06197558c309c928633ad993c9ad506df33a77588d0e8ed2829a09572f43",
+    "robot_assets/assets/models/ycb/024_bowl/textured_simple.obj.mtl": "66906c16609d5fc60d520f5cc0e59cfe7c0bb84e66c970da2badcdb15cbebe0a",
+    "robot_assets/assets/models/ycb/024_bowl/textured_simple_vhacd.obj": "6636d03e1594450fc400ace9fdccc2d09b87cce1d4c5237906eb15ac95e6a807",
+    "robot_assets/assets/models/ycb/006_mustard_bottle/006_mustard_bottle.xml": "7159b101cd6048cc81fd01160fdd54076ac3cc8ba2c79786090904f0d245a1d9",
+    "robot_assets/assets/models/ycb/006_mustard_bottle/texture_map.png": "5ab81c84e1b0a945c9f1a3f20fe765720ab607ca2841a1da3454b9cf443893b1",
+    "robot_assets/assets/models/ycb/006_mustard_bottle/textured_simple.obj": "f156897814cba5889427759c52d76f7d7c7dd7902aef87e38ec898195bbc6d79",
+    "robot_assets/assets/models/ycb/006_mustard_bottle/textured_simple.obj.mtl": "66906c16609d5fc60d520f5cc0e59cfe7c0bb84e66c970da2badcdb15cbebe0a",
+    "robot_assets/assets/models/ycb/006_mustard_bottle/textured_simple_vhacd.obj": "30cfbee77d90a12c07afa52066995da8b1595e0bb79a25065e9a3c2a364ec604"
+  },
+  "snapshot_seals": {
+    "harness/benchmark_episode.py": "f48a91041f8a04885b576f49a7ff66f41e40ef23285705bd365df0028cc39c46",
+    "harness/benchmark_protocol.py": "0dc1d00719f9e615464dc83c97778b8e5170a94b2440667f419b212b56d8a653",
+    "harness/benchmark_watchdog.py": "8e0e7569c5c4a59f5f4fcbad4bb2f6359187792a8af7186d7d1265a7afc4efe0",
+    "harness/build_benchmark_report.py": "b149dd0e037c62be87405fd2cd1fd6cc9fc0f4841de860f8b56716a2b4c50eac",
+    "harness/check_llm_connection.py": "27475bcd1b1eff8413b3acc460a121c57e753554904f6fd12e68ae204deddf25",
+    "harness/run_paired_benchmark.py": "40ba5001d87172cf3aa8039af12fb4243992d11d01299a0e401dd997929181b2",
+    "src/frontier_search/cli.py": "a52af031f44f31ee13925068fd4866036c74e46f290808720361a4b35ec6f1dd",
+    "src/frontier_search/config.py": "ab912dc851834b9f4036fac592277ea956bf35156495d31319aa6074abf856b9",
+    "src/frontier_search/contracts.py": "53d53f0a00289ed90b4305e3acc51568d43805c03325399e77512cd27ea52ec7",
+    "src/frontier_search/immutable.py": "bb7095340bafa978835c184029b102486a0f70953b997a1302c42bfd05a68887",
+    "src/frontier_search/sensors.py": "571bb8cb5916bc50637c05a6cdefbbda0c51d655c64beb20e36e5421b822e528",
+    "src/frontier_search/validation.py": "6329783e3db6f926ec422877dfe9d5c2fa78e762837bc4600aaf7e4ae0e59cb5",
+    "src/frontier_search/__init__.py": "747c7ae6cf57e4584518a8e5d039287f8ac79938633aa170a9a432939b46afca",
+    "src/frontier_search/__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+    "src/frontier_search/evaluation/api.py": "481dc537e2b8a418391de2dc1ed30613bbe2cbf4600b6d3b995f87c78e39ec14",
+    "src/frontier_search/evaluation/proximity.py": "0bc6c9bf5e2f5cd18feed471d8571d727d46af23b782d2584a5442b6c33941b8",
+    "src/frontier_search/evaluation/retained.py": "2291564dfc689202cc28d36e689ac4167990fd9e2364207228fe23d24477894f",
+    "src/frontier_search/evaluation/verifier.py": "950113d1ad9a7ed341ea24419986ee375b54be6bd593abd8ccfdf3454a56c87d",
+    "src/frontier_search/evaluation/__init__.py": "2e024d228f6b76955d1d5b3c3b0c2b8dd16b6c4524dfdc16ff67084d30bd0985",
+    "src/frontier_search/experimental/__init__.py": "34811d6395131bb9b96dc07cf4509eebd911047352fea2f38a52b08ae5912a9b",
+    "src/frontier_search/experimental/collision_refinement/bridge.py": "148bdbed6b19f1af42566e6d384e1b8dbb56e2709684500aedec1df828492ed2",
+    "src/frontier_search/experimental/collision_refinement/costmap.py": "2076ab0c5669f67a19f6b0eaca62a3db969931c117f07c63f32bf11b726f87d9",
+    "src/frontier_search/experimental/collision_refinement/patch.py": "23b2bcc87f40074e6a75b441b8f781dbf9f9fe39c2eb25643400c903931ab420",
+    "src/frontier_search/experimental/collision_refinement/rolling_local_map.py": "8760adc42a0a648c707b6db914b8883df2ec0ef8aa08289490258cc7bd790c91",
+    "src/frontier_search/experimental/collision_refinement/vector_fusion.py": "eaf1f4347e1285ca4bb943e184c86eb1abca80708f49528be80f9a926e449027",
+    "src/frontier_search/experimental/collision_refinement/__init__.py": "96348a590180d1d35c49d6ea26ba0c8838c706aa09818bec7ac27eb1c319b886",
+    "src/frontier_search/experiments/logging.py": "fe845e21ad004fc533962132f44b259945b2cb7611bddc910688ca9d01e90013",
+    "src/frontier_search/experiments/__init__.py": "3adc152fa3965fd2891d9059487850dc046340b57ce0bb3495db32cf46f44bb0",
+    "src/frontier_search/fixtures/analytic_rgbd.py": "5e6bfee7da223a9ad8c86ba60a129f251fca0f63ea562a88dac3ce0458fbff98",
+    "src/frontier_search/fixtures/clearance.py": "942e1c41d82449f07cb00138567485799f9493bd6e99db783ac57c8b38d62838",
+    "src/frontier_search/fixtures/loader.py": "5652b594c3f45cd7efe45844017454272eb3eec562d1dfc006a0e27ca19eb10d",
+    "src/frontier_search/fixtures/recording.py": "5060164551157825b38e127c211244e74c8bfe61340df25e7ba3579970dd1245",
+    "src/frontier_search/fixtures/sequence.py": "c98fc1959674ab07c70dc06d6985fb1a9efc472809440826b3026e97dcaa788c",
+    "src/frontier_search/fixtures/three_rooms.py": "d074930510acaf6fbde39d1be63c1222669812177bcac7dde14f20bd4e6e64ed",
+    "src/frontier_search/fixtures/w2_episode.py": "8be1e27f511d6848fc7b4041e74448b184c4205c0c297a6f0c705e3dce08d638",
+    "src/frontier_search/fixtures/__init__.py": "ee5347aa4a4f1285b0439a1675295bb8788ff275080020c14544ce01902fe8da",
+    "src/frontier_search/navigation/api.py": "cd01e69b36044f9f07f689c3cb2fde5e2886299595d5973d275345c8cf2426a6",
+    "src/frontier_search/navigation/costmap.py": "28e80883c2c4a0d5ebf970258964f3125bfc5ec887d8c384a201e6e87661b742",
+    "src/frontier_search/navigation/demo.py": "e3ce363246aa7a66318a18cf630458becd45b588eda7dcc0090e03d063f04c12",
+    "src/frontier_search/navigation/dev_robot.py": "e182bec2a941fcb7e915049f0ce66ff4a06274ce0568f2d3aeb01bfd06206e45",
+    "src/frontier_search/navigation/diagnostics.py": "f30357cc8cbe44c1a7000371ebcd8dc12e21bf4195a7e8c2a375e9acd25c7cc6",
+    "src/frontier_search/navigation/geometry.py": "8cbbdc664412be1387f264aefb7842149b0f62e6a9a698408bdc392f1d34bd69",
+    "src/frontier_search/navigation/lattice.py": "bfb0c73aacd5e13562de4535d43ccf91d264079633ddcd86a0964e1f1baaf15b",
+    "src/frontier_search/navigation/locobot_robot.py": "8b754a96b6a8475e64ac7f631a0988c2e5c3e6ada346395d9f4e6ae29c78ff2c",
+    "src/frontier_search/navigation/navigator.py": "8bbcfa80f1e3a426a3023414513c787a71be3057fdb8f5eb602389b43261e47e",
+    "src/frontier_search/navigation/planner.py": "b9f2d1d1ea36c39468833873b1ae27146d3ebd8fa70ab39607312f6ee5de2432",
+    "src/frontier_search/navigation/__init__.py": "1f04cc1dc78876885c638ac6a5bf67a26e617551fc9ce72f2e65945c79c7fae8",
+    "src/frontier_search/perception/api.py": "454dc3ae1dfce6f1c37d099ebb80f67348d9beb6bec0ce5a26635c951edfe6ae",
+    "src/frontier_search/perception/claims.py": "cfd1e158c893865eb680ffdc1544cd749520bb796cad3405e92e0eaf26fe8f37",
+    "src/frontier_search/perception/depth_filter.py": "080db77c6acc2c4bc9fbcfe4c79f1fe3d9b93fb529fda89cb9b02302b1929cb8",
+    "src/frontier_search/perception/detection.py": "e83a04a44d018616763000ba8dcbdf18d21d1e533346f5b4987075c41edc83d4",
+    "src/frontier_search/perception/frontiers.py": "f8fd43772bd8813bfa4dbd026989af40990e5f54885c5eae8802ad94913713b4",
+    "src/frontier_search/perception/fusion.py": "72cd56ce2e38bf0ee8a73cc5a263e1eb31c704ff7e45b42d68831bd00ba7621e",
+    "src/frontier_search/perception/gain.py": "df8ff54ae7443b56f39fed57aa19e6c6cee8f4a8800aa87d810bdaca6b521286",
+    "src/frontier_search/perception/mapper.py": "c41dc5f44a172d4b93238217c32df6d1e8fdb4a0140acdc87858acf45edcf690",
+    "src/frontier_search/perception/observations.py": "ca7127be53542e9cab5f30e733a24a017f98c58b2922699a4254061c0e6ceb50",
+    "src/frontier_search/perception/occupancy.py": "aa769611d96f6b6b71c81b27ad4a5bc499601e1eb53234f18a144593be4735b4",
+    "src/frontier_search/perception/priors.py": "b6375c7750c9ee46ff63cc71182efb6324d2a960b0751f923db8519a94b47343",
+    "src/frontier_search/perception/profiling.py": "e7a06a969621560a490860de3892aa98f605306a695ad6c9ba36e7d8e8794810",
+    "src/frontier_search/perception/projection.py": "fb95a65287b096591aff60bc9ed47a902f0a8c392754ba7a7dab418898ecd31e",
+    "src/frontier_search/perception/tracking.py": "ee6ad3dedb22b82f9edc29bb6abe9e21fd9074f0e26c57a9a26623cce2234a61",
+    "src/frontier_search/perception/__init__.py": "fb4e91cc76c69dec8fd3628e13889aac369b3cfce83cd714da16e0f2bab637d2",
+    "src/frontier_search/policies/api.py": "1b2e876673d0a63199a0ddd197dd348fff573ecdf75cfb17e56dfd58bec89597",
+    "src/frontier_search/policies/baselines.py": "50f323f1dc94ec9318ac93530f9f7748ca04541e9108ad72ef7c42b256289f40",
+    "src/frontier_search/policies/llm.py": "84905b7cac34d6fd97afb9f462e91faef5f18cd7d1d1997524caf3df97d10c39",
+    "src/frontier_search/policies/provider.py": "d7854a4f620760a8e1500bcf00954b67a36facb951431ccabba42cbb63d40796",
+    "src/frontier_search/policies/transport.py": "7c5e4c80cd699a80b7e8ef51326c12aa0a90be9e0ee2fd90497614f964c0559d",
+    "src/frontier_search/policies/__init__.py": "9ae475c7ce6b8aa467dc24a68dafff15697f4da376032722afae70bbfabdff89",
+    "src/frontier_search/runner/demo_video.py": "b7fc2bb21e9acbf87f63f0c7f1c7bbe14ca0428c3ea470e84790ddbe50e6a0bb",
+    "src/frontier_search/runner/diagnose_clearance.py": "e5e45e7c8b57b3f206de881a1305d20d649b0424d02ec614b7093fd30911e95c",
+    "src/frontier_search/runner/episode.py": "3f8b15a11273467d73d79f6b0071b5fe07436352483b75baa4aa5be786253672",
+    "src/frontier_search/runner/igibson_demo.py": "e081d5f10e2221588833316a0b89603a1ce93fff6595db81cc6d2e993f492a6f",
+    "src/frontier_search/runner/indoor_viewer.html": "d35d3ec5485bcebe9675a4c94de4d95056ac424f07bdd66096e4714d5687f375",
+    "src/frontier_search/runner/indoor_viewer.py": "4bdfb2c965f6a98865cd0bf06d54a8d1ac17f3400f4d10deb77f89a5459fbcca",
+    "src/frontier_search/runner/integrated.py": "517941b454175846489a3ad27904b3b3ea67560051a2a6c94b2a7b36771b6052",
+    "src/frontier_search/runner/integrated_recording.py": "ef35aa60117dce029447bb0bb854438b16a7feed61bd7cf1d2a1b78067f78a58",
+    "src/frontier_search/runner/manifest.py": "efaa308a02292170bbfec53b42a1c8fb722713c3f0ab7b98d62a6fb86bdbe2c9",
+    "src/frontier_search/runner/recovery.py": "647a4eead85b6c298eea34cd614bed8c2aaa6f260ebc0451ddf37f58ed216214",
+    "src/frontier_search/runner/replay.py": "efb6317629f3a88550e2848cc400311130aec6e4f98f3b3c88257c28133d0b7c",
+    "src/frontier_search/runner/supervisor.py": "04c169900a028b5e25034ad9338869b23b4ce874b6d798b68cdcd74685d41017",
+    "src/frontier_search/runner/synthetic.py": "d73b28a5dace0656ba1eed2ebd72df95fd9477a39577b2945180b9d1fe978651",
+    "src/frontier_search/runner/w2.py": "a04c39b1aae3f1894284e3fbc1a2a846c3e90ab590d55cce1d91fb8377e9dcea",
+    "src/frontier_search/runner/__init__.py": "e12259290ca70fc848df09bf53c00ba3b264325dbf33d50a43d8f47edf2afb7f",
+    "src/frontier_search/simulation/api.py": "2c8af8289432def135c4ef6b40fe04a8fde123429b8706962a62c4bf3241c980",
+    "src/frontier_search/simulation/capture_igibson.py": "bbb83ed5f9a59b9b12123a2578859be91a404d0ad39a7fffc4a0af25053bf3c0",
+    "src/frontier_search/simulation/cart_motion.py": "3aa03b5f0b300ece1c005728a93fd9a784d2e5ff125915324ecf7c90380ad41e",
+    "src/frontier_search/simulation/igibson_adapter.py": "91063ac817976606b9ebe1b28664a6f05cac0d9bbed2495c24cd92c51e8fcfba",
+    "src/frontier_search/simulation/igibson_rs.py": "49f72696ab8fa9671a049640be472cd29bab827654ced90ca70bedc19f72cf91",
+    "src/frontier_search/simulation/indoor_challenges.py": "313d2e8ae608c3a3b42fff7820368176de35788c16e219ebcd63e176c9b56bd2",
+    "src/frontier_search/simulation/integrated_rs.py": "fd6fb86151600107b5296c0e7ca37a2547f7e7d1186a5711c370b316af123f38",
+    "src/frontier_search/simulation/mock_adapter.py": "6a0cb4611b94b325da38d120e7c05ec6354b7070298570b9683d3b14fa6609fb",
+    "src/frontier_search/simulation/record_sequence.py": "be25d4015aa7ac52e32c8274dc95b3f73828f50383e69f4497f77ce7a95cd3d6",
+    "src/frontier_search/simulation/rgbd.py": "bb7e00b6b675b8087e4ecf6937e8c1e85871b55b1d1dfe8aa540cfe94e5d5e4e",
+    "src/frontier_search/simulation/rs_tasks.py": "487ff8aae1f3285daae322efd7be489d2e63937d4a765273c8c25bb9d8a4c008",
+    "src/frontier_search/simulation/sensor_noise.py": "7270c39622f691c128abfc18e3786fae208bd763198af40a3da755bb8895c7b3",
+    "src/frontier_search/simulation/start_area_verifier.py": "8aafb9c4e4f2b70d7849f3d2937e8110497b613ab73689f9a26408968d335b1c",
+    "src/frontier_search/simulation/__init__.py": "3b0211966bd653b67fed274068959f0677959d3bdef7ec960793309855d56cfc",
+    "weights/yolo11/yolo11s.pt": "85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5",
+    "harness/inspection_diagnostics.py": "7ad85dd8b96c3eef9c63db8805da1982d47d6dce9956ece6f77c57e436d7b852",
+    "src/frontier_search/navigation/pose_recovery.py": "b18c9c2013e75a6af70e83659724e35cf791b0f0133bc0f33280e8c440e85782"
+  },
+  "base_manifest": {
+    "episode_id": "template",
+    "scene_id": "Rs",
+    "source": "igibson",
+    "target_class": "bowl",
+    "start_pose": {
+      "x_m": 0.8,
+      "y_m": -2.4,
+      "z_m": 0.0,
+      "yaw_rad": 1.5707963267948966
+    },
+    "robot": {
+      "footprint_base": [
+        {
+          "x_m": 0.19,
+          "y_m": 0.0
+        },
+        {
+          "x_m": 0.1755371111771445,
+          "y_m": 0.07270985214936707
+        },
+        {
+          "x_m": 0.13435028842544405,
+          "y_m": 0.13435028842544405
+        },
+        {
+          "x_m": 0.07270985214936707,
+          "y_m": 0.1755371111771445
+        },
+        {
+          "x_m": 1.1634144591899856e-17,
+          "y_m": 0.19
+        },
+        {
+          "x_m": -0.07270985214936705,
+          "y_m": 0.1755371111771445
+        },
+        {
+          "x_m": -0.13435028842544403,
+          "y_m": 0.13435028842544405
+        },
+        {
+          "x_m": -0.1755371111771445,
+          "y_m": 0.07270985214936708
+        },
+        {
+          "x_m": -0.19,
+          "y_m": 2.3268289183799712e-17
+        },
+        {
+          "x_m": -0.17553711117714452,
+          "y_m": -0.07270985214936704
+        },
+        {
+          "x_m": -0.13435028842544405,
+          "y_m": -0.13435028842544403
+        },
+        {
+          "x_m": -0.07270985214936716,
+          "y_m": -0.17553711117714443
+        },
+        {
+          "x_m": -3.490243377569956e-17,
+          "y_m": -0.19
+        },
+        {
+          "x_m": 0.07270985214936711,
+          "y_m": -0.17553711117714446
+        },
+        {
+          "x_m": 0.134350288425444,
+          "y_m": -0.13435028842544405
+        },
+        {
+          "x_m": 0.17553711117714443,
+          "y_m": -0.07270985214936718
+        }
+      ],
+      "collision_z_min_m": 0.0,
+      "collision_z_max_m": 0.908,
+      "clearance_margin_m": 0.01,
+      "motion_model": "differential_drive",
+      "can_turn_in_place": true,
+      "max_linear_speed_mps": 0.32,
+      "max_angular_speed_radps": 1.1,
+      "position_tolerance_m": 0.03,
+      "yaw_tolerance_rad": 0.1
+    },
+    "policy_name": "information_gain",
+    "mapping": {
+      "resolution_m": 0.1,
+      "width_cells": 70,
+      "height_cells": 85,
+      "origin_x_m": -4.5,
+      "origin_y_m": -4.5,
+      "confirmation_frames": 2,
+      "confirmation_window_s": 3.0,
+      "confidence_threshold": 0.5,
+      "floor_height_m": 0.0,
+      "floor_tolerance_m": 0.04,
+      "depth_min_m": 0.1,
+      "depth_max_m": 5.0,
+      "clearance_bin_height_m": 0.05,
+      "depth_surface_margin_m": 0.02,
+      "base_elevation_margin_m": 0.015,
+      "frontier_min_cells": 2,
+      "frontier_connectivity": 4,
+      "frontier_approach_search_m": 1.0,
+      "frontier_match_tolerance_cells": 1,
+      "frontier_match_fraction": 0.25,
+      "frontier_history_s": 30.0,
+      "gain_range_m": 3.0,
+      "gain_ray_step_rad": 0.15,
+      "object_match_distance_m": 0.35,
+      "depth_pixel_stride": 4,
+      "depth_filter_kernel_size": 5,
+      "depth_filter_max_delta_m": 0.08,
+      "unvisited_recovery_viewpoints": true,
+      "recovery_viewpoint_spacing_m": 0.6,
+      "recovery_viewpoint_range_m": 3.0,
+      "frontier_cluster_span_m": 1.0,
+      "dynamic_clear_frames": 2,
+      "inspection_distance_m": 0.9,
+      "inspection_linear_speed_mps": 0.03,
+      "inspection_angular_speed_radps": 0.02,
+      "target_max_extent_m": 0.25,
+      "tentative_target_memory_s": 30.0,
+      "claim_confidence_threshold": 0.65
+    },
+    "observation": {
+      "initial_headings_rad": [
+        0.0,
+        1.57,
+        -1.57,
+        0.0
+      ],
+      "arrival_headings_rad": [
+        0.0,
+        1.5707963267948966,
+        3.141592653589793,
+        -1.5707963267948966,
+        0.0
+      ],
+      "recovery_headings_rad": [
+        1.5707963267948966,
+        3.141592653589793,
+        -1.5707963267948966,
+        0.0
+      ],
+      "heading_tolerance_rad": 0.05,
+      "dwell_s": 0.6,
+      "processed_samples_per_heading": 1,
+      "allow_full_rotation": true,
+      "operation_deadline_s": 400.0,
+      "drain_deadline_s": 30.0,
+      "inspection_hold_s": 4.0,
+      "inspection_headings_rad": [
+        -0.15,
+        0.0,
+        0.15
+      ],
+      "inspection_heading_settle_ratio": 0.5
+    },
+    "navigation": {
+      "batch_deadline_s": 5.0,
+      "navigation_deadline_s": 400.0,
+      "max_replans": 4,
+      "pose_freshness_m": 0.05,
+      "map_freshness_s": 0.4
+    },
+    "policy": {
+      "epsilon_m": 0.1,
+      "llm_model": "gemini-3.5-flash-lite",
+      "llm_reasoning": null,
+      "llm_deadline_s": 30.0,
+      "llm_call_cap": 30,
+      "llm_prompt": "Choose the best eligible frontier for finding the target. Use semantic evidence, information gain, assessed path cost, exclusions, and recent execution feedback.",
+      "llm_bypass_single_candidate": true,
+      "llm_cache_identical_context": true,
+      "llm_feedback_window": 8,
+      "llm_max_observed_objects": 24
+    },
+    "recovery": {
+      "cooldown_s": 5.0,
+      "evaluation_retry_cap": 2,
+      "navigation_retry_cap": 2,
+      "opportunity_attempt_cap": 6,
+      "no_progress_cap": 2,
+      "progress_radius_m": 1.0,
+      "minimum_progress_m2": 0.1,
+      "max_cycles_without_navigation": 3,
+      "epsilon_retry": 0.0,
+      "stuck_retry": false
+    },
+    "limits": {
+      "max_attempts": 45,
+      "max_steps": 18000,
+      "max_simulated_time_s": 600.0,
+      "max_wall_time_s": 2400.0,
+      "max_decisions": 80
+    },
+    "evaluation": {
+      "minimum_visibility": 0.1,
+      "minimum_bbox_iou": 0.5,
+      "localization_tolerance_m": 0.25,
+      "required_evidence_frames": 2,
+      "deadline_s": 5.0
+    },
+    "region_priors": [
+      {
+        "region_id": "R1",
+        "boundary_world": [
+          {
+            "x_m": -2.05,
+            "y_m": -4.2
+          },
+          {
+            "x_m": 1.95,
+            "y_m": -4.2
+          },
+          {
+            "x_m": 1.95,
+            "y_m": 1.5
+          },
+          {
+            "x_m": -2.05,
+            "y_m": 1.5
+          }
+        ],
+        "room_type": null
+      },
+      {
+        "region_id": "R2",
+        "boundary_world": [
+          {
+            "x_m": -4.1,
+            "y_m": -2.2
+          },
+          {
+            "x_m": -2.05,
+            "y_m": -2.2
+          },
+          {
+            "x_m": -2.05,
+            "y_m": 1.5
+          },
+          {
+            "x_m": -4.1,
+            "y_m": 1.5
+          }
+        ],
+        "room_type": null
+      },
+      {
+        "region_id": "R3",
+        "boundary_world": [
+          {
+            "x_m": -4.1,
+            "y_m": 1.5
+          },
+          {
+            "x_m": -2.1,
+            "y_m": 1.5
+          },
+          {
+            "x_m": -2.1,
+            "y_m": 3.6
+          },
+          {
+            "x_m": -4.1,
+            "y_m": 3.6
+          }
+        ],
+        "room_type": null
+      },
+      {
+        "region_id": "R4",
+        "boundary_world": [
+          {
+            "x_m": -2.1,
+            "y_m": 1.5
+          },
+          {
+            "x_m": 1.95,
+            "y_m": 1.5
+          },
+          {
+            "x_m": 1.95,
+            "y_m": 3.6
+          },
+          {
+            "x_m": -2.1,
+            "y_m": 3.6
+          }
+        ],
+        "room_type": null
+      }
+    ],
+    "environment_seed": 0,
+    "perception_seed": 1,
+    "policy_seed": 2,
+    "oracle_room_labels": false,
+    "capture_every_steps": 10,
+    "module_deadline_s": 60.0,
+    "enable_target_evaluation": true,
+    "initial_clearance_mode": "verified_start_area",
+    "initial_clearance_radius_m": 0.65,
+    "initialization_deadline_s": 240.0,
+    "sensor_noise": {
+      "enabled": true,
+      "depth_std_m": 0.01,
+      "depth_dropout_prob": 0.01,
+      "seed": 123
+    }
+  },
+  "policies": [
+    "random",
+    "nearest",
+    "information_gain",
+    "llm_guided"
+  ],
+  "profiles": [
+    "apartment",
+    "clutter",
+    "dynamic"
+  ],
+  "target_evaluator_only": {
+    "model": "024_bowl",
+    "class_name": "bowl",
+    "position_world": [
+      -1.3502419985830785,
+      2.9511864975094797,
+      0.9097093077414806
+    ],
+    "instance_id": "Rs-inserted-bowl",
+    "reachability": "Native collision/floor oracle preflight, parked cart if dynamic; oracle files never read by episode worker."
+  },
+  "runtime": {
+    "workers": 2,
+    "torch_threads": 4,
+    "device": "0",
+    "python": "3.8.20 (default, Oct  3 2024, 15:19:54) [MSC v.1929 64 bit (AMD64)]",
+    "startup_deadline_s": 300.0,
+    "wall_time_interpretation": "Concurrent shared-resource wall times; not isolated single-robot latency."
+  },
+  "regression_certificate": {
+    "returncode": 0,
+    "source_fingerprint": "8a943c855186426351deee5b4930be148e140166d1abcd91d31e6dd64dd105c4",
+    "source_unchanged": true,
+    "tests_count": 677
+  },
+  "no_episode_retries": true,
+  "arm": null,
+  "arm_settings": null,
+  "reporting": {
+    "primary_unit": "target location x profile x start",
+    "penalized_failure_s": 600.0,
+    "confidence": "Descriptive fixed-task statistics; paired bootstrap within profile over target/start blocks. Two starts are task variation, not independent houses.",
+    "include_all_terminations": true,
+    "success_conditioned_metrics_include_n": true
+  },
+  "design": "bowl48",
+  "scene_layout": "bowl48_accessible",
+  "scene_layout_reason": "A chair at (-2.70,1.0) blocked all full-footprint routes to bathroom close viewpoints in isolated preflight. Move the same chair to (-3.35,.85) in both clutter/dynamic conditions for both targets; all other props and legacy layouts unchanged.",
+  "targets_evaluator_only": {
+    "kitchen": {
+      "model": "024_bowl",
+      "class_name": "bowl",
+      "position_world": [
+        -1.3502419985830785,
+        2.9511864975094797,
+        0.9097093077414806
+      ],
+      "instance_id": "Rs-inserted-bowl"
+    },
+    "bathroom": {
+      "model": "024_bowl",
+      "class_name": "bowl",
+      "position_world": [
+        -3.400241998583078,
+        3.0011864975094804,
+        0.43358444657109885
+      ],
+      "instance_id": "Rs-inserted-bowl"
+    }
+  },
+  "starts": {
+    "A": {
+      "x_m": 0.8,
+      "y_m": -2.4,
+      "z_m": 0.0,
+      "yaw_rad": 1.5707963267948966
+    },
+    "B": {
+      "x_m": -1.5,
+      "y_m": 0.6,
+      "z_m": 0.0,
+      "yaw_rad": 3.141592653589793
+    }
+  },
+  "preflight_cases": [
+    {
+      "case_id": "kitchen-clutter-startB",
+      "job_id": "kitchen-clutter-startB-random"
+    },
+    {
+      "case_id": "bathroom-clutter-startB",
+      "job_id": "bathroom-clutter-startB-random"
+    },
+    {
+      "case_id": "bathroom-apartment-startA",
+      "job_id": "bathroom-apartment-startA-random"
+    },
+    {
+      "case_id": "kitchen-apartment-startA",
+      "job_id": "kitchen-apartment-startA-random"
+    },
+    {
+      "case_id": "kitchen-clutter-startA",
+      "job_id": "kitchen-clutter-startA-random"
+    },
+    {
+      "case_id": "kitchen-dynamic-startA",
+      "job_id": "kitchen-dynamic-startA-random"
+    },
+    {
+      "case_id": "kitchen-apartment-startB",
+      "job_id": "kitchen-apartment-startB-random"
+    },
+    {
+      "case_id": "kitchen-dynamic-startB",
+      "job_id": "kitchen-dynamic-startB-random"
+    },
+    {
+      "case_id": "bathroom-clutter-startA",
+      "job_id": "bathroom-clutter-startA-random"
+    },
+    {
+      "case_id": "bathroom-dynamic-startA",
+      "job_id": "bathroom-dynamic-startA-random"
+    },
+    {
+      "case_id": "bathroom-apartment-startB",
+      "job_id": "bathroom-apartment-startB-random"
+    },
+    {
+      "case_id": "bathroom-dynamic-startB",
+      "job_id": "bathroom-dynamic-startB-random"
+    }
+  ],
+  "execution_grouping": "pair_id",
+  "priority_pairs": [
+    "kitchen-clutter-startB",
+    "bathroom-clutter-startB",
+    "bathroom-apartment-startA"
+  ]
+}

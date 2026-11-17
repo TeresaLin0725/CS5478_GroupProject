@@ -155,6 +155,12 @@ class RGBDMapper:
         self._state = None  # type: Optional[_EpisodeState]
         self._detector = detector
 
+    def set_observation_routine(self, routine: Optional[str]) -> None:
+        """Optional runner hint; detectors without inspection support are unchanged."""
+        setter = getattr(self._detector, 'set_inspection_mode', None)
+        if setter is not None:
+            setter(routine == 'inspection')
+
     # Prepare the mapper for a new episode and clear previous episode data.
     def reset(self, request: MapperInit) -> None:
         """Validate and replace the episode, without publishing an observation.
@@ -174,6 +180,7 @@ class RGBDMapper:
         new_state.floor_seen = [[False] * cfg.width_cells for _ in range(cfg.height_cells)]
         new_state.clear_counts = [[0] * cfg.width_cells for _ in range(cfg.height_cells)]
         self._state = new_state
+        self.set_observation_routine(None)
 
     def update(self, observation: RGBDObservation) -> WorldState:
         """Atomically process one fresh frame and publish an owned snapshot.

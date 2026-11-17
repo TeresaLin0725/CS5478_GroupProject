@@ -236,6 +236,19 @@ class EpisodeRunner:
             self.last_feedback = fingerprint
 
     def _operation(self, kind, subgoal=None, routine=None, heading=None):
+        setter = getattr(self.mapper, 'set_observation_routine', None)
+        if setter is not None:
+            self._call('mapper.set_observation_routine', setter,
+                       routine if kind == 'observe' else None)
+        try:
+            return self._execute_operation(kind, subgoal, routine, heading)
+        finally:
+            # A target claim/cancellation can interrupt an inspection capture.
+            # Never leave the high-frequency detector mode enabled afterward.
+            if setter is not None:
+                self._call('mapper.set_observation_routine', setter, None)
+
+    def _execute_operation(self, kind, subgoal=None, routine=None, heading=None):
         self.op_serial += 1
         self.active = 'op-%d' % self.op_serial
         self.last_feedback = None

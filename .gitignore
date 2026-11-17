@@ -16,3 +16,4 @@ data/
 weights/
 .env
 /Ultralytics/
+/tmp/

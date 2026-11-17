@@ -64,6 +64,7 @@ from ..validation import ContractError
 from . import diagnostics, planner
 from .costmap import START_ZONE_M, Costmap, circumradius
 from .geometry import circle_footprint
+from .pose_recovery import choose_pose_egress, egress_path_valid
 
 try:  # typing.Protocol exists from Python 3.8
     from typing import Protocol
@@ -186,6 +187,8 @@ class _Operation:
         self.heading_settle_ratio = 1.0
         self.marks = []                       # type: List[float]
         self.pose = None                      # type: Optional[Pose]
+        self.pose_egress = None
+        self.egress_started_s = None
         # stall detection
         self.stall_pose = None                # type: Optional[Pose]
         self.stall_since_s = started_s
@@ -424,6 +427,9 @@ class TeamNavigator:
                 return
             self._control.set_velocity(0.0, 0.0)  # stop unsafe motion before replanning
             self._replan(op, live)
+        elif op.pose_egress is not None:
+            if not egress_path_valid(op.costmap, live, op.pose_egress):
+                self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
         elif not self._sweep_safe(op.costmap, live, [live.yaw_rad] + op.targets[op.leg:]):
             self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
 
@@ -480,6 +486,14 @@ class TeamNavigator:
                 and (not (request.routine == "initial" and cfg.allow_full_rotation)
                      or op.costmap.full_rotation_valid(live, margin_m=op.costmap.start_margin_m)))
         if not safe:  # never rotate blindly
+            if (request.routine == 'recovery' and self._robot.can_turn_in_place and
+                    not getattr(self._control, 'contact_this_step', False)):
+                op.pose_egress = choose_pose_egress(op.costmap, live)
+                if op.pose_egress is not None:
+                    op.egress_started_s = self._control.sim_time_s()
+                    self._log('pose_egress', '%s start %s -> %s unknown=%s' %
+                              (op.goal_id, live, op.pose_egress.goal, sorted(op.pose_egress.unknown_cells)))
+                    return self._feedback(op)
             return self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
         return self._feedback(op)  # ACCEPTED
 
@@ -604,7 +618,31 @@ class TeamNavigator:
             return v, w
         return _clip(v, limit.max_linear_mps), _clip(w, limit.max_angular_radps)
 
+    def _tick_pose_egress(self, op: _Operation, now: float) -> None:
+        live, egress = self._control.current_pose(), op.pose_egress
+        error = _wrap(egress.origin.yaw_rad-live.yaw_rad)
+        if (now-op.egress_started_s > 6. or abs(error) > .10 or
+                not egress_path_valid(op.costmap, live, egress)):
+            self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
+            return
+        distance = hypot(egress.goal.x_m-live.x_m, egress.goal.y_m-live.y_m)
+        if distance <= .012:
+            self._control.set_velocity(0., 0.)
+            op.pose_egress = None
+            if not (op.costmap.start_pose_valid(live) and
+                    self._sweep_safe(op.costmap, live, [live.yaw_rad]+op.targets)):
+                self._finish(op, NavigationStatus.FAILED, FailureReason.BLOCKED)
+                return
+            self._log('pose_egress', '%s completed at %s' % (op.goal_id, live))
+            op.stall_pose, op.stall_since_s = live, now
+            return
+        self._control.set_velocity(egress.direction*min(.05, self._robot.max_linear_speed_mps),
+                                   _clip(2.*error, .15))
+
     def _tick_observation(self, op: _Operation, now: float) -> None:
+        if op.pose_egress is not None:
+            self._tick_pose_egress(op, now)
+            return
         if op.leg >= len(op.targets):
             self._finish(op, NavigationStatus.REACHED, None)
             return

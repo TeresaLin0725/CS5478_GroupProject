@@ -1,0 +1,122 @@
+{
+  "evidence": {
+    "episode_id": "bathroom-apartment-startA-information_gain",
+    "claim_id": "claim-000001",
+    "detections": [
+      {
+        "observation_id": "detection-000698",
+        "capture_sequence": 400,
+        "timestamp_s": 120.66666666666667,
+        "track_id": "track-000052",
+        "class_name": "bowl",
+        "confidence": 0.7227668762207031,
+        "bbox_xyxy_px": [
+          340,
+          267,
+          400,
+          306
+        ],
+        "position_world": {
+          "x_m": -3.436626595953576,
+          "y_m": 3.0215759386740606,
+          "z_m": 0.4188007981708185
+        }
+      },
+      {
+        "observation_id": "detection-000716",
+        "capture_sequence": 411,
+        "timestamp_s": 123.66666666666667,
+        "track_id": "track-000052",
+        "class_name": "bowl",
+        "confidence": 0.7114588618278503,
+        "bbox_xyxy_px": [
+          320,
+          266,
+          372,
+          303
+        ],
+        "position_world": {
+          "x_m": -3.433793649116611,
+          "y_m": 3.0292601064966203,
+          "z_m": 0.4192989943913728
+        }
+      }
+    ]
+  },
+  "frames": [
+    {
+      "episode_id": "bathroom-apartment-startA-information_gain",
+      "capture_sequence": 400,
+      "timestamp_s": 120.66666666666667,
+      "width": 640,
+      "height": 480,
+      "instances": [
+        {
+          "instance_id": "Rs-inserted-bowl",
+          "class_name": "bowl",
+          "visibility": 1.0,
+          "bbox_xyxy_px": [
+            340,
+            267,
+            400,
+            305
+          ],
+          "position_world": {
+            "x_m": -3.428835646490339,
+            "y_m": 3.008803541393288,
+            "z_m": 0.4411510556074213
+          }
+        }
+      ]
+    },
+    {
+      "episode_id": "bathroom-apartment-startA-information_gain",
+      "capture_sequence": 411,
+      "timestamp_s": 123.66666666666667,
+      "width": 640,
+      "height": 480,
+      "instances": [
+        {
+          "instance_id": "Rs-inserted-bowl",
+          "class_name": "bowl",
+          "visibility": 1.0,
+          "bbox_xyxy_px": [
+            313,
+            266,
+            372,
+            303
+          ],
+          "position_world": {
+            "x_m": -3.4292385915950767,
+            "y_m": 3.007963146801924,
+            "z_m": 0.4408612418720012
+          }
+        }
+      ]
+    }
+  ],
+  "motion": {
+    "400": {
+      "pose": {
+        "x_m": -2.662351971753447,
+        "y_m": 2.628756245390049,
+        "z_m": 0.0005292498785746579,
+        "yaw_rad": 2.8409328475900315
+      },
+      "linear_mps": 0.00046139910486418285,
+      "angular_radps": 0.0023318160915314122,
+      "command_stopped": true
+    },
+    "411": {
+      "pose": {
+        "x_m": -2.660577851439541,
+        "y_m": 2.628617918671947,
+        "z_m": 0.0004064588167843382,
+        "yaw_rad": 2.7525688686302225
+      },
+      "linear_mps": 0.0011517923067348155,
+      "angular_radps": 0.010592636064966226,
+      "command_stopped": true
+    }
+  }
+}

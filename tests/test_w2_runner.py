@@ -43,6 +43,27 @@ def make_runner(scenario='progress', **overrides):
 
 
 class RunnerTests(unittest.TestCase):
+    def test_inspection_hint_clears_on_normal_return_claim_and_error(self):
+        from frontier_search.runner.episode import _Claim
+        for interruption in (None, _Claim(), RuntimeError('inspection failed')):
+            with self.subTest(interruption=type(interruption).__name__):
+                manifest,runner,log=make_runner()
+                runner.manifest=manifest
+                hints=[]
+                runner.mapper.set_observation_routine=hints.append
+                def execute(*args):
+                    self.assertEqual(hints, ['inspection'])
+                    if interruption is not None:
+                        raise interruption
+                    return 'finished'
+                runner._execute_operation=execute
+                if interruption is None:
+                    self.assertEqual(runner._operation('observe',routine='inspection'),'finished')
+                else:
+                    with self.assertRaises(type(interruption)):
+                        runner._operation('observe',routine='inspection')
+                self.assertEqual(hints,['inspection',None])
+
     def test_initialization_has_separate_deadline_with_legacy_fallback(self):
         for limit in (None,240.):
             manifest,runner,logger=make_runner()

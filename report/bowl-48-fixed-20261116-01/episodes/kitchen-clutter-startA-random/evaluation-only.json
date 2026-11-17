@@ -1,0 +1,122 @@
+{
+  "evidence": {
+    "episode_id": "kitchen-clutter-startA-random",
+    "claim_id": "claim-000001",
+    "detections": [
+      {
+        "observation_id": "detection-000878",
+        "capture_sequence": 523,
+        "timestamp_s": 161.0,
+        "track_id": "track-000100",
+        "class_name": "bowl",
+        "confidence": 0.7346006035804749,
+        "bbox_xyxy_px": [
+          241,
+          85,
+          311,
+          114
+        ],
+        "position_world": {
+          "x_m": -1.2997807311426213,
+          "y_m": 2.9122439560631683,
+          "z_m": 0.9122551767134169
+        }
+      },
+      {
+        "observation_id": "detection-000879",
+        "capture_sequence": 524,
+        "timestamp_s": 161.33333333333334,
+        "track_id": "track-000100",
+        "class_name": "bowl",
+        "confidence": 0.7803090810775757,
+        "bbox_xyxy_px": [
+          242,
+          85,
+          311,
+          114
+        ],
+        "position_world": {
+          "x_m": -1.302045221921414,
+          "y_m": 2.912104851649843,
+          "z_m": 0.912261521532544
+        }
+      }
+    ]
+  },
+  "frames": [
+    {
+      "episode_id": "kitchen-clutter-startA-random",
+      "capture_sequence": 523,
+      "timestamp_s": 161.0,
+      "width": 640,
+      "height": 480,
+      "instances": [
+        {
+          "instance_id": "Rs-inserted-bowl",
+          "class_name": "bowl",
+          "visibility": 0.9811083123425692,
+          "bbox_xyxy_px": [
+            241,
+            85,
+            310,
+            114
+          ],
+          "position_world": {
+            "x_m": -1.3014849546552312,
+            "y_m": 2.9112213559964073,
+            "z_m": 0.9161610387091638
+          }
+        }
+      ]
+    },
+    {
+      "episode_id": "kitchen-clutter-startA-random",
+      "capture_sequence": 524,
+      "timestamp_s": 161.33333333333334,
+      "width": 640,
+      "height": 480,
+      "instances": [
+        {
+          "instance_id": "Rs-inserted-bowl",
+          "class_name": "bowl",
+          "visibility": 0.9797852179406191,
+          "bbox_xyxy_px": [
+            242,
+            85,
+            311,
+            114
+          ],
+          "position_world": {
+            "x_m": -1.3014815530346455,
+            "y_m": 2.911064842556222,
+            "z_m": 0.9161254659542608
+          }
+        }
+      ]
+    }
+  ],
+  "motion": {
+    "523": {
+      "pose": {
+        "x_m": -0.6540894351464098,
+        "y_m": 2.4264927800658262,
+        "z_m": 0.0004824984590969417,
+        "yaw_rad": 2.3777907319139318
+      },
+      "linear_mps": 0.0017202217217311118,
+      "angular_radps": 0.005345148905199078,
+      "command_stopped": true
+    },
+    "524": {
+      "pose": {
+        "x_m": -0.6538021568205581,
+        "y_m": 2.426240971276029,
+        "z_m": 0.0004046463789325706,
+        "yaw_rad": 2.380303999210661
+      },
+      "linear_mps": 0.000862107109613075,
+      "angular_radps": 0.007490185175065144,
+      "command_stopped": true
+    }
+  }
+}

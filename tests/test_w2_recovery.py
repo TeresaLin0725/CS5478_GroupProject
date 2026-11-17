@@ -123,6 +123,42 @@ class RecoveryTests(unittest.TestCase):
             Subgoal(f.frontier_id, f.approach_pose, 1, PolicyName.NEAREST), None, 'cancelled', None))
         self.assertEqual(self.excluded(self.state), {})
 
+    def test_local_merge_cannot_reset_known_frontier_retry_history(self):
+        self.recovery = SpatialRecovery(
+            RecoveryConfig(opportunity_attempt_cap=2), locality_radius_m=.6)
+        self.recovery.reset(self.state.episode_id)
+        base = self.state.frontiers[0]
+        a = replace(base, frontier_id='a', parent_frontier_ids=(),
+                    approach_pose=Pose(.55, 1.95, 0., 0.),
+                    support_cells=(GridCell(20, 20),))
+        b = replace(a, frontier_id='b', approach_pose=Pose(-.15, 1.95, 0., 0.),
+                    support_cells=(GridCell(20, 22),))
+        state = replace(self.state, frontiers=(a, b))
+        self.recovery.record_dispatch(state, 'a')
+        self.recovery.record_dispatch(state, 'b')
+        # A split/merge bridge lies within the locality radius of both groups.
+        bridge = replace(a, frontier_id='bridge', parent_frontier_ids=('a', 'b'),
+                         approach_pose=Pose(.15, 1.95, 0., 0.),
+                         support_cells=(GridCell(20, 21),))
+        self.excluded(replace(state, frontiers=(bridge,)))
+        # The surviving anchor is 0.7 m from b, beyond the 0.6 m locality.
+        for frontiers in ((a, b, bridge), (b, bridge, a)):
+            excluded = self.excluded(replace(state, frontiers=frontiers))
+            self.assertEqual(excluded['b'].attempt_count, 2)
+            self.assertEqual(excluded['b'].retry_condition, 'exhausted')
+            self.assertFalse(self.recovery.can_probe(state, b))
+
+    def test_locality_still_separates_new_distant_frontiers(self):
+        self.recovery = SpatialRecovery(
+            RecoveryConfig(opportunity_attempt_cap=1), locality_radius_m=.6)
+        self.recovery.reset(self.state.episode_id)
+        a = replace(self.state.frontiers[0], frontier_id='a', parent_frontier_ids=())
+        self.recovery.record_dispatch(replace(self.state, frontiers=(a,)), 'a')
+        # Even matching support/parent lineage cannot attach a NEW distant id.
+        b = replace(a, frontier_id='b', parent_frontier_ids=('a',),
+                    approach_pose=replace(a.approach_pose, x_m=a.approach_pose.x_m+1.))
+        self.assertNotIn('b', self.excluded(replace(self.state, frontiers=(b,))))
+
     def test_progress_counts_only_dispatch_neighborhood_unknown_cells(self):
         f = self.state.frontiers[0]
         cells = [list(row) for row in self.state.occupancy_map.data]

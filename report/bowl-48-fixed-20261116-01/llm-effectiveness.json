@@ -1,0 +1,246 @@
+{
+  "kitchen": {
+    "n_setups": 6,
+    "means": {
+      "random": {
+        "time_s": 149.11111111111111,
+        "distance_m": 16.645612027883605
+      },
+      "nearest": {
+        "time_s": 128.77777777777777,
+        "distance_m": 9.78819656951328
+      },
+      "information_gain": {
+        "time_s": 129.88888888888889,
+        "distance_m": 13.487737554274563
+      },
+      "llm_guided": {
+        "time_s": 96.11111111111111,
+        "distance_m": 7.839279776302741
+      }
+    },
+    "comparisons": {
+      "random": {
+        "n_pairs": 6,
+        "time_reduction_pct": 35.543964232488825,
+        "distance_reduction_pct": 52.904827030866095,
+        "time_wtl": {
+          "wins": 5,
+          "ties": 0,
+          "losses": 1
+        },
+        "distance_wtl": {
+          "wins": 5,
+          "ties": 0,
+          "losses": 1
+        },
+        "time_difference_llm_minus_baseline_s": {
+          "n": 6,
+          "mean_difference": -53.0,
+          "ci95": [
+            -79.94444444444444,
+            -26.055555555555557
+          ]
+        },
+        "distance_difference_llm_minus_baseline_m": {
+          "n": 6,
+          "mean_difference": -8.806332251580862,
+          "ci95": [
+            -13.210816396673994,
+            -4.401848106487731
+          ]
+        }
+      },
+      "nearest": {
+        "n_pairs": 6,
+        "time_reduction_pct": 25.366695427092314,
+        "distance_reduction_pct": 19.910887356724285,
+        "time_wtl": {
+          "wins": 5,
+          "ties": 0,
+          "losses": 1
+        },
+        "distance_wtl": {
+          "wins": 3,
+          "ties": 0,
+          "losses": 3
+        },
+        "time_difference_llm_minus_baseline_s": {
+          "n": 6,
+          "mean_difference": -32.66666666666667,
+          "ci95": [
+            -49.11111111111112,
+            -16.222222222222218
+          ]
+        },
+        "distance_difference_llm_minus_baseline_m": {
+          "n": 6,
+          "mean_difference": -1.94891679321054,
+          "ci95": [
+            -2.7827423922376675,
+            -1.1150911941834127
+          ]
+        }
+      },
+      "information_gain": {
+        "n_pairs": 6,
+        "time_reduction_pct": 26.005132591958937,
+        "distance_reduction_pct": 41.878467424521475,
+        "time_wtl": {
+          "wins": 5,
+          "ties": 0,
+          "losses": 1
+        },
+        "distance_wtl": {
+          "wins": 5,
+          "ties": 0,
+          "losses": 1
+        },
+        "time_difference_llm_minus_baseline_s": {
+          "n": 6,
+          "mean_difference": -33.77777777777778,
+          "ci95": [
+            -46.61111111111111,
+            -20.944444444444446
+          ]
+        },
+        "distance_difference_llm_minus_baseline_m": {
+          "n": 6,
+          "mean_difference": -5.6484577779718235,
+          "ci95": [
+            -7.976068625330338,
+            -3.3208469306133086
+          ]
+        }
+      }
+    },
+    "llm_overhead": {
+      "calls": 17,
+      "fallbacks": 0,
+      "tokens": 148823,
+      "recorded_latency_sum_s": 64.8300000000745
+    }
+  },
+  "bathroom": {
+    "n_setups": 6,
+    "means": {
+      "random": {
+        "time_s": 177.27777777777777,
+        "distance_m": 19.34383898844367
+      },
+      "nearest": {
+        "time_s": 154.83333333333334,
+        "distance_m": 12.113508881772786
+      },
+      "information_gain": {
+        "time_s": 69.88888888888889,
+        "distance_m": 5.370667443410127
+      },
+      "llm_guided": {
+        "time_s": 94.33333333333333,
+        "distance_m": 7.8693221483792914
+      }
+    },
+    "comparisons": {
+      "random": {
+        "n_pairs": 6,
+        "time_reduction_pct": 46.78784080225634,
+        "distance_reduction_pct": 59.31871562268196,
+        "time_wtl": {
+          "wins": 5,
+          "ties": 0,
+          "losses": 1
+        },
+        "distance_wtl": {
+          "wins": 5,
+          "ties": 0,
+          "losses": 1
+        },
+        "time_difference_llm_minus_baseline_s": {
+          "n": 6,
+          "mean_difference": -82.94444444444444,
+          "ci95": [
+            -147.55555555555554,
+            -18.33333333333334
+          ]
+        },
+        "distance_difference_llm_minus_baseline_m": {
+          "n": 6,
+          "mean_difference": -11.474516840064378,
+          "ci95": [
+            -19.04566464191454,
+            -3.9033690382142163
+          ]
+        }
+      },
+      "nearest": {
+        "n_pairs": 6,
+        "time_reduction_pct": 39.07427341227127,
+        "distance_reduction_pct": 35.03680704589013,
+        "time_wtl": {
+          "wins": 4,
+          "ties": 1,
+          "losses": 1
+        },
+        "distance_wtl": {
+          "wins": 4,
+          "ties": 1,
+          "losses": 1
+        },
+        "time_difference_llm_minus_baseline_s": {
+          "n": 6,
+          "mean_difference": -60.50000000000001,
+          "ci95": [
+            -95.55555555555556,
+            -25.444444444444446
+          ]
+        },
+        "distance_difference_llm_minus_baseline_m": {
+          "n": 6,
+          "mean_difference": -4.244186733393494,
+          "ci95": [
+            -8.446453296925156,
+            -0.04192016986183189
+          ]
+        }
+      },
+      "information_gain": {
+        "n_pairs": 6,
+        "time_reduction_pct": -34.97615262321145,
+        "distance_reduction_pct": -46.52410024074462,
+        "time_wtl": {
+          "wins": 1,
+          "ties": 2,
+          "losses": 3
+        },
+        "distance_wtl": {
+          "wins": 1,
+          "ties": 2,
+          "losses": 3
+        },
+        "time_difference_llm_minus_baseline_s": {
+          "n": 6,
+          "mean_difference": 24.44444444444444,
+          "ci95": [
+            -9.500000000000005,
+            58.38888888888888
+          ]
+        },
+        "distance_difference_llm_minus_baseline_m": {
+          "n": 6,
+          "mean_difference": 2.498654704969164,
+          "ci95": [
+            0.5235249726656908,
+            4.473784437272637
+          ]
+        }
+      }
+    },
+    "llm_overhead": {
+      "calls": 16,
+      "fallbacks": 0,
+      "tokens": 142258,
+      "recorded_latency_sum_s": 89.23499999986961
+    }
+  }
+}

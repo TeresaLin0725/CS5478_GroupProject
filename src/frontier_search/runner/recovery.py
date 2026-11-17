@@ -51,7 +51,7 @@ class _Opportunity:
     timeouts: set = field(default_factory=set)
     # Each restriction survives merges; any still-locked restriction excludes.
     restrictions: list = field(default_factory=list)
-    anchor: object = None
+    anchors: set = field(default_factory=set)
 
 
 class SpatialRecovery:
@@ -78,15 +78,19 @@ class SpatialRecovery:
         vicinity = {(r+dr, c+dc) for r, c in cells for dr in (-1, 0, 1) for dc in (-1, 0, 1)}
         ids = {frontier.frontier_id, *frontier.parent_frontier_ids}
         pose = frontier.approach_pose
+        # Keep every merged opportunity's original locality anchor. Dropping
+        # one can make a returning frontier miss its own history and reset caps.
+        # Do not add every observed pose: that would let locality drift forever.
         matches = [g for g in self.groups if (g.ids & ids or g.support & vicinity)
-            and (self.locality_radius_m is None or g.anchor is None or
-                 hypot(pose.x_m-g.anchor[0],pose.y_m-g.anchor[1]) <= self.locality_radius_m)]
+            and (self.locality_radius_m is None or not g.anchors or
+                 any(hypot(pose.x_m-x, pose.y_m-y) <= self.locality_radius_m
+                     for x, y in g.anchors))]
         group = matches[0] if matches else _Opportunity()
         if not matches:
-            group.anchor = (pose.x_m, pose.y_m)
+            group.anchors.add((pose.x_m, pose.y_m))
             self.groups.append(group)
         for other in matches[1:]:
-            for key in ('ids', 'support', 'attempts', 'failures', 'no_progress', 'timeouts'):
+            for key in ('ids', 'support', 'attempts', 'failures', 'no_progress', 'timeouts', 'anchors'):
                 getattr(group, key).update(getattr(other, key))
             group.restrictions.extend(other.restrictions)
             self.groups.remove(other)

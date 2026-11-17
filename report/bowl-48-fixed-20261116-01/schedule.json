@@ -1,0 +1,126 @@
+{
+  "sets": [
+    {
+      "order": 1,
+      "pair_id": "kitchen-clutter-startB",
+      "jobs": [
+        "kitchen-clutter-startB-random",
+        "kitchen-clutter-startB-nearest",
+        "kitchen-clutter-startB-information_gain",
+        "kitchen-clutter-startB-llm_guided"
+      ]
+    },
+    {
+      "order": 2,
+      "pair_id": "bathroom-clutter-startB",
+      "jobs": [
+        "bathroom-clutter-startB-random",
+        "bathroom-clutter-startB-nearest",
+        "bathroom-clutter-startB-information_gain",
+        "bathroom-clutter-startB-llm_guided"
+      ]
+    },
+    {
+      "order": 3,
+      "pair_id": "bathroom-apartment-startA",
+      "jobs": [
+        "bathroom-apartment-startA-random",
+        "bathroom-apartment-startA-nearest",
+        "bathroom-apartment-startA-information_gain",
+        "bathroom-apartment-startA-llm_guided"
+      ]
+    },
+    {
+      "order": 4,
+      "pair_id": "kitchen-apartment-startA",
+      "jobs": [
+        "kitchen-apartment-startA-random",
+        "kitchen-apartment-startA-nearest",
+        "kitchen-apartment-startA-information_gain",
+        "kitchen-apartment-startA-llm_guided"
+      ]
+    },
+    {
+      "order": 5,
+      "pair_id": "kitchen-clutter-startA",
+      "jobs": [
+        "kitchen-clutter-startA-random",
+        "kitchen-clutter-startA-nearest",
+        "kitchen-clutter-startA-information_gain",
+        "kitchen-clutter-startA-llm_guided"
+      ]
+    },
+    {
+      "order": 6,
+      "pair_id": "kitchen-dynamic-startA",
+      "jobs": [
+        "kitchen-dynamic-startA-random",
+        "kitchen-dynamic-startA-nearest",
+        "kitchen-dynamic-startA-information_gain",
+        "kitchen-dynamic-startA-llm_guided"
+      ]
+    },
+    {
+      "order": 7,
+      "pair_id": "kitchen-apartment-startB",
+      "jobs": [
+        "kitchen-apartment-startB-random",
+        "kitchen-apartment-startB-nearest",
+        "kitchen-apartment-startB-information_gain",
+        "kitchen-apartment-startB-llm_guided"
+      ]
+    },
+    {
+      "order": 8,
+      "pair_id": "kitchen-dynamic-startB",
+      "jobs": [
+        "kitchen-dynamic-startB-random",
+        "kitchen-dynamic-startB-nearest",
+        "kitchen-dynamic-startB-information_gain",
+        "kitchen-dynamic-startB-llm_guided"
+      ]
+    },
+    {
+      "order": 9,
+      "pair_id": "bathroom-clutter-startA",
+      "jobs": [
+        "bathroom-clutter-startA-random",
+        "bathroom-clutter-startA-nearest",
+        "bathroom-clutter-startA-information_gain",
+        "bathroom-clutter-startA-llm_guided"
+      ]
+    },
+    {
+      "order": 10,
+      "pair_id": "bathroom-dynamic-startA",
+      "jobs": [
+        "bathroom-dynamic-startA-random",
+        "bathroom-dynamic-startA-nearest",
+        "bathroom-dynamic-startA-information_gain",
+        "bathroom-dynamic-startA-llm_guided"
+      ]
+    },
+    {
+      "order": 11,
+      "pair_id": "bathroom-apartment-startB",
+      "jobs": [
+        "bathroom-apartment-startB-random",
+        "bathroom-apartment-startB-nearest",
+        "bathroom-apartment-startB-information_gain",
+        "bathroom-apartment-startB-llm_guided"
+      ]
+    },
+    {
+      "order": 12,
+      "pair_id": "bathroom-dynamic-startB",
+      "jobs": [
+        "bathroom-dynamic-startB-random",
+        "bathroom-dynamic-startB-nearest",
+        "bathroom-dynamic-startB-information_gain",
+        "bathroom-dynamic-startB-llm_guided"
+      ]
+    }
+  ],
+  "workers": 2,
+  "set_barrier": true
+}

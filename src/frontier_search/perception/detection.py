@@ -124,12 +124,18 @@ class TiledYOLODetector(YOLODetector):
         self.target_class=target_class
         self.tile_every_frames=tile_every_frames
         self._tile_calls=0
+        self._inspection_mode=False
+
+    def set_inspection_mode(self, enabled: bool) -> None:
+        """Use fresh tiled evidence on every close-inspection capture."""
+        self._inspection_mode=enabled
 
     def detect(self,image):
         import numpy as np
         result=list(super().detect(image))
         self._tile_calls=getattr(self,'_tile_calls',0)+1
-        if (self._tile_calls-1) % getattr(self,'tile_every_frames',1):
+        if (not getattr(self,'_inspection_mode',False) and
+                (self._tile_calls-1) % getattr(self,'tile_every_frames',1)):
             return tuple(result)
         rgb=np.frombuffer(image.data,dtype=np.uint8).reshape(image.height,image.width,3)
         side=min(image.width,image.height)*2//3

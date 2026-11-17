@@ -1,0 +1,18 @@
+{
+  "complete": true,
+  "execution_scope_complete": true,
+  "execution_scope": "all",
+  "planned": 48,
+  "benchmark_planned": 48,
+  "completed": 48,
+  "complete_pairs": 12,
+  "frozen_snapshot_unchanged": true,
+  "shared_assets_unchanged": true,
+  "no_retries": false,
+  "protocol_sha256": "5edec5087082737a67b4ff0ad65ca7a798a51a005f72864468767db29399d918",
+  "engine_fingerprint": "8a943c855186426351deee5b4930be148e140166d1abcd91d31e6dd64dd105c4",
+  "all_result_integrity_checks_passed": true,
+  "finished_utc": "2026-11-17T01:58:05.763915+00:00",
+  "no_completed_episode_retries": true,
+  "retained_interrupted_attempts": 2
+}

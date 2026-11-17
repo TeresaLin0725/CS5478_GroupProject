@@ -1,0 +1,74 @@
+{
+  "job_id": "kitchen-dynamic-startA-llm_guided",
+  "pair_id": "kitchen-dynamic-startA",
+  "profile": "dynamic",
+  "policy": "llm_guided",
+  "target_location": "kitchen",
+  "start_id": "A",
+  "environment_seed": 17,
+  "perception_seed": 10017,
+  "policy_seed": 20017,
+  "start_pose": {
+    "x_m": 0.8,
+    "y_m": -2.4,
+    "z_m": 0.0,
+    "yaw_rad": 1.5707963267948966
+  },
+  "sensor_noise": {
+    "enabled": true,
+    "depth_std_m": 0.01,
+    "depth_dropout_prob": 0.01,
+    "seed": 140
+  },
+  "manifest_path": "manifests/kitchen-dynamic-startA-llm_guided.json",
+  "manifest_sha256": "a4db93768de933b3f28c3211848059c6e9b27757fc780cbdd4892b4d41dbe8f2",
+  "termination": "success",
+  "original_termination": "success",
+  "success": true,
+  "integrity_checks": {
+    "frozen_source": true,
+    "manifest_matches": true,
+    "independent_success_evidence": true,
+    "success_evidence_file": true,
+    "fresh_capture_sequences": true,
+    "decision_revision": true,
+    "llm_count": true,
+    "sensor_noise_configuration": true
+  },
+  "simulated_time_s": 107.66666666666667,
+  "actual_distance_m": 6.873325067920559,
+  "wall_time_s": 590.4529999997467,
+  "collisions": 0,
+  "decisions": 4,
+  "attempts": 4,
+  "llm_attempts": 2,
+  "llm_calls": 2,
+  "llm_fallbacks": 0,
+  "llm_fallback_reasons": [],
+  "llm_latencies_s": [
+    2.125,
+    2.0630000000819564
+  ],
+  "llm_tokens_total": 18413,
+  "recorded_cost_total": 0,
+  "calls_with_recorded_cost": 0,
+  "response_models": [
+    "gemini-3.5-flash-lite"
+  ],
+  "local_replans": 0,
+  "no_progress_attempts": 1,
+  "frontier_visits": 2,
+  "source_fingerprint": "8a943c855186426351deee5b4930be148e140166d1abcd91d31e6dd64dd105c4",
+  "partial_metrics": false,
+  "noise_enabled": true,
+  "noise_seed": 140,
+  "depth_noise_std_m": 0.01,
+  "depth_dropout_prob": 0.01,
+  "sensor_noise_stats": {
+    "captures": 359,
+    "valid_pixels": 109765052,
+    "dropout_pixels": 1095994,
+    "out_of_range_pixels": 4861,
+    "modified_pixels": 109764603
+  }
+}

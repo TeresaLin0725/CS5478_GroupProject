@@ -1,0 +1,148 @@
+{
+  "resumed_utc": "2026-11-17T00:09:43.542884+00:00",
+  "completed_preserved": [
+    {
+      "job_id": "kitchen-clutter-startB-random",
+      "summary_sha256": "36596426b5eb9968ce5dffc3e1fab1c2f724ac08e0acbc5bf51da0f41ed30709",
+      "result_sha256": "d3d43796c719fcd915bc8a484d6764fa1f792c57d4298c6edbfd17bf25c1aa8d"
+    },
+    {
+      "job_id": "kitchen-clutter-startB-nearest",
+      "summary_sha256": "f269d4dea43cb2f66e4d3f629122b357fb7113b830f5d4c900287d59b6acecd8",
+      "result_sha256": "77fdf1aee7dfccc4cf1c4b94d3ccba4251df6be933340b91827fa747c4462804"
+    },
+    {
+      "job_id": "kitchen-clutter-startB-information_gain",
+      "summary_sha256": "f576645238e6a9b902f50caddb715c2f72ff73854f993f850030aa41d315b9d0",
+      "result_sha256": "5b5423a271de7e2e4aa84b451fbdffbc8c1462de5dc9468f1eda112888632578"
+    },
+    {
+      "job_id": "kitchen-clutter-startB-llm_guided",
+      "summary_sha256": "be73d6d80415cee9599de766d7becca8e782adfb00996663ea7dd900465b4f8f",
+      "result_sha256": "4a0d41ab82c22952150fe2ff54bb40f7684cc676f8ded1cdce2c537359b6d2c8"
+    },
+    {
+      "job_id": "bathroom-clutter-startB-random",
+      "summary_sha256": "5fa358e6a24546730efe4d78e0f365e236420d2e2b44fa587a8bccecad8ae2b1",
+      "result_sha256": "789aec5fdc0a38ad85f193b1d5b0cad583bb9cb9db1b2aa17f87dc144e967896"
+    },
+    {
+      "job_id": "bathroom-clutter-startB-nearest",
+      "summary_sha256": "568aa10aab4146ed02839d4779678e1936a63b69575309ef6bdd5ec8fa975d24",
+      "result_sha256": "2fd4f5b48853eec05eed16e7b93a0ffa9abc5bc3bb082edf3a21a4adfa7e6270"
+    },
+    {
+      "job_id": "bathroom-clutter-startB-information_gain",
+      "summary_sha256": "8fd9f147fac5854dc5766ab0a7a48420a4746277fefefdec21531240a537e418",
+      "result_sha256": "6b2544e1169b214a081efe8dd85164d09d8e3947ea8162d8fd5d16877ede298e"
+    },
+    {
+      "job_id": "bathroom-clutter-startB-llm_guided",
+      "summary_sha256": "e1d8c78048da535f15a07479d5761d52c69be046820687821f82b891fb7c8c9f",
+      "result_sha256": "d6c1c5468f4a8b9c13d11644ef04fdb7c5a0f457995fba2a1a0b3205af998ca4"
+    },
+    {
+      "job_id": "bathroom-apartment-startA-random",
+      "summary_sha256": "b9a806d726ed2d4bed9b06c539b8c21e418483119bb3cf4e34c0f2a338e177b5",
+      "result_sha256": "209e7e2ff5d60f9019d9c2af1734b7735d270af18eeb2b7df0b8f900b12a0066"
+    },
+    {
+      "job_id": "bathroom-apartment-startA-nearest",
+      "summary_sha256": "9d9fa887204e4c67e2100558be729fd36fd659d858868059d913ecc009198460",
+      "result_sha256": "30dbb28397da21b1723bf959768a0956790b672cebdb43c95fd86cc1a83f799d"
+    },
+    {
+      "job_id": "bathroom-apartment-startA-information_gain",
+      "summary_sha256": "6b174af5a0b037d4d08d58b57b2179ce0d2e9dc43a8b72b107bace74cfae42d9",
+      "result_sha256": "e79ff253cd36f60cf0f4b379a2befbc1637a74e23a0583547de20aadc9c7c0fb"
+    },
+    {
+      "job_id": "bathroom-apartment-startA-llm_guided",
+      "summary_sha256": "6dba459a1ca4d9f015ac92aa76750c94b1cf8744070d82cd17e0336b28dfe45f",
+      "result_sha256": "cc5a9af7a7a4f0f3c1ba6bbf72d2fe6be9ebddbdc96e191386cf0c2215db9c6b"
+    },
+    {
+      "job_id": "kitchen-apartment-startA-random",
+      "summary_sha256": "905db2a6add4a299036f21e1c543389ea7fc21a5cc484e537922d025d1a4b10b",
+      "result_sha256": "6f8d25b273bb786615c4ec181b48001f429bb0c04a9146aa32fd15b79c21fd83"
+    },
+    {
+      "job_id": "kitchen-apartment-startA-nearest",
+      "summary_sha256": "a23c7cfe6534a7116c47448fb2638ea800282abe5c1645fe72edb57b3a32dc71",
+      "result_sha256": "14bc941d4d0aca2b10899025f86c6eaf3f33519ba0a759be4cedbeec5f0f7607"
+    },
+    {
+      "job_id": "kitchen-apartment-startA-information_gain",
+      "summary_sha256": "2f8d5615d03b571eeaf3083df7c432807ea21cfbfd2d87481a9c30336c8b8590",
+      "result_sha256": "2f1168b5a0226e558363cc84152ab788464da5b44ce679844e826524c1e200e0"
+    },
+    {
+      "job_id": "kitchen-apartment-startA-llm_guided",
+      "summary_sha256": "7d5b9607139116e1721b93fac5290f3661f26fd4ce12ae6396631095489664b4",
+      "result_sha256": "b1f84950caa0ab83ca9c8ef6090189f4e9b3b1674f1875a66ab57898ee8a5d81"
+    },
+    {
+      "job_id": "kitchen-clutter-startA-random",
+      "summary_sha256": "0ff5cb13ce11d1e21bc1c2fb02fc92daed824190bb7e8a113e7b7c45b5636c64",
+      "result_sha256": "c4b830a69b9a70904a3050f1f830fdda7f0770a5200b30dc074110cfbb41798b"
+    },
+    {
+      "job_id": "kitchen-clutter-startA-nearest",
+      "summary_sha256": "ca9c9523fd469b0bc9ef3a5d7f24589acdb568397f1d66ee12ee5df226c274b2",
+      "result_sha256": "491307ef4b1522c3c2238e0538db3f1e3cea3a26bdcf3e00f817f53399cacfbd"
+    },
+    {
+      "job_id": "kitchen-clutter-startA-information_gain",
+      "summary_sha256": "dc1db90b5b66d59d6aea408ffbbbe326d542217bf3798f9413fe6fdbdb9a25de",
+      "result_sha256": "607a0fa7db4ff5a0509d6b396fc09f228545cd97b58f029691696ba025d79c07"
+    },
+    {
+      "job_id": "kitchen-clutter-startA-llm_guided",
+      "summary_sha256": "168a6b705e3af603440001962d6cb7f9401de404ebc69e9d478acbb8562aac73",
+      "result_sha256": "9999e0ce92dc96781d4d2cab581f4fcb5fb1c10ef3ba730d8a0ca04d1bd6606e"
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-random",
+      "summary_sha256": "6230cfdb7ea3c2cbbe987004200d36b8b3ffd93ca58d7535bfe79f3301a5d4f4",
+      "result_sha256": "b419b4e407c273f14b06bace17198b5602fb96ab244ee38510a08889c650c71e"
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-nearest",
+      "summary_sha256": "fe7e659f0c641a8062cf78dbb3b7b440c0fce1516811412e737d510297480252",
+      "result_sha256": "41c8dab342a88698efc496cd204a42271a627981ade203b7e00a16e91b5e1357"
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-information_gain",
+      "summary_sha256": "7a0345f2e56129456f070b36738f0e804f660adc358e2ce45a5f28899612aef9",
+      "result_sha256": "ee3fa9fefcb716efe17784331b19e9859bc8f4b29848289883233d5ee927ae48"
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-llm_guided",
+      "summary_sha256": "b2dc3ef9204622f9512ec7094a0aa44ea40af1f7477832a2769a890a1ea25329",
+      "result_sha256": "135cca7be07d29d8342403067ab52bf03f4e785bb07890fdaf40f2cdee4d2aea"
+    },
+    {
+      "job_id": "kitchen-apartment-startB-random",
+      "summary_sha256": "23c165d074b2abac9df175197b4f195adfabe95e205a6f914726e657e91e29a4",
+      "result_sha256": "eff2b26b200086d2436b80ee6deb43ee3341eef993bc43ffaf586d0fb74d4c10"
+    },
+    {
+      "job_id": "kitchen-apartment-startB-nearest",
+      "summary_sha256": "4f6520d08c7d994539f3f3ec68847154fde52a7fcbda306237806de969e54398",
+      "result_sha256": "b2917ae8d8387f5d429967449d56b0903efb22ddff7fe8cbe5b3c886ad95e75a"
+    }
+  ],
+  "no_completed_episode_retries": true,
+  "interrupted_attempts": [
+    {
+      "job_id": "kitchen-apartment-startB-information_gain",
+      "events_sha256": "c7e54fbb481f25d4054c15c6b5b684ead6da54691ab8368388da64de9710c678",
+      "reason": "Stopped without summary or terminal episode result; user requested resume."
+    },
+    {
+      "job_id": "kitchen-apartment-startB-llm_guided",
+      "events_sha256": "f186bd3ced3ebf6d94c4cdb80f84617205f86f82a86690eb34a8e6e7a63c121d",
+      "reason": "Stopped without summary or terminal episode result; user requested resume."
+    }
+  ]
+}

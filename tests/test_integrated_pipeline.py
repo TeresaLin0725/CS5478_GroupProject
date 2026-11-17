@@ -154,6 +154,25 @@ class DetectorTileTests(unittest.TestCase):
             self.assertEqual(detector.detect(image),())
             self.assertTrue(detector.detect(image))
 
+    def test_inspection_tiles_every_frame_then_restores_normal_cadence(self):
+        from frontier_search.perception.detection import TiledYOLODetector,YOLODetector
+        from frontier_search.perception.mapper import RGBDMapper
+        from frontier_search.sensors import ImageBuffer
+        detector=TiledYOLODetector.__new__(TiledYOLODetector)
+        detector.target_class='cup';detector.tile_every_frames=3
+        def infer(self,image):
+            return (RGBDetection('cup',.9,(1,1,3,3)),) if image.width<12 else ()
+        mapper=RGBDMapper(detector)
+        with patch.object(YOLODetector,'detect',infer):
+            image=ImageBuffer(12,8,'rgb8',bytes(12*8*3))
+            self.assertTrue(detector.detect(image))  # normal call 1
+            mapper.set_observation_routine('inspection')
+            self.assertTrue(detector.detect(image))  # normally skipped calls
+            self.assertTrue(detector.detect(image))
+            mapper.set_observation_routine('arrival')
+            self.assertTrue(detector.detect(image))  # normal call 4
+            self.assertEqual(detector.detect(image),())
+
 
 class RecoveryViewpointTests(unittest.TestCase):
     def test_one_localized_view_can_propose_inspection_but_cannot_claim_success(self):

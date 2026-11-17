@@ -1,0 +1,9 @@
+D:\Projects\CS5478_GroupProject\scripts\run_paired_benchmark.py:197: ResourceWarning: unclosed file <_io.TextIOWrapper name='C:\\Users\\dance\\AppData\\Local\\Temp\\tmprr28aasy\\episodes\\apartment-s17-random\\events.jsonl' mode='r' encoding='utf-8'>
+  for line in (folder/'events.jsonl').open(encoding='utf-8'):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+detector_runtime {"device": "cpu", "torch_version": "test", "cuda_version": null, "gpu_name": null}
+sensor_noise {"enabled": false, "depth_std_m": 0.01, "depth_dropout_prob": 0.01, "seed": 0}
+----------------------------------------------------------------------
+Ran 677 tests in 103.721s
+
+OK (skipped=6)

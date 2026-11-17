@@ -1,5 +1,7 @@
 # Indoor frontier object search
 
+Latest completed benchmark: [fixed 48-episode bowl results and LLM comparisons](report/bowl-48-fixed-20261116-01/README.md) — 48/48 successes, zero collisions, with configuration, verification and selected evidence.
+
 ## 保留的实验基线
 
 仓库只保留 [2026-10-25 中期报告与 Demo](midterm-report-20261025/README.md)：
