@@ -41,7 +41,11 @@ See [LLM effectiveness calculations](llm-effectiveness.md) and [machine-readable
 - [Frozen protocol](protocol.json), [original protocol SHA-256](protocol.sha256), and all 48 files under `manifests/`.
 - [Suite verification](suite-verification.json), [regression certificate](tests.json), [test output](tests.log), and 12 physical-check records under `preflight/`.
 - Every episode under `episodes/` has its result, execution summary and independent target-evaluation evidence. The three originally failed cases additionally include scene trajectories and the two accepted RGB evidence frames.
-- `harness/` contains the exact frozen execution scripts, including the four-policy setup barrier and read-only inspection diagnostics. The matching source is committed in the repository; copied source snapshots are omitted.
+- `harness/` contains the exact frozen execution scripts, including the four-policy setup barrier and read-only inspection diagnostics. The matching fixes are recorded in commit `296fa0d`, based on `0a29a4b`; copied source snapshots are omitted. Later merged features were not part of this frozen experiment. Snapshot seals are byte-sensitive, including line endings.
 - [Artifact hashes](artifact-sha256.json) preserve the packaged files' SHA-256 values. The original protocol retains machine-specific paths for auditability. Re-execution requires localizing those paths and generating a fresh protocol/seal; these records should not be edited in place.
 
 Model weights, iGibson assets, Python environments, credentials, per-frame depth arrays and large raw event logs are not committed. Full local evidence remains in `runs/bowl-48-fixed-20261116-01/`; interrupted attempts remain under its `interrupted/` directory.
+
+## Post-merge integration validation
+
+After preserving the frozen results and merging the remote semantic-navigation changes, the integrated code passed **689 tests** in the native Python 3.8 environment. See [merge-validation.json](merge-validation.json) and [output](merge-validation.log). This is separate from the frozen experiment's 677-test certificate and does not replace its source fingerprint.

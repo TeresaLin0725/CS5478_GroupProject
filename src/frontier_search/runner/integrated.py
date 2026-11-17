@@ -21,7 +21,7 @@ from ..policies.baselines import BaselinePolicy
 from ..policies.llm import LLMGuidedPolicy
 from ..policies.provider import CANONICAL_LLM_MODEL,GeminiCompatibleClient,load_local_env
 from ..simulation.igibson_adapter import AdapterConfig
-from ..simulation.integrated_rs import RetainingAdapter,CloseRetainedEvaluator
+from ..simulation.integrated_rs import RetainingAdapter,CloseRetainedEvaluator,RsTargetSpec
 from ..simulation.sensor_noise import add_noise_arguments,noise_from_arguments
 from ..simulation.igibson_rs import REGIONS
 from ..simulation.rs_tasks import LEGACY_CUP,RS_TARGETS,bowl_start_pose
@@ -154,6 +154,23 @@ def main():
     parser.add_argument('--epsilon-retry',type=float,default=0.,help='C: probability of probing an excluded frontier per decision')
     parser.add_argument('--stuck-retry',action='store_true',help='C: probe an excluded frontier instead of ending when stuck')
     parser.add_argument('--validation',type=Path)
+    # Custom target (semantic experiments): giving --target-model overrides the --task target
+    # while keeping that task's manifest. Without it, the registered --task target is used.
+    parser.add_argument('--target-class')
+    parser.add_argument('--target-model')
+    parser.add_argument('--target-position',type=float,nargs=3,metavar=('X','Y','Z'))
+    parser.add_argument('--target-roll',type=float,default=0.)
+    parser.add_argument('--target-pitch',type=float,default=0.)
+    parser.add_argument('--target-yaw',type=float,default=0.)
+    parser.add_argument('--target-instance-id',default='Rs-inserted-target')
+    parser.add_argument('--start-pose',type=float,nargs=3,metavar=('X','Y','YAW'))
+    parser.add_argument('--environment-seed',type=int)
+    parser.add_argument('--perception-seed',type=int)
+    parser.add_argument('--policy-seed',type=int)
+    parser.add_argument('--llm-prompt-version',choices=('v1','v2'),default='v1',
+                        help='System prompt variant for llm_guided (v1 = original wording)')
+    parser.add_argument('--llm-deadline-s',type=float,
+                        help='Override the per-decision LLM deadline (wall clock; simulation is paused)')
     add_noise_arguments(parser)
     args=parser.parse_args()
     if args.profile is None:
@@ -168,9 +185,29 @@ def main():
         manifest=task_manifest_for(args.output.name,args.policy,args.task)
     except ValueError as exc:
         parser.error(str(exc))
-    target=RS_TARGETS[args.task]
-    manifest=replace(manifest,sensor_noise=noise,recovery=replace(manifest.recovery,epsilon_retry=args.epsilon_retry,
-                                               stuck_retry=args.stuck_retry))
+    if args.target_model is not None:
+        if args.target_class is None or args.target_position is None:
+            parser.error('--target-model requires --target-class and --target-position')
+        try:
+            target=RsTargetSpec(args.target_class,args.target_model,tuple(args.target_position),
+                                args.target_yaw,args.target_instance_id,
+                                args.target_roll,args.target_pitch).validate()
+        except ValueError as exc:
+            parser.error(str(exc))
+    else:
+        if args.target_class is not None or args.target_position is not None:
+            parser.error('--target-class/--target-position require --target-model')
+        target=RS_TARGETS[args.task]
+    start=(Pose(args.start_pose[0],args.start_pose[1],0.,args.start_pose[2])
+           if args.start_pose is not None else manifest.start_pose)
+    seed_overrides={name:getattr(args,name) for name in
+                    ('environment_seed','perception_seed','policy_seed')
+                    if getattr(args,name) is not None}
+    manifest=replace(manifest,target_class=target.class_name,start_pose=start,sensor_noise=noise,
+        recovery=replace(manifest.recovery,epsilon_retry=args.epsilon_retry,
+                         stuck_retry=args.stuck_retry),
+        policy=replace(manifest.policy,llm_prompt_version=args.llm_prompt_version,
+                       **({'llm_deadline_s':args.llm_deadline_s} if args.llm_deadline_s else {})),**seed_overrides)
     manifest.validate()
     relaxed_retry=RelaxedRetry() if args.relaxed_retry else None
     effective_runtime=runtime_configuration(manifest,args.profile,relaxed_retry,target)
@@ -225,14 +262,18 @@ def main():
     result=runner.run(manifest)
     log.close()
     llm_records=getattr(policy,'call_records',())
+    (args.output/'llm-calls.json').write_text(dumps(list(llm_records)),encoding='utf-8')
     summary=dict(runner.summary,profile=args.profile,policy=args.policy,task=args.task,
+        custom_target=args.target_model is not None,
+        environment_seed=manifest.environment_seed,perception_seed=manifest.perception_seed,
+        policy_seed=manifest.policy_seed,start_pose=asdict(manifest.start_pose),
         llm_attempts=len(llm_records),
         llm_calls=sum(bool(r.get('model_called',
             r.get('fallback_reason') not in ('unconfigured_client','call_cap'))) for r in llm_records),
         llm_fallbacks=sum(bool(r.get('fallback_reason')) for r in llm_records),
         source_fingerprint=fingerprint,source_unchanged=fingerprint==source_fingerprint(),evaluation=evaluator.metrics,
         detector_runtime=detector_runtime,
-        runtime_configuration=effective_runtime,
+        runtime_configuration=effective_runtime,target=asdict(target),
         scene_events=getattr(getattr(getattr(sim,'_backend',None),'world',None),'environment_events',[]),
         navigator_events=nav.events,recorded=args.record,
         components=dict(scene='Gibson Rs',robot='native Locobot',sensor='native calibrated eyes RGB-D',

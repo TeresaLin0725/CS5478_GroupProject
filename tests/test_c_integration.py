@@ -118,6 +118,34 @@ class IntegrationTests(unittest.TestCase):
             self.assertEqual(result.subgoal.frontier_id, 'F1')
             self.assertEqual(policy.call_records[-1]['fallback_reason'], 'timeout')
 
+    def test_provider_retries_transient_http_error_within_deadline(self):
+        with patch.dict(os.environ, {'LLM_API_KEY': 'test-secret'}):
+            client = GeminiCompatibleClient()
+        unavailable = subprocess.CompletedProcess([], 0, json.dumps({'error': 'HTTP_503'}), '')
+        response = {'raw_response': '{"frontier_id":"F3","reason":"clues"}',
+                    'usage': {'total_tokens': 12}, 'response_model': 'test-model'}
+        success = subprocess.CompletedProcess([], 0, json.dumps(response), '')
+        with patch('frontier_search.policies.provider.subprocess.run',
+                   side_effect=(unavailable, success)) as run, \
+             patch('frontier_search.policies.provider.sleep') as wait:
+            selected = client.select_id({}, model='test', reasoning=None,
+                                        deadline_monotonic=monotonic() + 10.)
+        self.assertEqual(selected, 'F3')
+        self.assertEqual(run.call_count, 2)
+        wait.assert_called_once_with(.5)
+        self.assertEqual(client.last_record['retry_errors'], ['HTTP_503'])
+
+    def test_provider_does_not_retry_nontransient_http_error(self):
+        with patch.dict(os.environ, {'LLM_API_KEY': 'test-secret'}):
+            client = GeminiCompatibleClient()
+        bad_request = subprocess.CompletedProcess([], 0, json.dumps({'error': 'HTTP_400'}), '')
+        with patch('frontier_search.policies.provider.subprocess.run',
+                   return_value=bad_request) as run:
+            with self.assertRaises(RuntimeError):
+                client.select_id({}, model='test', reasoning=None,
+                                 deadline_monotonic=monotonic() + 10.)
+        run.assert_called_once()
+
     def test_env_is_scoped_and_process_values_win(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / '.env'

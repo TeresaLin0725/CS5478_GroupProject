@@ -233,10 +233,14 @@ class LLMGuidedPolicy(BaselinePolicy):
             self.calls += 1
             model_called = True
             deadline = started + self.config.llm_deadline_s
+            extra = {}
+            if self.config.llm_prompt_version != 'v1':
+                from .provider import SYSTEM_PROMPTS
+                extra['system_prompt'] = SYSTEM_PROMPTS[self.config.llm_prompt_version]
             try:
                 response = self.client.select_id(payload, model=self.config.llm_model,
                                                 reasoning=self.config.llm_reasoning,
-                                                deadline_monotonic=deadline)
+                                                deadline_monotonic=deadline, **extra)
                 if monotonic() > deadline:
                     fallback = 'timeout'
                 elif not isinstance(response, str) or response not in context.eligible_frontier_ids:
@@ -263,6 +267,7 @@ class LLMGuidedPolicy(BaselinePolicy):
             self.last_candidate_ranking = tuple(ranking or (response,))
         record = {'episode_id': state.episode_id, 'state_revision': state.revision,
                   'model': self.config.llm_model, 'reasoning': self.config.llm_reasoning,
+                  'prompt_version': self.config.llm_prompt_version,
                   'input': payload, 'response': response, 'latency_s': monotonic() - started,
                   'model_called': model_called,
                   'validated_ranking': self.last_candidate_ranking,

@@ -230,5 +230,7 @@
   "suite-verification.json": "6348cae9d853788cc6fea2fcb0293386e8e4e996f98f1791d71ad657b209f82a",
   "tests.json": "f429e113dabbd1e673f342d64c1622d4e750bc9e1c18f981f99bf3f7b4d86164",
   "tests.log": "943e4b07fea7f76a6cd08ff7d08c037f42d877e3e2a1b9479cadeaf277709d37",
-  "README.md": "4f4b4d3b5aed442cac1376bc2bf0a4ed5c85c9e763491bb1e93c7261653809c6"
+  "README.md": "37dbba25f3b8f5d36f0cc1307d353f88b7f4be6d785470c5184888372ff3b252",
+  "merge-validation.log": "729cada889aaf3c984ca3bf11b0f6912fd188bb40da128c64401826bece332eb",
+  "merge-validation.json": "d055ac09d6bc716784f7be125d71a0ebc9474c9ff47b98076c64235be60520b4"
 }

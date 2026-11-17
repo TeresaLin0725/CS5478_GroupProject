@@ -114,7 +114,7 @@ class IGibsonWorld:
 
     def __init__(self, data_root=DATA_ROOT, start=START_POSE, target_position=TARGET_POSITION,
                  profile='apartment', target_model=TARGET_MODEL, image_width=IMAGE_W, image_height=IMAGE_H,
-                 scene_layout='legacy'):
+                 scene_layout='legacy', target_orientation=(0, 0, 0, 1)):
         configure_paths(data_root)
         import pybullet as p
         from igibson.objects.ycb_object import YCBObject
@@ -142,7 +142,7 @@ class IGibsonWorld:
         self.target_body = self.target.get_body_ids()[0]
         # Static body: dynamic YCB boxes slide off the uneven scanned counter into the sink.
         p.changeDynamics(self.target_body, -1, mass=0)
-        self.target.set_position_orientation(list(target_position), [0, 0, 0, 1])
+        self.target.set_position_orientation(list(target_position), list(target_orientation))
         self.robot_bodies = set(self.robot.get_body_ids())
         self.floor_bodies = set(self.scene.floor_body_ids)
         from .indoor_challenges import import_furniture

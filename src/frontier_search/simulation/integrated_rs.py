@@ -1,28 +1,52 @@
 """Native Rs bridge for B's adapter. Rendered truth is retained privately for W3 scoring."""
-from math import hypot, pi
+from math import cos, hypot, pi, sin
 import numpy as np
 from ..contracts import Point3, Pose, EvaluationResult
 from ..evaluation.retained import GroundTruthFrame, VisibleInstance
 from ..evaluation.verifier import RetainedTargetEvaluator
 from .igibson_adapter import IGibsonAdapter, IGibsonBackend
 from .igibson_rs import IGibsonWorld
-from .rs_tasks import LEGACY_CUP
+from .rs_tasks import LEGACY_CUP, RsTarget
+
+
+def RsTargetSpec(class_name='cup', model='025_mug', position_world=(-1.4, 2.95, .9213), yaw_rad=0.0,
+                 instance_id='Rs-inserted-mug', roll_rad=0.0, pitch_rad=0.0):
+    """Keyword-compatible builder for an arbitrary experiment target (see rs_tasks.RsTarget).
+
+    Public experiment setup; target truth remains private to W3 at runtime."""
+    return RsTarget(class_name, model, tuple(position_world), instance_id,
+                    yaw_rad=yaw_rad, roll_rad=roll_rad, pitch_rad=pitch_rad)
+
+
+DEFAULT_RS_TARGET = LEGACY_CUP
+
+
+def _quaternion_from_rpy(roll, pitch, yaw):
+    cr, sr = cos(roll / 2.), sin(roll / 2.)
+    cp, sp = cos(pitch / 2.), sin(pitch / 2.)
+    cy, sy = cos(yaw / 2.), sin(yaw / 2.)
+    return (sr * cp * cy - cr * sp * sy,
+            cr * sp * cy + sr * cp * sy,
+            cr * cp * sy - sr * sp * cy,
+            cr * cp * cy + sr * sp * sy)
 
 
 class RsBackend(IGibsonBackend):
     def __init__(self, config, profile='dynamic', target=LEGACY_CUP,scene_layout='legacy'):
         super().__init__(config)
         self.profile = profile
-        self.target_spec = target
+        self.target_spec = self.target = target.validate()
         self.scene_layout = scene_layout
 
     def open(self, scene_id, seed, start_pose):
         if scene_id != 'Rs':
             raise ValueError('RsBackend requires the installed Rs scan')
         np.random.seed(seed)
+        quaternion = _quaternion_from_rpy(self.target.roll_rad, self.target.pitch_rad,
+                                          self.target.yaw_rad)
         self.world = IGibsonWorld(start=(start_pose.x_m,start_pose.y_m,start_pose.yaw_rad),
             profile=self.profile, target_model=self.target_spec.model,target_position=self.target_spec.position, image_width=self._config.image_width,
-            image_height=self._config.image_height,scene_layout=self.scene_layout)
+            image_height=self._config.image_height,scene_layout=self.scene_layout,target_orientation=quaternion)
         w = self.world
         self._p, self._np, self._sim, self._scene = w.p, np, w.sim, w.scene
         self._robot, self._bodies = w.robot, w.robot_bodies
