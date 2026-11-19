@@ -1,0 +1,153 @@
+{
+  "job_id": "kitchen-apartment-startA-llm_guided",
+  "outcome": {
+    "termination": "success",
+    "simulated_time_s": 135.66666666666666,
+    "actual_distance_m": 15.229966460798906,
+    "collisions": 0
+  },
+  "source_file": "llm-calls.json",
+  "original_source_sha256": "0fe1bd7139887f6d4baa63c1da421c29104372e7648f5698c0ab80c5ad283f8c",
+  "records": [
+    {
+      "state_revision": 41,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000018",
+      "latency_s": 2.1880000000819564,
+      "model_called": true,
+      "validated_ranking": [
+        "F000018",
+        "F000017",
+        "F000019",
+        "F000020",
+        "F000030",
+        "F000036",
+        "F000040",
+        "F000060",
+        "F000064"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 202,
+        "prompt_tokens": 8107,
+        "total_tokens": 8309
+      },
+      "returned_answer": {
+        "frontier_id": "F000018",
+        "reason": "F000018 provides a high information gain (2.75 m2) with a reasonable path cost (3.05 m) in region R1, which contains kitchen/living semantic context that could harbor a bowl.",
+        "ranked_frontier_ids": [
+          "F000018",
+          "F000017",
+          "F000019",
+          "F000020",
+          "F000030",
+          "F000036",
+          "F000040",
+          "F000060",
+          "F000064"
+        ],
+        "confidence": 0.85
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 128,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000171",
+      "latency_s": 5.217999999877065,
+      "model_called": true,
+      "validated_ranking": [
+        "F000171",
+        "F000172",
+        "F000168",
+        "F000122",
+        "F000064"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 167,
+        "prompt_tokens": 9110,
+        "total_tokens": 9277
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000171",
+        "ranked_frontier_ids": [
+          "F000171",
+          "F000172",
+          "F000168",
+          "F000122",
+          "F000064"
+        ],
+        "reason": "Frontier F000171 provides a balanced trade-off in region R2 with high information gain (5.80 m2), a relatively short path cost (2.18 m), and efficient gain-per-path metrics to continue expanding unexplored areas efficiently."
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 206,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000195",
+      "latency_s": 2.1720000002533197,
+      "model_called": true,
+      "validated_ranking": [
+        "F000195",
+        "F000196",
+        "F000064",
+        "F000094",
+        "F000123"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 170,
+        "prompt_tokens": 7315,
+        "total_tokens": 7485
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000195",
+        "ranked_frontier_ids": [
+          "F000195",
+          "F000196",
+          "F000064",
+          "F000094",
+          "F000123"
+        ],
+        "reason": "Frontier F000195 has a low path cost (2.09 m) and high information gain per path length (1.49), offering efficient exploration in region R3 where beds and toilets are observed. It is a safer, closer choice than the R4 frontiers."
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 286,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000064",
+      "latency_s": 1.5,
+      "model_called": true,
+      "validated_ranking": [
+        "F000064",
+        "F000094",
+        "F000123"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 136,
+        "prompt_tokens": 6405,
+        "total_tokens": 6541
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000064",
+        "ranked_frontier_ids": [
+          "F000064",
+          "F000094",
+          "F000123"
+        ],
+        "reason": "F000064 offers the highest information gain per path meter (0.58) and lower path cost compared to the other remaining alternatives in region R4, which still requires thorough exploration to locate the target object (bowl)."
+      },
+      "thinking_summaries": []
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "job_id": "bathroom-clutter-startA-llm_guided",
+  "outcome": {
+    "termination": "success",
+    "simulated_time_s": 113.33333333333333,
+    "actual_distance_m": 11.214777001971544,
+    "collisions": 0
+  },
+  "source_file": "llm-calls.json",
+  "original_source_sha256": "6cf89a7317e8d5356bdc8d451cccad4e6e6ec935c57d95f2589f25825c507007",
+  "records": [
+    {
+      "state_revision": 41,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000054",
+      "latency_s": 10.328000000212342,
+      "model_called": true,
+      "validated_ranking": [
+        "F000054",
+        "F000055",
+        "F000056",
+        "F000057",
+        "F000058",
+        "F000059",
+        "F000060",
+        "F000029",
+        "F000061",
+        "F000050"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 246,
+        "prompt_tokens": 9191,
+        "total_tokens": 9437
+      },
+      "returned_answer": {
+        "frontier_id": "F000054",
+        "reason": "Frontier F000054 provides a high information gain to path cost ratio (gain_per_path_m: 1.109, path_cost_m: 2.08m) within the well-explored region R1 containing kitchen/living-area semantic clues (chairs, books, couch), making it an efficient candidate for continuing the search for a bowl.",
+        "ranked_frontier_ids": [
+          "F000054",
+          "F000055",
+          "F000056",
+          "F000057",
+          "F000058",
+          "F000059",
+          "F000060",
+          "F000029",
+          "F000061",
+          "F000050"
+        ],
+        "confidence": 0.92
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 115,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000119",
+      "latency_s": 24.57800000021234,
+      "model_called": true,
+      "validated_ranking": [
+        "F000119",
+        "F000120",
+        "F000167",
+        "F000166",
+        "F000165",
+        "F000164",
+        "F000160",
+        "F000148",
+        "F000168",
+        "F000169",
+        "F000138",
+        "F000139"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 222,
+        "prompt_tokens": 10252,
+        "total_tokens": 10474
+      },
+      "returned_answer": {
+        "frontier_id": "F000119",
+        "reason": "F000119 leads into region R4, which contains kitchen-related semantic objects (microwave, refrigerator), making it the most promising area to search for a bowl.",
+        "ranked_frontier_ids": [
+          "F000119",
+          "F000120",
+          "F000167",
+          "F000166",
+          "F000165",
+          "F000164",
+          "F000160",
+          "F000148",
+          "F000168",
+          "F000169",
+          "F000138",
+          "F000139"
+        ],
+        "confidence": 0.95
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 200,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000148",
+      "latency_s": 10.07799999974668,
+      "model_called": true,
+      "validated_ranking": [
+        "F000148",
+        "F000168",
+        "F000169",
+        "F000138",
+        "F000139"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 187,
+        "prompt_tokens": 7260,
+        "total_tokens": 7447
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000148",
+        "ranked_frontier_ids": [
+          "F000148",
+          "F000168",
+          "F000169",
+          "F000138",
+          "F000139"
+        ],
+        "reason": "F000148 has the lowest path cost (4.43m) among the eligible frontiers and provides high information gain (6.89 m2) with excellent gain-per-path efficiency (1.52), making it the most balanced choice for exploring region R2 where kitchen/dining objects (refrigerator, oven, dining table) are nearby."
+      },
+      "thinking_summaries": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "job_id": "kitchen-dynamic-startA-llm_guided",
+  "outcome": {
+    "termination": "success",
+    "simulated_time_s": 107.66666666666667,
+    "actual_distance_m": 6.873325067920559,
+    "collisions": 0
+  },
+  "source_file": "llm-calls.json",
+  "original_source_sha256": "ffc0ca7aa5eaaa57aa7c4977b4be3d04a9afa9b86f008686473dfeff06674896",
+  "records": [
+    {
+      "state_revision": 41,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000048",
+      "latency_s": 20.969000000040978,
+      "model_called": true,
+      "validated_ranking": [
+        "F000048",
+        "F000049",
+        "F000050",
+        "F000051",
+        "F000028",
+        "F000052",
+        "F000053",
+        "F000030",
+        "F000054"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 237,
+        "prompt_tokens": 8061,
+        "total_tokens": 8298
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000048",
+        "reason": "Frontier F000048 offers a strong balance of high information gain (2.52 m²), a relatively low path cost (2.08 m), and an efficient gain-per-path-m ratio (1.15). It continues exploration in Region R1 near observed objects like chairs, beds, and plants where a bowl is likely to be found in a furnished environment.",
+        "ranked_frontier_ids": [
+          "F000048",
+          "F000049",
+          "F000050",
+          "F000051",
+          "F000028",
+          "F000052",
+          "F000053",
+          "F000030",
+          "F000054"
+        ]
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 115,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000153",
+      "latency_s": 20.780999999959022,
+      "model_called": true,
+      "validated_ranking": [
+        "F000153",
+        "F000154",
+        "F000161",
+        "F000160",
+        "F000159",
+        "F000157",
+        "F000147",
+        "F000162",
+        "F000163",
+        "F000137",
+        "F000138"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 236,
+        "prompt_tokens": 9889,
+        "total_tokens": 10125
+      },
+      "returned_answer": {
+        "frontier_id": "F000153",
+        "reason": "F000153 is located in region R4, which contains kitchen/dining-related objects such as a microwave, refrigerator, dining table, and bottle. Since the target class is 'bowl', exploring region R4 further via F000153 has the highest semantic relevance.",
+        "ranked_frontier_ids": [
+          "F000153",
+          "F000154",
+          "F000161",
+          "F000160",
+          "F000159",
+          "F000157",
+          "F000147",
+          "F000162",
+          "F000163",
+          "F000137",
+          "F000138"
+        ],
+        "confidence": 0.95
+      },
+      "thinking_summaries": []
+    }
+  ]
+}

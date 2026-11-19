@@ -1,0 +1,245 @@
+{
+  "job_id": "kitchen-clutter-startB-llm_guided",
+  "outcome": {
+    "termination": "success",
+    "simulated_time_s": 151.0,
+    "actual_distance_m": 13.751267151247017,
+    "collisions": 0
+  },
+  "source_file": "llm-calls.json",
+  "original_source_sha256": "e6603b439963ecbc031d6b4e83a2f257d0b287cff5c9f0f0b8de075c8d8fcd86",
+  "records": [
+    {
+      "state_revision": 41,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000007",
+      "latency_s": 7.030999999959022,
+      "model_called": true,
+      "validated_ranking": [
+        "F000007",
+        "F000006",
+        "F000008",
+        "F000037",
+        "F000034",
+        "F000035",
+        "F000036",
+        "F000033",
+        "F000038",
+        "F000039"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 220,
+        "prompt_tokens": 7562,
+        "total_tokens": 7782
+      },
+      "returned_answer": {
+        "frontier_id": "F000007",
+        "reason": "F000007 provides a strong balance of high information gain (4.11 m2) and a favorable gain-per-path ratio (2.91) within region R2, which requires further exploration compared to the nearly fully explored region R1.",
+        "ranked_frontier_ids": [
+          "F000007",
+          "F000006",
+          "F000008",
+          "F000037",
+          "F000034",
+          "F000035",
+          "F000036",
+          "F000033",
+          "F000038",
+          "F000039"
+        ],
+        "confidence": 0.85
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 50,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000045",
+      "latency_s": 6.063000000081956,
+      "model_called": true,
+      "validated_ranking": [
+        "F000045",
+        "F000044",
+        "F000047",
+        "F000046",
+        "F000042",
+        "F000008",
+        "F000037"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 200,
+        "prompt_tokens": 8951,
+        "total_tokens": 9151
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000045",
+        "ranked_frontier_ids": [
+          "F000045",
+          "F000044",
+          "F000047",
+          "F000046",
+          "F000042",
+          "F000008",
+          "F000037"
+        ],
+        "reason": "F000045 in region R3 offers a high information gain (4.27) with a low path cost (1.29m) and strong gain-per-path efficiency. It continues exploration in an area with a toilet and unmapped territory, complementing previous failure on F000007."
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 116,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000008",
+      "latency_s": 2.9679999998770654,
+      "model_called": true,
+      "validated_ranking": [
+        "F000008",
+        "F000037",
+        "F000036",
+        "F000034",
+        "F000035",
+        "F000033",
+        "F000038"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 180,
+        "prompt_tokens": 7974,
+        "total_tokens": 8154
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000008",
+        "ranked_frontier_ids": [
+          "F000008",
+          "F000037",
+          "F000036",
+          "F000034",
+          "F000035",
+          "F000033",
+          "F000038"
+        ],
+        "reason": "F000008 has the lowest path cost (1.09m) and is located in region R2, which contains kitchen/dining semantic indicators like a sink and dining table where a bowl is likely to be found."
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 183,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000057",
+      "latency_s": 4.70299999974668,
+      "model_called": true,
+      "validated_ranking": [
+        "F000057",
+        "F000056",
+        "F000055",
+        "F000054",
+        "F000038",
+        "F000008"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 184,
+        "prompt_tokens": 7707,
+        "total_tokens": 7891
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000057",
+        "ranked_frontier_ids": [
+          "F000057",
+          "F000056",
+          "F000055",
+          "F000054",
+          "F000038",
+          "F000008"
+        ],
+        "reason": "F000057 is located in region R3 where kitchen/bathroom semantic objects like refrigerator, sink, and bottle are observed, offering the highest information gain per path cost (0.92) and continuing systematic exploration toward unmapped areas in that region, which is optimal for finding a 'bowl'."
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 264,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000056",
+      "latency_s": 1.9849999998696148,
+      "model_called": true,
+      "validated_ranking": [
+        "F000056",
+        "F000055",
+        "F000054",
+        "F000038",
+        "F000008"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 177,
+        "prompt_tokens": 7399,
+        "total_tokens": 7576
+      },
+      "returned_answer": {
+        "frontier_id": "F000056",
+        "reason": "F000056 provides a good information gain (1.65 m2) with a reasonable path cost (4.46 m) and is located in the well-explored region R1 containing kitchen/dining-related items (dining table, chair, etc.), which aligns well with the target class 'bowl'.",
+        "ranked_frontier_ids": [
+          "F000056",
+          "F000055",
+          "F000054",
+          "F000038",
+          "F000008"
+        ],
+        "confidence": 0.85
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 376,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000084",
+      "latency_s": 7.25,
+      "model_called": true,
+      "validated_ranking": [
+        "F000084",
+        "F000085",
+        "F000087",
+        "F000086",
+        "F000088",
+        "F000116",
+        "F000115",
+        "F000117",
+        "F000008"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 208,
+        "prompt_tokens": 10576,
+        "total_tokens": 10784
+      },
+      "returned_answer": {
+        "confidence": 0.9,
+        "ranked_frontier_ids": [
+          "F000084",
+          "F000085",
+          "F000087",
+          "F000086",
+          "F000088",
+          "F000116",
+          "F000115",
+          "F000117",
+          "F000008"
+        ],
+        "frontier_id": "F000084",
+        "reason": "F000084 offers a good balance of high information gain (4.6 m2), low path cost (1.80 m), and is located in region R4 near a refrigerator and books, which is a promising area to search for a bowl."
+      },
+      "thinking_summaries": []
+    }
+  ]
+}

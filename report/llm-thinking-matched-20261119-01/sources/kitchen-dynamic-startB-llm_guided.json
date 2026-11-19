@@ -1,0 +1,204 @@
+{
+  "job_id": "kitchen-dynamic-startB-llm_guided",
+  "outcome": {
+    "termination": "success",
+    "simulated_time_s": 158.66666666666666,
+    "actual_distance_m": 14.93382993322501,
+    "collisions": 0
+  },
+  "source_file": "llm-calls.json",
+  "original_source_sha256": "bd75398f796b1d8d91aae6568a32534d95aed6f2ff47cb93816231706e4b5efa",
+  "records": [
+    {
+      "state_revision": 41,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000007",
+      "latency_s": 9.514999999664724,
+      "model_called": true,
+      "validated_ranking": [
+        "F000007",
+        "F000006",
+        "F000009",
+        "F000046",
+        "F000047",
+        "F000039",
+        "F000043"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 184,
+        "prompt_tokens": 6887,
+        "total_tokens": 7071
+      },
+      "returned_answer": {
+        "frontier_id": "F000007",
+        "reason": "F000007 provides the best balance of high information gain (4.11 m2), efficient path cost (1.31 m), and highest gain-per-path ratio among eligible frontiers in region R2, which requires further exploration.",
+        "ranked_frontier_ids": [
+          "F000007",
+          "F000006",
+          "F000009",
+          "F000046",
+          "F000047",
+          "F000039",
+          "F000043"
+        ],
+        "confidence": 0.95
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 50,
+      "model": "gemini-3.5-flash-lite",
+      "response": null,
+      "latency_s": 30.014999999664724,
+      "model_called": true,
+      "validated_ranking": [
+        "F000049"
+      ],
+      "fallback_reason": "timeout",
+      "fallback_selected_action": true,
+      "usage": null,
+      "returned_answer": null,
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 117,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000057",
+      "latency_s": 18.219000000040978,
+      "model_called": true,
+      "validated_ranking": [
+        "F000057",
+        "F000046",
+        "F000047",
+        "F000009",
+        "F000039"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 180,
+        "prompt_tokens": 7019,
+        "total_tokens": 7199
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "ranked_frontier_ids": [
+          "F000057",
+          "F000046",
+          "F000047",
+          "F000009",
+          "F000039"
+        ],
+        "frontier_id": "F000057",
+        "reason": "Frontier F000057 offers a high information gain and efficiency (gain_per_path_m = 2.03) while targeting region R3, which has lower exploration completion (71.6%) and contains kitchen/appliance semantic objects like a refrigerator, making it a promising area to search for a bowl."
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 188,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000009",
+      "latency_s": 9.609999999869615,
+      "model_called": true,
+      "validated_ranking": [
+        "F000009",
+        "F000046",
+        "F000047",
+        "F000039"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 164,
+        "prompt_tokens": 7012,
+        "total_tokens": 7176
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000009",
+        "reason": "F000009 has the lowest path cost (2.23m) and is located in R2, allowing efficient continuation of exploration in nearby unexplored regions. F000039, F000046, and F000047 have significantly higher path costs.",
+        "ranked_frontier_ids": [
+          "F000009",
+          "F000046",
+          "F000047",
+          "F000039"
+        ]
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 273,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000039",
+      "latency_s": 9.671000000089407,
+      "model_called": true,
+      "validated_ranking": [
+        "F000039",
+        "F000046",
+        "F000047",
+        "F000009"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 146,
+        "prompt_tokens": 7181,
+        "total_tokens": 7327
+      },
+      "returned_answer": {
+        "frontier_id": "F000039",
+        "reason": "F000039 is located in Region R1 where dining tables, chairs, and other household furniture are present, offering high information gain (2.28 m²) and solid coverage potential for finding small objects like a bowl.",
+        "ranked_frontier_ids": [
+          "F000039",
+          "F000046",
+          "F000047",
+          "F000009"
+        ],
+        "confidence": 0.85
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 386,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000123",
+      "latency_s": 17.030999999959022,
+      "model_called": true,
+      "validated_ranking": [
+        "F000123",
+        "F000124",
+        "F000125",
+        "F000126",
+        "F000117",
+        "F000118",
+        "F000073",
+        "F000009"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 212,
+        "prompt_tokens": 9168,
+        "total_tokens": 9380
+      },
+      "returned_answer": {
+        "confidence": 0.9,
+        "ranked_frontier_ids": [
+          "F000123",
+          "F000124",
+          "F000125",
+          "F000126",
+          "F000117",
+          "F000118",
+          "F000073",
+          "F000009"
+        ],
+        "frontier_id": "F000123",
+        "reason": "Frontier F000123 in region R4 provides a high information gain (3.28 m2) and strong gain per path meter, while targeting a less-explored region (54.6% explored) that contains kitchen/pantry semantics (microwave, refrigerator, laptop) where a bowl is likely to be found."
+      },
+      "thinking_summaries": []
+    }
+  ]
+}

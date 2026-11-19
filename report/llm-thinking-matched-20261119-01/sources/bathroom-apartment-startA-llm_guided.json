@@ -1,0 +1,89 @@
+{
+  "job_id": "bathroom-apartment-startA-llm_guided",
+  "outcome": {
+    "termination": "success",
+    "simulated_time_s": 77.33333333333333,
+    "actual_distance_m": 7.495506521537048,
+    "collisions": 0
+  },
+  "source_file": "llm-calls.json",
+  "original_source_sha256": "6b2930fafb9df0db79b8777ed42802b1a70455ecc94e6f38e43834c00421252c",
+  "records": [
+    {
+      "state_revision": 41,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000018",
+      "latency_s": 2.219000000040978,
+      "model_called": true,
+      "validated_ranking": [
+        "F000018",
+        "F000017",
+        "F000019",
+        "F000020",
+        "F000030",
+        "F000036",
+        "F000040",
+        "F000064",
+        "F000060"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 219,
+        "prompt_tokens": 8107,
+        "total_tokens": 8326
+      },
+      "returned_answer": {
+        "frontier_id": "F000018",
+        "reason": "F000018 offers high information gain (2.75 m^2) with a reasonable path cost (3.05 m) in region R1, which has semantic cues like beds, books, and chairs that often correlate with bowl placements (e.g., bedrooms or living areas with surfaces).",
+        "ranked_frontier_ids": [
+          "F000018",
+          "F000017",
+          "F000019",
+          "F000020",
+          "F000030",
+          "F000036",
+          "F000040",
+          "F000064",
+          "F000060"
+        ],
+        "confidence": 0.85
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 128,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000171",
+      "latency_s": 7.686999999918044,
+      "model_called": true,
+      "validated_ranking": [
+        "F000171",
+        "F000172",
+        "F000168",
+        "F000122",
+        "F000064"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 163,
+        "prompt_tokens": 9110,
+        "total_tokens": 9273
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000171",
+        "ranked_frontier_ids": [
+          "F000171",
+          "F000172",
+          "F000168",
+          "F000122",
+          "F000064"
+        ],
+        "reason": "Frontier F000171 offers a low path cost (2.18m) and high information gain (5.80 m^2) in region R2, balancing coverage expansion and efficiency well while avoiding fully explored regions like R1."
+      },
+      "thinking_summaries": []
+    }
+  ]
+}

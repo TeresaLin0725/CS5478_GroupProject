@@ -1,0 +1,286 @@
+{
+  "all_twelve_finalized": true,
+  "successes": 12,
+  "terminations": {
+    "success": 12
+  },
+  "all_manifests_byte_identical": true,
+  "original_prompt_default_reasoning_model_and_detector_runtime_preserved": true,
+  "source_request_and_dispatch_checks_passed": true,
+  "initial_inputs_identical_to_original": 12,
+  "finalized_episode_llm_calls": 38,
+  "llm_fallbacks": 2,
+  "calls_with_thinking_summary_text": 0,
+  "valid_answers_without_summary_text": 36,
+  "missing_summary_details": [
+    {
+      "job_id": "kitchen-clutter-startB-llm_guided",
+      "revision": 41
+    },
+    {
+      "job_id": "kitchen-clutter-startB-llm_guided",
+      "revision": 50
+    },
+    {
+      "job_id": "kitchen-clutter-startB-llm_guided",
+      "revision": 116
+    },
+    {
+      "job_id": "kitchen-clutter-startB-llm_guided",
+      "revision": 183
+    },
+    {
+      "job_id": "kitchen-clutter-startB-llm_guided",
+      "revision": 264
+    },
+    {
+      "job_id": "kitchen-clutter-startB-llm_guided",
+      "revision": 376
+    },
+    {
+      "job_id": "bathroom-clutter-startB-llm_guided",
+      "revision": 41
+    },
+    {
+      "job_id": "bathroom-clutter-startB-llm_guided",
+      "revision": 50
+    },
+    {
+      "job_id": "bathroom-apartment-startA-llm_guided",
+      "revision": 41
+    },
+    {
+      "job_id": "bathroom-apartment-startA-llm_guided",
+      "revision": 128
+    },
+    {
+      "job_id": "kitchen-apartment-startA-llm_guided",
+      "revision": 41
+    },
+    {
+      "job_id": "kitchen-apartment-startA-llm_guided",
+      "revision": 128
+    },
+    {
+      "job_id": "kitchen-apartment-startA-llm_guided",
+      "revision": 206
+    },
+    {
+      "job_id": "kitchen-apartment-startA-llm_guided",
+      "revision": 286
+    },
+    {
+      "job_id": "kitchen-clutter-startA-llm_guided",
+      "revision": 41
+    },
+    {
+      "job_id": "kitchen-clutter-startA-llm_guided",
+      "revision": 115
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-llm_guided",
+      "revision": 41
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-llm_guided",
+      "revision": 115
+    },
+    {
+      "job_id": "kitchen-apartment-startB-llm_guided",
+      "revision": 41
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-llm_guided",
+      "revision": 41
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-llm_guided",
+      "revision": 117
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-llm_guided",
+      "revision": 188
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-llm_guided",
+      "revision": 273
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-llm_guided",
+      "revision": 386
+    },
+    {
+      "job_id": "bathroom-clutter-startA-llm_guided",
+      "revision": 41
+    },
+    {
+      "job_id": "bathroom-clutter-startA-llm_guided",
+      "revision": 115
+    },
+    {
+      "job_id": "bathroom-clutter-startA-llm_guided",
+      "revision": 200
+    },
+    {
+      "job_id": "bathroom-dynamic-startA-llm_guided",
+      "revision": 41
+    },
+    {
+      "job_id": "bathroom-dynamic-startA-llm_guided",
+      "revision": 115
+    },
+    {
+      "job_id": "bathroom-dynamic-startA-llm_guided",
+      "revision": 326
+    },
+    {
+      "job_id": "bathroom-apartment-startB-llm_guided",
+      "revision": 41
+    },
+    {
+      "job_id": "bathroom-apartment-startB-llm_guided",
+      "revision": 139
+    },
+    {
+      "job_id": "bathroom-apartment-startB-llm_guided",
+      "revision": 232
+    },
+    {
+      "job_id": "bathroom-apartment-startB-llm_guided",
+      "revision": 338
+    },
+    {
+      "job_id": "bathroom-dynamic-startB-llm_guided",
+      "revision": 41
+    },
+    {
+      "job_id": "bathroom-dynamic-startB-llm_guided",
+      "revision": 50
+    }
+  ],
+  "collision_contact_ticks": 0,
+  "failures": [],
+  "setup_comparisons": [
+    {
+      "job_id": "kitchen-clutter-startB-llm_guided",
+      "manifest_byte_identical": true,
+      "original_termination": "success",
+      "new_termination": "success",
+      "first_model_input_identical": true,
+      "first_selection_identical": true,
+      "original_time_s": 83.66666666666667,
+      "new_time_s": 151.0
+    },
+    {
+      "job_id": "bathroom-clutter-startB-llm_guided",
+      "manifest_byte_identical": true,
+      "original_termination": "success",
+      "new_termination": "success",
+      "first_model_input_identical": true,
+      "first_selection_identical": true,
+      "original_time_s": 46.333333333333336,
+      "new_time_s": 46.333333333333336
+    },
+    {
+      "job_id": "bathroom-apartment-startA-llm_guided",
+      "manifest_byte_identical": true,
+      "original_termination": "success",
+      "new_termination": "success",
+      "first_model_input_identical": true,
+      "first_selection_identical": true,
+      "original_time_s": 77.33333333333333,
+      "new_time_s": 77.33333333333333
+    },
+    {
+      "job_id": "kitchen-apartment-startA-llm_guided",
+      "manifest_byte_identical": true,
+      "original_termination": "success",
+      "new_termination": "success",
+      "first_model_input_identical": true,
+      "first_selection_identical": false,
+      "original_time_s": 76.33333333333333,
+      "new_time_s": 135.66666666666666
+    },
+    {
+      "job_id": "kitchen-clutter-startA-llm_guided",
+      "manifest_byte_identical": true,
+      "original_termination": "success",
+      "new_termination": "success",
+      "first_model_input_identical": true,
+      "first_selection_identical": true,
+      "original_time_s": 68.66666666666667,
+      "new_time_s": 68.66666666666667
+    },
+    {
+      "job_id": "kitchen-dynamic-startA-llm_guided",
+      "manifest_byte_identical": true,
+      "original_termination": "success",
+      "new_termination": "success",
+      "first_model_input_identical": true,
+      "first_selection_identical": true,
+      "original_time_s": 107.66666666666667,
+      "new_time_s": 107.66666666666667
+    },
+    {
+      "job_id": "kitchen-apartment-startB-llm_guided",
+      "manifest_byte_identical": true,
+      "original_termination": "success",
+      "new_termination": "success",
+      "first_model_input_identical": true,
+      "first_selection_identical": true,
+      "original_time_s": 81.66666666666667,
+      "new_time_s": 81.66666666666667
+    },
+    {
+      "job_id": "kitchen-dynamic-startB-llm_guided",
+      "manifest_byte_identical": true,
+      "original_termination": "success",
+      "new_termination": "success",
+      "first_model_input_identical": true,
+      "first_selection_identical": true,
+      "original_time_s": 158.66666666666666,
+      "new_time_s": 158.66666666666666
+    },
+    {
+      "job_id": "bathroom-clutter-startA-llm_guided",
+      "manifest_byte_identical": true,
+      "original_termination": "success",
+      "new_termination": "success",
+      "first_model_input_identical": true,
+      "first_selection_identical": true,
+      "original_time_s": 113.33333333333333,
+      "new_time_s": 113.33333333333333
+    },
+    {
+      "job_id": "bathroom-dynamic-startA-llm_guided",
+      "manifest_byte_identical": true,
+      "original_termination": "success",
+      "new_termination": "success",
+      "first_model_input_identical": true,
+      "first_selection_identical": true,
+      "original_time_s": 146.66666666666666,
+      "new_time_s": 146.66666666666666
+    },
+    {
+      "job_id": "bathroom-apartment-startB-llm_guided",
+      "manifest_byte_identical": true,
+      "original_termination": "success",
+      "new_termination": "success",
+      "first_model_input_identical": true,
+      "first_selection_identical": true,
+      "original_time_s": 136.0,
+      "new_time_s": 136.0
+    },
+    {
+      "job_id": "bathroom-dynamic-startB-llm_guided",
+      "manifest_byte_identical": true,
+      "original_termination": "success",
+      "new_termination": "success",
+      "first_model_input_identical": true,
+      "first_selection_identical": true,
+      "original_time_s": 46.333333333333336,
+      "new_time_s": 46.333333333333336
+    }
+  ],
+  "interpretation": "Original benchmark settings were preserved; only summary request/capture was added. No high reasoning was forced. Missing summary text is reported separately from run success and execution integrity."
+}

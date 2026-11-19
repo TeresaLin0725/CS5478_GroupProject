@@ -1,0 +1,123 @@
+{
+  "job_id": "bathroom-dynamic-startA-llm_guided",
+  "outcome": {
+    "termination": "success",
+    "simulated_time_s": 146.66666666666666,
+    "actual_distance_m": 11.135074724726463,
+    "collisions": 0
+  },
+  "source_file": "llm-calls.json",
+  "original_source_sha256": "5ec837a01c8cacc34266b448c03a4839a7f39b14683fce672e2a405eed5f25f0",
+  "records": [
+    {
+      "state_revision": 41,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000048",
+      "latency_s": 24.29699999978766,
+      "model_called": true,
+      "validated_ranking": [
+        "F000048",
+        "F000049",
+        "F000050",
+        "F000051",
+        "F000052",
+        "F000028",
+        "F000053",
+        "F000030",
+        "F000054"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 207,
+        "prompt_tokens": 8061,
+        "total_tokens": 8268
+      },
+      "returned_answer": {
+        "frontier_id": "F000048",
+        "reason": "F000048 offers a very favorable path cost (2.08m) combined with high information gain and strong gain-per-path-meter efficiency (1.15), facilitating efficient expansion toward unexplored areas while remaining close to the current viewpoint.",
+        "ranked_frontier_ids": [
+          "F000048",
+          "F000049",
+          "F000050",
+          "F000051",
+          "F000052",
+          "F000028",
+          "F000053",
+          "F000030",
+          "F000054"
+        ],
+        "confidence": 0.85
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 115,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000153",
+      "latency_s": 9.890000000130385,
+      "model_called": true,
+      "validated_ranking": [
+        "F000153",
+        "F000154",
+        "F000161",
+        "F000160",
+        "F000157"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 188,
+        "prompt_tokens": 9889,
+        "total_tokens": 10077
+      },
+      "returned_answer": {
+        "frontier_id": "F000153",
+        "reason": "F000153 is located in region R4, which contains kitchen/dining semantic objects such as microwave, refrigerator, bottle, and dining table. This makes R4 the most promising region for locating a 'bowl'. F000153 provides a good information gain (3.30 m2) with a reasonable path cost of 2.44 m.",
+        "ranked_frontier_ids": [
+          "F000153",
+          "F000154",
+          "F000161",
+          "F000160",
+          "F000157"
+        ],
+        "confidence": 0.95
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 326,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000147",
+      "latency_s": 7.405999999959022,
+      "model_called": true,
+      "validated_ranking": [
+        "F000147",
+        "F000162",
+        "F000163",
+        "F000137",
+        "F000138"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 148,
+        "prompt_tokens": 7439,
+        "total_tokens": 7587
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000147",
+        "reason": "Frontier F000147 provides the highest information gain per path meter (1.55) among accessible eligible candidates in region R2, balancing coverage and efficient path cost.",
+        "ranked_frontier_ids": [
+          "F000147",
+          "F000162",
+          "F000163",
+          "F000137",
+          "F000138"
+        ]
+      },
+      "thinking_summaries": []
+    }
+  ]
+}

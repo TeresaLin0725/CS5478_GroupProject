@@ -1,0 +1,95 @@
+{
+  "job_id": "bathroom-dynamic-startB-llm_guided",
+  "outcome": {
+    "termination": "success",
+    "simulated_time_s": 46.333333333333336,
+    "actual_distance_m": 3.020697499482538,
+    "collisions": 0
+  },
+  "source_file": "llm-calls.json",
+  "original_source_sha256": "e6e12382b88e8d117c8255dad35248612cd2a9fc9f98479330cde6a9f76886ac",
+  "records": [
+    {
+      "state_revision": 41,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000007",
+      "latency_s": 10.342999999877065,
+      "model_called": true,
+      "validated_ranking": [
+        "F000007",
+        "F000006",
+        "F000009",
+        "F000046",
+        "F000047",
+        "F000039",
+        "F000043"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 212,
+        "prompt_tokens": 6887,
+        "total_tokens": 7099
+      },
+      "returned_answer": {
+        "frontier_id": "F000007",
+        "reason": "F000007 is in region R2, which has a lower explored fraction (37.8%) compared to R1 (95.5%), offering high information gain (4.11 m2) and a favorable gain-per-path-m ratio (2.91) for exploring unmapped bedroom/living areas where household items like a bowl might be located.",
+        "ranked_frontier_ids": [
+          "F000007",
+          "F000006",
+          "F000009",
+          "F000046",
+          "F000047",
+          "F000039",
+          "F000043"
+        ],
+        "confidence": 0.85
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 50,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000049",
+      "latency_s": 10.514999999664724,
+      "model_called": true,
+      "validated_ranking": [
+        "F000049",
+        "F000009",
+        "F000051",
+        "F000052",
+        "F000053",
+        "F000054",
+        "F000046",
+        "F000047",
+        "F000039",
+        "F000043"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 224,
+        "prompt_tokens": 8307,
+        "total_tokens": 8531
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000049",
+        "ranked_frontier_ids": [
+          "F000049",
+          "F000009",
+          "F000051",
+          "F000052",
+          "F000053",
+          "F000054",
+          "F000046",
+          "F000047",
+          "F000039",
+          "F000043"
+        ],
+        "reason": "Frontier F000049 offers a very low path cost (0.91 m) and high information gain per path meter (3.17) in region R2, avoiding the failed goal F000007 while continuing exploration of nearby unmapped space."
+      },
+      "thinking_summaries": []
+    }
+  ]
+}

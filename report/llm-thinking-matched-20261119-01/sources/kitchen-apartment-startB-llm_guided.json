@@ -1,0 +1,72 @@
+{
+  "job_id": "kitchen-apartment-startB-llm_guided",
+  "outcome": {
+    "termination": "success",
+    "simulated_time_s": 81.66666666666667,
+    "actual_distance_m": 5.31283287048841,
+    "collisions": 0
+  },
+  "source_file": "llm-calls.json",
+  "original_source_sha256": "cfc87747e1d6c284af31b8e38114ab87166fefa04e11d7c1400940f2346d1ef0",
+  "records": [
+    {
+      "state_revision": 41,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000054",
+      "latency_s": 9.703999999910593,
+      "model_called": true,
+      "validated_ranking": [
+        "F000054",
+        "F000055",
+        "F000053",
+        "F000007",
+        "F000006",
+        "F000051",
+        "F000050",
+        "F000059",
+        "F000041",
+        "F000058"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 225,
+        "prompt_tokens": 7811,
+        "total_tokens": 8036
+      },
+      "returned_answer": {
+        "frontier_id": "F000054",
+        "reason": "F000054 provides a high information gain (4.63 m2) in region R1, which has observed objects like dining table, chair, and couch (kitchen/living area semantics relevant for finding a bowl), with a reasonable path cost of 2.74 m.",
+        "ranked_frontier_ids": [
+          "F000054",
+          "F000055",
+          "F000053",
+          "F000007",
+          "F000006",
+          "F000051",
+          "F000050",
+          "F000059",
+          "F000041",
+          "F000058"
+        ],
+        "confidence": 0.85
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 139,
+      "model": "gemini-3.5-flash-lite",
+      "response": null,
+      "latency_s": 2.0469999997876585,
+      "model_called": true,
+      "validated_ranking": [
+        "F000103"
+      ],
+      "fallback_reason": "client_error:RuntimeError",
+      "fallback_selected_action": true,
+      "usage": null,
+      "returned_answer": null,
+      "thinking_summaries": []
+    }
+  ]
+}

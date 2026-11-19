@@ -1,5 +1,7 @@
 # 室内前沿探索目标搜索：最终实验报告汇总
 
+Latest matched LLM run: [all 12 episodes and returned decision rationales](llm-thinking-matched-20261119-01/README.md).
+
 更新日期：2026-11-11　代码分支：`feat/semantic-llm-experiments`（已合并 `origin/integration/w2` @ `0a29a4b`）
 
 本页把项目的全部正式实验放在一起：先给出各批实验的索引和主要数字，再给出跨实验一致的结论、相互之间的差异，以及哪些结论不能合并。每批实验的完整报告、逐回合数据和复现方法见各自目录。

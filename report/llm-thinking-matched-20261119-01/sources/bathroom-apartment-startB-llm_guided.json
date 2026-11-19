@@ -1,0 +1,161 @@
+{
+  "job_id": "bathroom-apartment-startB-llm_guided",
+  "outcome": {
+    "termination": "success",
+    "simulated_time_s": 136.0,
+    "actual_distance_m": 11.329179643075614,
+    "collisions": 0
+  },
+  "source_file": "llm-calls.json",
+  "original_source_sha256": "1e4ed6cbbaee899daf5f8907ce4c5bb8bb8cf6a4a51007b74642e9c906812912",
+  "records": [
+    {
+      "state_revision": 41,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000054",
+      "latency_s": 10.280999999959022,
+      "model_called": true,
+      "validated_ranking": [
+        "F000054",
+        "F000055",
+        "F000007",
+        "F000006",
+        "F000053",
+        "F000051",
+        "F000050",
+        "F000059",
+        "F000058",
+        "F000041"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 215,
+        "prompt_tokens": 7811,
+        "total_tokens": 8026
+      },
+      "returned_answer": {
+        "frontier_id": "F000054",
+        "reason": "F000054 offers a high information gain (4.63 m2) and strong gain per path meter in a well-explored region with table surfaces (dining table observed nearby), which are high-probability locations for finding a bowl.",
+        "ranked_frontier_ids": [
+          "F000054",
+          "F000055",
+          "F000007",
+          "F000006",
+          "F000053",
+          "F000051",
+          "F000050",
+          "F000059",
+          "F000058",
+          "F000041"
+        ],
+        "confidence": 0.85
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 139,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000103",
+      "latency_s": 8.484999999869615,
+      "model_called": true,
+      "validated_ranking": [
+        "F000103",
+        "F000104",
+        "F000105",
+        "F000099",
+        "F000100"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 160,
+        "prompt_tokens": 12342,
+        "total_tokens": 12502
+      },
+      "returned_answer": {
+        "frontier_id": "F000103",
+        "reason": "F000103 offers a high gain-to-path-cost ratio, short path cost (1.25m), and directly targets unexplored areas in Region 4 near a refrigerator, which is semantically relevant for finding a bowl.",
+        "ranked_frontier_ids": [
+          "F000103",
+          "F000104",
+          "F000105",
+          "F000099",
+          "F000100"
+        ],
+        "confidence": 0.95
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 232,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000007",
+      "latency_s": 10.5,
+      "model_called": true,
+      "validated_ranking": [
+        "F000007",
+        "F000006",
+        "F000116",
+        "F000115",
+        "F000114"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 154,
+        "prompt_tokens": 9763,
+        "total_tokens": 9917
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "ranked_frontier_ids": [
+          "F000007",
+          "F000006",
+          "F000116",
+          "F000115",
+          "F000114"
+        ],
+        "frontier_id": "F000007",
+        "reason": "F000007 provides the highest information gain and gain-per-path-meter in R2 among eligible frontiers, helping to uncover unmapped space where kitchen/dining items like a bowl might be located."
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 338,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000154",
+      "latency_s": 9.655999999959022,
+      "model_called": true,
+      "validated_ranking": [
+        "F000154",
+        "F000155",
+        "F000146",
+        "F000112",
+        "F000133",
+        "F000145"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 179,
+        "prompt_tokens": 8040,
+        "total_tokens": 8219
+      },
+      "returned_answer": {
+        "confidence": 0.85,
+        "frontier_id": "F000154",
+        "ranked_frontier_ids": [
+          "F000154",
+          "F000155",
+          "F000146",
+          "F000112",
+          "F000133",
+          "F000145"
+        ],
+        "reason": "Frontier F000154 is in region R3, which contains a refrigerator and is associated with kitchen/food storage items such as a bowl. It has a low path cost (2.19m) and high gain per path meter (0.344)."
+      },
+      "thinking_summaries": []
+    }
+  ]
+}

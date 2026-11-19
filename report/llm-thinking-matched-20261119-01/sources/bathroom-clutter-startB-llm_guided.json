@@ -1,0 +1,107 @@
+{
+  "job_id": "bathroom-clutter-startB-llm_guided",
+  "outcome": {
+    "termination": "success",
+    "simulated_time_s": 46.333333333333336,
+    "actual_distance_m": 3.020697499482538,
+    "collisions": 0
+  },
+  "source_file": "llm-calls.json",
+  "original_source_sha256": "6b271b3126a83f251154516ed2ad172ca331b223791fb4dfa6db86e287077125",
+  "records": [
+    {
+      "state_revision": 41,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000007",
+      "latency_s": 8.780999999959022,
+      "model_called": true,
+      "validated_ranking": [
+        "F000007",
+        "F000006",
+        "F000008",
+        "F000037",
+        "F000034",
+        "F000036",
+        "F000035",
+        "F000033",
+        "F000038",
+        "F000039"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 208,
+        "prompt_tokens": 7562,
+        "total_tokens": 7770
+      },
+      "returned_answer": {
+        "frontier_id": "F000007",
+        "reason": "F000007 provides the best balance of high information gain (4.11 m2) and a low path cost (1.31 m) within region R2, which requires further exploration.",
+        "ranked_frontier_ids": [
+          "F000007",
+          "F000006",
+          "F000008",
+          "F000037",
+          "F000034",
+          "F000036",
+          "F000035",
+          "F000033",
+          "F000038",
+          "F000039"
+        ],
+        "confidence": 0.85
+      },
+      "thinking_summaries": []
+    },
+    {
+      "state_revision": 50,
+      "model": "gemini-3.5-flash-lite",
+      "response": "F000042",
+      "latency_s": 5.4530000002123415,
+      "model_called": true,
+      "validated_ranking": [
+        "F000042",
+        "F000045",
+        "F000047",
+        "F000044",
+        "F000046",
+        "F000008",
+        "F000037",
+        "F000036",
+        "F000034",
+        "F000035",
+        "F000033",
+        "F000038",
+        "F000039"
+      ],
+      "fallback_reason": null,
+      "fallback_selected_action": false,
+      "usage": {
+        "completion_tokens": 255,
+        "prompt_tokens": 9129,
+        "total_tokens": 9384
+      },
+      "returned_answer": {
+        "frontier_id": "F000042",
+        "reason": "F000042 provides high information gain (3.20 m2) with low path cost (0.91 m), excellent gain-per-path efficiency (3.17), and is located in R2 near previously explored space without triggering recent navigation failures.",
+        "ranked_frontier_ids": [
+          "F000042",
+          "F000045",
+          "F000047",
+          "F000044",
+          "F000046",
+          "F000008",
+          "F000037",
+          "F000036",
+          "F000034",
+          "F000035",
+          "F000033",
+          "F000038",
+          "F000039"
+        ],
+        "confidence": 0.95
+      },
+      "thinking_summaries": []
+    }
+  ]
+}
