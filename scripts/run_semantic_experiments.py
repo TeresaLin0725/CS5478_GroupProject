@@ -112,8 +112,24 @@ def command(suite, job, folder):
               '--target-instance-id', target['instance_id'], '--start-pose',
               *map(str, suite['start_pose']), '--environment-seed', str(suite['environment_seed']),
               '--perception-seed', str(suite['perception_seed']),
-              '--policy-seed', str(suite['policy_seed']), '--no-noise']
+              '--policy-seed', str(suite['policy_seed'])]
+    values += noise_arguments(suite)
+    if suite.get('robust_mapping'):
+        values.append('--robust-mapping')
+    if suite.get('initialization_deadline_s') is not None:
+        values += ['--initialization-deadline-s', str(suite['initialization_deadline_s'])]
     return values
+
+
+def noise_arguments(suite):
+    """Clean depth unless the suite enables noise; the per-job seed follows the bowl48 rule
+    (base seed + environment seed), so every policy sees the same noise stream."""
+    noise = suite.get('sensor_noise') or {}
+    if not noise.get('enabled'):
+        return ['--no-noise']
+    return ['--noise', '--depth-noise-std-m', str(noise['depth_std_m']),
+            '--depth-dropout-prob', str(noise['depth_dropout_prob']),
+            '--noise-seed', str(noise['base_seed'] + suite['environment_seed'])]
 
 
 def event_rows(folder):

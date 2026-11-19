@@ -74,16 +74,20 @@ def shared_round_manifest_for(episode_id, policy='information_gain'):
     return replace(manifest,robot=shared_round_robot(manifest.robot))
 
 
+def with_robust_mapping(manifest):
+    """The robustness configuration validated by the 35/36 noisy suite and used by bowl48."""
+    return replace(manifest,
+        mapping=replace(manifest.mapping,depth_filter_kernel_size=5,
+                        unvisited_recovery_viewpoints=True),
+        observation=replace(manifest.observation,inspection_heading_settle_ratio=.5))
+
+
 def task_manifest_for(episode_id, policy='information_gain', task='legacy_cup'):
     manifest=shared_round_manifest_for(episode_id,policy)
     if task not in RS_TARGETS:
         raise ValueError('Unknown Rs task: '+str(task))
     if task in ('kitchen_bowl','bathroom_bowl'):
-        # Retain the robustness configuration validated by the 35/36 noisy suite.
-        return replace(manifest,target_class='bowl',start_pose=bowl_start_pose(),
-            mapping=replace(manifest.mapping,depth_filter_kernel_size=5,
-                            unvisited_recovery_viewpoints=True),
-            observation=replace(manifest.observation,inspection_heading_settle_ratio=.5))
+        return replace(with_robust_mapping(manifest),target_class='bowl',start_pose=bowl_start_pose())
     return manifest
 
 
@@ -171,6 +175,11 @@ def main():
                         help='System prompt variant for llm_guided (v1 = original wording)')
     parser.add_argument('--llm-deadline-s',type=float,
                         help='Override the per-decision LLM deadline (wall clock; simulation is paused)')
+    parser.add_argument('--robust-mapping',action='store_true',
+                        help='Apply the bowl48 robustness settings (5x5 depth filter, unvisited '
+                             'recovery viewpoints, 0.5 inspection settling) to any task')
+    parser.add_argument('--initialization-deadline-s',type=float,
+                        help='Initialization watchdog deadline (bowl48 protocol used 240 s)')
     add_noise_arguments(parser)
     args=parser.parse_args()
     if args.profile is None:
@@ -185,6 +194,10 @@ def main():
         manifest=task_manifest_for(args.output.name,args.policy,args.task)
     except ValueError as exc:
         parser.error(str(exc))
+    if args.robust_mapping:
+        manifest=with_robust_mapping(manifest)
+    if args.initialization_deadline_s is not None:
+        manifest=replace(manifest,initialization_deadline_s=args.initialization_deadline_s)
     if args.target_model is not None:
         if args.target_class is None or args.target_position is None:
             parser.error('--target-model requires --target-class and --target-position')

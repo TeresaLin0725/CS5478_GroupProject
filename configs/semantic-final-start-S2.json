@@ -1,0 +1,230 @@
+{
+  "schema_version": "1.0",
+  "scope": "Final-setup semantic suite: same tasks, starts and seeds as semantic-navigation-start-S2, rerun with the bowl48 configuration (depth noise 1 cm / 1 % dropout, 5x5 depth filter, unvisited recovery viewpoints, 0.5 inspection settling, 240 s initialization deadline, 30 s LLM call deadline). LLM provider differs from bowl48 (DeepSeek).",
+  "profile": "apartment",
+  "policies": [
+    "nearest",
+    "information_gain",
+    "llm_guided",
+    "llm_guided_v2"
+  ],
+  "start_pose": [
+    -1.05,
+    0.15,
+    3.141592653589793
+  ],
+  "environment_seed": 71,
+  "perception_seed": 10071,
+  "policy_seed": 20071,
+  "tasks": [
+    {
+      "task_id": "scissors-desk-aligned",
+      "family": "scissors",
+      "condition": "aligned",
+      "target_region": "R1",
+      "hypothesis": "Strong correct desk/work-area evidence can help LLM choose the useful branch early.",
+      "target": {
+        "class_name": "scissors",
+        "model": "037_scissors",
+        "position_world": [
+          0.15,
+          -3.8,
+          0.80989
+        ],
+        "roll_rad": 1.5707963267948966,
+        "yaw_rad": -0.63,
+        "instance_id": "Rs-semantic-scissors-desk"
+      },
+      "view_pose": [
+        0.55,
+        -3.25,
+        -2.2
+      ]
+    },
+    {
+      "task_id": "scissors-kitchen-misaligned",
+      "family": "scissors",
+      "condition": "misaligned",
+      "target_region": "R4",
+      "hypothesis": "A strong but wrong work-area prior can make LLM less efficient than geometric baselines.",
+      "target": {
+        "class_name": "scissors",
+        "model": "037_scissors",
+        "position_world": [
+          -1.4,
+          2.95,
+          0.95246
+        ],
+        "roll_rad": 1.5707963267948966,
+        "yaw_rad": 0.84,
+        "instance_id": "Rs-semantic-scissors-kitchen"
+      },
+      "view_pose": [
+        -0.75,
+        2.45,
+        2.485897027348257
+      ]
+    },
+    {
+      "task_id": "cup-kitchen-aligned",
+      "family": "cup",
+      "condition": "aligned_control",
+      "target_region": "R4",
+      "hypothesis": "The established kitchen target is the aligned control for the semantic-decoy comparison.",
+      "target": {
+        "class_name": "cup",
+        "model": "025_mug",
+        "position_world": [
+          -1.4,
+          2.95,
+          0.91903
+        ],
+        "yaw_rad": 0.0,
+        "instance_id": "Rs-semantic-cup-kitchen"
+      },
+      "view_pose": [
+        -0.75,
+        2.45,
+        2.485897027348257
+      ],
+      "view_yaw_offsets": [
+        -0.25,
+        -0.2,
+        -0.15,
+        -0.1,
+        -0.05,
+        0.0,
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25
+      ]
+    },
+    {
+      "task_id": "cup-bathroom-semantic-decoy",
+      "family": "cup",
+      "condition": "misleading_prior",
+      "target_region": "R3",
+      "hypothesis": "The empty kitchen is a semantic decoy; feedback should determine whether LLM recovers after an initially plausible mistake.",
+      "target": {
+        "class_name": "cup",
+        "model": "025_mug",
+        "position_world": [
+          -3.52,
+          3.08,
+          0.4445
+        ],
+        "yaw_rad": 0.0,
+        "instance_id": "Rs-semantic-cup-bathroom"
+      },
+      "view_pose": [
+        -2.85,
+        2.95,
+        3.05
+      ]
+    },
+    {
+      "task_id": "bottle-kitchen-ambiguous",
+      "family": "bottle",
+      "condition": "ambiguous_kitchen",
+      "target_region": "R4",
+      "hypothesis": "Bottle has several plausible room priors, so LLM may add little beyond path cost and information gain.",
+      "target": {
+        "class_name": "bottle",
+        "model": "006_mustard_bottle",
+        "position_world": [
+          -1.4,
+          2.95,
+          0.96402
+        ],
+        "yaw_rad": 0.0,
+        "instance_id": "Rs-semantic-bottle-kitchen"
+      },
+      "view_pose": [
+        -0.75,
+        2.45,
+        2.485897027348257
+      ]
+    },
+    {
+      "task_id": "bottle-bathroom-ambiguous",
+      "family": "bottle",
+      "condition": "ambiguous_bathroom",
+      "target_region": "R3",
+      "hypothesis": "A bathroom bottle remains semantically plausible, testing whether diffuse priors produce neutral LLM value.",
+      "target": {
+        "class_name": "bottle",
+        "model": "006_mustard_bottle",
+        "position_world": [
+          -3.52,
+          3.08,
+          0.48949
+        ],
+        "yaw_rad": 0.0,
+        "instance_id": "Rs-semantic-bottle-bathroom"
+      },
+      "view_pose": [
+        -2.85,
+        2.95,
+        3.05
+      ]
+    },
+    {
+      "task_id": "banana-kitchen-aligned",
+      "family": "banana",
+      "condition": "aligned",
+      "target_region": "R4",
+      "hypothesis": "A correct food/kitchen prior can reduce unnecessary room visits.",
+      "target": {
+        "class_name": "banana",
+        "model": "011_banana",
+        "position_world": [
+          -1.4,
+          2.95,
+          0.89691
+        ],
+        "yaw_rad": 0.84,
+        "instance_id": "Rs-semantic-banana-kitchen"
+      },
+      "view_pose": [
+        -0.75,
+        2.45,
+        2.485897027348257
+      ]
+    },
+    {
+      "task_id": "banana-bathroom-misaligned",
+      "family": "banana",
+      "condition": "misaligned",
+      "target_region": "R3",
+      "hypothesis": "A strongly counterfactual location can turn LLM common sense into a navigation disadvantage.",
+      "target": {
+        "class_name": "banana",
+        "model": "011_banana",
+        "position_world": [
+          -3.52,
+          3.08,
+          0.42238
+        ],
+        "yaw_rad": -1.76,
+        "instance_id": "Rs-semantic-banana-bathroom"
+      },
+      "view_pose": [
+        -2.85,
+        2.95,
+        3.05
+      ]
+    }
+  ],
+  "start_id": "S2",
+  "llm_deadline_s": 30.0,
+  "sensor_noise": {
+    "enabled": true,
+    "depth_std_m": 0.01,
+    "depth_dropout_prob": 0.01,
+    "base_seed": 123
+  },
+  "robust_mapping": true,
+  "initialization_deadline_s": 240.0
+}

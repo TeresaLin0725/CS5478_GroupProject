@@ -14,8 +14,14 @@ def main() -> None:
                      'Authorization': 'Bearer ' + request['key']})
         with urllib.request.urlopen(http, timeout=request['timeout']) as response:
             payload = json.load(response)
-        output = {'raw_response': payload['choices'][0]['message']['content'],
+        message = payload['choices'][0]['message']
+        output = {'raw_response': message['content'],
                   'usage': payload.get('usage'), 'response_model': payload.get('model')}
+        # Record-only: keep the provider's chain of thought when it exposes one
+        # (DeepSeek: reasoning_content; some gateways: reasoning). Never sent back.
+        for field in ('reasoning_content', 'reasoning'):
+            if message.get(field):
+                output[field] = message[field]
     except urllib.error.HTTPError as exc:
         output = {'error': 'HTTP_' + str(exc.code)}
     except Exception as exc:
