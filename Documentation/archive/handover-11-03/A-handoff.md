@@ -36,7 +36,7 @@
 
 四条有效回合均零接触；Nearest ON 观测墙钟约多 2.2%，仅一次配对，不能作稳定开销估计。首次 Random OFF 起步超时已保留，表中使用用户授权补跑的有效结果，未将基础设施异常计作算法失败。
 
-证据：[有效配对复盘](../../runs/local-history-rerun-20261104-01/PAIR_REVIEW.md)、[回归证书](../../runs/local-history-20261104-01/regression.json)。
+证据：[有效配对复盘](../../../runs/local-history-rerun-20261104-01/PAIR_REVIEW.md)、[回归证书](../../../runs/local-history-20261104-01/regression.json)。
 
 ## C 下一步
 

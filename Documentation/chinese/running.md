@@ -1,6 +1,6 @@
 # 新电脑运行与复现
 
-所有命令均在 **Git 仓库根目录**执行，即包含 `pyproject.toml` 的 `integration/` 目录。路径不需要是原作者的 `D:` 盘；使用短的英文路径可减少旧版原生编译工具的路径问题。当前生产入口为 `scripts/run_integrated.py`。
+所有命令均在 **Git 仓库根目录**执行，即包含 `pyproject.toml` 的目录。路径不需要是原作者的 `D:` 盘；使用短的英文路径可减少旧版原生编译工具的路径问题。当前生产入口为 `scripts/run_integrated.py`。
 
 ## 1. 运行环境与依赖
 
@@ -25,10 +25,11 @@
 
 ## 2. Windows 首次安装
 
-先取得本次的 `project-source-20261018.zip` 源码交接包，完整解压后进入其中的 `frontier-search/`。交接包包含本地新增的安装脚本、依赖和场景修订；使用 GitHub 分发时，需要先把这些文件提交并同步到所用分支，远端提交 `43617b9` 本身不包含本次新增的安装脚本。
+从提交链接对应的分支克隆完整仓库后进入根目录，无需旧的源码交接 ZIP。以下使用本次提交分支；已经克隆的读者直接在仓库根目录执行安装命令。
 
 ```powershell
-cd frontier-search
+git clone --branch cleanup/submission https://github.com/TeresaLin0725/CS5478_GroupProject.git
+cd CS5478_GroupProject
 python scripts/setup_project.py --device cuda
 ```
 

@@ -8,7 +8,7 @@ The standard experiment is **object search with a known room-layout prior and kn
 
 All policies share perception, candidate-generation rules, feasibility filtering, observation routines, navigation, and budgets. Given the same state, they receive the same eligible candidates. Actual maps and frontier sets naturally diverge after policies take different routes.
 
-The behavioral contracts in [Interface Freeze](interface_freeze.md) are authoritative. 
+The behavioral contracts in [Interface Freeze](../../english/interface_freeze.md) are authoritative.
 ## 2. Work Division
 
 | Owner | Responsibilities | Boundary |

@@ -2,10 +2,10 @@
 
 Current demo audit (2026-10-18): this checklist contains historical scaffolding
 milestones, not a current release acceptance certificate. See the
-[code-and-evidence design review](chinese/demo_design_review.md) for what is
+[code-and-evidence design review](../chinese/demo_design_review.md) for what is
 implemented and accepted. The current Rs benchmark now completes 36 native
 episodes in 9 paired blocks across three conditions; see the
-[paired results and scope](chinese/paired_benchmark.md). Cross-house
+[paired results and scope](../chinese/paired_benchmark.md). Cross-house
 generalization and the complete W4 native reliability suite remain uncovered.
 
 The English design documents remain authoritative. This file records scaffolding
@@ -33,7 +33,7 @@ validation. Reject boundary violations explicitly rather than returning empty da
 ## A — Perception and evaluation
 
 Completed W1: mapper reset, JSON room-prior loading, RGB-D validation and replay,
-and detector feasibility. See the [handoff](english/w1_perception_handoff.md) for
+and detector feasibility. See the [handoff](../english/w1_perception_handoff.md) for
 ownership and setup.
 
 W2 perception implementation (2026-10-10): `RGBDMapper.update()` fuses observed obstacle endpoints and
@@ -41,10 +41,10 @@ height-binned free-ray evidence, publishes separate geometric/room coverage,
 and returns immutable states atomically. Frontier extraction, interior approach
 poses, stable identity/lineage and arrival-sweep gain are implemented, with a
 synthetic RGB-D → A → B assessment → C selection regression. See
-[mapping details](english/w2_mapping.md). Real recording/adapter acceptance,
+[mapping details](../english/w2_mapping.md). Real recording/adapter acceptance,
 detector integration and evidence retrieval remain pending.
 
-The [portable RGB-D replay](english/w2_rgbd_replay.md) implements sequence
+The [portable RGB-D replay](../english/w2_rgbd_replay.md) implements sequence
 packaging/checksums, a synthetic moving/scanning dataset, repeat verification,
 offline A/B/C decisions and map/HTML reports. A7's real recording acceptance
 still requires the agreed robot/configuration and B's capture/clearance checks.
@@ -86,7 +86,7 @@ supervisor implement the lifecycle/recovery/budget items below for synchronous
 module calls. Tests cover normal/blocked/no-progress episodes, stale inputs,
 scan barriers, cancellation, lineage caps and hung modules. These remain
 acceptance requirements when replacing mocks with real A/B components.
-See [runner usage](chinese/w2_runner.md) and [A/B acceptance](chinese/w2_ab_handoff.md).
+See [runner usage](../chinese/w2_runner.md) and [A/B acceptance](../chinese/w2_ab_handoff.md).
 
 Implemented: Random, Nearest, Information Gain, LLM response validation/Nearest
 fallback, shared eligible-context construction, validated selection, runner
