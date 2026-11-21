@@ -7,7 +7,7 @@ Run commands from the directory containing `pyproject.toml`. The tested native e
 Install Git, uv, Visual Studio 2022 Build Tools with the C++ desktop workload and Windows SDK, and a working OpenGL graphics driver. Internet access is required for source, dependency, scene and model downloads. Allow approximately 15 GB of free disk space; 16 GB RAM is recommended rather than a measured minimum.
 
 ```powershell
-git clone --branch cleanup/submission https://github.com/TeresaLin0725/CS5478_GroupProject.git
+git clone --branch main https://github.com/TeresaLin0725/CS5478_GroupProject.git
 cd CS5478_GroupProject
 python scripts/setup_project.py --device cuda
 ```
