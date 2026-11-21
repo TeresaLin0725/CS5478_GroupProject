@@ -77,7 +77,7 @@ Pytest is configured to collect only `tests/`, excluding ignored experiment snap
 | `src/frontier_search/runner/` | Episode orchestration, recovery and recording |
 | `src/frontier_search/evaluation/` | Independent retained-frame verification |
 | `scripts/`, `configs/` | Installation, experiments, analysis and configuration |
-| `tests/` | Regression tests |
+| [Tests](tests/README.md) | Unit, integration and experiment checks |
 | `report/` | Committed experiment evidence and paper figures |
 | `midterm-report-20261025/` | Preserved historical reports, videos and baseline data |
 | [Documentation](Documentation/README.md) | Runtime and architecture guide; development history is marked separately |

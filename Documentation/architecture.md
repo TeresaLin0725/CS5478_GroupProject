@@ -42,6 +42,6 @@ Episode limits bound simulated time, wall time, attempts, control steps and deci
 
 ## Code and outputs
 
-Shared immutable records live in `contracts.py`; configuration dataclasses live in `config.py`. `runner/manifest.py` validates episode manifests, and `runner/integrated.py` wires the native components. `scripts/run_paired_benchmark.py` freezes a fresh source/harness snapshot and paired manifests before suite execution.
+Shared immutable records live in `contracts.py`; configuration dataclasses live in `config.py`. `runner/manifest.py` validates episode manifests, and `runner/integrated.py` wires the native components. The single production mapper is `perception/mapper.py`; `simulation/igibson_rs.py` supplies the shared native world and renderer. `scripts/run_paired_benchmark.py` freezes a fresh source/harness snapshot and paired manifests before suite execution.
 
 A run exports its manifest, event log, result summary, model-call records and retained evaluation evidence. A recording adds MP4 video and frame metadata. Committed reports provide selected experiment evidence; environment assets and newly generated raw runs stay local. See [reproduction instructions](reproducing.md) for exact historical-replay limits.

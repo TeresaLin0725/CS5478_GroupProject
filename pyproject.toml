@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "frontier-search"
 version = "0.1.0"
-description = "Indoor object-search comparison scaffold (contract 1.0)"
+description = "Indoor object search with shared RGB-D mapping, navigation and frontier policies"
 requires-python = ">=3.8"
 dependencies = []
 
@@ -17,9 +17,6 @@ frontier-search = "frontier_search.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-
-[tool.setuptools.package-data]
-"frontier_search.runner" = ["indoor_viewer.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

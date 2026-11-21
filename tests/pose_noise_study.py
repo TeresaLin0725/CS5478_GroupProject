@@ -23,7 +23,7 @@ from frontier_search.fixtures.loader import load_policy_fixture
 from frontier_search.navigation.locobot_robot import LOCOBOT_ROUND_ROBOT as ROBOT, ROUND_FOOTPRINT_NAV_OPTIONS
 from frontier_search.navigation.navigator import TeamNavigator
 from frontier_search.simulation.mock_adapter import MockSimulator
-from tests.test_planning_radius import DONE, world
+from tests.unit.test_planning_radius import DONE, world
 
 START, GOAL = Pose(0.9, 2.0, 0, 0), Pose(4.5, 2.0, 0, 0)
 

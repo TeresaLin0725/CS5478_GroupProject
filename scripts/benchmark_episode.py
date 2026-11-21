@@ -19,14 +19,12 @@ def target_for_protocol(protocol,job=None):
     return RsTarget(spec['class_name'],spec['model'],tuple(spec['position_world']),
                     spec.get('instance_id',default_id))
 
-def local_collision_switches(protocol):
-    enabled=protocol.get('local_collision_refinement',False)
-    history=protocol.get('local_collision_retain_history',False)
-    if type(enabled) is not bool or type(history) is not bool:
-        raise ValueError('local collision refinement/history switches must be bool')
-    if history and not enabled:
-        raise ValueError('local collision history requires local collision refinement')
-    return enabled,history
+def validate_supported_protocol(protocol):
+    """Reject removed experiment modes instead of silently changing a frozen run."""
+    for key in ('local_collision_refinement', 'local_collision_retain_history'):
+        if key in protocol and protocol[key] is not False:
+            raise ValueError('Experimental collision refinement is not supported by the submission pipeline; '
+                             'use the recorded source revision for historical experiments.')
 def navigation_options(protocol):
     """Resolve the frozen B preset; legacy protocols keep their original behavior."""
     preset=protocol.get('navigation_preset','legacy')
@@ -174,6 +172,7 @@ def preflight(protocol,profile,out):
     return int(not result['passed'])
 
 def episode(protocol,job,out):
+    validate_supported_protocol(protocol)
     import random,numpy as np,torch
     from PIL import Image
     from frontier_search.runner.integrated import DisplayDetector,PipelineLog,source_fingerprint
@@ -209,15 +208,8 @@ def episode(protocol,job,out):
     store=RetainedFrames()
     sim=RetainingAdapter(m.robot,m.mapping,AdapterConfig(scene_id='Rs',settle_steps=0,
         image_width=640,image_height=480,vertical_fov_deg=75.),store,job['profile'],target,protocol.get('scene_layout','legacy'))
-    local_refinement,retain_history=local_collision_switches(protocol)
-    if local_refinement:
-        from frontier_search.experimental.collision_refinement import LocalCollisionMapper,LocalCollisionNavigator
-        release_scope=protocol.get('local_collision_scope','window')
-        mapper=LocalCollisionMapper(detector,release_scope=release_scope,retain_history=retain_history)
-        nav=LocalCollisionNavigator(sim,patch_provider=lambda:mapper.collision_patch,mapping_config=m.mapping,
-            release_scope=release_scope,linear_gain=2.,**nav_kwargs(job,protocol))
-    else:
-        mapper=RGBDMapper(detector);nav=TeamNavigator(sim,linear_gain=2.,**nav_kwargs(job,protocol))
+    mapper=RGBDMapper(detector)
+    nav=TeamNavigator(sim,linear_gain=2.,**nav_kwargs(job,protocol))
     policy=LLMGuidedPolicy(GeminiCompatibleClient()) if job['policy']=='llm_guided' else BaselinePolicy(PolicyName(job['policy']))
     evaluator=CloseRetainedEvaluator(store,sim,target_class=m.target_class)
     from benchmark_watchdog import WatchdogChannel,AsyncEventWriter
@@ -288,14 +280,7 @@ def episode(protocol,job,out):
         detector_runtime=dict(device=device,torch_version=torch.__version__,cuda_version=torch.version.cuda,
             gpu_name=torch.cuda.get_device_name(0) if device=='0' else None),
         navigation_preset=protocol.get('navigation_preset','legacy'),
-        navigator_events=nav.events,scene_events=getattr(getattr(sim._backend,'world',None),'environment_events',[]),
-        local_collision_refinement=local_refinement,
-        local_collision_scope=mapper.release_scope if local_refinement else None,
-        local_collision_stats=dict(frames=getattr(mapper,'local_frames',0),seconds=getattr(mapper,'local_seconds',0.)))
-    summary['local_collision_retain_history']=retain_history
-    if local_refinement:
-        summary['local_collision_stats'].update(history_cells=len(mapper._local._history),
-            history_restored_cells=mapper._local.history_restored_cells)
+        navigator_events=nav.events,scene_events=getattr(getattr(sim._backend,'world',None),'environment_events',[]))
     if runner.state:
         atomic(out/'final-state.json',asdict(runner.state))
         if runner.state.target_claim:
@@ -312,6 +297,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--protocol',type=Path,required=True)
     p.add_argument('--job');p.add_argument('--preflight')
     args=p.parse_args();protocol=read(args.protocol)
+    validate_supported_protocol(protocol)
     os.environ['GIBSON_ASSETS_PATH']=protocol['asset_paths']['robot_assets']
     os.environ['GIBSON_DATASET_PATH']=protocol['asset_paths']['scenes']
     os.environ['YOLO_CONFIG_DIR']=str(Path(protocol['run_root'])/'yolo-config')
