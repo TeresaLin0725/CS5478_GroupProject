@@ -10,14 +10,6 @@ The first setups were kitchen/clutter/B, bathroom/clutter/B, and bathroom/apartm
 
 The batch was interrupted after 26 completed episodes. Two unfinished attempts were archived locally and restarted on resume; no completed result was retried or replaced. Consequently `suite-verification.json` records `no_retries=false`, `no_completed_episode_retries=true`, and two retained interrupted attempts. Their log hashes and the preserved completed-result hashes appear in [resume-audit.json](resume-audit.json).
 
-## Implemented fixes
-
-- Retain all original spatial locality anchors when recovery groups merge, preventing retry counters from escaping enforcement.
-- Run tiled detection on every close-inspection capture, restoring normal cadence afterward, including on interruption. Success thresholds and observation routines remain unchanged.
-- During recovery only, permit bounded straight egress from unknown cells already intersecting the current footprint. The map stays unchanged; occupied cells, new unknown cells, contact, excessive drift and timeout stop the primitive. In the diagnostic Nearest reruns, about 4.3 cm of movement restored reachability even though the primitive itself reached its time bound before completing the scan.
-
-Final validation: **677 tests, 6 skipped, no failures**, with unchanged source fingerprint during testing. The frozen engine fingerprint is `8a943c855186426351deee5b4930be148e140166d1abcd91d31e6dd64dd105c4`.
-
 ## Efficiency by target
 
 Means over six matched setups per target and policy. Times are simulated seconds, not wall-clock latency.
@@ -41,11 +33,9 @@ See [LLM effectiveness calculations](llm-effectiveness.md) and [machine-readable
 - [Frozen protocol](protocol.json), [original protocol SHA-256](protocol.sha256), and all 48 files under `manifests/`.
 - [Suite verification](suite-verification.json), [regression certificate](tests.json), [test output](tests.log), and 12 physical-check records under `preflight/`.
 - Every episode under `episodes/` has its result, execution summary and independent target-evaluation evidence. The three originally failed cases additionally include scene trajectories and the two accepted RGB evidence frames.
-- `harness/` contains the exact frozen execution scripts, including the four-policy setup barrier and read-only inspection diagnostics. The matching fixes are recorded in commit `296fa0d`, based on `0a29a4b`; copied source snapshots are omitted. Later merged features were not part of this frozen experiment. Snapshot seals are byte-sensitive, including line endings.
-- [Artifact hashes](artifact-sha256.json) preserve the packaged files' SHA-256 values. The original protocol retains machine-specific paths for auditability. Re-execution requires localizing those paths and generating a fresh protocol/seal; these records should not be edited in place.
+- `harness/` contains the experiment execution scripts with English presentation labels. The original implementation is recorded at commit `296fa0d`; copied source snapshots are omitted. Later features were not part of this experiment. Original source fingerprints refer to that historical version, not the localized scripts.
+- [Artifact hashes](artifact-sha256.json) preserve the packaged files' SHA-256 values. The original protocol retains machine-specific paths for auditability. Re-execution requires localizing those paths and generating a fresh protocol/seal; new experiments must use fresh output directories.
 
 Model weights, iGibson assets, Python environments, credentials, per-frame depth arrays and large raw event logs are not committed. Full local evidence remains in `runs/bowl-48-fixed-20261116-01/`; interrupted attempts remain under its `interrupted/` directory.
 
-## Post-merge integration validation
-
-After preserving the frozen results and merging the remote semantic-navigation changes, the integrated code passed **689 tests** in the native Python 3.8 environment. See [merge-validation.json](merge-validation.json) and [output](merge-validation.log). This is separate from the frozen experiment's 677-test certificate and does not replace its source fingerprint.
+Explanatory scene-event text has been translated to English without changing measured values or model replies. [Localization provenance](../localization.json) records original/current hashes; the artifact hash manifest describes the current submission files.

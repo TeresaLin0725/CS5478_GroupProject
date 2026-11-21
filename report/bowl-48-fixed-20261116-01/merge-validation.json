@@ -1,9 +1,0 @@
-{
-  "command": "python -m pytest tests -q --disable-warnings",
-  "environment": "native iGibson Python 3.8; PYTHONPATH=src;tests",
-  "passed": 689,
-  "warnings": 3,
-  "returncode": 0,
-  "source_fingerprint": "9bc906e65a6e276920272c37bb9323a64af3695ee6e2f0114ebabcf75f6e02fb",
-  "scope": "Integrated code after merging origin/integration/w2; not a rerun of the frozen benchmark."
-}

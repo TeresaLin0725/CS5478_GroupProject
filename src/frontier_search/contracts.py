@@ -1,4 +1,4 @@
-"""Shared contract 1.0 records from Documentation/english/interface_freeze.md.
+"""Shared contract 1.0 records from Documentation/architecture.md.
 
 Collections use tuples for deeply immutable owned snapshots. Behavioral boundary
 checks live in validation.py; these types contain no evaluator capability.

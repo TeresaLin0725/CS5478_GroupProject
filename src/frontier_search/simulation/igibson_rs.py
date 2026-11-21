@@ -250,7 +250,7 @@ class IGibsonWorld:
         if self.cart_started_s is None and self.sim_time > 16 and ready:
             self.cart_started_s = self.sim_time
             self.environment_events.append({'time_s': self.sim_time, 'event': 'cart_crossing',
-                                            'text': '推车开始横穿客厅通道'})
+                                            'text': 'Cart started crossing the living-room passage'})
         if self.cart_started_s is None:
             return
         elapsed = self.sim_time - self.cart_started_s
@@ -262,11 +262,11 @@ class IGibsonWorld:
         if not self.cart_motion.move(fraction):
             self.cart_blocked = True
             self.environment_events.append({'time_s': self.sim_time, 'event': 'cart_blocked',
-                                            'text': '推车扫掠空间被占用，停止移动以防穿模'})
+                                            'text': 'Cart swept volume is occupied, stop movement to avoid penetration'})
         elif one_way and fraction >= 1.0:
             self.cart_finished = True
             self.environment_events.append({'time_s': self.sim_time, 'event': 'cart_parked',
-                                            'text': '推车已在通道侧方停妥，保持通道开放'})
+                                            'text': 'Cart parked beside the passage, keeping the passage open'})
 
     def spectator(self):
         """Third-person iGibson render with the entire physical robot visible."""

@@ -11,11 +11,11 @@ import hashlib
 import os
 
 PROFILES = {
-    'apartment': {'title': '原始扫描公寓', 'description': '四个房间、门洞、家具遮挡；起点看不到厨房目标。', 'props': ()},
-    'clutter': {'title': '拥挤公寓 · 困难', 'description': '新增椅子和软凳收窄客厅通道，绕家具进入厨房，再靠近台面目标。',
+    'apartment': {'title': 'Original scanned apartment', 'description': 'Four rooms, doorways, furniture occlusion; the kitchen target is invisible from the start. ', 'props': ()},
+    'clutter': {'title': 'Cluttered apartment · Difficult', 'description': 'Added chairs and ottomans narrow the living-room passage, navigate around furniture into the kitchen, then approach the countertop target. ',
                 'props': (('ottoman', (.25, -1.10, 0), 0), ('chair', (-.80, .70, 0), .35),
                           ('chair', (-2.70, 1.0, 0), -pi / 2))},
-    'dynamic': {'title': '临时障碍 · 高难度', 'description': '拥挤布局中推车横穿客厅通道；深度更新触发重规划，目标需近距离确认。',
+    'dynamic': {'title': 'Temporary obstacles · Very difficult', 'description': 'A cart crosses the living-room passage in the cluttered layout; depth updates trigger replanning, the target requires close-range verification. ',
                 'props': (('ottoman', (.25, -1.10, 0), 0), ('chair', (-2.70, 1.0, 0), -pi / 2),
                           ('cart', (1.40, -.10, 0), 0))},
 }

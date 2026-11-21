@@ -144,13 +144,13 @@ def export_viewer(output,summary):
         row=json.loads(line)
         if row['event']=='decision':
             selection=row['selection'];goal=selection['subgoal']
-            events.append(dict(t=row['state']['timestamp_s'],text='C 原始选择: '+(goal['frontier_id'] if goal else selection['stop_reason'])+' / '+str(selection['rationale'])))
+            events.append(dict(t=row['state']['timestamp_s'],text='C original choice: '+(goal['frontier_id'] if goal else selection['stop_reason'])+' / '+str(selection['rationale'])))
         if row['event']=='action_selected':
-            label={'policy':'搜索策略','epsilon_retry':'概率恢复重试','stuck_retry':'无可用目标后的恢复重试'}[row['action_source']]
-            events.append(dict(t=row['simulated_time_s'],text='最终目标: '+row['selection']['subgoal']['frontier_id']+' / '+label))
+            label={'policy':'Search policy','epsilon_retry':'Probabilistic recovery retry','stuck_retry':'Recovery retry after no eligible goals'}[row['action_source']]
+            events.append(dict(t=row['simulated_time_s'],text='Final goal: '+row['selection']['subgoal']['frontier_id']+' / '+label))
         if row['event']=='dispatch':
             events.append(dict(t=row.get('simulated_time_s',events[-1]['t'] if events else 0.),
-                               text='B 实际下发: '+row['request']['subgoal']['frontier_id']))
+                               text='B dispatched: '+row['request']['subgoal']['frontier_id']))
         if row['event']=='operation_terminal':
             fb=row['feedback'];events.append(dict(t=fb['timestamp_s'],text='B: '+fb['status']+' / '+str(fb['failure_reason'])))
         if row['event']=='target_evaluation':
@@ -158,14 +158,14 @@ def export_viewer(output,summary):
         if row['event']=='navigation_map_feedback':
             events.append(dict(t=row['simulated_time_s'],text='A → B: '+row['detail']))
         if row['event']=='replan_request':
-            events.append(dict(t=row['simulated_time_s'],text='B → C: 请求改选目标'))
+            events.append(dict(t=row['simulated_time_s'],text='B → C: Request a different goal'))
         if row['event']=='strategy_replan':
             events.append(dict(t=row['simulated_time_s'],text='C → B: '+row['selected']['frontier_id']+' / '+row.get('action_source','policy')))
     payload=json.dumps(dict(summary=summary,events=events),ensure_ascii=False).replace('</','<\\/')
-    html='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>完整管线 · Gibson Rs</title>
+    html='''<!doctype html><html lang="en"><meta charset="utf-8"><title>Complete pipeline · Gibson Rs</title>
 <style>body{margin:0;background:#101720;color:#e1edf7;font:16px system-ui}main{max-width:1400px;margin:32px auto;padding:0 24px}h1{font-size:25px}p{color:#9eb4c6}video{width:100%;border-radius:12px;background:#000}section{display:flex;gap:12px;flex-wrap:wrap}a,button{background:#233746;color:#bdeafa;padding:10px 14px;border:0;border-radius:6px;text-decoration:none;cursor:pointer}pre{white-space:pre-wrap;line-height:1.6;background:#17232e;padding:18px;border-radius:10px}.events button{display:block;text-align:left;width:100%;margin:6px 0}</style>
-<main><h1>完整搜索管线 · Gibson Rs / 实体 Locobot</h1><p>原生 RGB-D → YOLO11s → 共享 A 地图与跟踪 → 共享 B 规划控制 → C 策略与恢复 → W3 独立验收</p>
-<video id="video" src="integrated.mp4" controls preload="metadata" poster="start.png"></video><p>视频按仿真时间连续采集。右侧 RGB 为最近一次已处理观测；场景画面为每秒 15 帧真实渲染。</p>
-<section><a href="summary.json">运行结果</a><a href="events.jsonl">完整事件日志</a><a href="manifest.json">实验配置</a><a href="video.json">视频帧元数据</a><a href="../validation.json">录制前验证</a></section><pre id="summary"></pre><h2>决策与反馈</h2><div class="events" id="events"></div></main>
+<main><h1>Complete search pipeline · Gibson Rs / embodied Locobot</h1><p>Native RGB-D → YOLO11s → Shared A mapping and tracking → Shared B planning and control → C policy and recovery → W3 Independent verification</p>
+<video id="video" src="integrated.mp4" controls preload="metadata" poster="start.png"></video><p>Video is captured continuously in simulation time. The right-hand RGB shows the latest processed observation; the scene is rendered at 15 rendered frames per second. </p>
+<section><a href="summary.json">Run outcome</a><a href="events.jsonl">Full event log</a><a href="manifest.json">Experiment configuration</a><a href="video.json">Video frame metadata</a><a href="../validation.json">Pre-recording validation</a></section><pre id="summary"></pre><h2>Decisions and feedback</h2><div class="events" id="events"></div></main>
 <script>const data=__PAYLOAD__;const s=data.summary;document.getElementById('summary').textContent=JSON.stringify({termination:s.termination,policy:s.policy,profile:s.profile,simulated_time_s:s.simulated_time_s,actual_distance_m:s.actual_distance_m,collisions:s.collisions,evaluation:s.evaluation},null,2);for(const e of data.events){const b=document.createElement('button');b.textContent=e.t.toFixed(1)+'s  '+e.text;b.onclick=()=>{document.getElementById('video').currentTime=e.t;};document.getElementById('events').appendChild(b);}</script></html>'''
     (output/'index.html').write_text(html.replace('__PAYLOAD__',payload),encoding='utf-8')

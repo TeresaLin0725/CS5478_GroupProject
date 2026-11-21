@@ -21,7 +21,7 @@ let checks=0;for(const profile of nodes.scenario.children){nodes.scenario.value=
   nodes.speed.value='4';nodes.speed.onchange();assert.equal(nodes.movie.playbackRate,4);nodes.speed.value='1';
   nodes.movie.onended();assert.equal(read('playing'),false);assert.equal(read('t'),read('current.summary.sim_time_s'));}
  nodes.restart.onclick();assert.equal(read('t'),0);assert.equal(read('playing'),true);
- if(button.dataset.id.endsWith('/llm_guided'))assert(nodes.llm.textContent.includes('没有模型推理')||nodes.llm.textContent.includes('实时模型'));
+ if(button.dataset.id.endsWith('/llm_guided'))assert(nodes.llm.textContent.includes('No model inference')||nodes.llm.textContent.includes('Live model'));
  checks++;}}
 assert.equal(nodes.results.querySelector('tbody').children.length,episodes.length);
 const report={passed:true,mode:'offline DOM runtime harness; browser screenshot unavailable',episodes:checks,

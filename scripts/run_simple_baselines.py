@@ -89,12 +89,12 @@ def report(out, protocol, status, active=None):
     rows = results(out, protocol)
     atomic(out/'results.json', dict(status=status, completed=len(rows), planned=3, results=rows))
     atomic(out/'progress.json', dict(status=status, completed=len(rows), planned=3, active=active, updated_utc=utc()))
-    labels = dict(random='随机策略', nearest='最近前沿', information_gain='信息增益')
-    outcomes = dict(success='成功', search_limit='搜索或时间上限', no_feasible_frontiers='无可达前沿',
-                    no_frontiers='无前沿', pipeline_error='流水线错误')
-    geometry = 'A/B 共享圆形足迹' if protocol.get('navigation_preset') == 'shared_round' else 'B 圆形足迹预设'
-    lines = ['# 原始公寓三策略验证', '', '单进程；'+geometry+'；600 秒仿真、18000 步、7200 秒总现实上限；单次操作 400 秒。',
-             '', '状态：'+status, '', '| 策略 | 本次结果 | 本次仿真秒 | 本次现实秒 | 本次路程米 | 之前结果 | 之前仿真秒 | 之前现实秒 |',
+    labels = dict(random='Random policy', nearest='Nearest frontier', information_gain='Information gain')
+    outcomes = dict(success='Success', search_limit='Search or time limit', no_feasible_frontiers='No reachable frontiers',
+                    no_frontiers='No frontiers', pipeline_error='Pipeline error')
+    geometry = 'A/B Shared round footprint' if protocol.get('navigation_preset') == 'shared_round' else 'B Round-footprint preset'
+    lines = ['# Three-policy apartment validation', '', 'Single process; '+geometry+'; 600 simulation s, 18000 steps, 7200 s total wall-clock limit; Per operation 400 s. ',
+             '', 'Status: '+status, '', '| Policy | Current outcome | Current simulation s | Current wall-clock s | Current distance m | Previous outcome | Previous simulation s | Previous wall-clock s |',
              '|---|---|---:|---:|---:|---|---:|---:|']
     cells = []
     for row in rows:
@@ -105,18 +105,18 @@ def report(out, protocol, status, active=None):
                   outcomes.get(old['termination'],old['termination']), '%.1f'%old['simulated_time_s'], '%.1f'%old['wall_time_s']]
         lines.append('| '+' | '.join(values)+' |')
         cells.append('<tr>'+''.join('<td>'+html.escape(v)+'</td>' for v in values)+'</tr>')
-    lines += ['', '与旧批次相比仍包含 A 的前沿/目标确认修改及并发差异，不能把全部速度变化归因于融合优化。',
-              '取消的未完成回合单独归档，不计入结果；恢复时从该回合起点重跑，保留已完成结果。']
+    lines += ['', 'Differences from the earlier batch include A frontier/target-verification changes and concurrency differences, speed changes cannot be attributed solely to fusion optimization. ',
+              'Cancelled unfinished episodes are archived separately, excluded from the results; resume unfinished episodes from their starting pose, retain completed outcomes. ']
     (out/'SUMMARY.md').write_text('\n'.join(lines)+'\n', encoding='utf-8')
     report_dir = out/'report'; report_dir.mkdir(exist_ok=True)
     page = '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
     if status == 'running': page += '<meta http-equiv="refresh" content="30">'
-    page += '<title>原始公寓三策略验证</title><style>body{font:17px "Microsoft YaHei",sans-serif;background:#101a25;color:#e1ebf5;padding:32px}td,th{padding:14px;border-bottom:1px solid #354759}table{border-collapse:collapse}a{color:#67d9ba}</style>'
-    page += '<h1>原始公寓三策略验证</h1><p>状态：'+html.escape(status)+'；已完成 '+str(len(rows))+'/3</p>'
-    page += '<p>单进程 · '+geometry+' · 仿真预算 600 秒 · 总现实上限 7200 秒</p>'
-    if active: page += '<p>当前：'+html.escape(active['job_id'])+' · 仿真 '+str(active.get('simulated_time_s',0))+' 秒</p>'
-    page += '<div style="overflow:auto"><table><tr>'+''.join('<th>'+v+'</th>' for v in ['策略','本次结果','本次仿真秒','本次现实秒','本次路程米','之前结果','之前仿真秒','之前现实秒'])+'</tr>'+''.join(cells)+'</table></div>'
-    page += '<p>旧批次并发和 A 感知配置存在差异，不作为融合优化的严格性能对照。</p><a href="../SUMMARY.md">详细说明</a>'
+    page += '<title>Three-policy apartment validation</title><style>body{font:17px "Microsoft YaHei",sans-serif;background:#101a25;color:#e1ebf5;padding:32px}td,th{padding:14px;border-bottom:1px solid #354759}table{border-collapse:collapse}a{color:#67d9ba}</style>'
+    page += '<h1>Three-policy apartment validation</h1><p>Status: '+html.escape(status)+'; Complete '+str(len(rows))+'/3</p>'
+    page += '<p>Single process · '+geometry+' · Simulation budget 600 s · Wall-clock limit 7200 s</p>'
+    if active: page += '<p>Current: '+html.escape(active['job_id'])+' · simulation '+str(active.get('simulated_time_s',0))+' s</p>'
+    page += '<div style="overflow:auto"><table><tr>'+''.join('<th>'+v+'</th>' for v in ['Policy','Current outcome','Current simulation s','Current wall-clock s','Current distance m','Previous outcome','Previous simulation s','Previous wall-clock s'])+'</tr>'+''.join(cells)+'</table></div>'
+    page += '<p>The earlier batch used concurrency and A perception configurations differ, not a controlled benchmark of fusion optimization. </p><a href="../SUMMARY.md">Details</a>'
     (report_dir/'index.html').write_text(page, encoding='utf-8')
 
 

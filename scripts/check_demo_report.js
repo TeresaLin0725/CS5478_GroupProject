@@ -12,23 +12,23 @@ async function until(expression){for(let i=0;i<100;i++){if(await evaluate(expres
 async function screenshot(name){await new Promise(r=>setTimeout(r,200));const r=await command('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(path.join(output,name),Buffer.from(r.data,'base64'));}
 function readJSON(file){return JSON.parse(fs.readFileSync(file,'utf8'));}
 function sourceCounts(c){
- const source=c.links.find(l=>l.title==='完整事件日志');
+ const source=c.links.find(l=>l.title==='Full event log');
  const file=path.resolve(currentDirectory,source.href);
  const rows=fs.readFileSync(file,'utf8').trim().split(/\r?\n/).map(JSON.parse);
- const ds=rows.filter(r=>r.event==='decision'&&(c.group==='完整集成管线'||r.selection.subgoal));
+ const ds=rows.filter(r=>r.event==='decision'&&(c.group==='Integrated pipeline'||r.selection.subgoal));
  assert.equal(c.decisions.length,ds.length);
  for(let i=0;i<ds.length;i++){
   assert.equal(c.decisions[i].time,ds[i].state.timestamp_s);
   assert.equal(c.decisions[i].raw.selection.subgoal?.frontier_id,ds[i].selection.subgoal?.frontier_id);
  }
- if(c.group==='完整集成管线'){
+ if(c.group==='Integrated pipeline'){
   const starts=rows.filter(r=>['dispatch','observation_start','inspection_start'].includes(r.event));
   const ends=rows.filter(r=>['operation_terminal','inspection_end'].includes(r.event));
   assert.equal(c.operations.length,starts.length);
-  assert.equal(c.operations.filter(o=>o.status==='任务验收时结束').length,starts.length-ends.length);
+  assert.equal(c.operations.filter(o=>o.status==='Ended at task verification').length,starts.length-ends.length);
   const failed=ends.filter(r=>r.feedback?.status==='failed');
-  assert.equal(c.operations.filter(o=>o.status==='失败').length,failed.length);
-  const artifact=readJSON(path.resolve(currentDirectory,c.links.find(l=>l.title==='录像与物理轨迹核验').href));
+  assert.equal(c.operations.filter(o=>o.status==='Failed').length,failed.length);
+  const artifact=readJSON(path.resolve(currentDirectory,c.links.find(l=>l.title==='Video and physical-trajectory verification').href));
   const sha=require('crypto').createHash('sha256').update(fs.readFileSync(path.resolve(currentDirectory,c.video))).digest('hex');
   assert.equal(sha,artifact.video_sha256,'Raw recording changed');
  }else assert.equal(c.operations.length,rows.filter(r=>r.event==='navigation_feedback').length);
@@ -79,7 +79,7 @@ let currentDirectory;
      await evaluate(`byId('play-toggle').click()`);await until('video.paused');
      await evaluate(`byId('chapters').lastElementChild.click()`);
      assert.equal(await evaluate('currentTime'),c.duration,'Result chapter uses terminal simulation time');
-     assert.ok(await evaluate(`byId('live-stage').textContent.includes('验收通过')`));
+     assert.ok(await evaluate(`byId('live-stage').textContent.includes('Verification passed')`));
      await evaluate(`byId('play-toggle').click()`,true);
      await until('!video.paused && video.currentTime>0 && video.currentTime<5');
      await evaluate(`byId('play-toggle').click()`);await until('video.paused');

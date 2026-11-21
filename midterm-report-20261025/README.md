@@ -1,21 +1,10 @@
-# 中期报告与 Demo（2026-10-25）
+# Midterm baseline and demonstrations
 
-代码版本：`origin/integration/w2` @ `87869e2`
+This historical baseline contains 36 episodes with 29 verified successes and seven `no_feasible_frontiers` outcomes. It predates the final bowl benchmark and must not be used as the final project's success rate.
 
-| 路径 | 内容 |
-| --- | --- |
-| `report/中期报告-中文.pdf` | 中期报告（中文） |
-| `report/Midterm-Report-EN.pdf` | Midterm report (English) |
-| [项目框架图](framework/README.md) | 中英文科研框架图：已实现闭环、搜索与双向通讯优化方向；含 PNG / 可编辑 SVG / 矢量 PDF |
-| `demo/report/index.html` | 四策略 demo 报告：用浏览器打开即可播放视频，按事件跳转 |
-| `demo/<策略>/recording/integrated.mp4` | 各策略录像（15 fps） |
-| `demo/<策略>/dryrun/`、`validation.json` | 录制前的试跑与录制许可 |
-| `data/episodes.csv` | 报告中 36 个配对回合的逐条结果 |
-| `data/episodes/<回合>/` | 各回合 `summary.json`（LLM 回合另含 `llm-calls.json`） |
-| `data/protocol-*.json` | 两批实验冻结时的协议 |
+- [English midterm report](report/Midterm-Report-EN.pdf)
+- [Local four-policy video viewer](demo/report/index.html): clone or download the repository, then open this file in a browser.
+- Videos: [Random](demo/random/recording/integrated.mp4), [Nearest](demo/nearest/recording/integrated.mp4), [Information Gain](demo/information_gain/recording/integrated.mp4), [LLM-guided](demo/llm_guided/recording/integrated.mp4).
+- [All episode results](data/episodes.csv); per-episode summaries and frozen protocols are under `data/`.
 
-在线可编辑版本：
-- 中文：https://claude.ai/artifact/MQRzZivE2ZsfwTYUniqAt1
-- English: https://claude.ai/artifact/WzsqDoNZ655qQuLKP2uAdT
-
-移动文件夹时请保持内部相对结构不变，否则 demo 报告找不到视频。
+GitHub's file view does not execute the HTML player; download a video if it does not preview. Each demo has its recording metadata and validation evidence. Single demonstration videos illustrate behavior rather than estimating policy success rates. Event descriptions have been translated to English; measured values and model responses are retained. See [localization provenance](../report/localization.json).

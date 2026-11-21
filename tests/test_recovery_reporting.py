@@ -40,7 +40,7 @@ class RecoveryReportingTests(unittest.TestCase):
                 self.assertEqual(row['raw']['selection'], asdict(self.original))
                 self.assertEqual(row['raw']['executed_subgoal'], asdict(self.final.subgoal))
                 self.assertEqual(row['raw']['action_source'], source)
-                self.assertEqual(row['provider'], '共享恢复规则')
+                self.assertEqual(row['provider'], 'Shared recovery rules')
                 self.assertIn(self.original.subgoal.frontier_id, row['reason'])
                 self.assertIn(self.final.subgoal.frontier_id, row['reason'])
 
@@ -51,7 +51,7 @@ class RecoveryReportingTests(unittest.TestCase):
         report.record_dispatch(row, {'subgoal': asdict(self.final.subgoal)})
         self.assertEqual(row['raw']['action_source'], 'recovery')
         self.assertEqual(row['goal_id'], self.final.subgoal.frontier_id)
-        self.assertIn('未选择导航目标', row['reason'])
+        self.assertIn('No navigation goal selected', row['reason'])
 
     def test_normal_policy_dispatch_retains_its_explanation(self):
         row = report.decision_row(self.decision, 1)
@@ -84,7 +84,7 @@ class RecoveryReportingTests(unittest.TestCase):
                 self.assertEqual(result['decisions'][0]['raw']['selection'], asdict(self.original))
                 self.assertEqual(result['decisions'][0]['raw']['action_source'], 'epsilon_retry')
                 self.assertEqual(result['operations'][0]['decision'], 1)
-                self.assertTrue(any(f['kind'] == '恢复机制下发目标' for f in result['feedback']))
+                self.assertTrue(any(f['kind'] == 'Recovery dispatched goal' for f in result['feedback']))
 
     @unittest.skipUnless(importlib.util.find_spec('PIL'), 'viewer export imports optional Pillow')
     def test_viewer_distinguishes_policy_final_goal_and_actual_dispatch(self):
@@ -100,10 +100,10 @@ class RecoveryReportingTests(unittest.TestCase):
             html = (output/'index.html').read_text(encoding='utf-8')
         payload = json.loads(re.search(r'const data=(.*?);const s=data.summary;', html).group(1))
         texts = [e['text'] for e in payload['events']]
-        self.assertIn('C 原始选择: '+self.original.subgoal.frontier_id, texts[0])
-        self.assertIn('最终目标: '+self.final.subgoal.frontier_id, texts[1])
-        self.assertIn('概率恢复重试', texts[1])
-        self.assertEqual(texts[2], 'B 实际下发: '+self.final.subgoal.frontier_id)
+        self.assertIn('C original choice: '+self.original.subgoal.frontier_id, texts[0])
+        self.assertIn('Final goal: '+self.final.subgoal.frontier_id, texts[1])
+        self.assertIn('Probabilistic recovery retry', texts[1])
+        self.assertEqual(texts[2], 'B dispatched: '+self.final.subgoal.frontier_id)
 
 
 if __name__ == '__main__':

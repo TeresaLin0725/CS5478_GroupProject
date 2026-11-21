@@ -37,7 +37,7 @@ def main():
     args = parser.parse_args()
     os.environ.setdefault('UV_CACHE_DIR', str(ROOT / 'data/uv-cache'))
     if os.name != 'nt':
-        parser.error('This installer builds Windows DLLs. See Documentation/chinese/running.md for Linux setup.')
+        parser.error('This installer builds Windows DLLs. See Documentation/running.md for Linux setup.')
     for executable in ('git', 'uv'):
         if shutil.which(executable) is None:
             parser.error('Install ' + executable + ' and reopen the terminal first.')

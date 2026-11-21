@@ -1,0 +1,423 @@
+{
+  "original_revision": "61066554bfc9770783d3a6db3d77afe987082d09",
+  "scope": "English localization of explanatory labels and report interfaces; removal of development handovers, plans, repair notes and non-English presentation-only media.",
+  "measured_episode_values_unchanged": true,
+  "model_responses_unchanged": true,
+  "changed_episode_fields": [
+    "midterm-report-20261025/data/episodes/dynamic-s17-information_gain/summary.json/scene_events/1/text",
+    "midterm-report-20261025/data/episodes/dynamic-s17-information_gain/summary.json/scene_events/2/text",
+    "midterm-report-20261025/data/episodes/dynamic-s17-llm_guided/summary.json/scene_events/1/text",
+    "midterm-report-20261025/data/episodes/dynamic-s17-llm_guided/summary.json/scene_events/2/text",
+    "midterm-report-20261025/data/episodes/dynamic-s17-nearest/summary.json/scene_events/1/text",
+    "midterm-report-20261025/data/episodes/dynamic-s17-nearest/summary.json/scene_events/2/text",
+    "midterm-report-20261025/data/episodes/dynamic-s17-random/summary.json/scene_events/1/text",
+    "midterm-report-20261025/data/episodes/dynamic-s17-random/summary.json/scene_events/2/text",
+    "midterm-report-20261025/data/episodes/dynamic-s29-information_gain/summary.json/scene_events/1/text",
+    "midterm-report-20261025/data/episodes/dynamic-s29-information_gain/summary.json/scene_events/2/text",
+    "midterm-report-20261025/data/episodes/dynamic-s29-llm_guided/summary.json/scene_events/1/text",
+    "midterm-report-20261025/data/episodes/dynamic-s29-llm_guided/summary.json/scene_events/2/text",
+    "midterm-report-20261025/data/episodes/dynamic-s29-nearest/summary.json/scene_events/1/text",
+    "midterm-report-20261025/data/episodes/dynamic-s29-nearest/summary.json/scene_events/2/text",
+    "midterm-report-20261025/data/episodes/dynamic-s29-random/summary.json/scene_events/1/text",
+    "midterm-report-20261025/data/episodes/dynamic-s29-random/summary.json/scene_events/2/text",
+    "midterm-report-20261025/data/episodes/dynamic-s43-information_gain/summary.json/scene_events/1/text",
+    "midterm-report-20261025/data/episodes/dynamic-s43-information_gain/summary.json/scene_events/2/text",
+    "midterm-report-20261025/data/episodes/dynamic-s43-llm_guided/summary.json/scene_events/1/text",
+    "midterm-report-20261025/data/episodes/dynamic-s43-llm_guided/summary.json/scene_events/2/text",
+    "midterm-report-20261025/data/episodes/dynamic-s43-nearest/summary.json/scene_events/1/text",
+    "midterm-report-20261025/data/episodes/dynamic-s43-nearest/summary.json/scene_events/2/text",
+    "midterm-report-20261025/data/episodes/dynamic-s43-random/summary.json/scene_events/1/text",
+    "midterm-report-20261025/data/episodes/dynamic-s43-random/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startA-information_gain/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startA-information_gain/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startA-llm_guided/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startA-llm_guided/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startA-nearest/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startA-nearest/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startA-random/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startA-random/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startB-information_gain/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startB-information_gain/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startB-llm_guided/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startB-llm_guided/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startB-nearest/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startB-nearest/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startB-random/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startB-random/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startA-information_gain/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startA-information_gain/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startA-llm_guided/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startA-llm_guided/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startA-nearest/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startA-nearest/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startA-random/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startA-random/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startB-information_gain/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startB-information_gain/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startB-llm_guided/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startB-llm_guided/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startB-nearest/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startB-nearest/summary.json/scene_events/2/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startB-random/summary.json/scene_events/1/text",
+    "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startB-random/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startA-information_gain/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startA-information_gain/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startA-llm_guided/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startA-llm_guided/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startA-nearest/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startA-nearest/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startA-random/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startA-random/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startB-information_gain/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startB-information_gain/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startB-llm_guided/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startB-llm_guided/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startB-nearest/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startB-nearest/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startB-random/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startB-random/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startA-information_gain/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startA-information_gain/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startA-llm_guided/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startA-llm_guided/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startA-nearest/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startA-nearest/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startA-random/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startA-random/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startB-information_gain/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startB-information_gain/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startB-llm_guided/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startB-llm_guided/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startB-nearest/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startB-nearest/summary.json/scene_events/2/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startB-random/summary.json/scene_events/1/text",
+    "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startB-random/summary.json/scene_events/2/text"
+  ],
+  "notes": [
+    "Historical source/model fingerprints identify the original experiment, not newly translated UI code.",
+    "Artifact indexes describe the current submission. The recorded revision retains all original files and hashes.",
+    "Videos and experimental result tables were not re-encoded or recomputed. The discovery plot was redrawn from its committed CSV with English labels."
+  ],
+  "localized_files": [
+    {
+      "path": "midterm-report-20261025/README.md",
+      "original_sha256": "11b31d2e1c7f05f6f6a370523f7be68c0072eac42b13ed8423d732674ba424b0",
+      "submission_sha256": "7d82c1fb853042589a8506ee24738d80c2f524dfcfde0d8b335702bb04ab3aac"
+    },
+    {
+      "path": "midterm-report-20261025/data/episodes/dynamic-s17-information_gain/summary.json",
+      "original_sha256": "c1e14169b6e12d9c699c1979816bbf1e5daa8e0e72226556856ecdb7162289dc",
+      "submission_sha256": "87323e69e04aa970125034f5b6c8f719f166c5415554c963f09d956448359fd7"
+    },
+    {
+      "path": "midterm-report-20261025/data/episodes/dynamic-s17-llm_guided/summary.json",
+      "original_sha256": "d38d8245af4c1472669dd33b978d26a470732a84a007d1fdee62503f11e42f8c",
+      "submission_sha256": "c50b98c8a77af7572298c11f254b7d9790b4ae36d12c4174d4e8caff546e8c61"
+    },
+    {
+      "path": "midterm-report-20261025/data/episodes/dynamic-s17-nearest/summary.json",
+      "original_sha256": "2abb78d350f2af746df9550072e3bc508366c28435eff6cd6910b01b4c2c0e94",
+      "submission_sha256": "c6314d30a0530570f89746505d8e07911d8a2c82878724b1c30863b22b64fffa"
+    },
+    {
+      "path": "midterm-report-20261025/data/episodes/dynamic-s17-random/summary.json",
+      "original_sha256": "ad53c059b7aad33bf2059aa6d942fc944f0cefa7eb6ec0feff85c8cc23bbb717",
+      "submission_sha256": "d80420b6b97b04bd8b8a54b9214601f7682443f7dd9163bb5c1e3c05f654c4f7"
+    },
+    {
+      "path": "midterm-report-20261025/data/episodes/dynamic-s29-information_gain/summary.json",
+      "original_sha256": "9a216d32671bcee9087dc768dc51e8db29f7c4192a0927149e769d0843b9e7d2",
+      "submission_sha256": "811f98da542b37547e6a9e243a8bd2bda8e03f73828f78a7614ffbbf092fb94b"
+    },
+    {
+      "path": "midterm-report-20261025/data/episodes/dynamic-s29-llm_guided/summary.json",
+      "original_sha256": "94d8c605e0e2b7132088d43d3025081660f09cfa37cb36e14d59cd41d88a0d49",
+      "submission_sha256": "1e7f0efd13487bda987391665e879f53492ad5ddc64fa4701611ef33d620d5e2"
+    },
+    {
+      "path": "midterm-report-20261025/data/episodes/dynamic-s29-nearest/summary.json",
+      "original_sha256": "216924f9570a1e167694e584dc95419e4af10c8b7822bbe0214a0a7d867489d0",
+      "submission_sha256": "7f03d3598ea110679aa2563a3819855ddde2eaf2c20021faefd810962e3996cf"
+    },
+    {
+      "path": "midterm-report-20261025/data/episodes/dynamic-s29-random/summary.json",
+      "original_sha256": "a0adfe642a74b176fa2b7438c030389c2cd65a839448e97350dd37d0967dd127",
+      "submission_sha256": "88e4a5013d3faef017e38744bbe03abe7bfa2dfff9bd19caf840130be51bccb5"
+    },
+    {
+      "path": "midterm-report-20261025/data/episodes/dynamic-s43-information_gain/summary.json",
+      "original_sha256": "b6a8810de713f01ef85ad397b9ad2c5440d87470d75bc5565d35b1949fca5a26",
+      "submission_sha256": "467a07ea24beccb9b7463852f2b67bcd858a222035d03b1f80c1ee5c6a7497cb"
+    },
+    {
+      "path": "midterm-report-20261025/data/episodes/dynamic-s43-llm_guided/summary.json",
+      "original_sha256": "900f07f57500c75d0126a95df872c288dc24b441472c619308438008e41c2671",
+      "submission_sha256": "d9385d7f511ad14e9640a0eb0a35f6ce10334d737cae266dd765ed4646ef6f2c"
+    },
+    {
+      "path": "midterm-report-20261025/data/episodes/dynamic-s43-nearest/summary.json",
+      "original_sha256": "9c1ed456e91f395c56c74ab278ab131053c0f832e3865af8f951367a2e1fd334",
+      "submission_sha256": "c704a3b2cd469254b13edc1d80353baa875b75cb96f15f475936fb47a5e3a449"
+    },
+    {
+      "path": "midterm-report-20261025/data/episodes/dynamic-s43-random/summary.json",
+      "original_sha256": "195eed2a05356f832edd6d00c4fa523768712d6872e9ea5de04ed85ebf6a7aa6",
+      "submission_sha256": "3fb348258d7833b6ffdca805c3e95ccbd7d929babd824cbbc569a4d4efeb1916"
+    },
+    {
+      "path": "midterm-report-20261025/demo/information_gain/dryrun/summary.json",
+      "original_sha256": "b7fb74916ebe0c6355b81119927bac9cecbdf69658c23723eb26d056a66c42b9",
+      "submission_sha256": "e5f3ecbe7c4e4a14a1b5463e67c061a06cf438810cd7ba2a49cc0c4ba1163c17"
+    },
+    {
+      "path": "midterm-report-20261025/demo/information_gain/recording/summary.json",
+      "original_sha256": "65cee8a078b7061705d9b0efe302e5bd0b5dd48fdc53e159af6a67ac91ced856",
+      "submission_sha256": "0438cd64cf55ba4de3e8ed14a60abf428498531363b1268833dc44a74feb3cba"
+    },
+    {
+      "path": "midterm-report-20261025/demo/information_gain/validation.json",
+      "original_sha256": "b384e8b27c06ff727e9f2c03d069f967a61807cc16aec8c132a74c2c76f5d6fe",
+      "submission_sha256": "dee5436ab93080edb80bce8d3a0d6648d5795b0e2aedbdb8d2352c57652beab7"
+    },
+    {
+      "path": "midterm-report-20261025/demo/llm_guided/dryrun-dynamic-failed/summary.json",
+      "original_sha256": "febe93e61fc318e99a00576bfeca730ce96400fe75a672a4dfd99cd06d2b7a50",
+      "submission_sha256": "f18aa18f44bed5ac175ea495d77d65a0665709b6d538fe8fba7160de06726ecd"
+    },
+    {
+      "path": "midterm-report-20261025/demo/nearest/dryrun-dynamic-failed/summary.json",
+      "original_sha256": "452276bafdfca6de22b1d8b8bbd42be91907fb5caf49a8e222565abb00d39fd6",
+      "submission_sha256": "d8ecf184d6a1def7282222ae45375ddef990f5139d5279c83d749956eaa6f0b1"
+    },
+    {
+      "path": "midterm-report-20261025/demo/random/dryrun/summary.json",
+      "original_sha256": "d63b312008ecb1ed1dfd4906a94aa2e0e65378bf7c1d15eea773137fc17dbd07",
+      "submission_sha256": "524d7e6d961a17e49dce7318ac3662ebad54583c6c2954dc77044e0f22715db8"
+    },
+    {
+      "path": "midterm-report-20261025/demo/random/recording/summary.json",
+      "original_sha256": "19f1c3b49a92acc78b4d24db0feb1c7de2151c51904e41324cf7fa59af462a8e",
+      "submission_sha256": "c770b6d24c2d3b6357347d99095eab14af41cd46f9e3cfb1cf8221ef5d47c143"
+    },
+    {
+      "path": "midterm-report-20261025/demo/random/validation.json",
+      "original_sha256": "df090d8b2b8697a39e9853b737b36b01571391202b4079d23f61930add16da54",
+      "submission_sha256": "cff40d39cbcdedf83ecbafbfc2db6e93ec01c5b80a251b0edd9249f5c078f1db"
+    },
+    {
+      "path": "midterm-report-20261025/demo/report/index.html",
+      "original_sha256": "5a937c3e6195896c0324910bf842f10322a06d2eb21e7aa353ec183269239786",
+      "submission_sha256": "780b59ed6ea4745d33163757bba8f5f9b6286859165d60b7e765cb32304461e2"
+    },
+    {
+      "path": "midterm-report-20261025/demo/report/inventory.json",
+      "original_sha256": "849773ea3f53f34c06b12e36cfe96cb70392d1a7cd5fb226885dd996751ec0f8",
+      "submission_sha256": "8b5042153ca54c3e67ba9bf60a71251121773f5aef8a3d21bb5f1658ca566d10"
+    },
+    {
+      "path": "report/README.md",
+      "original_sha256": "71ac116bf77a378553aa39ca646fd0cf8772c36ba2128eea3ff0b543dcff7dd4",
+      "submission_sha256": "be29f28996dc6672ec2b6155a0638027649bebfd1554f6dc0677a2b1be07ed72"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/README.md",
+      "original_sha256": "37dbba25f3b8f5d36f0cc1307d353f88b7f4be6d785470c5184888372ff3b252",
+      "submission_sha256": "4ee2529e8440bd5793c74f3253cb2aea4de0d3f95c7d9e123195771a6df07870"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/artifact-sha256.json",
+      "original_sha256": "8cfaee83b763c37080f34436ec44e465697f118299b937d71257bf67856c3850",
+      "submission_sha256": "d8724515cbefb8e3c6084b58e06e0adcab6c56ec53ba8010a3e234c78619ad92"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startA-information_gain/summary.json",
+      "original_sha256": "c0ba649f15243e929c0bf1a3b846ae2c42cbf074e73b74272d7c729d31f2be5c",
+      "submission_sha256": "2cafb838e787be3147018cdd2d814fc5be1851ec96ac6bb00f5f091699d1e6c6"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startA-llm_guided/summary.json",
+      "original_sha256": "22f03fa575605783645d7b2abb7a563d4abb533cf046d123ef400eca8f999db8",
+      "submission_sha256": "2c1a4d96ba823a24e5dbdecab7d471480b45827e44bc189da5c2f46c758114dc"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startA-nearest/summary.json",
+      "original_sha256": "b234cb19f3b957f64f7c8ffed58d22d641ae14c73fe18b2934cda01554aab7ca",
+      "submission_sha256": "3a917b0c6740408e26497cde3686237011a73b795150255d8fcd54680eaef0e6"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startA-random/summary.json",
+      "original_sha256": "dbfba6133c7e8075cc89f9fee9357c26e9ecfdc7b160dcd74e383f19ea8379eb",
+      "submission_sha256": "c1e12b964711451e4ea63e1d073ff0b6767e2f6541b94e015a467074004d6141"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startB-information_gain/summary.json",
+      "original_sha256": "edeb0851756608334e6b17a833ea8aaedc2b9d59e710b5ea57f0b78bd9843bef",
+      "submission_sha256": "9adcf917690ea42c6d7d4d58818de2a55bf0f5a6279832dfdb17400540ba6530"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startB-llm_guided/summary.json",
+      "original_sha256": "fdeb0055b001b45307c20873a7452296b97b1fcafbe0fdd54c07eda2d96761c6",
+      "submission_sha256": "831f90a8b3f064c68757549022779d8b97c21f151fb2d91976e5c7e0d01c786d"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startB-nearest/summary.json",
+      "original_sha256": "398927395b81df0ea5909ebfe45ea82ff840e93245b081e21ba0e5ccc48d6153",
+      "submission_sha256": "0bbf68b1a9f2e71ae94bddf85aa549745dfd832201a39a97c41f4e84af42ac4c"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/bathroom-dynamic-startB-random/summary.json",
+      "original_sha256": "63209390e0bcf86cab2fda81d5ee4eaa5f43e7679b059d09f8394a621c039476",
+      "submission_sha256": "70795be90f0ecf63b77cd0a349a1b06b40e22e7a24eea691ea9a03df87a6f856"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startA-information_gain/summary.json",
+      "original_sha256": "7a0345f2e56129456f070b36738f0e804f660adc358e2ce45a5f28899612aef9",
+      "submission_sha256": "9f4148b6b510fff648115b5dc811e85959b23bfc6cfcd397b31e865fc1a3635d"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startA-llm_guided/summary.json",
+      "original_sha256": "b2dc3ef9204622f9512ec7094a0aa44ea40af1f7477832a2769a890a1ea25329",
+      "submission_sha256": "5d18097f7656762b4359b7e2df786238bfab6d6b24ce273190ab7e80e89133e5"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startA-nearest/summary.json",
+      "original_sha256": "fe7e659f0c641a8062cf78dbb3b7b440c0fce1516811412e737d510297480252",
+      "submission_sha256": "6294fe1d9b2557b8d3a897d644bf78ee4a8dce35b739dee37318e390047299b7"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startA-random/summary.json",
+      "original_sha256": "6230cfdb7ea3c2cbbe987004200d36b8b3ffd93ca58d7535bfe79f3301a5d4f4",
+      "submission_sha256": "33c44100c8459d89865d3f97f115399e618afa33f391c6feafd0b7f781915aee"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startB-information_gain/summary.json",
+      "original_sha256": "832f154a9820a4415c66fad6b6fe11bd4b8f05caf13be805a4986010255b1bf6",
+      "submission_sha256": "28e8b915f71905c66a7abdb94e4d90a88d622082504a1b60d3cf766d986ed9b4"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startB-llm_guided/summary.json",
+      "original_sha256": "2f48c9ee31955aa1bb118f99f96b06fe71cc8e45e3a7da510253627a71c2de82",
+      "submission_sha256": "757f925d5259f373c77b15e658b83b38cb4a94d77e6017ab8fb18fcb090a5c6a"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startB-nearest/summary.json",
+      "original_sha256": "5c0d74d7320a631ec9a86c6d128067da101808f1c66601a2ed407c256090b1f0",
+      "submission_sha256": "49e0e71d5a3d9c713978c02db703dbb8ad3ad8855660aea86ad40663f79418b9"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/episodes/kitchen-dynamic-startB-random/summary.json",
+      "original_sha256": "6d7e1ec53caedb6816928562e06bab8c50ad24ceb23ca0d4acee42a4e01b1309",
+      "submission_sha256": "3e32a5cdfe7023ad6ce1214e42e72421cf1433bcbc10322ba33babcabb60c9d4"
+    },
+    {
+      "path": "report/bowl-48-fixed-20261116-01/harness/build_benchmark_report.py",
+      "original_sha256": "b149dd0e037c62be87405fd2cd1fd6cc9fc0f4841de860f8b56716a2b4c50eac",
+      "submission_sha256": "dea6a5e30314967b0fbab3b8489b8189bd238b034ff471eb6c582c296cf67579"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/README.md",
+      "original_sha256": "d8af48622144342588d2dff1b5cf2ac304e5e74c2469c7055f6fcd44f21c95bd",
+      "submission_sha256": "c56b52de24a707d998b88abe2433e42058bfcf434bde8c2364792f3fba13f49f"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/archive-manifest.json",
+      "original_sha256": "481a8be8237a27204c23346737e7e5bc9272bf7f17b40f82a4021daa33d10315",
+      "submission_sha256": "cf274e9e7258ce90e669b4f6007058d163783dc92e479830ed37af11b105c951"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startA-information_gain/summary.json",
+      "original_sha256": "b2508e0f440045525824804b8d5e31db65f484898c2af1b5515252527fdd426c",
+      "submission_sha256": "3016d68c1e29a3bc6397ecfcf4990862307d03722b281fc37a83e7177dcae152"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startA-llm_guided/summary.json",
+      "original_sha256": "940e0a1708f6d9bc3c9027d8efa12a26db18559668dc0f8bbb4eead0d7e6bef9",
+      "submission_sha256": "c177b8531a83e6dd729b8a0d5064be2fc49dfe0c91f635804a7e749378d18bcc"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startA-nearest/summary.json",
+      "original_sha256": "8f71b8a40cbf44a51c0f2cb2c3fd2c8d811d10861eaaeef94a4c8678dc6d84e2",
+      "submission_sha256": "0d61a845b82c704ca3e480f66b4deb52f40f2fc4cc559d91503977086893017b"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startA-random/summary.json",
+      "original_sha256": "41de6024a6de2c1065375466fb10c5ee2da74332393153592b26fb27fb9d9656",
+      "submission_sha256": "caf8f2092a3d9c5744a7fb5956dad550a2c7bd9f0c1603472dd0f9bd9ab85815"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startB-information_gain/summary.json",
+      "original_sha256": "62128641dd4b2b2fc826a23298532f95bc3207824b7a745e066802513108b47e",
+      "submission_sha256": "7ab53ad39ea0eddf2f6660f246a7debe525b30f1330c2c83836097a4d53e1a5b"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startB-llm_guided/summary.json",
+      "original_sha256": "93ffeeb08a3a551a7f9f8324a9fce69f86824566708211a11a4f83c4de17c468",
+      "submission_sha256": "5f6debe9cac392da4feb53f60cc07fd685ea95d6dbbb246657f0f1493f98d778"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startB-nearest/summary.json",
+      "original_sha256": "906bfe058b62cf1dae9c69e369ef59377d8efaa4cf455b994d99eb18852e59bb",
+      "submission_sha256": "dffcebf7e8fe1637392d0ce45fdf8b8e6f15fb04d57311d3577af96755491cfc"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/bathroom-dynamic-startB-random/summary.json",
+      "original_sha256": "3c10ac54cfee07a4d8f58048de98ef257ddfcbc109fce6a3a73c85bb50df7c10",
+      "submission_sha256": "75e780254f6896ffdf788959a2b5f3079d4698611a9aea606e2b75c58243c4ad"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startA-information_gain/summary.json",
+      "original_sha256": "9097415db57a8e3c682177e0da156afa63e760e1e66412ebd5bfc7ef5ff70fc8",
+      "submission_sha256": "12827871da97e1db761193eb90325f9d208dc15308bff251ead2838febb9d88f"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startA-llm_guided/summary.json",
+      "original_sha256": "4e7d642390ee1b5b19e910db7424604ccb3dd0e6c58a191791400180ceb4f883",
+      "submission_sha256": "0568f48e935031ab598ab1aa776f2334095dae4e095568670417a8e184594d9b"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startA-nearest/summary.json",
+      "original_sha256": "2abc72af0ece7a0fbc1e7e32eddc5b76ecf67ffa18fd5edb9f258ecd249b3699",
+      "submission_sha256": "a3741278a1fcc2a25dcdfa238c12dc6cf8ecc7304759d6491d5748a9e0bb33ee"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startA-random/summary.json",
+      "original_sha256": "e5e9a7d125257f1cdcb9f82b6cfe88682f864e5530014227c628b7c7e99b6885",
+      "submission_sha256": "861185a9d1446f06b05014772034c9088788115f898580ba83fa747b1eb922ac"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startB-information_gain/summary.json",
+      "original_sha256": "15dfa2ecc8f9e0020f723ea662a1fe52d0f408893d230bd4888d67607c98e59d",
+      "submission_sha256": "ab1bc09f88ba80abe8ceaf877a82d4d90690feab27a6060af84ed1ed22a3da35"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startB-llm_guided/summary.json",
+      "original_sha256": "0d67e53a58e76397f27ddb91ac52422b0577e2ab59eff011c6bc8f61bb4a4881",
+      "submission_sha256": "2a5469297f076f9097837ffbe212915b064daeb591590694639fad385ed14799"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startB-nearest/summary.json",
+      "original_sha256": "30da1cc6e6fb602c49bdf2551a3c09efc8c04ee60b9f1d8ac4e914b07f2fe9c0",
+      "submission_sha256": "d5cb3299f3bb8d7639b5cf91dd5e67b61372534c150560c28401da65dd4eea94"
+    },
+    {
+      "path": "report/bowl-48-noise-20261110-02/episodes/kitchen-dynamic-startB-random/summary.json",
+      "original_sha256": "402b037ca4c42b37321870cec7ded086e5a9264f0c3ea222383677c73b6972db",
+      "submission_sha256": "53cda6c3876f5de2460dd1def7fa29ab75072fc1c6e4efcf08cf4dcace463fc6"
+    },
+    {
+      "path": "report/semantic-llm-20261111/README.md",
+      "original_sha256": "1316193a692b0f32e73ef75356a9ed7109fbf258fbf0e535f06cbee3dc2e53ba",
+      "submission_sha256": "98417cd4db5ed83ed88ac34b4a0237754faa19b1c17213859551d5dc262dc64c"
+    },
+    {
+      "path": "report/semantic-llm-20261111/find-time-by-group.png",
+      "original_sha256": "2f6d6894ada0291fb493f68d5be2bb38272e1ceb26717b5df6cafb0cacdf342d",
+      "submission_sha256": "5b3e2ec8aa8544d673ccbf62218d78b9212227acea2389118d60623f7349b53a"
+    },
+    {
+      "path": "report/semantic-llm-20261111/prompts.md",
+      "original_sha256": "1d4945d90e134d7835bb313f56dce7da8601001178980b5323ab0274f04b45c6",
+      "submission_sha256": "1406721d53a4c7875e2a652cddfbab708ba694a482891f6ae98364ceaa90539c"
+    }
+  ]
+}

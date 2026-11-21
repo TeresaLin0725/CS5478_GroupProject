@@ -255,12 +255,12 @@
     {
       "time_s": 16.03333333333333,
       "event": "cart_crossing",
-      "text": "推车开始横穿客厅通道"
+      "text": "Cart started crossing the living-room passage"
     },
     {
       "time_s": 22.7,
       "event": "cart_parked",
-      "text": "推车已在通道侧方停妥，保持通道开放"
+      "text": "Cart parked beside the passage, keeping the passage open"
     }
   ]
 }

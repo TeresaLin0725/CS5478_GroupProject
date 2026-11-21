@@ -8,8 +8,8 @@ This index separates the final experiment from earlier development baselines. Re
 | Matched LLM rationale capture, 19 November | Separate 12/12-success run; 36 valid answers, two fallback calls, no separate thinking-summary text returned | [All episodes and decision rationales](llm-thinking-matched-20261119-01/README.md) |
 | Semantic guidance study, 11 November | 124 episodes across 31 task/start combinations; Nearest, IG, DeepSeek v1/v2 | [Report and analysis](semantic-llm-20261111/README.md) |
 | Original bowl benchmark, 10 November | 45/48 successes; retained as the pre-repair comparison, distinct from the final 48/48 suite | [Report and portable evidence](bowl-48-noise-20261110-02/README.md) |
-| Clean/noisy cup robustness baseline | 35/36 successes in each arm | [Summary](robustness-35of36/summary.json), [interpretation](../Documentation/english/noise_experiment_results.md) |
-| Midterm baseline, 25 October | 29/36 successes; four-policy demonstration videos and English/Chinese PDFs | [Report and videos](../midterm-report-20261025/README.md) |
+| Clean/noisy cup robustness baseline | 35/36 successes in each arm | [Summary](robustness-35of36/summary.json) |
+| Midterm baseline, 25 October | 29/36 successes; four-policy demonstration videos and English report | [Report and videos](../midterm-report-20261025/README.md) |
 
 [Paper figures](paper-figures/) contain exported PNG/PDF visuals, including model comparisons. The committed figures can be inspected directly; some figure/analysis scripts require original local run logs that are not included. See [reproduction scope and commands](../Documentation/reproducing.md).
 
@@ -21,4 +21,4 @@ This index separates the final experiment from earlier development baselines. Re
 - Simulation pauses during model inference. Simulated-time improvements do not imply wall-clock acceleration. Fixed setups in one house do not establish performance across houses.
 - Returned decision rationales are model-provided explanations, not observations of private internal reasoning. The rationale-capture rerun is separate from the final benchmark.
 
-Frozen archives retain original manifests, certificates and machine-specific paths for auditability. Do not overwrite them with new results. Detailed test logs that belong to the final archive are retained alongside its artifact hash manifest.
+Frozen archives retain original experiment manifests, certificates and machine-specific paths for auditability. Explanatory event descriptions have been translated to English; measured values and returned model answers are unchanged. [Localization provenance](localization.json) records the original and current file hashes, and archive hash manifests describe the current files. Do not overwrite these archives with new experiment results.

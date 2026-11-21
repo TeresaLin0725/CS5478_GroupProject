@@ -9,6 +9,9 @@ description = "Indoor object-search comparison scaffold (contract 1.0)"
 requires-python = ">=3.8"
 dependencies = []
 
+[project.optional-dependencies]
+test = ["pytest>=7,<8.4"]
+
 [project.scripts]
 frontier-search = "frontier_search.cli:main"
 
@@ -17,3 +20,7 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 "frontier_search.runner" = ["indoor_viewer.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]

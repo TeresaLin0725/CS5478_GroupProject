@@ -20,7 +20,7 @@ async function screenshot(name){const r=await call('Page.captureScreenshot',{for
  await call('Page.navigate',{url:pathToFileURL(path.join(directory,compact?'benchmark.html':'index.html')).href});
  await waitFor(`document.readyState==='complete' && !!document.querySelector('#episodes')`);
  const text=await evaluate('document.body.innerText');
- assert.ok(text.includes('目前的搜索表现'));assert.ok(!/__CARDS__|__TABLE__|__TIME__|\ufffd/.test(text));
+ assert.ok(text.includes('Search performance'));assert.ok(!/__CARDS__|__TABLE__|__TIME__|\ufffd/.test(text));
  const n=await evaluate(`document.querySelectorAll('#episodes tr').length`);
  const stats=JSON.parse(fs.readFileSync(path.join(root,'results.json'),'utf8'));
  if(stats.complete){assert.equal(n,36);assert.ok(!await evaluate(`!!document.querySelector('meta[http-equiv="refresh"]')`));}

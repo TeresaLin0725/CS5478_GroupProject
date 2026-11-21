@@ -13,7 +13,6 @@ The **final bowl benchmark achieved 48/48 verified successes with zero collision
 | [Paper figures](report/paper-figures/) | Committed PNG/PDF figures, viewable without running the simulator |
 | [LLM decision rationales](report/llm-thinking-matched-20261119-01/README.md) | Separate 12-episode matched run; 36 valid answers and two fallback calls |
 | [Midterm report (English)](midterm-report-20261025/report/Midterm-Report-EN.pdf) | Historical baseline report; 29/36 successes |
-| [Midterm report (Chinese)](midterm-report-20261025/report/中期报告-中文.pdf) | Same historical stage in Chinese |
 
 Four **historical midterm** demonstration videos are included in the repository: [Random](midterm-report-20261025/demo/random/recording/integrated.mp4), [Nearest](midterm-report-20261025/demo/nearest/recording/integrated.mp4), [IG](midterm-report-20261025/demo/information_gain/recording/integrated.mp4), and [LLM-guided](midterm-report-20261025/demo/llm_guided/recording/integrated.mp4). Use GitHub's raw/download control if a video does not preview. After cloning, open [the local demo viewer](midterm-report-20261025/demo/report/index.html) in a browser; GitHub's file view does not execute the HTML player. These videos are not recordings of the final 48-episode benchmark.
 
@@ -28,7 +27,7 @@ python scripts/setup_project.py --device cuda
 python scripts/run_integrated.py --profile dynamic --policy nearest --output runs/my-first-run
 ```
 
-The installer creates the pinned Python environment, builds iGibson, downloads the public Rs/robot/YCB assets, installs dependencies and downloads checksum-verified YOLO11s weights. Assets, environments and weights are not committed. See [full installation instructions (Chinese)](Documentation/chinese/running.md) for prerequisites, Linux reference steps, recording and troubleshooting. Linux end-to-end execution has not been independently validated for this project.
+The installer creates the pinned Python environment, builds iGibson, downloads the public Rs/robot/YCB assets, installs dependencies and downloads checksum-verified YOLO11s weights. Assets, environments and weights are not committed. See [full installation instructions](Documentation/running.md) for prerequisites, Linux reference steps, recording and troubleshooting. Linux end-to-end execution has not been independently validated for this project.
 
 A lightweight authored-fixture demo runs without simulator assets or an API key:
 
@@ -59,7 +58,14 @@ In the installed simulation environment:
 ./data/venv-igibson/Scripts/python.exe scripts/run_integrated_checks.py --output runs/submission-checks/tests.log
 ```
 
-This produces the test log and a source/weight fingerprint certificate at `runs/submission-checks/tests.json`. The final frozen bowl run's historical certificate records 677 tests, six skipped and no failures; the later merged integration certificate records 689 tests. Those certificates describe their recorded source versions, not a new test execution on your machine.
+This writes the test log and a source/weight fingerprint certificate to `runs/submission-checks/`. To include the function-based tests as well, install the optional test dependencies and run pytest:
+
+```powershell
+uv pip install --python ./data/venv-igibson/Scripts/python.exe -e ".[test]"
+./data/venv-igibson/Scripts/python.exe -m pytest
+```
+
+Pytest is configured to collect only `tests/`, excluding ignored experiment snapshots and downloaded third-party code.
 
 ## Repository map
 

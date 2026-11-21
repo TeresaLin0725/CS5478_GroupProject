@@ -1,128 +1,60 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0a111c"><title>FRONTIER · 自主目标搜索</title>
+<title>FRONTIER / Recorded object search</title>
 <style>
-:root{color-scheme:light;--ink:#1d2d3b;--muted:#586a78;--line:#d8e1e7;--blue:#155b79;--paper:#fff;--wash:#f2f5f7;--green:#176545;--red:#a3392b}
-*{box-sizing:border-box}body{margin:0;background:var(--wash);color:var(--ink);font:15px/1.8 "Microsoft YaHei","PingFang SC",sans-serif}main{max-width:1440px;margin:auto;padding:48px 40px 72px}header{border-top:5px solid var(--blue);padding:24px 0 28px}h1{font-size:34px;letter-spacing:.04em;margin:8px 0 12px;font-weight:700}h2{font-size:24px;margin:0 0 18px}h3{font-size:18px;margin:24px 0 12px}p{margin:10px 0}a{color:var(--blue);text-underline-offset:3px}button,select,input{font:inherit}button,select{cursor:pointer}button{border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--blue);padding:5px 10px}button:hover{background:#eaf3f8;border-color:var(--blue)}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #df9c23;outline-offset:3px}small{display:block;color:var(--muted);font-size:12px}nav{display:flex;gap:26px;flex-wrap:wrap;margin:20px 0}nav a{text-decoration:none}.eyebrow{font-size:13px;letter-spacing:.12em;color:var(--muted)}.meta{color:var(--muted)}.facts{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);background:#fff;margin:12px 0 30px}.facts>div{padding:20px 24px;border-right:1px solid var(--line)}.facts>div:last-child{border:0}.facts strong{font-size:30px;display:block;line-height:1.3}.facts span{font-size:13px;color:var(--muted)}section.report{background:var(--paper);border:1px solid var(--line);padding:28px 30px;margin:22px 0;scroll-margin-top:20px}.number{font-weight:400;color:var(--muted);margin-right:10px}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;vertical-align:top;padding:12px;border-bottom:1px solid var(--line)}th{background:#eef3f6;font-weight:600;white-space:nowrap}td:first-child{font-variant-numeric:tabular-nums}tbody tr.active{background:#e6f1f7}tbody tr.failure{border-left:3px solid var(--red)}.catalog-button{border:0;padding:0;text-align:left;background:transparent;line-height:1.65}.findings{display:grid;grid-template-columns:1fr 1fr;gap:24px}.finding{border-left:3px solid var(--blue);padding:0 20px}.finding h3{margin-top:0}.note{color:var(--muted);font-size:13px}.scope{background:#f3f6f8;border-left:3px solid #90a5b3;padding:12px 18px;margin:16px 0}.selector{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-bottom:16px}select{max-width:100%;border:1px solid #b6c7d2;border-radius:4px;padding:7px;background:white;color:var(--ink)}.media-grid{display:grid;grid-template-columns:minmax(0,2.4fr) minmax(240px,1fr);gap:22px}.player{background:#17232d;border-radius:5px;overflow:hidden}video,#sample-image{width:100%;display:block;aspect-ratio:8/5;object-fit:contain;background:#17232d}figure{margin:0}figcaption{color:var(--muted);font-size:12px;margin-top:6px}.controls{padding:12px 14px;background:#f3f6f8;border:1px solid var(--line)}.control-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}#scrub{width:100%;accent-color:var(--blue)}#clock{font-variant-numeric:tabular-nums}#live-operation{min-height:48px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}.metric{border-bottom:1px solid var(--line);padding:8px 0}.metric strong{font-size:19px;display:block}.metric span{font-size:12px;color:var(--muted)}#final-image{width:100%;margin-top:10px;border:1px solid var(--line)}.tag{display:inline-block;border:1px solid #b5d4c5;color:var(--green);border-radius:3px;font-size:12px;padding:1px 7px;margin-right:8px}.time{white-space:nowrap;font-variant-numeric:tabular-nums}details{margin-top:8px}summary{cursor:pointer;color:var(--blue);font-size:12px}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:280px;overflow:auto;background:#f4f6f8;padding:12px;font:12px/1.6 Consolas,monospace}.record-title{display:flex;gap:14px;align-items:center;justify-content:space-between}.record-title span{color:var(--muted);font-size:13px}.links{display:flex;gap:12px 24px;flex-wrap:wrap}footer{color:var(--muted);font-size:12px;padding-top:10px}.no-print{display:block}[hidden]{display:none!important}
-.findings>.finding:only-child{grid-column:1/-1}.finding code{overflow-wrap:anywhere}
-@media(max-width:1000px){main{padding:20px 16px}.media-grid,.findings{grid-template-columns:1fr}section.report{padding:22px 18px}.facts>div{padding:16px}.facts strong{font-size:24px}h1{font-size:27px}}
-@media(max-width:600px){.facts{grid-template-columns:1fr 1fr}.facts>div{border-bottom:1px solid var(--line)}th,td{padding:8px}table{font-size:12px}.selector{display:block}select{width:100%}}
-@media print{body{background:#fff}main{padding:0;max-width:none}section.report{border:0;padding:14px 0;break-inside:auto}.no-print,nav,video,.controls{display:none}h1{font-size:26px}.facts strong{font-size:23px}.table-wrap{overflow:visible}details pre{max-height:none}.media-grid{grid-template-columns:1fr 1fr}a{color:inherit}tr{break-inside:avoid}}
-__DEMO_SKIN__
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#0a111c;color:#e7edf6}
+body{max-width:1200px;margin:0 auto;padding:30px 20px;line-height:1.6}h1,h2{line-height:1.2}h1{margin-bottom:12px}
+a{color:#78e4c4}button,select,input{font:inherit}button,select{background:#172435;color:#e7edf6;border:1px solid #405069;border-radius:5px;padding:7px}
+video{width:100%;max-height:75vh;background:#000;border-radius:10px}select{max-width:100%;margin:12px 0}
+.metrics{display:flex;flex-wrap:wrap;gap:20px;background:#142030;padding:16px;border-radius:8px}.metric strong{display:block;font-size:22px}
+small,.note{color:#aab8cb}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:10px;text-align:left;vertical-align:top;border-bottom:1px solid #29364a}
+tr.active{background:#18332e}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto}details{margin-top:6px}.links{display:flex;gap:16px;flex-wrap:wrap}#scrub{width:100%}
 </style>
 </head>
-<body><main>
-<div class="appbar"><a class="brand" href="#"><span class="brand-icon">F</span> FRONTIER <span>/ SEARCH LAB</span></a><nav aria-label="报告目录"><a href="#playback">演示</a><a href="#design-check">设计核对</a><a href="#records">运行记录</a><a href="#boundaries">证据范围</a></nav><span class="local-badge"><i></i> LOCAL DEMO</span></div>
-<header class="hero"><div><div class="eyebrow">EMBODIED INTELLIGENCE / OBJECT SEARCH</div>
-<h1>感知空间，<span>自主寻找。</span></h1>
-<p class="hero-description">从 RGB-D 观测到目标确认。看 Locobot 在真实扫描公寓中<br class="desktop-break">建图、选择前沿、绕行，并找到目标。</p>
-<a class="hero-cta" href="#playback">进入演示 <span>↗</span></a></div>
-<div class="hero-note"><span class="eyebrow">THE EXPERIMENT</span><p>Gibson Rs / Locobot</p><small>实体目标搜索 · <span id="mission-backend">在线前沿选择</span><br>物理仿真 · 原始运行证据</small><div class="pipeline"><span>感知</span><b>→</b><span>导航</span><b>→</b><span>决策</span><b>→</b><span>验收</span></div></div>
-</header>
-<div class="facts" id="hero-metrics">__FACTS__</div>
-<section class="report" id="playback"><div class="section-heading"><div><div class="eyebrow">01 / MISSION REPLAY</div><h2>一次完整的自主搜索</h2></div><span class="status-pill">原生仿真录像</span></div>
-<div class="selector no-print"><label for="case-select">选择演示</label><select id="case-select"></select><button id="print-report">打印当前报告</button></div>
-<h3 id="case-title"></h3><details class="setup-details"><summary>场景与管线配置</summary><p id="case-setup"></p><p id="case-scope" class="scope"></p></details>
-<div class="media-grid"><div><div class="player"><video id="video" controls preload="auto" src="__VIDEO__" poster="__POSTER__" playsinline></video><img id="sample-image" alt="当前仿真时间对应的采样画面" hidden></div>
-<div class="controls no-print"><div class="operation-track" id="operation-track" aria-hidden="true"></div><input id="scrub" aria-label="仿真时间" type="range" min="0" max="1" step="0.01" value="0"><div class="control-row"><button id="play-toggle" class="primary-button" aria-label="播放录像">▶ 播放</button><button id="restart" aria-label="从头播放">↺</button><button id="sample-play" hidden>播放采样画面</button><span id="clock" aria-live="off"></span><label class="speed-label">播放 <select id="speed"><option value="0.5">0.5×</option><option value="1">1× 原速</option><option value="2" selected>2× 演示</option><option value="4">4× 快览</option></select></label><button id="theater-toggle">专注演示</button></div><div id="frame-caption" class="note"></div><div id="playback-estimate" class="note"></div></div>
-<div class="chapters no-print" id="chapters" aria-label="关键阶段跳转"></div>
-<p id="live-operation" class="scope" aria-live="polite"></p><p id="media-note" class="note"></p></div>
-<aside><div class="mission-card"><div class="eyebrow">MISSION / OBJECT SEARCH</div><div class="mission-target"><span>◎</span><div><span id="mission-target-name">寻找杯子</span><small>视觉搜索与目标确认</small></div></div><div class="live-stage" id="live-stage">初始环境观察</div><p id="live-reason" class="note"></p></div><div class="metrics" id="case-metrics"></div><p id="case-assessment" class="note"></p><details class="final-details"><summary>查看任务终止画面</summary><figure><a id="final-link"><img id="final-image" alt="本项演示的任务终止画面" loading="lazy"></a><figcaption>点击查看原图。</figcaption></figure></details></aside></div>
+<body>
+<header><p>FRONTIER / RGB-D OBJECT SEARCH</p><h1>Recorded search, decisions and evidence</h1>
+<p>Native Locobot simulation in the Gibson Rs apartment. These individual demonstrations show system behavior; policy success rates require the paired experiment results.</p></header>
+<label for="case-select">Recording</label> <select id="case-select"></select>
+<h2 id="case-title"></h2><p id="case-setup"></p><p id="case-scope" class="note"></p>
+<video id="video" controls preload="metadata" playsinline></video>
+<label for="scrub">Simulation time</label><input id="scrub" type="range" min="0" max="1" step="0.01" value="0">
+<p id="clock"></p><div id="case-metrics" class="metrics"></div><p id="case-assessment"></p>
+<h2>Decisions</h2><p class="note">Original policy choices and actual dispatched goals remain distinct. Model explanations are returned text, not private internal reasoning.</p>
+<div class="scroll"><table><thead><tr><th>Decision</th><th>Time</th><th>Goal / source</th><th>Reason</th><th>Feedback</th></tr></thead><tbody id="decisions"></tbody></table></div>
+<h2>Operations</h2><p id="operation-scope" class="note"></p>
+<div class="scroll"><table><thead><tr><th>Operation</th><th>Start / end</th><th>Goal</th><th>Decision</th><th>Status</th><th>Details</th></tr></thead><tbody id="operations"></tbody></table></div>
+<h2>Execution and scene feedback</h2><div class="scroll"><table><thead><tr><th>Time</th><th>Event</th><th>Details</th></tr></thead><tbody id="feedback"></tbody></table></div>
+<h2>Independent verification</h2><div class="scroll"><table><thead><tr><th>Time</th><th>Evidence</th></tr></thead><tbody id="evidence"></tbody></table></div>
+<h2>Source records</h2><div id="source-links" class="links"></div>
 <p id="case-limits" class="note"></p>
-<div id="records" class="records-heading"><div class="eyebrow">02 / DECISION & EXECUTION</div><h2>每一步，都有依据</h2><p class="note">点击时间回到当时画面，展开条目查看原始记录。</p></div>
-<div class="record-title"><h3>决策记录</h3><span id="decision-count"></span></div><p class="note">时间采用仿真时钟。点击时间定位画面；决策说明采用本地策略解释或模型实际回答，展开条目可核对原始回答、日志标识与完整目标参数。</p>
-<div class="table-wrap"><table><thead><tr><th>决策</th><th>仿真时间</th><th>目标与选择来源</th><th>决策依据</th><th>收到的执行反馈</th><th>对应导航结果</th></tr></thead><tbody id="decisions"></tbody></table></div>
-<div class="record-title"><h3>操作记录</h3><span id="operation-count"></span></div><p id="operation-scope" class="note"></p>
-<div class="table-wrap"><table><thead><tr><th>操作</th><th>仿真起止时间</th><th>操作内容</th><th>关联决策</th><th>结果</th><th>执行说明</th></tr></thead><tbody id="operations"></tbody></table></div>
-<h3>环境变化与双向反馈记录</h3><div class="table-wrap"><table><thead><tr><th>仿真时间</th><th>事件</th><th>记录说明</th></tr></thead><tbody id="feedback"></tbody></table></div>
-<h3>目标验收记录</h3><div class="table-wrap"><table><thead><tr><th>仿真时间</th><th>验收证据与结果</th></tr></thead><tbody id="evidence"></tbody></table></div>
-<h3>原始运行材料</h3><div class="links" id="source-links"></div>
-</section>
-<section class="report" id="design-check"><div class="eyebrow">03 / DESIGN REVIEW</div><h2>设计落实到了哪一步？</h2><p class="note">实现、单次原生验证与完整实验验收分别列出。以项目英文实施计划和接口约定为核对依据。</p><div class="table-wrap"><table class="audit-table"><thead><tr><th>设计要求</th><th>当前落实情况</th><th>证据与限制</th></tr></thead><tbody><tr><td>RGB-D 建图、稳定前沿、目标跟踪</td><td><span class="tag">已实现 / 原生运行</span></td><td>深度融合、YOLO11s、多帧声明，接入同次搜索链路。</td></tr><tr><td>实体导航、动态障碍、观察与恢复</td><td><span class="tag">已实现 / 原生运行</span></td><td>A*、足迹检查、轮速控制、地图更新和有界恢复；推车采用脚本运动。</td></tr><tr><td>目标验收与真值隔离</td><td><span class="tag">已实现 / 原生运行</span></td><td>独立实例匹配、两份不同时刻的近距离停稳证据；真值不传给策略。</td></tr><tr><td>Random / Nearest / IG / LLM 四策略</td><td><span class="tag partial">代码具备 / 实验待齐</span></td><td>共享候选和导航；当前演示不能代替四策略的完整配对比较。</td></tr><tr><td>多场景、多种子、统计与不确定性</td><td><span class="tag pending">尚未完成验收</span></td><td>还需冻结实验配置，保留全部成功与失败回合，报告配对统计和区间。</td></tr><tr><td>失败后由 LLM 再次推理</td><td><span class="tag partial">可选扩展 / 本次未证明</span></td><td>受阻恢复使用共享规则；在线调用发生在前沿选择，详见原始决策记录。</td></tr></tbody></table></div></section>
-<section class="report" id="performance"><div class="eyebrow">04 / RUN EVIDENCE</div><h2>实测表现</h2><div class="findings">__FINDINGS__</div><div class="scope"><strong>时间口径：</strong>原始录像按仿真时间采集，播放器默认 2× 演示，可切换 1× 核对。仿真时间与实际计算耗时分别报告；改变播放倍速不会改变原始指标。完整管线尚未达到实时计算。</div><details><summary>演示清单与场景版本</summary><div id="inventory"><p>__INTRO__</p><p>__INVENTORY_CONTEXT__</p><div class="table-wrap"><table id="catalog"><thead><tr><th>序号</th><th>演示名称与运行范围</th><th>探索决策来源</th><th>媒体形式</th><th>仿真时间</th><th>实测行驶距离</th><th>本次结果</th></tr></thead><tbody>__CATALOG__</tbody></table></div><p class="note">__INVENTORY_NOTE__</p>__SCENE_NOTE__</div></details></section>
-<section class="report" id="boundaries"><div class="eyebrow">05 / SCOPE & LIMITS</div><h2>证据范围与结论边界</h2>
-<p>本报告中的成功、距离、耗时、接触和操作结果均对应清单中实际保存的单次运行，不据此推算成功率、平均性能或未知环境中的泛化能力。机器人运动与碰撞来自实体物理仿真；环境采用真实室内纹理扫描，实验在仿真环境中完成。</p>
-<p>完整集成管线记录感知建图、导航执行、策略决策和目标验收。若本次触发路径失效或策略恢复，相应失败上下文与目标下发见反馈表。物理接触步数为零不表示所有操作均成功，受阻、目标失效和任务结束时没有独立终态的操作均单独列出。</p>
-<p>__BOUNDARY_EXTRA__</p>
-</section>
-<footer><span>FRONTIER / SEARCH LAB</span><span>__REPORT_DATE__ · 本地运行记录 · 无需联网加载</span></footer>
-</main>
-<script id="report-data" type="application/json">__DATA__</script>
 <script>
-'use strict';
-const report=JSON.parse(document.getElementById('report-data').textContent);
-const entryHash=location.hash;
+const payload=__DATA__;
 const byId=id=>document.getElementById(id);
-const video=byId('video'), scrub=byId('scrub'), selector=byId('case-select');
-let current, currentTime=0, playing=false, lastTick=0, decisionRows=[],operationRows=[],pendingSeek=null;
-function text(tag,value){const e=document.createElement(tag);e.textContent=value;return e;}
-function cell(row,value){const td=text('td',value);row.appendChild(td);return td;}
-function clear(id){byId(id).replaceChildren();}
-function raw(parent,value){const d=document.createElement('details');d.appendChild(text('summary','查看原始记录'));d.appendChild(text('pre',JSON.stringify(value,null,2)));parent.appendChild(d);}
-function timeButton(parent,t,label){const b=text('button',label||t.toFixed(2)+' 秒');b.className='time';b.dataset.time=t;b.onclick=()=>seek(t);parent.appendChild(b);return b;}
-function metric(label,value){const d=document.createElement('div');d.className='metric';d.appendChild(text('strong',value));d.appendChild(text('span',label));byId('case-metrics').appendChild(d);}
-function update(t){
- currentTime=Math.max(0,Math.min(current.duration,t));scrub.value=currentTime;
- byId('clock').textContent=currentTime.toFixed(2)+' / '+current.duration.toFixed(2)+' 秒（仿真时间）';
- if(current.media_type==='frames'){
-  let frame=current.frames[0];for(const f of current.frames){if(f.time<=currentTime+1e-6)frame=f;else break;}
-  if(byId('sample-image').getAttribute('src')!==frame.image)byId('sample-image').src=frame.image;
-  byId('frame-caption').textContent='当前展示采集于 '+frame.time.toFixed(2)+' 秒的原始画面；采样间隔内保持该画面。';
- }else byId('frame-caption').textContent='原始连续录像，每秒 '+current.fps+' 帧；播放位置与仿真时钟对应。';
- let activeDecision=-1;current.decisions.forEach((d,i)=>{if(d.time<=currentTime+1e-6)activeDecision=i;});
- decisionRows.forEach((r,i)=>r.classList.toggle('active',i===activeDecision));
- const active=current.operations.findIndex(o=>o.time<=currentTime+1e-6&&currentTime<o.end-1e-6);
- operationRows.forEach((r,i)=>r.classList.toggle('active',i===active));
- byId('live-operation').textContent=currentTime>=current.duration-1e-6?'任务结束：目标验收通过。':
-  active>=0?'当前操作第 '+current.operations[active].number+' 项：'+current.operations[active].kind+'。'+(activeDecision>=0?'最近一次策略决策为第 '+(activeDecision+1)+' 次。':'尚未选择导航目标。'):
-  '当前阶段为环境观察或操作衔接；有明确起止时间的操作见下表。';
+const selector=byId('case-select'),video=byId('video'),scrub=byId('scrub');
+let current,currentTime=0,operationRows=[];
+function text(tag,value){const element=document.createElement(tag);element.textContent=String(value??'');return element;}
+function cell(row,value){const element=text('td',value);row.append(element);return element;}
+function raw(parent,value){const details=document.createElement('details');details.append(text('summary','Original record'),text('pre',JSON.stringify(value,null,2)));parent.append(details);}
+function timeButton(parent,time,label){const button=text('button',label??Number(time).toFixed(2)+' s');button.dataset.time=time;button.onclick=()=>seek(time);parent.append(button);}
+function update(time){currentTime=Math.max(0,Math.min(current.duration,time));scrub.value=currentTime;byId('clock').textContent=currentTime.toFixed(2)+' / '+current.duration.toFixed(2)+' simulation s';operationRows.forEach((row,index)=>row.classList.toggle('active',currentTime>=current.operations[index].time&&currentTime<current.operations[index].end));}
+function seek(time){video.pause();const value=Math.max(0,Math.min(current.duration,time));if(video.readyState)video.currentTime=Math.min(value,video.duration||value);update(value);}
+function render(){
+ current=payload.cases.find(item=>item.key===selector.value);operationRows=[];
+ for(const id of ['decisions','operations','feedback','evidence','source-links','case-metrics'])byId(id).replaceChildren();
+ byId('case-title').textContent=current.title;byId('case-setup').textContent=current.setup;byId('case-scope').textContent=current.scope;
+ byId('case-assessment').textContent=current.assessment;byId('operation-scope').textContent=current.operation_scope;byId('case-limits').textContent=current.limits;
+ video.src=current.video;video.poster=current.poster;scrub.max=current.duration;
+ for(const [label,value] of [['Outcome',current.success?'Verified success':'Ended'],['Simulation time',current.duration.toFixed(2)+' s'],['Wall time',current.wall.toFixed(2)+' s'],['Distance',current.distance.toFixed(2)+' m'],['Contact ticks',current.contacts],['Model calls',current.model_calls]]){const box=document.createElement('div');box.className='metric';box.append(text('strong',value),text('small',label));byId('case-metrics').append(box);}
+ for(const decision of current.decisions){const row=document.createElement('tr');cell(row,decision.number);timeButton(cell(row,''),decision.time);cell(row,decision.goal+' / '+decision.provider);const reason=cell(row,decision.reason);raw(reason,decision.raw);cell(row,decision.feedback);byId('decisions').append(row);}
+ for(const operation of current.operations){const row=document.createElement('tr');cell(row,operation.number+' / '+operation.kind);const times=cell(row,'');timeButton(times,operation.time);times.append(text('span',' to '));timeButton(times,operation.end);cell(row,operation.goal);cell(row,operation.decision??'Initial scan');cell(row,operation.status);const detail=cell(row,operation.detail);raw(detail,operation.raw);byId('operations').append(row);operationRows.push(row);}
+ for(const feedback of current.feedback){const row=document.createElement('tr');timeButton(cell(row,''),feedback.time);cell(row,feedback.kind);const detail=cell(row,feedback.detail);raw(detail,feedback.raw);byId('feedback').append(row);}
+ for(const evidence of current.evidence){const row=document.createElement('tr');timeButton(cell(row,''),evidence.time);cell(row,evidence.detail);byId('evidence').append(row);}
+ for(const link of current.links){const anchor=text('a',link.title);anchor.href=link.href;byId('source-links').append(anchor);}
+ update(0);
 }
-function seek(t){
- t=Math.max(0,Math.min(current.duration,t));playing=false;byId('sample-play').textContent='播放采样画面';video.pause();
- if(current.media_type==='video'){if(video.readyState>=1)video.currentTime=t;else pendingSeek=t;}
- update(t);
-}
-function choose(key){
- const chosen=report.cases.find(c=>c.key===key);if(!chosen)return;
- video.pause();playing=false;pendingSeek=null;current=chosen;selector.value=key;
- if(location.hash!=='#'+key)history.replaceState(null,'','#'+key);
- for(const [id,value] of Object.entries({'case-title':current.title,'case-setup':current.setup,'case-scope':current.scope,'case-assessment':current.assessment,'case-limits':current.limits,'operation-scope':current.operation_scope}))byId(id).textContent=value;
- const continuous=current.media_type==='video';video.hidden=!continuous;byId('sample-image').hidden=continuous;byId('sample-play').hidden=continuous;
- if(continuous){video.src=current.video;video.poster=current.poster;video.load();video.playbackRate=Number(byId('speed').value);}
- else{video.removeAttribute('src');video.load();}
- byId('sample-play').textContent='播放采样画面';scrub.max=current.duration;
- byId('media-note').textContent=continuous?'连续视频共 '+current.frame_count+' 帧，画面保持录制内容。':'本项共 '+current.frames.length+' 张带时间戳的采样画面；播放时按仿真采集间隔切换。';
- byId('final-image').src=current.final;byId('final-link').href=current.final;
- clear('case-metrics');metric('本次运行结果','目标验收通过');metric('仿真时间',current.duration.toFixed(2)+' 秒');metric('实际计算耗时',current.wall.toFixed(2)+' 秒');metric('实测行驶距离',current.distance.toFixed(2)+' 米');metric('物理接触步数',String(current.contacts));metric('真实在线模型调用',current.model_calls+' 次');
- clear('decisions');clear('operations');clear('feedback');clear('evidence');clear('source-links');decisionRows=[];operationRows=[];
- current.decisions.forEach(d=>{
-  const row=document.createElement('tr');cell(row,'第 '+d.number+' 次');timeButton(cell(row,''),d.time);
-  cell(row,d.kind+'；'+d.goal+'。'+d.provider+(d.latency!==null?'；请求实际耗时 '+d.latency.toFixed(3)+' 秒。':''));
-  const reason=cell(row,d.reason+' 本次可选目标 '+d.candidate_count+' 个。');raw(reason,d.raw);cell(row,d.feedback);
-  const operation=current.operations.find(o=>o.kind==='导航行驶'&&o.decision===d.number);cell(row,operation?operation.status+'；'+operation.detail:'无对应导航操作记录');
-  byId('decisions').appendChild(row);decisionRows.push(row);
- });
- current.operations.forEach(o=>{
-  const row=document.createElement('tr');if(o.status==='失败')row.classList.add('failure');cell(row,'第 '+o.number+' 项');const times=cell(row,'');timeButton(times,o.time,o.time.toFixed(2)+(o.time_basis==='terminal_only'?' 秒（仅终态）':' 秒'));if(o.time_basis!=='terminal_only'){times.appendChild(text('span',' 至 '));timeButton(times,o.end,o.end.toFixed(2)+' 秒');}
-  cell(row,o.kind+'；'+o.goal);cell(row,o.decision?'第 '+o.decision+' 次决策':'初始环境观察');cell(row,o.status);const detail=cell(row,o.detail);if(Object.keys(o.raw).length)raw(detail,o.raw);byId('operations').appendChild(row);operationRows.push(row);
- });
- current.feedback.forEach(f=>{const row=document.createElement('tr');timeButton(cell(row,''),f.time);cell(row,f.kind);const td=cell(row,f.detail);raw(td,f.raw);byId('feedback').appendChild(row);});
- if(!current.feedback.length){const row=document.createElement('tr');const td=cell(row,'本次运行未记录路径失效、局部重规划或策略重新下发事件。');td.colSpan=3;byId('feedback').appendChild(row);}
- current.evidence.forEach(e=>{const row=document.createElement('tr');timeButton(cell(row,''),e.time);cell(row,e.detail);byId('evidence').appendChild(row);});
- for(const source of current.links){const a=text('a',source.title);a.href=source.href;a.target='_blank';a.rel='noopener';byId('source-links').appendChild(a);}
- byId('decision-count').textContent=current.decisions.length+' 次策略决策';byId('operation-count').textContent=current.operations.length+' 项有记录的操作';update(0);
-}
-for(const c of report.cases){const option=text('option',c.title);option.value=c.key;selector.appendChild(option);}
-selector.addEventListener('change',()=>choose(selector.value));
-document.querySelectorAll('[data-case]').forEach(button=>button.addEventListener('click',()=>{choose(button.dataset.case);byId('playback').scrollIntoView({behavior:'smooth'});}));
-scrub.addEventListener('input',()=>seek(Number(scrub.value)));
-video.addEventListener('loadedmetadata',()=>{if(pendingSeek!==null){video.currentTime=pendingSeek;pendingSeek=null;}});
-video.addEventListener('timeupdate',()=>{if(current.media_type==='video')update(video.currentTime);});
-byId('speed').addEventListener('change',()=>{video.playbackRate=Number(byId('speed').value);});
-byId('sample-play').addEventListener('click',()=>{if(currentTime>=current.duration)update(0);playing=!playing;lastTick=performance.now();byId('sample-play').textContent=playing?'暂停采样画面':'播放采样画面';});
-byId('print-report').addEventListener('click',()=>window.print());
-function tick(now){if(playing&&current.media_type==='frames'){update(currentTime+(now-lastTick)/1000*Number(byId('speed').value));if(currentTime>=current.duration){playing=false;byId('sample-play').textContent='播放采样画面';}}lastTick=now;requestAnimationFrame(tick);}
-choose(report.cases.some(c=>c.key===location.hash.slice(1))?location.hash.slice(1):report.default);requestAnimationFrame(tick);
-</script><script>__DEMO_PLAYER__</script></body></html>
+for(const item of payload.cases){const option=text('option',item.title);option.value=item.key;selector.append(option);}
+selector.value=payload.default;selector.onchange=render;video.ontimeupdate=()=>update(video.currentTime);scrub.oninput=()=>seek(Number(scrub.value));render();
+</script>
+</body></html>

@@ -1,13 +1,13 @@
 """Owner B: legacy shared square envelope and explicit round navigation preset.
 
-Source: A's ``simulation/record_sequence.py`` and ``Documentation/english/locobot_multiframe.md``.
+Source: A's ``simulation/record_sequence.py`` and ``Documentation/architecture.md``.
 A measures the installed Locobot URDF at run time (collision AABB union over all links) and
 uses it as the base-frame footprint. The doc reports about +/-0.181 m horizontally and a
 collision top of about 0.907 m above the base, so this file uses those rounded values.
 These AABBs are bounding boxes, not the exact circular collision boundary. The
 round preset below changes B's envelope only and keeps the shared robot record intact.
 These are A's DEVELOPMENT settings, not a
-frozen team agreement (see Documentation/english/locobot_abc_handoff.md).
+frozen team agreement (see Documentation/architecture.md).
 
 Robotics background
 -------------------

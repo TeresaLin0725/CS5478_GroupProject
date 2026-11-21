@@ -60,7 +60,7 @@ def patch(relative, old, new):
 
 def main():
     if os.name != 'nt':
-        raise RuntimeError('This source-build helper is for Windows; see Documentation/chinese/running.md for Linux.')
+        raise RuntimeError('This source-build helper is for Windows; see Documentation/running.md for Linux.')
     DATA.mkdir(exist_ok=True)
     os.environ.setdefault('UV_CACHE_DIR', str(DATA / 'uv-cache'))
     if not SOURCE.exists():

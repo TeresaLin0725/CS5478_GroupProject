@@ -1,4 +1,4 @@
-"""Owner B: bounded verified-starting-area verifier (Documentation/english/verified_start_area.md).
+"""Owner B: bounded verified-starting-area verifier (Documentation/architecture.md).
 
 Robotics background
 -------------------

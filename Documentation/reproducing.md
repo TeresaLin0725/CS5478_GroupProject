@@ -8,7 +8,7 @@ No simulator or API key is needed to read these results. Download the committed 
 
 ## Run a new bowl experiment
 
-First follow the [installation instructions](chinese/running.md). All commands below run from the repository root on Windows using the installed Python 3.8 environment. On Linux, substitute `data/venv-igibson/bin/python` for `data/venv-igibson/Scripts/python.exe`; full Linux execution was not independently validated.
+First follow the [installation instructions](running.md). All commands below run from the repository root on Windows using the installed Python 3.8 environment. On Linux, substitute `data/venv-igibson/bin/python` for `data/venv-igibson/Scripts/python.exe`; full Linux execution was not independently validated.
 
 For one new baseline episode with the robust bowl mapping settings:
 
@@ -49,7 +49,7 @@ Supply a model available to your account; the configuration and logs must identi
 
 ## Historical reproduction limits
 
-The final bowl archive identifies commit `296fa0d`, its original source/weight fingerprint, manifests and exact harness scripts. It omits the frozen source copy, simulator assets, model weights, credentials and most raw frame/event logs. Original protocol JSON retains author-machine paths and byte-sensitive snapshot seals. Do not feed it directly to the current harness or edit the preserved archive to fit a new machine. To investigate that historical implementation, use a separate checkout of the recorded commit, install its documented dependencies and generate fresh local protocols/certificates. A fresh current-source run is a replication with the same experiment design, not a byte-identical replay of the historical run.
+The final bowl archive identifies commit `296fa0d`, its original source/weight fingerprint, manifests and execution harness scripts with English presentation labels. It omits the frozen source copy, simulator assets, model weights, credentials and most raw frame/event logs. Original protocol JSON retains author-machine paths and byte-sensitive snapshot seals. Do not feed it directly to the current harness or change recorded experiment settings to fit a new machine. To investigate that historical implementation, use a separate checkout of the recorded commit, install its documented dependencies and generate fresh local protocols/certificates. A fresh current-source run is a replication with the same experiment design, not a byte-identical replay of the historical run.
 
 Some analysis utilities are author-side export tools:
 
@@ -58,10 +58,10 @@ Some analysis utilities are author-side export tools:
 | `scripts/make_paper_figures.py` | Original `runs/bowl-llm-models-20261117/` CSV and per-episode trajectories |
 | `scripts/analyze_bowl_llm_models.py`, `scripts/analyze_bowl_llm_cot.py` | Model-comparison episode call logs under their selected `--runs` root |
 | `scripts/analyze_semantic_replicates.py` | Original semantic run cohorts; its S0 defaults reference historical local directories |
-| `scripts/archive_bowl48_report.py`, `scripts/archive_semantic_report.py` | Completed local runs to export into a report archive |
+| `scripts/archive_semantic_report.py` | Completed local runs to export into a report archive |
 
 Their exported figures/reports are committed where listed in the experiment index, but original raw inputs for every model-comparison figure are not all included. The committed rationale archive contains compact returned-answer evidence rather than full prompts or raw transport logs. It cannot be used as a complete model-comparison dataset. The repository therefore supports inspecting the archived results and running fresh experiments, with these limits on exact historical replay and figure regeneration.
 
-## Validation and unchanged evidence
+## Validation and evidence provenance
 
-Run `scripts/run_integrated_checks.py` in the installed environment for the complete unittest regression suite and a fresh fingerprint certificate. Historical test logs and hash manifests remain intact. Simulator checks and hosted calls require the documented assets and account access; the lightweight CLI fixture alone does not validate full simulation.
+Run `scripts/run_integrated_checks.py` in the installed environment for the complete unittest regression suite and a fresh fingerprint certificate. Historical regression logs remain available; explanatory labels were localized and current hash indexes were regenerated. The localization provenance records original and submission hashes. Simulator checks and hosted calls require the documented assets and account access; the lightweight CLI fixture alone does not validate full simulation.

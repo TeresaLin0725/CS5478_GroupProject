@@ -138,10 +138,10 @@ def main():
         write(out/'results.json',dict(completed=len(results),planned=len(jobs),results=results))
         print('DONE',policy,json.dumps(summary or result),flush=True)
     write(out/'progress.json',dict(status='complete' if len(results)==len(jobs) else 'cancelled',completed=len(results)))
-    lines=['# 厨房碗：带噪声策略试跑','',
-        '每种方法仅 1 回合，不作统计优劣结论。深度噪声标准差 1 cm，丢失率 1%，种子 0。',
-        '共同预算：600 仿真秒、18000 控制步、2400 墙钟秒；固定卧室旁起点，启动全周观察。','',
-        '| 方法 | 终止原因 | 仿真秒 | 距离 / m | 碰撞控制步 | LLM 调用 / 回退 |',
+    lines=['# Kitchen bowl: Noisy policy pilot','',
+        'Each method has only 1 episodes, no statistical superiority claim. Depth noise standard deviation 1 cm, dropout probability 1%, seed 0. ',
+        'Shared budget: 600 Simulation s, 18000 control steps, 2400 wall-clock s; fixed start near the bedroom, full-circle initial scan. ','',
+        '| Method | Termination reason | Simulation s | Distance / m | Collision ticks | LLM Calls / fallback |',
         '| --- | --- | ---: | ---: | ---: | --- |']
     for result in results:
         s=result['summary'] or {}
